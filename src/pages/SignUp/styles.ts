@@ -1,5 +1,6 @@
 import styled, { keyframes } from 'styled-components';
 import { shade } from 'polished';
+import '../../styles/global';
 
 import signUpBackgroundImg from '../../assets/sign-up-background.png';
 
@@ -51,7 +52,7 @@ export const AnimationContainer = styled.div`
     }
 
     a {
-      color: #f4ede8;
+      color: var(--letter-color-3);
       display: block;
       margin-top: 24px;
       text-decoration: none;
@@ -64,7 +65,7 @@ export const AnimationContainer = styled.div`
   }
 
   > a {
-    color: #ff9000;
+    color: var(--primary-color);
     display: block;
     margin-top: 24px;
     text-decoration: none;
@@ -78,7 +79,7 @@ export const AnimationContainer = styled.div`
     }
 
     &:hover {
-      color: ${shade(0.2, '#ff9000')};
+      color: ${shade(0.2, '#FF9000')};
     }
   }
 `;

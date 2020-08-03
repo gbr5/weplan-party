@@ -1,14 +1,15 @@
 import styled from 'styled-components';
+import '../../styles/global';
 
 import { shade } from 'polished';
 
 export const Container = styled.button`
-  background: #ff9000;
+  background: var(--primary-color);
   height: 56px;
   border-radius: 10px;
   border: 0;
   padding: 0 16px;
-  color: #312e38;
+  color: var(--background-color);
   width: 100%;
   font-weight: 500;
   margin-top: 16px;

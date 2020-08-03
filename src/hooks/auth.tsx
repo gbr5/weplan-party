@@ -2,43 +2,51 @@ import React, { createContext, useCallback, useState, useContext } from 'react';
 
 import api from '../services/api';
 
-interface AuthState {
-  token: string;
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  user: object;
+interface IUser {
+  id: string;
+  name: string;
+  email: string;
+  avatar_url?: string;
 }
 
-interface SignInCredentials {
+interface IAuthState {
+  token: string;
+  user: IUser;
+}
+
+interface ISignInCredentials {
   email: string;
   password: string;
 }
 
-interface AuthContextData {
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  user: object;
-  signIn(credentials: SignInCredentials): Promise<void>;
+interface IAuthContextData {
+  user: IUser;
+  signIn(credentials: ISignInCredentials): Promise<void>;
   signOut(): void;
+  updateUser(user: IUser): void;
 }
 
-const AuthContext = createContext<AuthContextData>({} as AuthContextData);
+const AuthContext = createContext<IAuthContextData>({} as IAuthContextData);
 
 const AuthProvider: React.FC = ({ children }) => {
-  const [data, setData] = useState<AuthState>(() => {
+  const [data, setData] = useState<IAuthState>(() => {
     const token = localStorage.getItem('@GoBarber:token');
     const user = localStorage.getItem('@GoBarber:user');
 
     if (token && user) {
+      api.defaults.headers.authorization = `Bearer ${token}`;
+
       return { token, user: JSON.parse(user) };
     }
 
-    return {} as AuthState;
+    return {} as IAuthState;
   });
 
   const signOut = useCallback(() => {
     localStorage.removeItem('@GoBarber:token');
     localStorage.removeItem('@GoBarber:user');
 
-    setData({} as AuthState);
+    setData({} as IAuthState);
   }, []);
 
   const signIn = useCallback(async ({ email, password }) => {
@@ -52,17 +60,33 @@ const AuthProvider: React.FC = ({ children }) => {
     localStorage.setItem('@GoBarber:token', token);
     localStorage.setItem('@GoBarber:user', JSON.stringify(user));
 
+    api.defaults.headers.authorization = `Bearer ${token}`;
+
     setData({ token, user });
   }, []);
 
+  const updateUser = useCallback(
+    (updatedUser: IUser) => {
+      localStorage.setItem('@GoBarber:user', JSON.stringify(updatedUser));
+
+      setData({
+        token: data.token,
+        user: updatedUser,
+      });
+    },
+    [data.token],
+  );
+
   return (
-    <AuthContext.Provider value={{ user: data.user, signIn, signOut }}>
+    <AuthContext.Provider
+      value={{ user: data.user, signIn, signOut, updateUser }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
-function useAuth(): AuthContextData {
+function useAuth(): IAuthContextData {
   const context = useContext(AuthContext);
 
   if (!context) {

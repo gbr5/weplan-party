@@ -44,6 +44,10 @@
           "allowExpressions": true
         }
       ],
+      "no-console":"off",
+      "camelcase":"off",
+      "@typescript-eslint/ban-types": "off",
+      "import/no-duplicates": "off",
       "import/extensions": [
         "error",
         "ignorePackages",

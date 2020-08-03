@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import '../../styles/global';
 
 export const Container = styled.div`
   position: absolute;
@@ -6,4 +7,5 @@ export const Container = styled.div`
   top: 0;
   padding: 0;
   overflow: hidden;
+  z-index: 100;
 `;
