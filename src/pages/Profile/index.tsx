@@ -62,13 +62,13 @@ const Profile: React.FC = () => {
             .email('Digite um e-mail válido'),
           old_password: Yup.string(),
           password: Yup.string().when('old_password', {
-            is: val => !!val.length,
+            is: val => !!val?.length,
             then: Yup.string().required('Campo obrigatório.').min(6),
             otherwise: Yup.string(),
           }),
           password_confirmation: Yup.string()
             .when('old_password', {
-              is: val => !!val.length,
+              is: val => !!val?.length,
               then: Yup.string().required('Campo obrigatório.').min(6),
               otherwise: Yup.string(),
             })
@@ -78,34 +78,40 @@ const Profile: React.FC = () => {
             ),
         });
 
-        // await schema.validate(data, {
-        //   abortEarly: false,
-        // });
+        await schema.validate(data, {
+          abortEarly: false,
+        });
 
-        await api.put('/profile', data);
+        const response = await api.put('/profile', data);
+
+        updateUser(response.data);
 
         history.push('/');
 
         addToast({
           type: 'success',
-          title: 'Cadastro realizado!',
-          description: 'Você já pode fazer seu login no GoBarber!',
+          title: 'Perfil atualizado!',
+          description:
+            'Suas informações do perfil foram atualizadas com sucesso.',
         });
       } catch (err) {
+        console.log(err);
         if (err instanceof Yup.ValidationError) {
           const error = getValidationErrors(err);
+          console.log(error);
 
           formRef.current?.setErrors(error);
         }
 
         addToast({
           type: 'error',
-          title: 'Erro no cadastro',
-          description: 'Ocorreu um erro ao fazer o cadastro, tente novamente.',
+          title: 'Erro na atualização',
+          description:
+            'Ocorreu um erro ao atualizar o perfil, tente novamente.',
         });
       }
     },
-    [addToast, history],
+    [addToast, history, updateUser],
   );
 
   const handleAvatarChange = useCallback(
