@@ -78,11 +78,31 @@ const Profile: React.FC = () => {
             ),
         });
 
-        await schema.validate(data, {
+        const {
+          email,
+          name,
+          old_password,
+          password,
+          password_confirmation,
+        } = data;
+
+        const formData = {
+          name,
+          email,
+          ...(old_password
+            ? {
+                old_password,
+                password,
+                password_confirmation,
+              }
+            : {}),
+        };
+
+        await schema.validate(formData, {
           abortEarly: false,
         });
 
-        const response = await api.put('/profile', data);
+        const response = await api.put('/profile', formData);
 
         updateUser(response.data);
 
