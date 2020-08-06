@@ -78,6 +78,10 @@ const Profile: React.FC = () => {
             ),
         });
 
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+
         const {
           email,
           name,
@@ -97,10 +101,6 @@ const Profile: React.FC = () => {
               }
             : {}),
         };
-
-        await schema.validate(formData, {
-          abortEarly: false,
-        });
 
         const response = await api.put('/profile', formData);
 
