@@ -60,6 +60,13 @@ import {
   AddAppointmentDrawerCloseButton,
   EditEventNameDrawer,
   EditEventNameCloseButton,
+  MessagesSection,
+  UsersChat,
+  UserChat,
+  ChatMessages,
+  Messages,
+  AddCheckListDrawerCloseButton,
+  AddCheckListDrawer,
 } from './styles';
 
 import profileImg from '../../assets/guy.jpg';
@@ -111,6 +118,7 @@ const EventHostDashboard: React.FC = () => {
   const [addSupplierDrawer, setAddSupplierDrawer] = useState(false);
   const [addAppointmentDrawer, setAddAppointmentDrawer] = useState(false);
   const [editEventNameDrawer, setEditEventNameDrawer] = useState(false);
+  const [addCheckListDrawer, setAddCheckListDrawer] = useState(false);
 
   const [latestActionsSection, setLatestActionsSection] = useState(true);
   const [guestsSection, setGuestsSection] = useState(false);
@@ -118,6 +126,7 @@ const EventHostDashboard: React.FC = () => {
   const [financeSection, setFinanceSection] = useState(false);
   const [checkListSection, setCheckListSection] = useState(false);
   const [supplierSection, setSupplierSection] = useState(false);
+  const [messagesSection, setMessagesSection] = useState(false);
 
   useEffect(() => {
     try {
@@ -157,6 +166,10 @@ const EventHostDashboard: React.FC = () => {
     setEditEventNameDrawer(!editEventNameDrawer);
   }, [editEventNameDrawer]);
 
+  const handleAddCheckListDrawer = useCallback(() => {
+    setAddCheckListDrawer(!addCheckListDrawer);
+  }, [addCheckListDrawer]);
+
   const handleLatestActionsSection = useCallback(() => {
     setLatestActionsSection(true);
     setGuestsSection(false);
@@ -164,6 +177,7 @@ const EventHostDashboard: React.FC = () => {
     setFinanceSection(false);
     setCheckListSection(false);
     setSupplierSection(false);
+    setMessagesSection(false);
   }, []);
 
   const handleGuestsSection = useCallback(() => {
@@ -173,6 +187,7 @@ const EventHostDashboard: React.FC = () => {
     setFinanceSection(false);
     setCheckListSection(false);
     setSupplierSection(false);
+    setMessagesSection(false);
   }, []);
 
   const handleAppointmentsSection = useCallback(() => {
@@ -182,6 +197,7 @@ const EventHostDashboard: React.FC = () => {
     setFinanceSection(false);
     setCheckListSection(false);
     setSupplierSection(false);
+    setMessagesSection(false);
   }, []);
 
   const handleFinanceSection = useCallback(() => {
@@ -191,6 +207,7 @@ const EventHostDashboard: React.FC = () => {
     setFinanceSection(true);
     setCheckListSection(false);
     setSupplierSection(false);
+    setMessagesSection(false);
   }, []);
 
   const handleCheckListSection = useCallback(() => {
@@ -200,6 +217,7 @@ const EventHostDashboard: React.FC = () => {
     setFinanceSection(false);
     setCheckListSection(true);
     setSupplierSection(false);
+    setMessagesSection(false);
   }, []);
 
   const handleSupplierSection = useCallback(() => {
@@ -209,6 +227,17 @@ const EventHostDashboard: React.FC = () => {
     setFinanceSection(false);
     setCheckListSection(false);
     setSupplierSection(true);
+    setMessagesSection(false);
+  }, []);
+
+  const handleMessagesSection = useCallback(() => {
+    setLatestActionsSection(false);
+    setGuestsSection(false);
+    setAppointmentsSection(false);
+    setFinanceSection(false);
+    setCheckListSection(false);
+    setSupplierSection(false);
+    setMessagesSection(true);
   }, []);
 
   useEffect(() => {
@@ -394,7 +423,7 @@ const EventHostDashboard: React.FC = () => {
           <button type="button" onClick={handleSupplierSection}>
             Fornecedores
           </button>
-          <button type="button" onClick={handleSupplierSection}>
+          <button type="button" onClick={handleMessagesSection}>
             Mensagens
           </button>
           <h1>Cerimonialista</h1>
@@ -630,6 +659,100 @@ const EventHostDashboard: React.FC = () => {
               )}
             </SupplierSection>
           )}
+          {!!messagesSection && (
+            <MessagesSection>
+              <UsersChat>
+                <div>
+                  <h1>Contatos</h1>
+
+                  <UserChat>
+                    <h1>Rullus</h1>
+                    <FiChevronRight />
+                  </UserChat>
+                  <UserChat>
+                    <h1>ZCM</h1>
+                    <FiChevronRight />
+                  </UserChat>
+                  <UserChat>
+                    <h1>Company</h1>
+                    <FiChevronRight />
+                  </UserChat>
+                  <UserChat>
+                    <h1>Vagalumens</h1>
+                    <FiChevronRight />
+                  </UserChat>
+                  <UserChat>
+                    <h1>ZCM</h1>
+                    <FiChevronRight />
+                  </UserChat>
+                  <UserChat>
+                    <h1>Company</h1>
+                    <FiChevronRight />
+                  </UserChat>
+                  <UserChat>
+                    <h1>ZCM</h1>
+                    <FiChevronRight />
+                  </UserChat>
+                  <UserChat>
+                    <h1>Company</h1>
+                    <FiChevronRight />
+                  </UserChat>
+                </div>
+              </UsersChat>
+              <ChatMessages>
+                <div>
+                  <h1>Rullus</h1>
+
+                  <Messages>
+                    <span>Rullus: </span>
+                    <p>
+                      Então, posso ver o que pode ser feito, o Felipe vai te
+                      ligar. Mas de toda forma, segue agendado para segunda as
+                      8am. ;)
+                    </p>
+                    <p>14:20</p>
+                  </Messages>
+                  <Messages>
+                    <span>Você: </span>
+                    <p>
+                      Tudo bem. Fico aguardando o seu retorno. Muito obrigado
+                      Alice! ;D
+                    </p>
+                    <p>14:22</p>
+                  </Messages>
+                  <Messages>
+                    <span>Rullus: </span>
+                    <p>
+                      Imagina, é um prazer. Precisando só falar! Um excelente
+                      fim de semana.
+                    </p>
+                    <p>14:27</p>
+                  </Messages>
+                  <Messages>
+                    <span>Você: </span>
+                    <p>Um beijo, bom fim de semana.</p>
+                    <p>14:29</p>
+                  </Messages>
+                  <Messages>
+                    <span>Rullus: </span>
+                    <p>
+                      Imagina, é um prazer. Precisando só falar! Um excelente
+                      fim de semana.
+                    </p>
+                    <p>14:30</p>
+                  </Messages>
+                  <Messages>
+                    <span>Você: </span>
+                    <p>Um beijo, bom fim de semana.</p>
+                    <p>14:32</p>
+                  </Messages>
+
+                  <input type="text" />
+                  <button type="button">Enviar</button>
+                </div>
+              </ChatMessages>
+            </MessagesSection>
+          )}
           {!!guestsSection && (
             <GuestSection>
               <EventGuests>
@@ -817,23 +940,60 @@ const EventHostDashboard: React.FC = () => {
             </Financial>
           )}
           {!!checkListSection && (
-            <CheckList>
-              <strong>Check List</strong>
-              <ul>
-                <li>
-                  <span>Cerimonialista</span>
-                  <FiCheckSquare size={24} />
-                </li>
-                <li>
-                  <span>Espaço</span>
-                  <FiCheckSquare size={24} />
-                </li>
-                <li>
-                  <span>Decoração</span>
-                  <FiCheckSquare size={24} />
-                </li>
-              </ul>
-            </CheckList>
+            <>
+              <CheckList>
+                <strong>Check List</strong>
+                <button type="button" onClick={handleAddCheckListDrawer}>
+                  <MdAdd size={30} />
+                </button>
+                <ul>
+                  <li>
+                    <span>Cerimonialista</span>
+                    <FiCheckSquare size={24} />
+                  </li>
+                  <li>
+                    <span>Espaço</span>
+                    <FiCheckSquare size={24} />
+                  </li>
+                  <li>
+                    <span>Decoração</span>
+                    <FiCheckSquare size={24} />
+                  </li>
+                </ul>
+              </CheckList>
+              {!!addCheckListDrawer && (
+                <>
+                  <AddCheckListDrawerCloseButton
+                    type="button"
+                    onClick={handleAddCheckListDrawer}
+                  >
+                    <MdClose size={30} />
+                  </AddCheckListDrawerCloseButton>
+                  <AddCheckListDrawer>
+                    <h1>Adicionar Fornecedor</h1>
+                    <span>
+                      <h2>1) Nome</h2>
+                      <input type="text" />
+                    </span>
+                    <span>
+                      <h2>2) É usuário WePlan?</h2>
+                      <input type="text" />
+                    </span>
+                    <span>
+                      <h2>3) Se sim, qual o nome de usuário?</h2>
+                      <input type="text" />
+                    </span>
+                    <span>
+                      <h2>4) Contratado?</h2>
+                      <input type="text" />
+                    </span>
+                    <button type="button">
+                      <h3>Salvar</h3>
+                    </button>
+                  </AddCheckListDrawer>
+                </>
+              )}
+            </>
           )}
         </Main>
       </Content>

@@ -101,7 +101,7 @@ export const SideBar = styled.div`
   background: var(--header-background-color);
   width: 100%;
   height: 100%;
-  padding: 86px 16px 110px;
+  padding: 86px 16px 40px;
   display: flex;
   flex-direction: column;
 
@@ -189,24 +189,20 @@ export const MyEventsDrawer = styled.div`
   height: 300px;
   width: 500px;
   background-color: var(--card-color);
-  opacity: 0.9;
   border-radius: 0 0 8px 8px;
-  display: flex;
-  flex-direction: column;
-  text-align: left;
   padding: 8px;
-  &:hover {
-    opacity: 0.95;
-  }
+
   > span {
     background-color: rgba(255, 144, 0, 0.05);
     display: flex;
-    justify-content: center;
+    flex-direction: row;
+    align-items: flex-start;
     color: var(--letter-color-3);
-    margin: 8px;
+    margin-top: 8px;
     border: 1px solid var(--primary-color);
     border-radius: 8px;
     padding: 16px;
+    font-size: 20px;
 
     &:hover {
       background-color: rgba(255, 144, 0, 0.15);
@@ -879,7 +875,6 @@ export const AddSupplierDrawer = styled.div`
   height: 460px;
   width: 700px;
   background-color: var(--card-color);
-  /* opacity: 0.95; */
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -1057,7 +1052,6 @@ export const AddGuestDrawer = styled.div`
   height: 460px;
   width: 700px;
   background-color: var(--card-color);
-  opacity: 0.95;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -1148,6 +1142,16 @@ export const CheckList = styled.section`
   border-radius: 8px;
   margin-bottom: 24px;
   box-shadow: 1px 1px 5px 4px rgba(90, 90, 90, 0.02);
+  position: relative;
+
+  > button {
+    right: 16px;
+    top: 16px;
+    position: absolute;
+    background: transparent;
+    border: none;
+    color: var(--title-color);
+  }
 
   > strong {
     color: var(--letter-color-2);
@@ -1180,6 +1184,102 @@ export const CheckList = styled.section`
 
   li + li {
     margin-top: 16px;
+  }
+`;
+
+export const AddCheckListDrawer = styled.div`
+  top: 140px;
+  left: 380px;
+  z-index: 100;
+  position: absolute;
+  height: 460px;
+  width: 700px;
+  background-color: var(--card-color);
+  /* opacity: 0.95; */
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  padding: 16px;
+
+  > h1 {
+    font-size: 24px;
+    color: var(--primary-color);
+    margin-bottom: 16px;
+  }
+
+  button {
+    width: 100%;
+    margin-top: 16px;
+    background: transparent;
+    padding: 8px;
+    border-radius: 8px;
+    border: none;
+    border: 1px solid var(--title-color);
+    background-color: rgba(100, 100, 0, 0.2);
+
+    > h3 {
+      color: var(--primary-color);
+      font-size: 16px;
+    }
+
+    &:hover {
+      background-color: rgba(100, 100, 0, 0.4);
+    }
+    &:active {
+      background-color: rgba(100, 100, 0, 0.6);
+    }
+  }
+
+  > span {
+    background-color: rgba(255, 144, 0, 0.05);
+    display: flex;
+    justify-content: center;
+    color: var(--letter-color-3);
+    margin: 8px;
+    border: 1px solid var(--primary-color);
+    border-radius: 8px;
+    padding: 16px;
+
+    h2 {
+      font-size: 16px;
+      color: var(--title-color);
+      margin-bottom: 8px;
+      width: 300px;
+    }
+
+    input {
+      padding: 0 8px;
+      margin-left: auto;
+      text-align: right;
+      border: 1px solid var(--primary-color);
+      border-radius: 4px;
+      height: 32px;
+      width: 252px;
+      color: var(--title-color);
+      font-weight: 500;
+      background-color: rgba(255, 144, 0, 0.18);
+
+      &:active {
+        background-color: rgba(255, 144, 0, 0.22);
+      }
+    }
+
+    &:hover {
+      background-color: rgba(255, 144, 0, 0.15);
+    }
+  }
+`;
+
+export const AddCheckListDrawerCloseButton = styled.button`
+  position: absolute;
+  top: 115px;
+  right: 248px;
+  background: transparent;
+  border: none;
+
+  > svg {
+    color: red;
   }
 `;
 
@@ -1280,5 +1380,127 @@ export const Payments = styled.section`
 
   li + li {
     margin-top: 16px;
+  }
+`;
+
+export const MessagesSection = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 1px;
+`;
+
+export const UsersChat = styled.div`
+  display: grid;
+  grid-template-rows: repeat(7, 1fr);
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+  position: relative;
+
+  > div {
+    padding: 16px;
+    border-radius: 8px;
+    background-color: var(--header-background-color);
+    box-shadow: 2px 2px 3px 2px rgba(50, 50, 50, 0.1);
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+
+    > h1 {
+      width: 100%;
+      font-size: 24px;
+      color: var(--primary-color);
+      border-bottom: 1px solid var(--letter-color-2);
+    }
+  }
+`;
+
+export const UserChat = styled.div`
+  width: 100%;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--letter-color-4);
+
+  > h1 {
+    font-size: 18px;
+    color: var(--title-color);
+  }
+
+  > svg {
+    margin-left: auto;
+  }
+`;
+
+export const ChatMessages = styled.div`
+  width: 100%;
+  display: grid;
+  grid-template-rows: repeat(6, 1fr);
+  align-items: flex-start;
+  gap: 16px;
+  position: relative;
+
+  > div {
+    width: 100%;
+
+    padding: 16px;
+    border-radius: 8px;
+    background-color: var(--header-background-color);
+    box-shadow: 2px 2px 3px 2px rgba(50, 50, 50, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+
+    > h1 {
+      width: 100%;
+      font-size: 24px;
+      color: var(--primary-color);
+      border-bottom: 1px solid var(--letter-color-2);
+    }
+
+    button {
+      width: 100%;
+      height: 40px;
+      background-color: var(--primary-color);
+      opacity: 0.9;
+      border: none;
+      border-radius: 4px;
+    }
+
+    input {
+      border: none;
+      height: 40px;
+      width: 100%;
+      border-radius: 4px;
+      background-color: var(--letter-color-4);
+      color: var(--letter-color-2);
+    }
+  }
+`;
+
+export const Messages = styled.div`
+  width: 100%;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--letter-color-4);
+
+  > p {
+    font-size: 16px;
+    color: var(--letter-color-1);
+    margin-right: 16px;
+  }
+  > p + p {
+    margin-left: auto;
+  }
+  > span {
+    margin-right: 16px;
+    color: var(--letter-color-3);
   }
 `;

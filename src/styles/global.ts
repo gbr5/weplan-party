@@ -24,6 +24,7 @@ export default createGlobalStyle`
     --toast-success-background-color: #e6fffa;
     --toast-error-color: #c53030;
     --toast-error-background-color: #fddede;
+    --green-background-color: rgba(10, 200, 0)
   }
 
   * {

@@ -112,7 +112,6 @@ export const MyEventsDrawer = styled.div`
   height: 300px;
   width: 500px;
   background-color: var(--card-color);
-  opacity: 0.95;
   border-radius: 0 0 8px 8px;
   display: flex;
   flex-direction: column;
