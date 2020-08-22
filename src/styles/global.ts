@@ -3,12 +3,17 @@ import { createGlobalStyle } from 'styled-components';
 export default createGlobalStyle`
   :root {
     --primary-color: #ff9000;
-    --background-color: #312e38;
-    --header-background-color: #28262e;
+    --title-color: rgb(255, 200, 55);
+    --background-color: rgb(45, 50, 53);
+    /* #312e38 */
+    --header-background-color: rgb(76, 82, 85);
+    /* #28262e */
+    --card-color: rgb(100, 102, 105);
+    /* #3e3a47 */
     --letter-color-1: #FFF;
-    --letter-color-2: #999591;
-    --letter-color-3: #f4ede8;
-    --letter-color-4: #3e3d47;
+    --letter-color-2: rgb(20, 22, 25);
+    --letter-color-3: rgb(179, 182, 178);
+    --letter-color-4: rgb(120, 122, 125);
     --letter-color-5: #666360;
     --box-shadow: 1px 2px 2px 3px rgba(0, 0, 0, 0.1);
     --red-color: #c53030;

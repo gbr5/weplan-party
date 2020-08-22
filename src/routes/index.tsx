@@ -9,7 +9,9 @@ import ForgotPassword from '../pages/ForgotPassword';
 import ResetPassword from '../pages/ResetPassword';
 import Profile from '../pages/Profile';
 
-import Dashboard from '../pages/Dashboard';
+// import Dashboard from '../pages/Dashboard';
+// import HostDashboard from '../pages/HostDashboard';
+import EventHostDashboard from '../pages/EventHostDashboard';
 
 const Routes: React.FC = () => (
   <Switch>
@@ -19,7 +21,7 @@ const Routes: React.FC = () => (
     <Route path="/reset-password" exact component={ResetPassword} />
 
     <Route path="/profile" exact component={Profile} isPrivate />
-    <Route path="/dashboard" exact component={Dashboard} isPrivate />
+    <Route path="/dashboard" exact component={EventHostDashboard} isPrivate />
   </Switch>
 );
 
