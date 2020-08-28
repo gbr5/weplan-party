@@ -25,6 +25,11 @@ export const HeaderContent = styled.div`
   margin: 0 auto;
   display: flex;
   align-items: center;
+
+  > button {
+    background: transparent;
+    border: none;
+  }
 `;
 
 export const Logo = styled.h2`
@@ -183,26 +188,27 @@ export const MyEvents = styled.button`
 
 export const MyEventsDrawer = styled.div`
   top: 130px;
+  z-index: 10;
   left: 0px;
-  z-index: 100;
   position: absolute;
   height: 300px;
   width: 500px;
   background-color: var(--card-color);
   border-radius: 0 0 8px 8px;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
   padding: 8px;
 
-  > span {
+  > button {
     background-color: rgba(255, 144, 0, 0.05);
     display: flex;
-    flex-direction: row;
-    align-items: flex-start;
+    justify-content: center;
     color: var(--letter-color-3);
-    margin-top: 8px;
+    margin: 8px;
     border: 1px solid var(--primary-color);
     border-radius: 8px;
     padding: 16px;
-    font-size: 20px;
 
     &:hover {
       background-color: rgba(255, 144, 0, 0.15);
@@ -236,99 +242,67 @@ export const MyEventsDrawerButton = styled.button`
 `;
 
 export const EventInfoDrawer = styled.div`
-  top: 140px;
-  left: 230px;
-  z-index: 100;
-  position: absolute;
-  height: 490px;
-  width: 1020px;
-  background-color: var(--card-color);
-  /* opacity: 0.95; */
-  border-radius: 8px;
+  position: fixed;
+  z-index: 10;
+  top: 110px;
+  left: 400px;
+  width: 600px;
+  height: 450px;
   display: flex;
   flex-direction: column;
-  text-align: left;
-  padding: 8px;
+  align-items: center;
+  justify-content: center;
+  margin: 16px auto;
+  background: var(--header-background-color);
+  border-radius: 8px;
+  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
+  padding: 32px;
+  gap: 16px;
 
-  button {
-    width: 100%;
-    margin-top: 16px;
-    background: transparent;
-    padding: 8px;
-    border-radius: 8px;
-    border: none;
-    border: 1px solid var(--title-color);
-    background-color: rgba(100, 100, 0, 0.2);
+  span {
+    position: absolute;
+    top: 0;
+    right: 8px;
+    > button {
+      background: transparent;
+      border: none;
 
-    > h3 {
-      color: var(--primary-color);
-      font-size: 16px;
-    }
-
-    &:hover {
-      background-color: rgba(100, 100, 0, 0.4);
-    }
-    &:active {
-      background-color: rgba(100, 100, 0, 0.6);
-    }
-  }
-
-  div {
-    display: flex;
-    flex-direction: row;
-
-    div {
-      display: flex;
-      flex-direction: column;
-
-      > span {
-        background-color: rgba(255, 144, 0, 0.05);
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        color: var(--letter-color-3);
-        margin: 8px;
-        border: 1px solid var(--primary-color);
-        border-radius: 8px;
-        padding: 16px;
-
-        h2 {
-          font-size: 16px;
-          color: var(--title-color);
-          margin-bottom: 8px;
-          width: 200px;
-        }
-
-        input {
-          padding: 0 8px;
-          margin-left: auto;
-          text-align: right;
-          border: 1px solid var(--primary-color);
-          border-radius: 4px;
-          height: 32px;
-          width: 252px;
-          color: var(--title-color);
-          font-weight: 500;
-          background-color: rgba(255, 144, 0, 0.2);
-        }
-
-        &:hover {
-          background-color: rgba(255, 144, 0, 0.15);
-        }
+      svg {
+        color: red;
       }
     }
   }
-`;
 
-export const CloseButton = styled.button`
-  position: absolute;
-  top: 107px;
-  right: 76px;
-  background: transparent;
-  border: none;
+  > h1 {
+    font-size: 24px;
+    color: var(--title-color);
+  }
 
-  > svg {
-    color: red;
+  div {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+
+    > div {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      > input {
+        height: 40px;
+        width: 100%;
+        border-radius: 4px;
+        padding: 0 16px;
+        border: none;
+      }
+    }
+  }
+
+  button {
+    background: var(--primary-color);
+    border: none;
+    height: 40px;
+    width: 91.5%;
+    border-radius: 4px;
   }
 `;
 
@@ -676,98 +650,56 @@ export const Appointment = styled.div`
 `;
 
 export const AddAppointmentDrawer = styled.div`
-  top: 140px;
-  left: 380px;
-  z-index: 100;
-  position: absolute;
-  height: 460px;
-  width: 700px;
-  background-color: var(--card-color);
-  /* opacity: 0.95; */
-  border-radius: 8px;
+  position: fixed;
+  z-index: 10;
+  top: 150px;
+  left: 400px;
+  width: 600px;
+  height: 400px;
   display: flex;
   flex-direction: column;
-  text-align: left;
-  padding: 16px;
+  align-items: center;
+  justify-content: center;
+  margin: 16px auto;
+  background: var(--header-background-color);
+  border-radius: 8px;
+  gap: 16px;
+  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
+  padding: 32px;
+
+  span {
+    position: absolute;
+    top: 2px;
+    right: 4px;
+    > button {
+      background: transparent;
+      border: none;
+
+      svg {
+        color: red;
+      }
+    }
+  }
 
   > h1 {
     font-size: 24px;
-    color: var(--primary-color);
-    margin-bottom: 16px;
+    color: var(--title-color);
+  }
+
+  > input {
+    height: 40px;
+    width: 90%;
+    border-radius: 4px;
+    padding: 0 16px;
+    border: none;
   }
 
   button {
-    width: 100%;
-    margin-top: 16px;
-    background: transparent;
-    padding: 8px;
-    border-radius: 8px;
+    background: var(--primary-color);
     border: none;
-    border: 1px solid var(--title-color);
-    background-color: rgba(100, 100, 0, 0.2);
-
-    > h3 {
-      color: var(--primary-color);
-      font-size: 16px;
-    }
-
-    &:hover {
-      background-color: rgba(100, 100, 0, 0.4);
-    }
-    &:active {
-      background-color: rgba(100, 100, 0, 0.6);
-    }
-  }
-
-  > span {
-    background-color: rgba(255, 144, 0, 0.05);
-    display: flex;
-    justify-content: center;
-    color: var(--letter-color-3);
-    margin: 8px;
-    border: 1px solid var(--primary-color);
-    border-radius: 8px;
-    padding: 16px;
-
-    h2 {
-      font-size: 16px;
-      color: var(--title-color);
-      margin-bottom: 8px;
-      width: 300px;
-    }
-
-    input {
-      padding: 0 8px;
-      margin-left: auto;
-      text-align: right;
-      border: 1px solid var(--primary-color);
-      border-radius: 4px;
-      height: 32px;
-      width: 252px;
-      color: var(--title-color);
-      font-weight: 500;
-      background-color: rgba(255, 144, 0, 0.18);
-
-      &:active {
-        background-color: rgba(255, 144, 0, 0.22);
-      }
-    }
-
-    &:hover {
-      background-color: rgba(255, 144, 0, 0.15);
-    }
-  }
-`;
-
-export const AddAppointmentDrawerCloseButton = styled.button`
-  position: absolute;
-  top: 115px;
-  right: 248px;
-  background: transparent;
-  border: none;
-
-  > svg {
-    color: red;
+    height: 40px;
+    width: 90%;
+    border-radius: 4px;
   }
 `;
 
@@ -868,93 +800,56 @@ export const Supplier = styled.div`
 `;
 
 export const AddSupplierDrawer = styled.div`
-  top: 140px;
-  left: 435px;
-  z-index: 100;
-  position: absolute;
-  height: 460px;
-  width: 700px;
-  background-color: var(--card-color);
-  border-radius: 8px;
+  position: fixed;
+  z-index: 10;
+  top: 150px;
+  left: 400px;
+  width: 600px;
+  height: 400px;
   display: flex;
   flex-direction: column;
-  text-align: left;
-  padding: 16px;
+  align-items: center;
+  justify-content: center;
+  margin: 16px auto;
+  background: var(--header-background-color);
+  border-radius: 8px;
+  gap: 16px;
+  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
+  padding: 32px;
+
+  span {
+    position: absolute;
+    top: 2px;
+    right: 4px;
+    > button {
+      background: transparent;
+      border: none;
+
+      svg {
+        color: red;
+      }
+    }
+  }
 
   > h1 {
     font-size: 24px;
-    color: var(--primary-color);
-    margin-bottom: 16px;
+    color: var(--title-color);
+  }
+
+  > input {
+    height: 40px;
+    width: 90%;
+    border-radius: 4px;
+    padding: 0 16px;
+    border: none;
   }
 
   button {
-    width: 100%;
-    margin-top: 16px;
-    background: transparent;
-    padding: 8px;
-    border-radius: 8px;
+    background: var(--primary-color);
     border: none;
-    border: 1px solid var(--title-color);
-    background-color: rgba(100, 100, 0, 0.2);
-
-    > h3 {
-      color: var(--primary-color);
-      font-size: 16px;
-    }
-
-    &:hover {
-      background-color: rgba(100, 100, 0, 0.4);
-    }
-    &:active {
-      background-color: rgba(100, 100, 0, 0.6);
-    }
-  }
-
-  > span {
-    background-color: rgba(255, 144, 0, 0.05);
-    display: flex;
-    justify-content: center;
-    color: var(--letter-color-3);
-    margin: 8px;
-    border: 1px solid var(--primary-color);
-    border-radius: 8px;
-    padding: 16px;
-
-    h2 {
-      font-size: 16px;
-      color: var(--title-color);
-      margin-bottom: 8px;
-      width: 300px;
-    }
-
-    input {
-      padding: 0 8px;
-      margin-left: auto;
-      text-align: right;
-      border: 1px solid var(--primary-color);
-      border-radius: 4px;
-      height: 32px;
-      width: 252px;
-      color: var(--title-color);
-      font-weight: 500;
-      background-color: rgba(255, 144, 0, 0.2);
-    }
-
-    &:hover {
-      background-color: rgba(255, 144, 0, 0.15);
-    }
-  }
-`;
-
-export const AddSupplierDrawerCloseButton = styled.button`
-  position: absolute;
-  top: 115px;
-  right: 191px;
-  background: transparent;
-  border: none;
-
-  > svg {
-    color: red;
+    height: 40px;
+    width: 90%;
+    border-radius: 4px;
   }
 `;
 
@@ -1039,99 +934,69 @@ export const Guest = styled.div`
     color: var(--title-color);
   }
 
+  > button {
+    background: transparent;
+    border: none;
+    color: var(--primary-color);
+    margin-left: auto;
+  }
+
   > svg {
     margin-left: auto;
   }
 `;
 
 export const AddGuestDrawer = styled.div`
-  top: 140px;
-  left: 380px;
-  z-index: 100;
-  position: absolute;
-  height: 460px;
-  width: 700px;
-  background-color: var(--card-color);
-  border-radius: 8px;
+  position: fixed;
+  z-index: 10;
+  top: 150px;
+  left: 400px;
+  width: 600px;
+  height: 400px;
   display: flex;
   flex-direction: column;
-  text-align: left;
-  padding: 16px;
+  align-items: center;
+  justify-content: center;
+  margin: 16px auto;
+  background: var(--header-background-color);
+  border-radius: 8px;
+  gap: 16px;
+  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
+  padding: 32px;
+
+  span {
+    position: absolute;
+    top: 2px;
+    right: 4px;
+    > button {
+      background: transparent;
+      border: none;
+
+      svg {
+        color: red;
+      }
+    }
+  }
 
   > h1 {
     font-size: 24px;
-    color: var(--primary-color);
-    margin-bottom: 16px;
+    color: var(--title-color);
+  }
+
+  > input {
+    height: 40px;
+    width: 90%;
+    border-radius: 4px;
+    padding: 0 16px;
+    border: none;
   }
 
   button {
-    width: 100%;
-    margin-top: 16px;
-    background: transparent;
-    padding: 8px;
-    border-radius: 8px;
+    background: var(--primary-color);
     border: none;
-    border: 1px solid var(--title-color);
-    background-color: rgba(100, 100, 0, 0.2);
-
-    > h3 {
-      color: var(--primary-color);
-      font-size: 16px;
-    }
-
-    &:hover {
-      background-color: rgba(100, 100, 0, 0.4);
-    }
-    &:active {
-      background-color: rgba(100, 100, 0, 0.6);
-    }
-  }
-
-  > span {
-    background-color: rgba(255, 144, 0, 0.05);
-    display: flex;
-    justify-content: center;
-    color: var(--letter-color-3);
-    margin: 8px;
-    border: 1px solid var(--primary-color);
-    border-radius: 8px;
-    padding: 16px;
-
-    h2 {
-      font-size: 16px;
-      color: var(--title-color);
-      margin-bottom: 8px;
-      width: 300px;
-    }
-
-    input {
-      padding: 0 8px;
-      margin-left: auto;
-      text-align: right;
-      border: 1px solid var(--primary-color);
-      border-radius: 4px;
-      height: 32px;
-      width: 252px;
-      color: var(--title-color);
-      font-weight: 500;
-      background-color: rgba(255, 144, 0, 0.2);
-    }
-
-    &:hover {
-      background-color: rgba(255, 144, 0, 0.15);
-    }
-  }
-`;
-
-export const AddGuestDrawerCloseButton = styled.button`
-  position: fixed;
-  top: 115px;
-  right: 265px;
-  background: transparent;
-  border: none;
-
-  > svg {
-    color: red;
+    height: 40px;
+    width: 90%;
+    border-radius: 4px;
   }
 `;
 
@@ -1188,98 +1053,56 @@ export const CheckList = styled.section`
 `;
 
 export const AddCheckListDrawer = styled.div`
-  top: 140px;
-  left: 380px;
-  z-index: 100;
-  position: absolute;
-  height: 460px;
-  width: 700px;
-  background-color: var(--card-color);
-  /* opacity: 0.95; */
-  border-radius: 8px;
+  position: fixed;
+  z-index: 10;
+  top: 150px;
+  left: 400px;
+  width: 600px;
+  height: 340px;
   display: flex;
   flex-direction: column;
-  text-align: left;
-  padding: 16px;
+  align-items: center;
+  justify-content: center;
+  margin: 16px auto;
+  background: var(--header-background-color);
+  border-radius: 8px;
+  gap: 16px;
+  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
+  padding: 32px;
+
+  span {
+    position: absolute;
+    top: 2px;
+    right: 4px;
+    > button {
+      background: transparent;
+      border: none;
+
+      svg {
+        color: red;
+      }
+    }
+  }
 
   > h1 {
     font-size: 24px;
-    color: var(--primary-color);
-    margin-bottom: 16px;
+    color: var(--title-color);
+  }
+
+  > input {
+    height: 40px;
+    width: 90%;
+    border-radius: 4px;
+    padding: 0 16px;
+    border: none;
   }
 
   button {
-    width: 100%;
-    margin-top: 16px;
-    background: transparent;
-    padding: 8px;
-    border-radius: 8px;
+    background: var(--primary-color);
     border: none;
-    border: 1px solid var(--title-color);
-    background-color: rgba(100, 100, 0, 0.2);
-
-    > h3 {
-      color: var(--primary-color);
-      font-size: 16px;
-    }
-
-    &:hover {
-      background-color: rgba(100, 100, 0, 0.4);
-    }
-    &:active {
-      background-color: rgba(100, 100, 0, 0.6);
-    }
-  }
-
-  > span {
-    background-color: rgba(255, 144, 0, 0.05);
-    display: flex;
-    justify-content: center;
-    color: var(--letter-color-3);
-    margin: 8px;
-    border: 1px solid var(--primary-color);
-    border-radius: 8px;
-    padding: 16px;
-
-    h2 {
-      font-size: 16px;
-      color: var(--title-color);
-      margin-bottom: 8px;
-      width: 300px;
-    }
-
-    input {
-      padding: 0 8px;
-      margin-left: auto;
-      text-align: right;
-      border: 1px solid var(--primary-color);
-      border-radius: 4px;
-      height: 32px;
-      width: 252px;
-      color: var(--title-color);
-      font-weight: 500;
-      background-color: rgba(255, 144, 0, 0.18);
-
-      &:active {
-        background-color: rgba(255, 144, 0, 0.22);
-      }
-    }
-
-    &:hover {
-      background-color: rgba(255, 144, 0, 0.15);
-    }
-  }
-`;
-
-export const AddCheckListDrawerCloseButton = styled.button`
-  position: absolute;
-  top: 115px;
-  right: 248px;
-  background: transparent;
-  border: none;
-
-  > svg {
-    color: red;
+    height: 40px;
+    width: 90%;
+    border-radius: 4px;
   }
 `;
 
@@ -1391,7 +1214,6 @@ export const MessagesSection = styled.div`
 
 export const UsersChat = styled.div`
   display: grid;
-  grid-template-rows: repeat(7, 1fr);
   align-items: flex-start;
   gap: 16px;
   width: 100%;
@@ -1411,9 +1233,11 @@ export const UsersChat = styled.div`
 
     > h1 {
       width: 100%;
+      margin-top: 3px;
       font-size: 24px;
       color: var(--primary-color);
       border-bottom: 1px solid var(--letter-color-2);
+      padding-bottom: 8px;
     }
   }
 `;
@@ -1439,7 +1263,6 @@ export const UserChat = styled.div`
 export const ChatMessages = styled.div`
   width: 100%;
   display: grid;
-  grid-template-rows: repeat(6, 1fr);
   align-items: flex-start;
   gap: 16px;
   position: relative;
@@ -1456,11 +1279,22 @@ export const ChatMessages = styled.div`
     align-items: center;
     gap: 16px;
 
-    > h1 {
+    > span {
       width: 100%;
-      font-size: 24px;
-      color: var(--primary-color);
-      border-bottom: 1px solid var(--letter-color-2);
+
+      > button {
+        margin-right: auto;
+        background: transparent;
+        border: none;
+
+        > h1 {
+          width: 100%;
+          font-size: 24px;
+          color: var(--primary-color);
+          border-bottom: 1px solid var(--letter-color-2);
+          padding-bottom: 8px;
+        }
+      }
     }
 
     button {

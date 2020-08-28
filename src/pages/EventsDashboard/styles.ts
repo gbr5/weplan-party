@@ -94,12 +94,84 @@ export const Content = styled.main`
   width: 100%;
   display: grid;
   padding: 0 80px;
-  grid-template-columns: 2fr 9fr;
+  grid-template-rows: 1fr 6fr;
   gap: 2px;
+
+  > span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    height: 42px;
+
+    > button {
+      background-color: transparent;
+      border: none;
+    }
+
+    > button + button {
+      padding-left: 16px;
+      border-left: 1px solid var(--primary-color);
+
+      &::before {
+        position: absolute;
+        height: 80%;
+        width: 1px;
+        left: 0;
+        top: 8px;
+        content: '';
+        background: var(--primary-color);
+      }
+    }
+
+    > div {
+      position: absolute;
+      top: 4px;
+      left: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+
+      > h3 {
+        font-size: 20px;
+        line-height: 30px;
+        padding: 0 16px;
+      }
+
+      > p {
+        font-size: 20px;
+        line-height: 30px;
+      }
+    }
+
+    > span {
+      position: absolute;
+      top: 4px;
+      right: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+
+      > input {
+        border: none;
+        height: 30px;
+        padding: 0 16px;
+        border-radius: 4px;
+      }
+
+      > button {
+        background: transparent;
+        border: none;
+      }
+    }
+  }
 `;
 
-export const UsersChat = styled.div`
+export const MyEvents = styled.div`
   display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   align-items: flex-start;
   gap: 16px;
   width: 100%;
@@ -128,101 +200,90 @@ export const UsersChat = styled.div`
   }
 `;
 
-export const UserChat = styled.div`
-  width: 100%;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--letter-color-4);
-
-  > h1 {
-    font-size: 18px;
-    color: var(--title-color);
-  }
-
-  > svg {
-    margin-left: auto;
-  }
-`;
-
-export const ChatMessages = styled.div`
-  width: 100%;
+export const FriendsEvents = styled.div`
   display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   align-items: flex-start;
   gap: 16px;
+  width: 100%;
   position: relative;
 
   > div {
-    width: 100%;
-
     padding: 16px;
     border-radius: 8px;
     background-color: var(--header-background-color);
     box-shadow: 2px 2px 3px 2px rgba(50, 50, 50, 0.1);
+    width: 100%;
+
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     gap: 16px;
 
-    > span {
+    > h1 {
+      padding-bottom: 8px;
+
       width: 100%;
-
-      > button {
-        margin-right: auto;
-        background: transparent;
-        border: none;
-
-        > h1 {
-          width: 100%;
-          font-size: 24px;
-          color: var(--primary-color);
-          border-bottom: 1px solid var(--letter-color-2);
-          padding-bottom: 8px;
-        }
-      }
-    }
-
-    button {
-      width: 100%;
-      height: 40px;
-      background-color: var(--primary-color);
-      opacity: 0.9;
-      border: none;
-      border-radius: 4px;
-    }
-
-    input {
-      text-align: right;
-      padding: 0 16px;
-      border: none;
-      height: 40px;
-      width: 100%;
-      border-radius: 4px;
-      background-color: var(--letter-color-4);
-      color: var(--letter-color-2);
+      font-size: 24px;
+      color: var(--primary-color);
+      border-bottom: 1px solid var(--letter-color-2);
     }
   }
 `;
 
-export const Messages = styled.div`
-  width: 100%;
-  margin-bottom: 8px;
+export const Event = styled.button`
+  margin: 16px;
   display: flex;
-  align-items: center;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--letter-color-4);
+  flex-direction: column;
+  height: 330px;
+  width: 300px;
+  border-radius: 8px;
+  background: var(--card-color);
+  border: none;
+  position: relative;
 
-  > p {
-    font-size: 16px;
-    color: var(--letter-color-1);
-    margin-right: 16px;
+  > img {
+    height: 180px;
+    width: 100%;
+    border-radius: 8px 8px 0 0;
   }
-  > p + p {
-    margin-left: auto;
+
+  > div {
+    position: absolute;
+    display: flex;
+    gap: 8px;
+    top: 16px;
+    right: 16px;
+    color: var(--primary-color);
   }
+
+  > h1 {
+    margin: 8px auto;
+    color: var(--primary-color);
+    font-size: 24px;
+  }
+
+  > h3 {
+    margin: 0 auto 8px;
+    color: var(--letter-color-2);
+    font-size: 22px;
+  }
+
   > span {
-    margin-right: 16px;
-    color: var(--letter-color-3);
+    width: 90%;
+    text-align: left;
+    margin: 4px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    > span {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      color: var(--letter-color-3);
+      font-size: 16px;
+      font-weight: 500;
+    }
   }
 `;

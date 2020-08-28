@@ -3,32 +3,26 @@ import React, { useState, useEffect, useCallback } from 'react';
 import 'react-day-picker/lib/style.css';
 
 import {
-  FiPower,
   FiChevronRight,
-  FiSettings,
   FiCheck,
   FiChevronDown,
   FiChevronUp,
   FiCheckSquare,
   FiUserPlus,
   FiEdit,
+  FiUser,
 } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
-import { MdHelp, MdClose, MdAdd } from 'react-icons/md';
+import { MdClose, MdAdd } from 'react-icons/md';
 import { isAfter } from 'date-fns';
 import { differenceInCalendarDays } from 'date-fns/esm';
+import { useHistory } from 'react-router-dom';
 import {
   Container,
-  Header,
-  HeaderContent,
-  Profile,
   Content,
   SubHeader,
-  Menu,
   FirstRow,
   LatestNews,
   Payments,
-  Logo,
   MyEvents,
   MyEventsDrawer,
   MyEventsDrawerButton,
@@ -37,13 +31,11 @@ import {
   HiredSuppliers,
   Supplier,
   AddSupplierDrawer,
-  AddSupplierDrawerCloseButton,
   GuestSection,
   EventGuests,
   MyGuests,
   Guest,
   AddGuestDrawer,
-  AddGuestDrawerCloseButton,
   Financial,
   SideBar,
   Main,
@@ -54,10 +46,8 @@ import {
   Appointment,
   BudgetDrawer,
   EventInfoDrawer,
-  CloseButton,
   BudgetCloseButton,
   AddAppointmentDrawer,
-  AddAppointmentDrawerCloseButton,
   EditEventNameDrawer,
   EditEventNameCloseButton,
   MessagesSection,
@@ -65,11 +55,13 @@ import {
   UserChat,
   ChatMessages,
   Messages,
-  AddCheckListDrawerCloseButton,
   AddCheckListDrawer,
 } from './styles';
 
-import profileImg from '../../assets/guy.jpg';
+import PageHeader from '../../components/PageHeader';
+import MenuButton from '../../components/MenuButton';
+import UserProfile from '../../components/UserProfile';
+
 import chart from '../../assets/charts.png';
 
 import { useAuth } from '../../hooks/auth';
@@ -98,7 +90,9 @@ interface IEventGuest {
 }
 
 const EventHostDashboard: React.FC = () => {
-  const { signOut, user } = useAuth();
+  const { user } = useAuth();
+  const history = useHistory();
+
   const [myEvents, setMyEvents] = useState<IEvent[]>([]);
   const [myEventsDrawer, setMyEventsDrawer] = useState(false);
   const [myNextEvent, setMyNextEvent] = useState<IEvent>({} as IEvent);
@@ -128,6 +122,8 @@ const EventHostDashboard: React.FC = () => {
   const [supplierSection, setSupplierSection] = useState(false);
   const [messagesSection, setMessagesSection] = useState(false);
 
+  const [userProfileWindow, setUserProfileWindow] = useState(false);
+
   useEffect(() => {
     try {
       api.get<IEvent[]>('/events').then(response => {
@@ -137,6 +133,13 @@ const EventHostDashboard: React.FC = () => {
       throw Error(err);
     }
   }, [myEvents]);
+
+  const handleMyEventDashboard = useCallback(
+    (event: IEvent) => {
+      history.push('/dashboard/my-event', { params: event });
+    },
+    [history],
+  );
 
   const handleMyEventsDrawer = useCallback(() => {
     setMyEventsDrawer(!myEventsDrawer);
@@ -169,6 +172,10 @@ const EventHostDashboard: React.FC = () => {
   const handleAddCheckListDrawer = useCallback(() => {
     setAddCheckListDrawer(!addCheckListDrawer);
   }, [addCheckListDrawer]);
+
+  const handleUserProfileWindow = useCallback(() => {
+    setUserProfileWindow(!userProfileWindow);
+  }, [userProfileWindow]);
 
   const handleLatestActionsSection = useCallback(() => {
     setLatestActionsSection(true);
@@ -304,36 +311,10 @@ const EventHostDashboard: React.FC = () => {
 
   return (
     <Container>
-      <Header>
-        <HeaderContent>
-          <Logo>WePlan</Logo>
+      <MenuButton />
+      <PageHeader />
+      {!!userProfileWindow && <UserProfile />}
 
-          <Profile>
-            <img src={profileImg} alt="oi" />
-            <div>
-              <span>Bem-vindo,</span>
-              <Link to="/profile">
-                <strong>{user.name}</strong>
-              </Link>
-            </div>
-          </Profile>
-          <Menu>
-            <button type="button">FOTOS</button>
-            <button type="button">AMIGOS</button>
-            <button type="button">EVENTOS</button>
-            <button type="button">FORNECEDORES</button>
-            <button type="button" onClick={signOut}>
-              <MdHelp size={30} />
-            </button>
-            <button type="button" onClick={signOut}>
-              <FiSettings size={30} />
-            </button>
-            <button type="button" onClick={signOut}>
-              <FiPower />
-            </button>
-          </Menu>
-        </HeaderContent>
-      </Header>
       <Content>
         <SideBar>
           <MyEvents>
@@ -348,10 +329,14 @@ const EventHostDashboard: React.FC = () => {
             {myEventsDrawer && (
               <MyEventsDrawer>
                 {myEvents.map(event => (
-                  <span key={event.id}>
+                  <button
+                    type="button"
+                    onClick={() => handleMyEventDashboard(event)}
+                    key={event.id}
+                  >
                     {event.name}
                     <FiChevronRight size={24} />
-                  </span>
+                  </button>
                 ))}
               </MyEventsDrawer>
             )}
@@ -360,62 +345,33 @@ const EventHostDashboard: React.FC = () => {
             Informações do Evento
           </button>
           {!!eventInfoDrawer && (
-            <>
-              <CloseButton type="button" onClick={handleEventInfoDrawer}>
-                <MdClose size={30} />
-              </CloseButton>
-              <EventInfoDrawer>
-                <div>
-                  <div>
-                    <span>
-                      <h2>1) Data do Evento</h2>
-                      <input type="text" />
-                    </span>
-                    <span>
-                      <h2>2) Tipo de Evento</h2>
-                      <input type="text" />
-                    </span>
-                    <span>
-                      <h2>3) Horário de início</h2>
-                      <input type="text" />
-                    </span>
-                    <span>
-                      <h2>4) Duração</h2>
-                      <input type="text" />
-                    </span>
-                    <span>
-                      <h2>5) Número de convidados</h2>
-                      <input type="text" />
-                    </span>
-                  </div>
-                  <div>
-                    <span>
-                      <h2>6) Traje</h2>
-                      <input type="text" />
-                    </span>
-                    <span>
-                      <h2>7) País</h2>
-                      <input type="text" />
-                    </span>
-                    <span>
-                      <h2>8) Estado</h2>
-                      <input type="text" />
-                    </span>
-                    <span>
-                      <h2>9) Cidade</h2>
-                      <input type="text" />
-                    </span>
-                    <span>
-                      <h2>10) Endereço</h2>
-                      <input type="text" />
-                    </span>
-                  </div>
-                </div>
-                <button type="button">
-                  <h3>Salvar</h3>
+            <EventInfoDrawer>
+              <span>
+                <button type="button" onClick={handleEventInfoDrawer}>
+                  <MdClose size={30} />
                 </button>
-              </EventInfoDrawer>
-            </>
+              </span>
+              <h1>Informações do evento</h1>
+              <div>
+                <div>
+                  <input type="text" placeholder="Data do evento" />
+                  <input type="text" placeholder="Tipo de Evento" />
+                  <input type="text" placeholder="Horário de início" />
+                  <input type="text" placeholder="Duração" />
+                  <input type="text" placeholder="Número de convidados" />
+                </div>
+                <div>
+                  <input type="text" placeholder="Traje" />
+                  <input type="text" placeholder="País" />
+                  <input type="text" placeholder="Estado" />
+                  <input type="text" placeholder="Cidade" />
+                  <input type="text" placeholder="Endereço" />
+                </div>
+              </div>
+              <button type="button">
+                <h3>Salvar</h3>
+              </button>
+            </EventInfoDrawer>
           )}
           <button type="button" onClick={handleLatestActionsSection}>
             Últimas Atualizações
@@ -428,7 +384,7 @@ const EventHostDashboard: React.FC = () => {
           </button>
           <h1>Cerimonialista</h1>
           <span>
-            <button type="button">
+            <button type="button" onClick={handleUserProfileWindow}>
               <h3>Sergio Mendes</h3>
             </button>
           </span>
@@ -436,26 +392,26 @@ const EventHostDashboard: React.FC = () => {
           <span>
             <p>Noiva</p>
 
-            <button type="button">
+            <button type="button" onClick={handleUserProfileWindow}>
               <h2>Roberta</h2>
             </button>
           </span>
           <span>
             <p>Noivo</p>
-            <button type="button">
+            <button type="button" onClick={handleUserProfileWindow}>
               <h2>Roberto</h2>
             </button>
           </span>
           <h1>Membros da Festa</h1>
           <span>
             <p>Mãe da Noiva</p>
-            <button type="button">
+            <button type="button" onClick={handleUserProfileWindow}>
               <h2>@espacofareast</h2>
             </button>
           </span>
           <span>
             <p>Mãe do Noivo</p>
-            <button type="button">
+            <button type="button" onClick={handleUserProfileWindow}>
               <h2>Rubia</h2>
             </button>
           </span>
@@ -627,30 +583,21 @@ const EventHostDashboard: React.FC = () => {
               </HiredSuppliers>
               {!!addSupplierDrawer && (
                 <>
-                  <AddSupplierDrawerCloseButton
-                    type="button"
-                    onClick={handleAddSupplierDrawer}
-                  >
-                    <MdClose size={30} />
-                  </AddSupplierDrawerCloseButton>
                   <AddSupplierDrawer>
+                    <span>
+                      <button type="button" onClick={handleAddSupplierDrawer}>
+                        <MdClose size={30} />
+                      </button>
+                    </span>
                     <h1>Adicionar Fornecedor</h1>
-                    <span>
-                      <h2>1) Nome</h2>
-                      <input type="text" />
-                    </span>
-                    <span>
-                      <h2>2) É usuário WePlan?</h2>
-                      <input type="text" />
-                    </span>
-                    <span>
-                      <h2>3) Se sim, qual o nome de usuário?</h2>
-                      <input type="text" />
-                    </span>
-                    <span>
-                      <h2>4) Contratado?</h2>
-                      <input type="text" />
-                    </span>
+                    <input type="text" placeholder="Nome" />
+
+                    <input type="text" placeholder="Usuário We Plan?" />
+
+                    <input type="text" placeholder="Qual o nome do usuário?" />
+
+                    <input type="text" placeholder="Contratado?" />
+
                     <button type="button">
                       <h3>Salvar</h3>
                     </button>
@@ -701,7 +648,11 @@ const EventHostDashboard: React.FC = () => {
               </UsersChat>
               <ChatMessages>
                 <div>
-                  <h1>Rullus</h1>
+                  <span>
+                    <button type="button" onClick={handleUserProfileWindow}>
+                      <h1>Rullus</h1>
+                    </button>
+                  </span>
 
                   <Messages>
                     <span>Rullus: </span>
@@ -768,6 +719,9 @@ const EventHostDashboard: React.FC = () => {
                   </Guest>
                   <Guest>
                     <h1>Luisa</h1>
+                    <button type="button" onClick={handleUserProfileWindow}>
+                      <FiUser size={24} />
+                    </button>
                     <FiCheckSquare />
                   </Guest>
                   <Guest>
@@ -784,6 +738,9 @@ const EventHostDashboard: React.FC = () => {
                 <div>
                   <Guest>
                     <h1>Luisa</h1>
+                    <button type="button" onClick={handleUserProfileWindow}>
+                      <FiUser size={24} />
+                    </button>
                     <FiCheckSquare />
                   </Guest>
                   <Guest>
@@ -802,30 +759,20 @@ const EventHostDashboard: React.FC = () => {
               </MyGuests>
               {!!addGuestDrawer && (
                 <>
-                  <AddGuestDrawerCloseButton
-                    type="button"
-                    onClick={handleAddGuestDrawer}
-                  >
-                    <MdClose size={30} />
-                  </AddGuestDrawerCloseButton>
                   <AddGuestDrawer>
+                    <span>
+                      <button type="button" onClick={handleAddGuestDrawer}>
+                        <MdClose size={30} />
+                      </button>
+                    </span>
                     <h1>Adicionar Convidado</h1>
-                    <span>
-                      <h2>1) Nome</h2>
-                      <input type="text" />
-                    </span>
-                    <span>
-                      <h2>2) É usuário WePlan?</h2>
-                      <input type="text" />
-                    </span>
-                    <span>
-                      <h2>3) Se sim, qual o nome de usuário?</h2>
-                      <input type="text" />
-                    </span>
-                    <span>
-                      <h2>4) Confirmado?</h2>
-                      <input type="text" />
-                    </span>
+                    <input type="text" placeholder="Nome" />
+                    <input type="text" placeholder="Usuário We Plan?" />
+
+                    <input type="text" placeholder="Qual o nome do usuário" />
+
+                    <input type="text" placeholder="Confirmado?" />
+
                     <button type="button">
                       <h3>Salvar</h3>
                     </button>
@@ -884,36 +831,25 @@ const EventHostDashboard: React.FC = () => {
                 </div>
               </MyAppointments>
               {!!addAppointmentDrawer && (
-                <>
-                  <AddAppointmentDrawerCloseButton
-                    type="button"
-                    onClick={handleAddAppointmentDrawer}
-                  >
-                    <MdClose size={30} />
-                  </AddAppointmentDrawerCloseButton>
-                  <AddAppointmentDrawer>
-                    <h1>Adicionar Convidado</h1>
-                    <span>
-                      <h2>1) Nome</h2>
-                      <input type="text" />
-                    </span>
-                    <span>
-                      <h2>2) É usuário WePlan?</h2>
-                      <input type="text" />
-                    </span>
-                    <span>
-                      <h2>3) Se sim, qual o nome de usuário?</h2>
-                      <input type="text" />
-                    </span>
-                    <span>
-                      <h2>4) Confirmado?</h2>
-                      <input type="text" />
-                    </span>
-                    <button type="button">
-                      <h3>Salvar</h3>
+                <AddAppointmentDrawer>
+                  <span>
+                    <button type="button" onClick={handleAddAppointmentDrawer}>
+                      <MdClose size={30} />
                     </button>
-                  </AddAppointmentDrawer>
-                </>
+                  </span>
+                  <h1>Adicionar Compromisso</h1>
+                  <input type="text" placeholder="Nome" />
+                  <input type="text" placeholder="Sobrenome" />
+                  <input type="text" placeholder="Usuário We Plan?" />
+
+                  <input type="text" placeholder="Qual o nome do usuário" />
+
+                  <input type="text" placeholder="Confirmado?" />
+
+                  <button type="button">
+                    <h3>Salvar</h3>
+                  </button>
+                </AddAppointmentDrawer>
               )}
             </Appointments>
           )}
@@ -962,36 +898,26 @@ const EventHostDashboard: React.FC = () => {
                 </ul>
               </CheckList>
               {!!addCheckListDrawer && (
-                <>
-                  <AddCheckListDrawerCloseButton
-                    type="button"
-                    onClick={handleAddCheckListDrawer}
-                  >
-                    <MdClose size={30} />
-                  </AddCheckListDrawerCloseButton>
-                  <AddCheckListDrawer>
-                    <h1>Adicionar Fornecedor</h1>
-                    <span>
-                      <h2>1) Nome</h2>
-                      <input type="text" />
-                    </span>
-                    <span>
-                      <h2>2) É usuário WePlan?</h2>
-                      <input type="text" />
-                    </span>
-                    <span>
-                      <h2>3) Se sim, qual o nome de usuário?</h2>
-                      <input type="text" />
-                    </span>
-                    <span>
-                      <h2>4) Contratado?</h2>
-                      <input type="text" />
-                    </span>
-                    <button type="button">
-                      <h3>Salvar</h3>
+                <AddCheckListDrawer>
+                  <span>
+                    <button type="button" onClick={handleAddCheckListDrawer}>
+                      <MdClose size={30} />
                     </button>
-                  </AddCheckListDrawer>
-                </>
+                  </span>
+                  <h1>Adicionar</h1>
+                  <input type="text" placeholder="Nome" />
+
+                  <input
+                    type="text"
+                    placeholder="Nível de prioridade (1 a 5)"
+                  />
+
+                  <input type="text" placeholder="Realizado?" />
+
+                  <button type="button">
+                    <h3>Salvar</h3>
+                  </button>
+                </AddCheckListDrawer>
               )}
             </>
           )}

@@ -118,7 +118,7 @@ export const MyEventsDrawer = styled.div`
   text-align: left;
   padding: 8px;
 
-  > span {
+  > button {
     background-color: rgba(255, 144, 0, 0.05);
     display: flex;
     justify-content: center;
@@ -284,6 +284,11 @@ export const MyNextEvent = styled.section`
 
   margin-bottom: 32px;
   position: relative;
+
+  > button {
+    background: transparent;
+    border: none;
+  }
 
   img {
     width: 100%;

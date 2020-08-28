@@ -1,13 +1,6 @@
 import React, { useCallback, useRef, ChangeEvent, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import {
-  FiArrowLeft,
-  FiMail,
-  FiLock,
-  FiUser,
-  FiPower,
-  FiCamera,
-} from 'react-icons/fi';
+import { useHistory } from 'react-router-dom';
+import { FiMail, FiLock, FiUser, FiCamera } from 'react-icons/fi';
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
@@ -21,16 +14,10 @@ import getValidationErrors from '../../utils/getValidationErros';
 
 import Input from '../../components/Input';
 import Button from '../../components/Button';
+import MenuButton from '../../components/MenuButton';
+import PageHeader from '../../components/PageHeader';
 
-import {
-  Container,
-  Content,
-  Header,
-  HeaderContent,
-  ProfileContent,
-  AvatarInput,
-  PasswordContainer,
-} from './styles';
+import { Container, Content, AvatarInput, PasswordContainer } from './styles';
 
 import { useAuth } from '../../hooks/auth';
 
@@ -43,7 +30,7 @@ interface IProfileForm {
 }
 
 const Profile: React.FC = () => {
-  const { signOut, user, updateUser } = useAuth();
+  const { user, updateUser } = useAuth();
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
   const history = useHistory();
@@ -164,18 +151,9 @@ const Profile: React.FC = () => {
 
   return (
     <Container>
-      <Header>
-        <HeaderContent>
-          <ProfileContent>
-            <Link to="/">
-              <FiArrowLeft />
-            </Link>
-          </ProfileContent>
-          <button type="button" onClick={signOut}>
-            <FiPower />
-          </button>
-        </HeaderContent>
-      </Header>
+      <MenuButton />
+      <PageHeader />
+
       <Content>
         <Form
           ref={formRef}
