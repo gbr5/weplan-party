@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import * as Yup from 'yup';
 
 import 'react-day-picker/lib/style.css';
 
@@ -16,6 +17,8 @@ import { MdClose, MdAdd } from 'react-icons/md';
 import { isAfter } from 'date-fns';
 import { differenceInCalendarDays } from 'date-fns/esm';
 import { useHistory } from 'react-router-dom';
+import { Form } from '@unform/web';
+import { FormHandles } from '@unform/core';
 import {
   Container,
   Content,
@@ -56,6 +59,8 @@ import {
   ChatMessages,
   Messages,
   AddCheckListDrawer,
+  WeplanGuestDrawer,
+  GuestConfirmedDrawer,
 } from './styles';
 
 import PageHeader from '../../components/PageHeader';
@@ -66,6 +71,9 @@ import chart from '../../assets/charts.png';
 
 import { useAuth } from '../../hooks/auth';
 import api from '../../services/api';
+import Input from '../../components/Input';
+import { useToast } from '../../hooks/toast';
+import getValidationErrors from '../../utils/getValidationErros';
 
 interface IMonthAvailabilityItem {
   day: number;
@@ -89,9 +97,19 @@ interface IEventGuest {
   confirmed: boolean;
 }
 
+interface ICreateGuest {
+  first_name: string;
+  last_name: string;
+  description: string;
+  confirmed: boolean;
+  weplanUser: boolean;
+}
+
 const EventHostDashboard: React.FC = () => {
   const { user } = useAuth();
   const history = useHistory();
+  const formRef = useRef<FormHandles>(null);
+  const { addToast } = useToast();
 
   const [myEvents, setMyEvents] = useState<IEvent[]>([]);
   const [myEventsDrawer, setMyEventsDrawer] = useState(false);
@@ -123,6 +141,13 @@ const EventHostDashboard: React.FC = () => {
   const [messagesSection, setMessagesSection] = useState(false);
 
   const [userProfileWindow, setUserProfileWindow] = useState(false);
+
+  const [weplanGuestDrawer, setWeplanGuestDrawer] = useState(false);
+  const [guestConfirmedDrawer, setGuestConfirmedDrawer] = useState(false);
+  const [weplanUser, setWeplanUser] = useState(false);
+  const [weplanGuestUser, setWeplanGuestUser] = useState('');
+  const [guestConfirmedMessage, setGuestConfirmedMessage] = useState('');
+  const [guestConfirmed, setGuestConfirmed] = useState(false);
 
   useEffect(() => {
     try {
@@ -156,6 +181,102 @@ const EventHostDashboard: React.FC = () => {
   const handleAddGuestDrawer = useCallback(() => {
     setAddGuestDrawer(!addGuestDrawer);
   }, [addGuestDrawer]);
+
+  const handleWeplanGuestDrawer = useCallback(() => {
+    setWeplanGuestDrawer(!weplanGuestDrawer);
+  }, [weplanGuestDrawer]);
+
+  const handleGuestConfirmedDrawer = useCallback(() => {
+    setGuestConfirmedDrawer(!guestConfirmedDrawer);
+  }, [guestConfirmedDrawer]);
+
+  const handleWeplanGuestQuestion = useCallback(
+    (weplan_user: boolean) => {
+      if (weplan_user === true) {
+        setWeplanGuestUser('É usuário WePlan S2!');
+        setWeplanUser(true);
+      } else {
+        setWeplanGuestUser('AINDA não é usuário WePlan!');
+        setWeplanUser(false);
+      }
+      return handleWeplanGuestDrawer();
+    },
+    [handleWeplanGuestDrawer],
+  );
+
+  const handleGuestConfirmedQuestion = useCallback(
+    (guest_confirmed: boolean) => {
+      if (guest_confirmed === true) {
+        setGuestConfirmedMessage('Convidado confirmado!');
+        setGuestConfirmed(true);
+      } else {
+        setGuestConfirmedMessage('');
+        setGuestConfirmed(false);
+      }
+      return handleGuestConfirmedDrawer();
+    },
+    [handleGuestConfirmedDrawer],
+  );
+
+  const handleAddGuest = useCallback(
+    async (data: ICreateGuest) => {
+      console.log(data);
+      try {
+        formRef.current?.setErrors([]);
+
+        const schema = Yup.object().shape({
+          first_name: Yup.string().required('Primeiro nome é obrigatório'),
+          last_name: Yup.string().required('Sobrenome é obrigatório'),
+          description: Yup.string(),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+        console.log('passou pelo Yup');
+
+        console.log(
+          {
+            first_name: data.first_name,
+            last_name: data.last_name,
+            description: data.description,
+            weplanUser,
+            confirmed: guestConfirmed,
+          },
+          { event_id: eventId },
+        );
+
+        await api.post(`events/${eventId}/guests`, {
+          first_name: data.first_name,
+          last_name: data.last_name,
+          description: data.description,
+          weplanUser,
+          confirmed: guestConfirmed,
+        });
+
+        addToast({
+          type: 'success',
+          title: 'Evento Criado com Sucesso',
+          description: 'Você já pode começar a planejar o seu evento.',
+        });
+
+        handleAddGuestDrawer();
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro ao criar evento',
+          description: 'Erro  ao criar o evento, tente novamente.',
+        });
+      }
+    },
+    [addToast, eventId, handleAddGuestDrawer, weplanUser, guestConfirmed],
+  );
 
   const handleAddSupplierDrawer = useCallback(() => {
     setAddSupplierDrawer(!addSupplierDrawer);
@@ -278,9 +399,7 @@ const EventHostDashboard: React.FC = () => {
   }, [myEvents]);
   useEffect(() => {
     setEventId(myNextEvent.id);
-    console.log(myNextEvent.id);
   }, [myNextEvent]);
-  console.log(user);
 
   useEffect(() => {
     api.get(`/events/${eventId}/check-list`).then(response => {
@@ -305,9 +424,7 @@ const EventHostDashboard: React.FC = () => {
     setConfirmedGuests(
       myNextEventGuests.filter(guest => guest.confirmed === true),
     );
-    console.log(myNextEventGuests.filter(guest => guest.confirmed === false));
   }, [myNextEvent, myNextEventGuests]);
-  console.log(myNextEventGuests);
 
   return (
     <Container>
@@ -758,7 +875,7 @@ const EventHostDashboard: React.FC = () => {
                 </div>
               </MyGuests>
               {!!addGuestDrawer && (
-                <>
+                <Form ref={formRef} onSubmit={handleAddGuest}>
                   <AddGuestDrawer>
                     <span>
                       <button type="button" onClick={handleAddGuestDrawer}>
@@ -766,18 +883,97 @@ const EventHostDashboard: React.FC = () => {
                       </button>
                     </span>
                     <h1>Adicionar Convidado</h1>
-                    <input type="text" placeholder="Nome" />
-                    <input type="text" placeholder="Usuário We Plan?" />
 
-                    <input type="text" placeholder="Qual o nome do usuário" />
+                    <div>
+                      {weplanGuestUser === '' ? (
+                        <button type="button" onClick={handleWeplanGuestDrawer}>
+                          Convidado Weplan ?
+                        </button>
+                      ) : (
+                        <h1>
+                          <button
+                            type="button"
+                            onClick={handleWeplanGuestDrawer}
+                          >
+                            {weplanGuestUser}
+                          </button>
+                        </h1>
+                      )}
+                      {guestConfirmedMessage === '' ? (
+                        <button
+                          type="button"
+                          onClick={handleGuestConfirmedDrawer}
+                        >
+                          Confirmado?
+                        </button>
+                      ) : (
+                        <h1>
+                          <button
+                            type="button"
+                            onClick={handleGuestConfirmedDrawer}
+                          >
+                            {guestConfirmedMessage}
+                          </button>
+                        </h1>
+                      )}
+                    </div>
+                    {!!weplanGuestDrawer && (
+                      <WeplanGuestDrawer>
+                        <h1>É usuário WePlan?</h1>
+                        <div>
+                          <button
+                            type="button"
+                            onClick={() => handleWeplanGuestQuestion(true)}
+                          >
+                            Sim
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleWeplanGuestQuestion(false)}
+                          >
+                            Não
+                          </button>
+                        </div>
+                      </WeplanGuestDrawer>
+                    )}
+                    {!!guestConfirmedDrawer && (
+                      <GuestConfirmedDrawer>
+                        <h1>Convidado confirmado?</h1>
+                        <div>
+                          <button
+                            type="button"
+                            onClick={() => handleGuestConfirmedQuestion(true)}
+                          >
+                            Sim
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleGuestConfirmedQuestion(false)}
+                          >
+                            Não
+                          </button>
+                        </div>
+                      </GuestConfirmedDrawer>
+                    )}
 
-                    <input type="text" placeholder="Confirmado?" />
+                    <Input name="first_name" type="text" placeholder="Nome" />
+                    <Input
+                      name="last_name"
+                      type="text"
+                      placeholder="Sobrenome"
+                    />
 
-                    <button type="button">
+                    <Input
+                      name="description"
+                      type="text"
+                      placeholder="Alguma descrição necessária?"
+                    />
+
+                    <button type="submit">
                       <h3>Salvar</h3>
                     </button>
                   </AddGuestDrawer>
-                </>
+                </Form>
               )}
             </GuestSection>
           )}

@@ -949,10 +949,10 @@ export const Guest = styled.div`
 export const AddGuestDrawer = styled.div`
   position: fixed;
   z-index: 10;
-  top: 150px;
-  left: 400px;
-  width: 600px;
-  height: 400px;
+  top: 5%;
+  left: 20%;
+  width: 60%;
+  height: 90%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -968,6 +968,7 @@ export const AddGuestDrawer = styled.div`
     position: absolute;
     top: 2px;
     right: 4px;
+
     > button {
       background: transparent;
       border: none;
@@ -979,16 +980,35 @@ export const AddGuestDrawer = styled.div`
   }
 
   > h1 {
-    font-size: 24px;
+    font-size: 32px;
+    margin-bottom: 32px;
     color: var(--title-color);
   }
 
-  > input {
-    height: 40px;
-    width: 90%;
-    border-radius: 4px;
-    padding: 0 16px;
-    border: none;
+  > div {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    width: 100%;
+    margin-bottom: 16px;
+
+    > button {
+      height: 40px;
+      width: 100%;
+      border-radius: 4px;
+      padding: 0 16px;
+      border: none;
+    }
+
+    > h1 {
+      > button {
+        background: transparent;
+        border: none;
+        color: var(--primary-color);
+        font-size: 24px;
+        font-weight: 500;
+      }
+    }
   }
 
   button {
@@ -997,6 +1017,7 @@ export const AddGuestDrawer = styled.div`
     height: 40px;
     width: 90%;
     border-radius: 4px;
+    margin-bottom: 16px;
   }
 `;
 
@@ -1336,5 +1357,77 @@ export const Messages = styled.div`
   > span {
     margin-right: 16px;
     color: var(--letter-color-3);
+  }
+`;
+
+export const WeplanGuestDrawer = styled.div`
+  position: absolute;
+  z-index: 10;
+  top: 30%;
+  left: 0;
+  width: 200px;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 16px auto;
+  background: var(--header-background-color);
+  border-radius: 8px;
+  gap: 16px;
+  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
+  padding: 32px;
+
+  > h1 {
+    font-size: 24px;
+    color: var(--title-color);
+  }
+
+  > div {
+    display: flex;
+    gap: 16px;
+
+    button {
+      background: var(--primary-color);
+      border: none;
+      height: 40px;
+      width: 90%;
+      border-radius: 4px;
+    }
+  }
+`;
+
+export const GuestConfirmedDrawer = styled.div`
+  position: absolute;
+  z-index: 10;
+  top: 30%;
+  left: 0;
+  width: 200px;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 16px auto;
+  background: var(--header-background-color);
+  border-radius: 8px;
+  gap: 16px;
+  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
+  padding: 32px;
+
+  > h1 {
+    font-size: 24px;
+    color: var(--title-color);
+  }
+
+  > div {
+    display: flex;
+    gap: 16px;
+
+    button {
+      background: var(--primary-color);
+      border: none;
+      height: 40px;
+      width: 90%;
+      border-radius: 4px;
+    }
   }
 `;
