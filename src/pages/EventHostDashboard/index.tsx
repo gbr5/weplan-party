@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import * as Yup from 'yup';
 
 import 'react-day-picker/lib/style.css';
+import DayPicker from 'react-day-picker';
 
 import {
   FiChevronRight,
@@ -61,6 +62,9 @@ import {
   AddCheckListDrawer,
   WeplanGuestDrawer,
   GuestConfirmedDrawer,
+  WeplanSupplierAppointmentDrawer,
+  AppointmentTypeDrawer,
+  Calendar,
 } from './styles';
 
 import PageHeader from '../../components/PageHeader';
@@ -105,6 +109,14 @@ interface ICreateGuest {
   weplanUser: boolean;
 }
 
+interface ICreateAppointment {
+  subject: string;
+  duration_minutes: number;
+  address: string;
+  start_hour: number;
+  start_minute: number;
+}
+
 const EventHostDashboard: React.FC = () => {
   const { user } = useAuth();
   const history = useHistory();
@@ -143,11 +155,30 @@ const EventHostDashboard: React.FC = () => {
   const [userProfileWindow, setUserProfileWindow] = useState(false);
 
   const [weplanGuestDrawer, setWeplanGuestDrawer] = useState(false);
-  const [guestConfirmedDrawer, setGuestConfirmedDrawer] = useState(false);
   const [weplanUser, setWeplanUser] = useState(false);
   const [weplanGuestUser, setWeplanGuestUser] = useState('');
+
+  const [guestConfirmedDrawer, setGuestConfirmedDrawer] = useState(false);
   const [guestConfirmedMessage, setGuestConfirmedMessage] = useState('');
   const [guestConfirmed, setGuestConfirmed] = useState(false);
+
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+
+  const [
+    weplanSupplierAppointmentDrawer,
+    setWeplanSupplierAppointmentDrawer,
+  ] = useState(false);
+  const [
+    weplanSupplierAppointmentUser,
+    setWeplanSupplierAppointmentUser,
+  ] = useState(false);
+  const [
+    weplanSupplierAppointmentMessage,
+    setWeplanSupplierAppointmentMessage,
+  ] = useState('');
+  const [appointmentTypeDrawer, setAppointmentTypeDrawer] = useState(false);
+  const [appointmentType, setAppointmentType] = useState('');
 
   useEffect(() => {
     try {
@@ -286,6 +317,110 @@ const EventHostDashboard: React.FC = () => {
     setAddAppointmentDrawer(!addAppointmentDrawer);
   }, [addAppointmentDrawer]);
 
+  const handleWeplanSupplierAppointmentDrawer = useCallback(() => {
+    setWeplanSupplierAppointmentDrawer(!weplanSupplierAppointmentDrawer);
+  }, [weplanSupplierAppointmentDrawer]);
+
+  const handleAppointmentTypeDrawer = useCallback(() => {
+    setAppointmentTypeDrawer(!appointmentTypeDrawer);
+  }, [appointmentTypeDrawer]);
+
+  const handleWeplanSupplierAppointmentQuestion = useCallback(
+    (weplan_user: boolean) => {
+      if (weplan_user === true) {
+        setWeplanSupplierAppointmentMessage('É usuário WePlan S2!');
+        setWeplanSupplierAppointmentUser(true);
+      } else {
+        setWeplanSupplierAppointmentMessage('AINDA não é usuário WePlan!');
+        setWeplanSupplierAppointmentUser(false);
+      }
+      return handleWeplanGuestDrawer();
+    },
+    [handleWeplanGuestDrawer],
+  );
+
+  const handleAppointmentTypeQuestion = useCallback(
+    (appointment_type: string) => {
+      if (appointment_type === 'Comercial') {
+        setAppointmentType('Comercial');
+      } else {
+        setAppointmentType('Técnico');
+      }
+      return handleGuestConfirmedDrawer();
+    },
+    [handleGuestConfirmedDrawer],
+  );
+
+  const handleAddAppointment = useCallback(
+    async (data: ICreateAppointment) => {
+      console.log(data);
+      try {
+        formRef.current?.setErrors([]);
+        const date = new Date(selectedDate);
+
+        date.setHours(Number(data.start_hour));
+        date.setMinutes(Number(data.start_minute));
+
+        const schema = Yup.object().shape({
+          subject: Yup.string().required('Assunto é obrigatório'),
+          duration_minutes: Yup.number(),
+          address: Yup.string(),
+          start_hour: Yup.number().required(),
+          start_minute: Yup.number().required(),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+        console.log('passou pelo Yup', {
+          subject: data.subject,
+          date,
+          duration_minutes: Number(data.duration_minutes),
+          address: data.address,
+          weplanGuest: weplanSupplierAppointmentUser,
+          appointment_type: appointmentType,
+        });
+
+        await api.post(`/appointments`, {
+          subject: data.subject,
+          date,
+          duration_minutes: Number(data.duration_minutes),
+          address: data.address,
+          weplanGuest: weplanSupplierAppointmentUser,
+          appointment_type: appointmentType,
+        });
+
+        addToast({
+          type: 'success',
+          title: 'Agendamento Criado com Sucesso',
+          description:
+            'Você já pode visualizar no seu dashboard de agendamentos.',
+        });
+
+        handleAddAppointmentDrawer();
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro ao criar agendamento',
+          description: 'Erro  ao criar o agendamento, tente novamente.',
+        });
+      }
+    },
+    [
+      addToast,
+      handleAddAppointmentDrawer,
+      weplanSupplierAppointmentUser,
+      appointmentType,
+      selectedDate,
+    ],
+  );
+
   const handleEditEventNameDrawer = useCallback(() => {
     setEditEventNameDrawer(!editEventNameDrawer);
   }, [editEventNameDrawer]);
@@ -366,6 +501,14 @@ const EventHostDashboard: React.FC = () => {
     setCheckListSection(false);
     setSupplierSection(false);
     setMessagesSection(true);
+  }, []);
+
+  const handleDateChange = useCallback((day: Date) => {
+    setSelectedDate(day);
+  }, []);
+
+  const handleMonthChange = useCallback((month: Date) => {
+    setCurrentMonth(month);
   }, []);
 
   useEffect(() => {
@@ -1027,25 +1170,163 @@ const EventHostDashboard: React.FC = () => {
                 </div>
               </MyAppointments>
               {!!addAppointmentDrawer && (
-                <AddAppointmentDrawer>
-                  <span>
-                    <button type="button" onClick={handleAddAppointmentDrawer}>
-                      <MdClose size={30} />
+                <Form ref={formRef} onSubmit={handleAddAppointment}>
+                  <AddAppointmentDrawer>
+                    <div>
+                      <div>
+                        <span>
+                          <button
+                            type="button"
+                            onClick={handleAddAppointmentDrawer}
+                          >
+                            <MdClose size={30} />
+                          </button>
+                        </span>
+                        <h1>Adicionar Compromisso</h1>
+
+                        <Input
+                          name="subject"
+                          type="text"
+                          placeholder="Assunto"
+                        />
+
+                        <Input
+                          type="text"
+                          placeholder="Hora"
+                          name="start_hour"
+                        />
+                        <Input
+                          type="text"
+                          placeholder="Minuto"
+                          name="start_minute"
+                        />
+                        <Input
+                          name="duration_minutes"
+                          type="number"
+                          placeholder="Duração em minutos"
+                        />
+                      </div>
+                      <span>
+                        <div>
+                          {weplanSupplierAppointmentMessage === '' ? (
+                            <button
+                              type="button"
+                              onClick={handleWeplanSupplierAppointmentDrawer}
+                            >
+                              Fornecedor Weplan ?
+                            </button>
+                          ) : (
+                            <h1>
+                              <button
+                                type="button"
+                                onClick={handleWeplanSupplierAppointmentDrawer}
+                              >
+                                {weplanSupplierAppointmentMessage}
+                              </button>
+                            </h1>
+                          )}
+                          {appointmentType === '' ? (
+                            <button
+                              type="button"
+                              onClick={handleAppointmentTypeDrawer}
+                            >
+                              Qual o tipo de compromisso ?
+                            </button>
+                          ) : (
+                            <h1>
+                              <button
+                                type="button"
+                                onClick={handleAppointmentTypeDrawer}
+                              >
+                                {appointmentType}
+                              </button>
+                            </h1>
+                          )}
+                          {!!weplanSupplierAppointmentDrawer && (
+                            <WeplanSupplierAppointmentDrawer>
+                              <h1>Fornecedor é usuário WePlan?</h1>
+                              <div>
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    handleWeplanSupplierAppointmentQuestion(
+                                      true,
+                                    )}
+                                >
+                                  Sim
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    handleWeplanSupplierAppointmentQuestion(
+                                      false,
+                                    )
+                                  }
+                                >
+                                  Não
+                                </button>
+                              </div>
+                            </WeplanSupplierAppointmentDrawer>
+                          )}
+                          {!!appointmentTypeDrawer && (
+                            <AppointmentTypeDrawer>
+                              <h1>Qual o tipo de compromisso?</h1>
+                              <div>
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    handleAppointmentTypeQuestion('Comercial')
+                                  }
+                                >
+                                  Comercial
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    handleAppointmentTypeQuestion('Técnico')
+                                  }
+                                >
+                                  Técnico
+                                </button>
+                              </div>
+                            </AppointmentTypeDrawer>
+                          )}
+                        </div>
+                        <Calendar>
+                          <DayPicker
+                            weekdaysShort={['D', 'S', 'T', 'Q', 'Q', 'S', 'S']}
+                            fromMonth={new Date()}
+                            onMonthChange={handleMonthChange}
+                            selectedDays={selectedDate}
+                            onDayClick={handleDateChange}
+                            months={[
+                              'Janeiro',
+                              'Fevereiro',
+                              'Março',
+                              'Abril',
+                              'Maio',
+                              'Junho',
+                              'Julho',
+                              'Agosto',
+                              'Setembro',
+                              'Outubro',
+                              'Novembro',
+                              'Dezembro',
+                            ]}
+                          />
+                        </Calendar>
+                        <Input
+                          name="address"
+                          type="text"
+                          placeholder="Endereço"
+                        />
+                      </span>
+                    </div>
+                    <button type="submit">
+                      <h3>Salvar</h3>
                     </button>
-                  </span>
-                  <h1>Adicionar Compromisso</h1>
-                  <input type="text" placeholder="Nome" />
-                  <input type="text" placeholder="Sobrenome" />
-                  <input type="text" placeholder="Usuário We Plan?" />
-
-                  <input type="text" placeholder="Qual o nome do usuário" />
-
-                  <input type="text" placeholder="Confirmado?" />
-
-                  <button type="button">
-                    <h3>Salvar</h3>
-                  </button>
-                </AddAppointmentDrawer>
+                  </AddAppointmentDrawer>
+                </Form>
               )}
             </Appointments>
           )}

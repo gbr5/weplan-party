@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import '../../styles/global';
+import { shade } from 'polished';
 
 export const Container = styled.div`
   position: relative;
@@ -652,12 +653,13 @@ export const Appointment = styled.div`
 export const AddAppointmentDrawer = styled.div`
   position: fixed;
   z-index: 10;
-  top: 150px;
-  left: 400px;
-  width: 600px;
-  height: 400px;
+  top: 5%;
+  left: 2%;
+  width: 96%;
+  height: 85%;
   display: flex;
   flex-direction: column;
+  /* grid-template-columns: 2fr 1fr; */
   align-items: center;
   justify-content: center;
   margin: 16px auto;
@@ -667,38 +669,112 @@ export const AddAppointmentDrawer = styled.div`
   box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
   padding: 32px;
 
-  span {
-    position: absolute;
-    top: 2px;
-    right: 4px;
-    > button {
-      background: transparent;
-      border: none;
-
-      svg {
-        color: red;
-      }
-    }
-  }
-
   > h1 {
     font-size: 24px;
     color: var(--title-color);
   }
 
-  > input {
-    height: 40px;
-    width: 90%;
-    border-radius: 4px;
-    padding: 0 16px;
-    border: none;
+  > div {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+    gap: 32px;
+
+    > span {
+      margin: auto 0;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      gap: 16px;
+
+      > div {
+        display: flex;
+
+        > button {
+          height: 40px;
+          width: 90%;
+          border-radius: 4px;
+          padding: 0 16px;
+          border: none;
+          margin: 16px;
+        }
+      }
+    }
+
+    > div {
+      margin: auto 0;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      gap: 16px;
+
+      > h1 {
+        font-size: 24px;
+        color: var(--title-color);
+        margin-bottom: 40px;
+      }
+
+      > button {
+        height: 40px;
+        width: 90%;
+        border-radius: 4px;
+        padding: 0 16px;
+        border: none;
+        margin: 16px;
+      }
+
+      span {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        > button {
+          background: transparent;
+          border: none;
+
+          svg {
+            color: red;
+          }
+        }
+      }
+      /*
+      > input {
+        height: 40px;
+        width: 90%;
+        border-radius: 4px;
+        padding: 0 16px;
+        border: none;
+        margin: 16px;
+      } */
+
+      > p {
+        margin-top: 32px;
+        font-size: 20px;
+        color: var(--primary-color);
+      }
+
+      div {
+        display: flex;
+        gap: 16px;
+        margin-right: 16px;
+
+        > input {
+          height: 40px;
+          width: 90%;
+          border-radius: 4px;
+          padding: 0 16px;
+          border: none;
+          margin: 16px;
+        }
+      }
+    }
   }
 
-  button {
+  > button {
+    margin-top: 16px;
     background: var(--primary-color);
     border: none;
     height: 40px;
-    width: 90%;
+    width: 100%;
     border-radius: 4px;
   }
 `;
@@ -1429,5 +1505,136 @@ export const GuestConfirmedDrawer = styled.div`
       width: 90%;
       border-radius: 4px;
     }
+  }
+`;
+
+export const WeplanSupplierAppointmentDrawer = styled.div`
+  position: absolute;
+  z-index: 10;
+  top: 30%;
+  left: 0;
+  width: 200px;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 16px auto;
+  background: var(--header-background-color);
+  border-radius: 8px;
+  gap: 16px;
+  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
+  padding: 32px;
+
+  > h1 {
+    font-size: 24px;
+    color: var(--title-color);
+  }
+
+  > div {
+    display: flex;
+    gap: 16px;
+
+    button {
+      background: var(--primary-color);
+      border: none;
+      height: 40px;
+      width: 90%;
+      border-radius: 4px;
+    }
+  }
+`;
+
+export const AppointmentTypeDrawer = styled.div`
+  position: absolute;
+  z-index: 10;
+  top: 30%;
+  left: 0;
+  width: 200px;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 16px auto;
+  background: var(--header-background-color);
+  border-radius: 8px;
+  gap: 16px;
+  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
+  padding: 32px;
+
+  > h1 {
+    font-size: 24px;
+    color: var(--title-color);
+  }
+
+  > div {
+    display: flex;
+    gap: 16px;
+
+    button {
+      background: var(--primary-color);
+      border: none;
+      height: 40px;
+      width: 90%;
+      border-radius: 4px;
+    }
+  }
+`;
+
+export const Calendar = styled.aside`
+  width: 100%;
+  height: 30%;
+
+  .DayPicker {
+    background: var(--background-color);
+    border-radius: 10px;
+  }
+
+  .DayPicker-wrapper {
+    padding-bottom: 0;
+  }
+
+  .DayPicker {
+    width: 100%;
+  }
+
+  .DayPicker-Month {
+    width: 90%;
+  }
+
+  .DayPicker-Month {
+    border-collapse: separate;
+    border-spacing: 8px;
+    margin: 16px;
+  }
+
+  .DayPicker-Day {
+    width: 40px;
+    height: 40px;
+  }
+
+  .DayPicker-Day--available:not(.DayPicker-Day--outside) {
+    background: var(--letter-color-4);
+    border-radius: 10px;
+    color: var(--letter-color-1);
+  }
+
+  .DayPicker:not(.DayPicker--interactionDisabled)
+    .DayPicker-Day:not(.DayPicker-Day--disabled):not(.DayPicker-Day--selected):not(.DayPicker-Day--outside):hover {
+    background: ${shade(0.2, '#3e3b47')};
+  }
+
+  .DayPicker-Day--today {
+    font-weight: normal;
+  }
+
+  .DayPicker-Day--disabled {
+    color: #666360 !important;
+    background: transparent !important;
+  }
+
+  .DayPicker-Day--selected {
+    background: var(--primary-color) !important;
+    border-radius: 10px;
+    color: #232129 !important;
   }
 `;
