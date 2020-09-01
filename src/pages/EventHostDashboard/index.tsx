@@ -65,6 +65,7 @@ import {
   WeplanSupplierAppointmentDrawer,
   AppointmentTypeDrawer,
   Calendar,
+  CheckedListItemDrawer,
 } from './styles';
 
 import PageHeader from '../../components/PageHeader';
@@ -109,6 +110,12 @@ interface ICreateGuest {
   weplanUser: boolean;
 }
 
+interface ICreateCheckListItem {
+  name: string;
+  priority_level: number;
+  checked: boolean;
+}
+
 interface ICreateAppointment {
   subject: string;
   duration_minutes: number;
@@ -118,7 +125,6 @@ interface ICreateAppointment {
 }
 
 const EventHostDashboard: React.FC = () => {
-  const { user } = useAuth();
   const history = useHistory();
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
@@ -179,6 +185,10 @@ const EventHostDashboard: React.FC = () => {
   ] = useState('');
   const [appointmentTypeDrawer, setAppointmentTypeDrawer] = useState(false);
   const [appointmentType, setAppointmentType] = useState('');
+
+  const [checkedListItemDrawer, setCheckedListItemDrawer] = useState(false);
+  const [CheckedListItemMessage, setCheckedListItemMessage] = useState('');
+  const [checked, setChecked] = useState(false);
 
   useEffect(() => {
     try {
@@ -432,6 +442,76 @@ const EventHostDashboard: React.FC = () => {
   const handleUserProfileWindow = useCallback(() => {
     setUserProfileWindow(!userProfileWindow);
   }, [userProfileWindow]);
+
+  const handleAddCheckListItem = useCallback(
+    async (data: ICreateCheckListItem) => {
+      console.log(data);
+      try {
+        formRef.current?.setErrors([]);
+
+        const schema = Yup.object().shape({
+          name: Yup.string().required('Nome é obrigatório'),
+          priority_level: Yup.string().required('Sobrenome é obrigatório'),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+        console.log('passou pelo Yup');
+
+        console.log({
+          name: data.name,
+          priority_level: data.priority_level,
+          checked,
+        });
+
+        await api.post(`events/${eventId}/check-list`, {
+          name: data.name,
+          priority_level: data.priority_level,
+          checked,
+        });
+
+        addToast({
+          type: 'success',
+          title: 'Item criado com Sucesso',
+          description: 'O item foi adicionado à sua check-list.',
+        });
+
+        handleAddCheckListDrawer();
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro ao criar item da check-list',
+          description: 'Erro  ao criar o item, tente novamente.',
+        });
+      }
+    },
+    [addToast, eventId, handleAddCheckListDrawer, checked],
+  );
+
+  const handleCheckedListItemDrawer = useCallback(() => {
+    setCheckedListItemDrawer(!checkedListItemDrawer);
+  }, [checkedListItemDrawer]);
+
+  const handleCheckListChecked = useCallback(
+    (item_checked: boolean) => {
+      if (item_checked === true) {
+        setCheckedListItemMessage('Feito! =D');
+        setChecked(true);
+      } else {
+        setCheckedListItemMessage('Em progresso! No Worries ;D');
+        setChecked(false);
+      }
+      return handleCheckedListItemDrawer();
+    },
+    [handleCheckedListItemDrawer],
+  );
 
   const handleLatestActionsSection = useCallback(() => {
     setLatestActionsSection(true);
@@ -1251,7 +1331,8 @@ const EventHostDashboard: React.FC = () => {
                                   onClick={() =>
                                     handleWeplanSupplierAppointmentQuestion(
                                       true,
-                                    )}
+                                    )
+                                  }
                                 >
                                   Sim
                                 </button>
@@ -1260,8 +1341,7 @@ const EventHostDashboard: React.FC = () => {
                                   onClick={() =>
                                     handleWeplanSupplierAppointmentQuestion(
                                       false,
-                                    )
-                                  }
+                                    )}
                                 >
                                   Não
                                 </button>
@@ -1275,16 +1355,14 @@ const EventHostDashboard: React.FC = () => {
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    handleAppointmentTypeQuestion('Comercial')
-                                  }
+                                    handleAppointmentTypeQuestion('Comercial')}
                                 >
                                   Comercial
                                 </button>
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    handleAppointmentTypeQuestion('Técnico')
-                                  }
+                                    handleAppointmentTypeQuestion('Técnico')}
                                 >
                                   Técnico
                                 </button>
@@ -1375,26 +1453,64 @@ const EventHostDashboard: React.FC = () => {
                 </ul>
               </CheckList>
               {!!addCheckListDrawer && (
-                <AddCheckListDrawer>
-                  <span>
-                    <button type="button" onClick={handleAddCheckListDrawer}>
-                      <MdClose size={30} />
+                <Form ref={formRef} onSubmit={handleAddCheckListItem}>
+                  <AddCheckListDrawer>
+                    <span>
+                      <button type="button" onClick={handleAddCheckListDrawer}>
+                        <MdClose size={30} />
+                      </button>
+                    </span>
+                    <h1>Adicionar</h1>
+
+                    {CheckedListItemMessage === '' ? (
+                      <button
+                        type="button"
+                        onClick={handleCheckedListItemDrawer}
+                      >
+                        Tarefa realizada ?
+                      </button>
+                    ) : (
+                      <h1>
+                        <button
+                          type="button"
+                          onClick={handleCheckedListItemDrawer}
+                        >
+                          {CheckedListItemMessage}
+                        </button>
+                      </h1>
+                    )}
+                    {!!checkedListItemDrawer && (
+                      <CheckedListItemDrawer>
+                        <h1>Tarefa Realizada?</h1>
+                        <div>
+                          <button
+                            type="button"
+                            onClick={() => handleCheckListChecked(true)}
+                          >
+                            Sim!
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleCheckListChecked(false)}
+                          >
+                            Ainda não ...
+                          </button>
+                        </div>
+                      </CheckedListItemDrawer>
+                    )}
+                    <Input name="name" type="text" placeholder="Nome" />
+
+                    <Input
+                      name="priority_level"
+                      type="text"
+                      placeholder="Nível de prioridade (1 a 5)"
+                    />
+
+                    <button type="submit">
+                      <h3>Salvar</h3>
                     </button>
-                  </span>
-                  <h1>Adicionar</h1>
-                  <input type="text" placeholder="Nome" />
-
-                  <input
-                    type="text"
-                    placeholder="Nível de prioridade (1 a 5)"
-                  />
-
-                  <input type="text" placeholder="Realizado?" />
-
-                  <button type="button">
-                    <h3>Salvar</h3>
-                  </button>
-                </AddCheckListDrawer>
+                  </AddCheckListDrawer>
+                </Form>
               )}
             </>
           )}

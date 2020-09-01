@@ -1638,3 +1638,39 @@ export const Calendar = styled.aside`
     color: #232129 !important;
   }
 `;
+
+export const CheckedListItemDrawer = styled.div`
+  position: absolute;
+  z-index: 10;
+  top: 30%;
+  left: 0;
+  width: 200px;
+  height: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 16px auto;
+  background: var(--header-background-color);
+  border-radius: 8px;
+  gap: 16px;
+  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
+  padding: 32px;
+
+  > h1 {
+    font-size: 24px;
+    color: var(--title-color);
+  }
+
+  > div {
+    display: flex;
+    gap: 16px;
+
+    button {
+      background: var(--primary-color);
+      border: none;
+      height: 40px;
+      width: 90%;
+      border-radius: 4px;
+    }
+  }
+`;
