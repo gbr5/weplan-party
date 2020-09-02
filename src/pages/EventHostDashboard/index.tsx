@@ -66,6 +66,7 @@ import {
   AppointmentTypeDrawer,
   Calendar,
   CheckedListItemDrawer,
+  IsHiredDrawer,
 } from './styles';
 
 import PageHeader from '../../components/PageHeader';
@@ -122,6 +123,11 @@ interface ICreateAppointment {
   address: string;
   start_hour: number;
   start_minute: number;
+}
+
+interface ICreateSupplier {
+  supplier_id: string;
+  supplier_sub_category: number;
 }
 
 const EventHostDashboard: React.FC = () => {
@@ -189,6 +195,10 @@ const EventHostDashboard: React.FC = () => {
   const [checkedListItemDrawer, setCheckedListItemDrawer] = useState(false);
   const [CheckedListItemMessage, setCheckedListItemMessage] = useState('');
   const [checked, setChecked] = useState(false);
+
+  const [isHiredDrawer, setIsHiredDrawer] = useState(false);
+  const [isHiredMessage, setIsHiredMessage] = useState('');
+  const [isHired, setIsHired] = useState(false);
 
   useEffect(() => {
     try {
@@ -323,6 +333,24 @@ const EventHostDashboard: React.FC = () => {
     setAddSupplierDrawer(!addSupplierDrawer);
   }, [addSupplierDrawer]);
 
+  const handleIsHiredDrawer = useCallback(() => {
+    setIsHiredDrawer(!isHiredDrawer);
+  }, [isHiredDrawer]);
+
+  const handleIsHiredQuestion = useCallback(
+    (is_hired: boolean) => {
+      if (is_hired === true) {
+        setIsHiredMessage('Contratado S2!');
+        setIsHired(true);
+      } else {
+        setIsHiredMessage('Avaliando ...');
+        setIsHired(false);
+      }
+      return handleWeplanGuestDrawer();
+    },
+    [handleWeplanGuestDrawer],
+  );
+
   const handleAddAppointmentDrawer = useCallback(() => {
     setAddAppointmentDrawer(!addAppointmentDrawer);
   }, [addAppointmentDrawer]);
@@ -435,65 +463,9 @@ const EventHostDashboard: React.FC = () => {
     setEditEventNameDrawer(!editEventNameDrawer);
   }, [editEventNameDrawer]);
 
-  const handleAddCheckListDrawer = useCallback(() => {
-    setAddCheckListDrawer(!addCheckListDrawer);
-  }, [addCheckListDrawer]);
-
   const handleUserProfileWindow = useCallback(() => {
     setUserProfileWindow(!userProfileWindow);
   }, [userProfileWindow]);
-
-  const handleAddCheckListItem = useCallback(
-    async (data: ICreateCheckListItem) => {
-      console.log(data);
-      try {
-        formRef.current?.setErrors([]);
-
-        const schema = Yup.object().shape({
-          name: Yup.string().required('Nome é obrigatório'),
-          priority_level: Yup.string().required('Sobrenome é obrigatório'),
-        });
-
-        await schema.validate(data, {
-          abortEarly: false,
-        });
-        console.log('passou pelo Yup');
-
-        console.log({
-          name: data.name,
-          priority_level: data.priority_level,
-          checked,
-        });
-
-        await api.post(`events/${eventId}/check-list`, {
-          name: data.name,
-          priority_level: data.priority_level,
-          checked,
-        });
-
-        addToast({
-          type: 'success',
-          title: 'Item criado com Sucesso',
-          description: 'O item foi adicionado à sua check-list.',
-        });
-
-        handleAddCheckListDrawer();
-      } catch (err) {
-        if (err instanceof Yup.ValidationError) {
-          const error = getValidationErrors(err);
-
-          formRef.current?.setErrors(error);
-        }
-
-        addToast({
-          type: 'error',
-          title: 'Erro ao criar item da check-list',
-          description: 'Erro  ao criar o item, tente novamente.',
-        });
-      }
-    },
-    [addToast, eventId, handleAddCheckListDrawer, checked],
-  );
 
   const handleCheckedListItemDrawer = useCallback(() => {
     setCheckedListItemDrawer(!checkedListItemDrawer);
@@ -572,6 +544,114 @@ const EventHostDashboard: React.FC = () => {
     setSupplierSection(true);
     setMessagesSection(false);
   }, []);
+
+  const handleAddSupplier = useCallback(
+    async (data: ICreateSupplier) => {
+      console.log(data);
+      try {
+        formRef.current?.setErrors([]);
+
+        const schema = Yup.object().shape({
+          supplier_id: Yup.string(),
+          supplier_sub_category: Yup.string(),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+        console.log('passou pelo Yup');
+
+        console.log({
+          supplier_id: data.supplier_id,
+          supplier_sub_category: data.supplier_sub_category,
+          isHired,
+        });
+
+        await api.post(`events/${eventId}/suppliers`, {
+          supplier_id: data.supplier_id,
+          supplier_sub_category: data.supplier_sub_category,
+          isHired,
+        });
+
+        addToast({
+          type: 'success',
+          title: 'Fornecedor selecionado com Sucesso',
+          description: 'Você já pode visualizar no dashboard do seu evento.',
+        });
+
+        handleAddSupplierDrawer();
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro ao selecionar fornecedor',
+          description: 'Erro selecionar fornecedor, tente novamente.',
+        });
+      }
+    },
+    [addToast, eventId, handleAddSupplierDrawer, isHired],
+  );
+
+  const handleAddCheckListDrawer = useCallback(() => {
+    setAddCheckListDrawer(!addCheckListDrawer);
+  }, [addCheckListDrawer]);
+
+  const handleAddCheckListItem = useCallback(
+    async (data: ICreateCheckListItem) => {
+      console.log(data);
+      try {
+        formRef.current?.setErrors([]);
+
+        const schema = Yup.object().shape({
+          name: Yup.string().required('Nome é obrigatório'),
+          priority_level: Yup.string().required('Sobrenome é obrigatório'),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+        console.log('passou pelo Yup');
+
+        console.log({
+          name: data.name,
+          priority_level: data.priority_level,
+          checked,
+        });
+
+        await api.post(`events/${eventId}/check-list`, {
+          name: data.name,
+          priority_level: data.priority_level,
+          checked,
+        });
+
+        addToast({
+          type: 'success',
+          title: 'Item criado com Sucesso',
+          description: 'O item foi adicionado à sua check-list.',
+        });
+
+        handleAddCheckListDrawer();
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro ao criar item da check-list',
+          description: 'Erro  ao criar o item, tente novamente.',
+        });
+      }
+    },
+    [addToast, eventId, handleAddCheckListDrawer, checked],
+  );
 
   const handleMessagesSection = useCallback(() => {
     setLatestActionsSection(false);
@@ -922,7 +1002,7 @@ const EventHostDashboard: React.FC = () => {
                 </div>
               </HiredSuppliers>
               {!!addSupplierDrawer && (
-                <>
+                <Form ref={formRef} onSubmit={handleAddSupplier}>
                   <AddSupplierDrawer>
                     <span>
                       <button type="button" onClick={handleAddSupplierDrawer}>
@@ -930,19 +1010,57 @@ const EventHostDashboard: React.FC = () => {
                       </button>
                     </span>
                     <h1>Adicionar Fornecedor</h1>
-                    <input type="text" placeholder="Nome" />
 
-                    <input type="text" placeholder="Usuário We Plan?" />
+                    {isHiredMessage === '' ? (
+                      <button type="button" onClick={handleIsHiredDrawer}>
+                        Contratado?
+                      </button>
+                    ) : (
+                      <h1>
+                        <button type="button" onClick={handleIsHiredDrawer}>
+                          {isHiredMessage}
+                        </button>
+                      </h1>
+                    )}
+                    {!!isHiredDrawer && (
+                      <IsHiredDrawer>
+                        <h1>Fornecedor contratado?</h1>
+                        <div>
+                          <button
+                            type="button"
+                            onClick={() => handleIsHiredQuestion(true)}
+                          >
+                            Sim
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleIsHiredQuestion(false)}
+                          >
+                            Não
+                          </button>
+                        </div>
+                      </IsHiredDrawer>
+                    )}
 
-                    <input type="text" placeholder="Qual o nome do usuário?" />
+                    <Input
+                      name="supplier_id"
+                      type="text"
+                      placeholder="ID do fornecedor"
+                    />
 
-                    <input type="text" placeholder="Contratado?" />
+                    {/* <Input name= type="text" placeholder="Usuário We Plan?" /> */}
 
-                    <button type="button">
+                    <Input
+                      name="supplier_sub_category"
+                      type="text"
+                      placeholder="Qual o serviço contratado?"
+                    />
+
+                    <button type="submit">
                       <h3>Salvar</h3>
                     </button>
                   </AddSupplierDrawer>
-                </>
+                </Form>
               )}
             </SupplierSection>
           )}
