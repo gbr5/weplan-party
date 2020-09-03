@@ -130,6 +130,18 @@ interface ICreateSupplier {
   supplier_sub_category: number;
 }
 
+interface IEditEventInfo {
+  date: Date;
+  number_of_guests: number;
+  duration: number;
+  budget: number;
+  description: boolean;
+  country: string;
+  local_state: string;
+  city: string;
+  address: string;
+}
+
 const EventHostDashboard: React.FC = () => {
   const history = useHistory();
   const formRef = useRef<FormHandles>(null);
@@ -224,6 +236,76 @@ const EventHostDashboard: React.FC = () => {
   const handleEventInfoDrawer = useCallback(() => {
     setEventInfoDrawer(!eventInfoDrawer);
   }, [eventInfoDrawer]);
+
+  const handleEditEventInfo = useCallback(
+    async (data: IEditEventInfo) => {
+      try {
+        formRef.current?.setErrors([]);
+
+        const schema = Yup.object().shape({
+          date: Yup.date().required(),
+          number_of_guests: Yup.string().required('Nome é obrigatório'),
+          duration: Yup.number().required('Sobrenome é obrigatório'),
+          budget: Yup.number(),
+          description: Yup.string(),
+          country: Yup.string(),
+          local_state: Yup.string(),
+          city: Yup.string(),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+        console.log('passou pelo Yup');
+
+        console.log({
+          number_of_guests: data.number_of_guests,
+          duration: data.duration,
+          budget: data.budget,
+          description: data.description,
+          country: data.country,
+          local_state: data.local_state,
+          city: data.city,
+        });
+
+        await api.put(`events/${eventId}/event-infos`, {
+          number_of_guests: data.number_of_guests,
+          duration: data.duration,
+          budget: data.budget,
+          description: data.description,
+          country: data.country,
+          local_state: data.local_state,
+          city: data.city,
+        });
+
+        // await api.put(`events/${eventId}`, {
+        //   date: data.date,
+        //   name: data.name,
+        // });
+
+        addToast({
+          type: 'success',
+          title: 'Item criado com Sucesso',
+          description: 'O item foi adicionado à sua check-list.',
+        });
+
+        handleEventInfoDrawer();
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro ao criar item da check-list',
+          description: 'Erro  ao criar o item, tente novamente.',
+        });
+      }
+    },
+    [addToast, eventId, handleEventInfoDrawer],
+  );
 
   const handleBudgetDrawer = useCallback(() => {
     setBudgetDrawer(!budgetDrawer);
@@ -765,33 +847,48 @@ const EventHostDashboard: React.FC = () => {
             Informações do Evento
           </button>
           {!!eventInfoDrawer && (
-            <EventInfoDrawer>
-              <span>
-                <button type="button" onClick={handleEventInfoDrawer}>
-                  <MdClose size={30} />
+            <Form ref={formRef} onSubmit={handleEditEventInfo}>
+              <EventInfoDrawer>
+                <span>
+                  <button type="button" onClick={handleEventInfoDrawer}>
+                    <MdClose size={30} />
+                  </button>
+                </span>
+                <h1>Informações do evento</h1>
+                <div>
+                  <div>
+                    <Input
+                      name="duration"
+                      type="number"
+                      placeholder="Duração (em horas)"
+                    />
+                    <Input
+                      name="number_of_guests"
+                      type="number"
+                      placeholder="Número de convidados"
+                    />
+                    <Input
+                      name="budget"
+                      type="number"
+                      placeholder="Orçamento"
+                    />
+                  </div>
+                  <div>
+                    <Input name="country" type="text" placeholder="País" />
+                    <Input
+                      name="local_state"
+                      type="text"
+                      placeholder="Estado"
+                    />
+                    <Input name="city" type="text" placeholder="Cidade" />
+                  </div>
+                  <Input name="address" type="text" placeholder="Endereço" />
+                </div>
+                <button type="submit">
+                  <h3>Salvar</h3>
                 </button>
-              </span>
-              <h1>Informações do evento</h1>
-              <div>
-                <div>
-                  <input type="text" placeholder="Data do evento" />
-                  <input type="text" placeholder="Tipo de Evento" />
-                  <input type="text" placeholder="Horário de início" />
-                  <input type="text" placeholder="Duração" />
-                  <input type="text" placeholder="Número de convidados" />
-                </div>
-                <div>
-                  <input type="text" placeholder="Traje" />
-                  <input type="text" placeholder="País" />
-                  <input type="text" placeholder="Estado" />
-                  <input type="text" placeholder="Cidade" />
-                  <input type="text" placeholder="Endereço" />
-                </div>
-              </div>
-              <button type="button">
-                <h3>Salvar</h3>
-              </button>
-            </EventInfoDrawer>
+              </EventInfoDrawer>
+            </Form>
           )}
           <button type="button" onClick={handleLatestActionsSection}>
             Últimas Atualizações

@@ -21,6 +21,7 @@ import {
   CreateEventForm,
   Calendar,
   EventTypeDrawer,
+  EventInfoDrawer,
 } from './styles';
 
 interface ICreateEvent {
@@ -31,6 +32,22 @@ interface ICreateEvent {
   start_minute: number;
 }
 
+interface ICreateEventInfo {
+  number_of_guests: number;
+  duration: number;
+  budget: number;
+  description: boolean;
+  country: string;
+  local_state: string;
+  city: string;
+  address: string;
+}
+
+interface IEvent {
+  id: string;
+  name: string;
+}
+
 const MenuButton: React.FC = () => {
   const [buttonDrawer, setButtonDrawer] = useState(false);
   const [createEventDrawer, setCreateEventDrawer] = useState(false);
@@ -38,6 +55,9 @@ const MenuButton: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [eventType, setEventType] = useState<string>();
+  const [eventInfoDrawer, setEventInfoDrawer] = useState(false);
+  const [myEvents, setMyEvents] = useState<IEvent[]>([]);
+  const [eventName, setEventName] = useState('');
 
   const formRef = useRef<FormHandles>(null);
 
@@ -65,6 +85,13 @@ const MenuButton: React.FC = () => {
     history.push('/events');
   }, [history]);
 
+  const handleMyEventDashboard = useCallback(
+    (event_id: string) => {
+      history.push('/dashboard/my-event', { params: event_id });
+    },
+    [history],
+  );
+
   const handleDateChange = useCallback((day: Date) => {
     setSelectedDate(day);
   }, []);
@@ -81,15 +108,99 @@ const MenuButton: React.FC = () => {
     [handleEventTypeDrawer, setEventType],
   );
 
+  const handleEventInfoDrawer = useCallback(() => {
+    setEventInfoDrawer(!eventInfoDrawer);
+  }, [eventInfoDrawer]);
+
+  const handlePostEventInfo = useCallback(
+    async (data: ICreateEventInfo) => {
+      console.log(data);
+      try {
+        const formattedName = eventName
+          .toLowerCase()
+          .split(' ')
+          .map(word => {
+            return word[0].toUpperCase() + word.slice(1);
+          })
+          .join(' ');
+        console.log(eventName, myEvents);
+        const new_event = myEvents.find(event => event.name === formattedName);
+        console.log(new_event);
+
+        formRef.current?.setErrors([]);
+
+        const schema = Yup.object().shape({
+          number_of_guests: Yup.string().required('Nome é obrigatório'),
+          duration: Yup.number().required('Sobrenome é obrigatório'),
+          budget: Yup.number().required(''),
+          description: Yup.string().required(),
+          country: Yup.string().required(),
+          local_state: Yup.string().required(),
+          city: Yup.string().required(),
+          address: Yup.string().required(),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+
+        await api.post(`events/${new_event?.id}/event-info`, {
+          number_of_guests: data.number_of_guests,
+          duration: data.duration,
+          budget: data.budget,
+          description: data.description,
+          country: data.country,
+          local_state: data.local_state,
+          city: data.city,
+          address: data.address,
+        });
+
+        addToast({
+          type: 'success',
+          title: 'Item criado com Sucesso',
+          description: 'O item foi adicionado à sua check-list.',
+        });
+        if (new_event) {
+          console.log('chegou aqui, 156');
+          handleMyEventDashboard(new_event?.id);
+        }
+        handleEventInfoDrawer();
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro ao criar item da check-list',
+          description: 'Erro  ao criar o item, tente novamente.',
+        });
+      }
+    },
+    [
+      addToast,
+      handleEventInfoDrawer,
+      myEvents,
+      eventName,
+      handleMyEventDashboard,
+    ],
+  );
+
+  const handleGetMyEvents = useCallback(async () => {
+    const response = await api.get('events');
+    setMyEvents(response.data);
+    handleEventInfoDrawer();
+  }, [handleEventInfoDrawer]);
+
   const handleCreateEvent = useCallback(
     async (data: ICreateEvent) => {
-      console.log(data);
       try {
         const date = new Date(selectedDate);
 
         date.setHours(Number(data.start_hour));
         date.setMinutes(Number(data.start_minute));
-        console.log(eventType);
 
         formRef.current?.setErrors([]);
 
@@ -102,8 +213,9 @@ const MenuButton: React.FC = () => {
         await schema.validate(data, {
           abortEarly: false,
         });
-        console.log('passou pelo Yup');
 
+        setEventName(data.name);
+        console.log(data.name);
         await api.post('/events', {
           name: data.name,
           date,
@@ -115,7 +227,7 @@ const MenuButton: React.FC = () => {
           title: 'Evento Criado com Sucesso',
           description: 'Você já pode começar a planejar o seu evento.',
         });
-
+        handleGetMyEvents();
         handleCreateEventDrawer();
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
@@ -131,7 +243,13 @@ const MenuButton: React.FC = () => {
         });
       }
     },
-    [addToast, selectedDate, handleCreateEventDrawer, eventType],
+    [
+      addToast,
+      selectedDate,
+      handleCreateEventDrawer,
+      eventType,
+      handleGetMyEvents,
+    ],
   );
 
   return (
@@ -247,6 +365,44 @@ const MenuButton: React.FC = () => {
             </button>
           </Menu>
         </EventTypeDrawer>
+      )}
+      {!!eventInfoDrawer && (
+        <Form ref={formRef} onSubmit={handlePostEventInfo}>
+          <EventInfoDrawer>
+            <span>
+              <button type="button" onClick={handleEventInfoDrawer}>
+                <MdClose size={30} />
+              </button>
+            </span>
+            <h1>Informações do evento</h1>
+            <div>
+              <div>
+                <Input
+                  name="duration"
+                  type="number"
+                  placeholder="Duração (em horas)"
+                />
+                <Input
+                  name="number_of_guests"
+                  type="number"
+                  placeholder="Número de convidados"
+                />
+                <Input name="budget" type="number" placeholder="Orçamento" />
+                <Input name="description" type="text" placeholder="Descrição" />
+              </div>
+              <div>
+                <Input name="country" type="text" placeholder="País" />
+                <Input name="local_state" type="text" placeholder="Estado" />
+                <Input name="city" type="text" placeholder="Cidade" />
+                <Input name="address" type="text" placeholder="Endereço" />
+              </div>
+            </div>
+
+            <button type="submit">
+              <h3>Salvar</h3>
+            </button>
+          </EventInfoDrawer>
+        </Form>
       )}
     </>
   );
