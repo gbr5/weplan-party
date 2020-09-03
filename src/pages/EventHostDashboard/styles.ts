@@ -115,9 +115,14 @@ export const SideBar = styled.div`
     margin-top: 32px;
     margin-bottom: 16px;
     margin-right: auto;
-    font-size: 20px;
-    color: var(--primary-color);
     opacity: 0.9;
+
+    button {
+      font-size: 20px;
+      color: var(--primary-color);
+      background: transparent;
+      border: none;
+    }
   }
 
   > button {
@@ -1708,5 +1713,149 @@ export const IsHiredDrawer = styled.div`
       width: 90%;
       border-radius: 4px;
     }
+  }
+`;
+
+export const AddPlannerDrawer = styled.div`
+  position: fixed;
+  z-index: 10;
+  top: 110px;
+  left: 400px;
+  width: 600px;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 16px auto;
+  background: var(--header-background-color);
+  border-radius: 8px;
+  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
+  padding: 32px;
+  gap: 16px;
+
+  span {
+    position: absolute;
+    top: 0;
+    right: 8px;
+    > button {
+      background: transparent;
+      border: none;
+
+      svg {
+        color: red;
+      }
+    }
+  }
+
+  > h1 {
+    font-size: 24px;
+    color: var(--title-color);
+    margin-bottom: 32px;
+  }
+
+  button {
+    margin-top: 24px;
+    background: var(--primary-color);
+    border: none;
+    height: 40px;
+    width: 91.5%;
+    border-radius: 4px;
+  }
+`;
+
+export const AddOwnerDrawer = styled.div`
+  position: fixed;
+  z-index: 10;
+  top: 110px;
+  left: 400px;
+  width: 600px;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 16px auto;
+  background: var(--header-background-color);
+  border-radius: 8px;
+  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
+  padding: 32px;
+  gap: 16px;
+
+  span {
+    position: absolute;
+    top: 0;
+    right: 8px;
+    > button {
+      background: transparent;
+      border: none;
+
+      svg {
+        color: red;
+      }
+    }
+  }
+
+  > h1 {
+    font-size: 24px;
+    color: var(--title-color);
+    margin-bottom: 32px;
+  }
+
+  button {
+    margin-top: 24px;
+    background: var(--primary-color);
+    border: none;
+    height: 40px;
+    width: 91.5%;
+    border-radius: 4px;
+  }
+`;
+
+export const AddMemberDrawer = styled.div`
+  position: fixed;
+  z-index: 10;
+  top: 110px;
+  left: 400px;
+  width: 600px;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 16px auto;
+  background: var(--header-background-color);
+  border-radius: 8px;
+  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
+  padding: 32px;
+  gap: 16px;
+
+  span {
+    position: absolute;
+    top: 0;
+    right: 8px;
+    > button {
+      background: transparent;
+      border: none;
+
+      svg {
+        color: red;
+      }
+    }
+  }
+
+  > h1 {
+    font-size: 24px;
+    color: var(--title-color);
+    margin-bottom: 32px;
+  }
+
+  button {
+    margin-top: 24px;
+    background: var(--primary-color);
+    border: none;
+    height: 40px;
+    width: 91.5%;
+    border-radius: 4px;
   }
 `;

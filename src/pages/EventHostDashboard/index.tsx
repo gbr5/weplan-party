@@ -67,6 +67,9 @@ import {
   Calendar,
   CheckedListItemDrawer,
   IsHiredDrawer,
+  AddPlannerDrawer,
+  AddOwnerDrawer,
+  AddMemberDrawer,
 } from './styles';
 
 import PageHeader from '../../components/PageHeader';
@@ -142,6 +145,19 @@ interface IEditEventInfo {
   address: string;
 }
 
+interface ICreateEventPlanner {
+  planner_id: string;
+}
+
+interface ICreateEventOwner {
+  owner_id: string;
+  description: string;
+}
+
+interface ICreateEventMember {
+  member_id: string;
+}
+
 const EventHostDashboard: React.FC = () => {
   const history = useHistory();
   const formRef = useRef<FormHandles>(null);
@@ -212,6 +228,10 @@ const EventHostDashboard: React.FC = () => {
   const [isHiredMessage, setIsHiredMessage] = useState('');
   const [isHired, setIsHired] = useState(false);
 
+  const [addPlannerDrawer, setAddPlannerDrawer] = useState(false);
+  const [addOwnerDrawer, setAddOwnerDrawer] = useState(false);
+  const [addMemberDrawer, setAddMemberDrawer] = useState(false);
+
   useEffect(() => {
     try {
       api.get<IEvent[]>('/events').then(response => {
@@ -228,14 +248,117 @@ const EventHostDashboard: React.FC = () => {
     },
     [history],
   );
+  const closeAllWindows = useCallback(() => {
+    setMyEventsDrawer(false);
+    setCheckedListItemDrawer(false);
+    setAddCheckListDrawer(false);
+    setIsHiredDrawer(false);
+    setEventInfoDrawer(false);
+    setBudgetDrawer(false);
+    setAddGuestDrawer(false);
+    setAddMemberDrawer(false);
+    setAddOwnerDrawer(false);
+    setAddSupplierDrawer(false);
+    setAddAppointmentDrawer(false);
+    setEditEventNameDrawer(false);
+    setWeplanSupplierAppointmentDrawer(false);
+    setWeplanGuestDrawer(false);
+    setGuestConfirmedDrawer(false);
+    setAppointmentTypeDrawer(false);
+    setCheckedListItemDrawer(false);
+    setAddPlannerDrawer(false);
+  }, []);
+
+  const closeAllSections = useCallback(() => {
+    setLatestActionsSection(false);
+    setGuestsSection(false);
+    setAppointmentsSection(false);
+    setFinanceSection(false);
+    setCheckListSection(false);
+    setSupplierSection(false);
+    setMessagesSection(false);
+  }, []);
 
   const handleMyEventsDrawer = useCallback(() => {
+    closeAllWindows();
     setMyEventsDrawer(!myEventsDrawer);
-  }, [myEventsDrawer]);
+  }, [myEventsDrawer, closeAllWindows]);
 
   const handleEventInfoDrawer = useCallback(() => {
+    closeAllWindows();
     setEventInfoDrawer(!eventInfoDrawer);
-  }, [eventInfoDrawer]);
+  }, [eventInfoDrawer, closeAllWindows]);
+
+  const handleBudgetDrawer = useCallback(() => {
+    closeAllWindows();
+    setBudgetDrawer(!budgetDrawer);
+  }, [budgetDrawer, closeAllWindows]);
+
+  const handleAddGuestDrawer = useCallback(() => {
+    closeAllWindows();
+    setAddGuestDrawer(!addGuestDrawer);
+  }, [addGuestDrawer, closeAllWindows]);
+
+  const handleWeplanGuestDrawer = useCallback(() => {
+    closeAllWindows();
+    setWeplanGuestDrawer(!weplanGuestDrawer);
+  }, [weplanGuestDrawer, closeAllWindows]);
+
+  const handleGuestConfirmedDrawer = useCallback(() => {
+    closeAllWindows();
+    setGuestConfirmedDrawer(!guestConfirmedDrawer);
+  }, [guestConfirmedDrawer, closeAllWindows]);
+
+  const handleAddSupplierDrawer = useCallback(() => {
+    closeAllWindows();
+    setAddSupplierDrawer(!addSupplierDrawer);
+  }, [addSupplierDrawer, closeAllWindows]);
+
+  const handleIsHiredDrawer = useCallback(() => {
+    setIsHiredDrawer(!isHiredDrawer);
+  }, [isHiredDrawer]);
+
+  const handleAddAppointmentDrawer = useCallback(() => {
+    closeAllWindows();
+    setAddAppointmentDrawer(!addAppointmentDrawer);
+  }, [addAppointmentDrawer, closeAllWindows]);
+
+  const handleWeplanSupplierAppointmentDrawer = useCallback(() => {
+    setWeplanSupplierAppointmentDrawer(!weplanSupplierAppointmentDrawer);
+  }, [weplanSupplierAppointmentDrawer]);
+
+  const handleAppointmentTypeDrawer = useCallback(() => {
+    setAppointmentTypeDrawer(!appointmentTypeDrawer);
+  }, [appointmentTypeDrawer]);
+
+  const handleEditEventNameDrawer = useCallback(() => {
+    closeAllWindows();
+    setEditEventNameDrawer(!editEventNameDrawer);
+  }, [editEventNameDrawer, closeAllWindows]);
+
+  const handleCheckedListItemDrawer = useCallback(() => {
+    setCheckedListItemDrawer(!checkedListItemDrawer);
+  }, [checkedListItemDrawer]);
+
+  const handleAddCheckListDrawer = useCallback(() => {
+    closeAllWindows();
+    setAddCheckListDrawer(!addCheckListDrawer);
+  }, [addCheckListDrawer, closeAllWindows]);
+
+  const handleAddMemberDrawer = useCallback(() => {
+    closeAllWindows();
+    setAddMemberDrawer(!addMemberDrawer);
+  }, [addMemberDrawer, closeAllWindows]);
+
+  const handleAddOwnerDrawer = useCallback(() => {
+    closeAllWindows();
+    setAddOwnerDrawer(!addOwnerDrawer);
+  }, [addOwnerDrawer, closeAllWindows]);
+
+  const handleAddPlannerDrawer = useCallback(() => {
+    closeAllWindows();
+    setAddPlannerDrawer(!addPlannerDrawer);
+  }, [addPlannerDrawer, closeAllWindows]);
 
   const handleEditEventInfo = useCallback(
     async (data: IEditEventInfo) => {
@@ -306,22 +429,6 @@ const EventHostDashboard: React.FC = () => {
     },
     [addToast, eventId, handleEventInfoDrawer],
   );
-
-  const handleBudgetDrawer = useCallback(() => {
-    setBudgetDrawer(!budgetDrawer);
-  }, [budgetDrawer]);
-
-  const handleAddGuestDrawer = useCallback(() => {
-    setAddGuestDrawer(!addGuestDrawer);
-  }, [addGuestDrawer]);
-
-  const handleWeplanGuestDrawer = useCallback(() => {
-    setWeplanGuestDrawer(!weplanGuestDrawer);
-  }, [weplanGuestDrawer]);
-
-  const handleGuestConfirmedDrawer = useCallback(() => {
-    setGuestConfirmedDrawer(!guestConfirmedDrawer);
-  }, [guestConfirmedDrawer]);
 
   const handleWeplanGuestQuestion = useCallback(
     (weplan_user: boolean) => {
@@ -411,14 +518,6 @@ const EventHostDashboard: React.FC = () => {
     [addToast, eventId, handleAddGuestDrawer, weplanUser, guestConfirmed],
   );
 
-  const handleAddSupplierDrawer = useCallback(() => {
-    setAddSupplierDrawer(!addSupplierDrawer);
-  }, [addSupplierDrawer]);
-
-  const handleIsHiredDrawer = useCallback(() => {
-    setIsHiredDrawer(!isHiredDrawer);
-  }, [isHiredDrawer]);
-
   const handleIsHiredQuestion = useCallback(
     (is_hired: boolean) => {
       if (is_hired === true) {
@@ -432,18 +531,6 @@ const EventHostDashboard: React.FC = () => {
     },
     [handleWeplanGuestDrawer],
   );
-
-  const handleAddAppointmentDrawer = useCallback(() => {
-    setAddAppointmentDrawer(!addAppointmentDrawer);
-  }, [addAppointmentDrawer]);
-
-  const handleWeplanSupplierAppointmentDrawer = useCallback(() => {
-    setWeplanSupplierAppointmentDrawer(!weplanSupplierAppointmentDrawer);
-  }, [weplanSupplierAppointmentDrawer]);
-
-  const handleAppointmentTypeDrawer = useCallback(() => {
-    setAppointmentTypeDrawer(!appointmentTypeDrawer);
-  }, [appointmentTypeDrawer]);
 
   const handleWeplanSupplierAppointmentQuestion = useCallback(
     (weplan_user: boolean) => {
@@ -541,17 +628,9 @@ const EventHostDashboard: React.FC = () => {
     ],
   );
 
-  const handleEditEventNameDrawer = useCallback(() => {
-    setEditEventNameDrawer(!editEventNameDrawer);
-  }, [editEventNameDrawer]);
-
   const handleUserProfileWindow = useCallback(() => {
     setUserProfileWindow(!userProfileWindow);
   }, [userProfileWindow]);
-
-  const handleCheckedListItemDrawer = useCallback(() => {
-    setCheckedListItemDrawer(!checkedListItemDrawer);
-  }, [checkedListItemDrawer]);
 
   const handleCheckListChecked = useCallback(
     (item_checked: boolean) => {
@@ -568,64 +647,39 @@ const EventHostDashboard: React.FC = () => {
   );
 
   const handleLatestActionsSection = useCallback(() => {
+    closeAllSections();
     setLatestActionsSection(true);
-    setGuestsSection(false);
-    setAppointmentsSection(false);
-    setFinanceSection(false);
-    setCheckListSection(false);
-    setSupplierSection(false);
-    setMessagesSection(false);
-  }, []);
+  }, [closeAllSections]);
 
   const handleGuestsSection = useCallback(() => {
-    setLatestActionsSection(false);
+    closeAllSections();
     setGuestsSection(true);
-    setAppointmentsSection(false);
-    setFinanceSection(false);
-    setCheckListSection(false);
-    setSupplierSection(false);
-    setMessagesSection(false);
-  }, []);
+  }, [closeAllSections]);
 
   const handleAppointmentsSection = useCallback(() => {
-    setLatestActionsSection(false);
-    setGuestsSection(false);
+    closeAllSections();
     setAppointmentsSection(true);
-    setFinanceSection(false);
-    setCheckListSection(false);
-    setSupplierSection(false);
-    setMessagesSection(false);
-  }, []);
+  }, [closeAllSections]);
 
   const handleFinanceSection = useCallback(() => {
-    setLatestActionsSection(false);
-    setGuestsSection(false);
-    setAppointmentsSection(false);
+    closeAllSections();
     setFinanceSection(true);
-    setCheckListSection(false);
-    setSupplierSection(false);
-    setMessagesSection(false);
-  }, []);
+  }, [closeAllSections]);
 
   const handleCheckListSection = useCallback(() => {
-    setLatestActionsSection(false);
-    setGuestsSection(false);
-    setAppointmentsSection(false);
-    setFinanceSection(false);
+    closeAllSections();
     setCheckListSection(true);
-    setSupplierSection(false);
-    setMessagesSection(false);
-  }, []);
+  }, [closeAllSections]);
 
   const handleSupplierSection = useCallback(() => {
-    setLatestActionsSection(false);
-    setGuestsSection(false);
-    setAppointmentsSection(false);
-    setFinanceSection(false);
-    setCheckListSection(false);
+    closeAllSections();
     setSupplierSection(true);
-    setMessagesSection(false);
-  }, []);
+  }, [closeAllSections]);
+
+  const handleMessagesSection = useCallback(() => {
+    closeAllSections();
+    setMessagesSection(true);
+  }, [closeAllSections]);
 
   const handleAddSupplier = useCallback(
     async (data: ICreateSupplier) => {
@@ -679,10 +733,6 @@ const EventHostDashboard: React.FC = () => {
     [addToast, eventId, handleAddSupplierDrawer, isHired],
   );
 
-  const handleAddCheckListDrawer = useCallback(() => {
-    setAddCheckListDrawer(!addCheckListDrawer);
-  }, [addCheckListDrawer]);
-
   const handleAddCheckListItem = useCallback(
     async (data: ICreateCheckListItem) => {
       console.log(data);
@@ -735,15 +785,135 @@ const EventHostDashboard: React.FC = () => {
     [addToast, eventId, handleAddCheckListDrawer, checked],
   );
 
-  const handleMessagesSection = useCallback(() => {
-    setLatestActionsSection(false);
-    setGuestsSection(false);
-    setAppointmentsSection(false);
-    setFinanceSection(false);
-    setCheckListSection(false);
-    setSupplierSection(false);
-    setMessagesSection(true);
-  }, []);
+  const handleAddPlanner = useCallback(
+    async (data: ICreateEventPlanner) => {
+      console.log(data);
+      try {
+        formRef.current?.setErrors([]);
+
+        const schema = Yup.object().shape({
+          planner_id: Yup.string().required('Usuário WePlan é obrigatório'),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+
+        await api.post(`events/${eventId}/event-planner`, {
+          planner_id: data.planner_id,
+        });
+
+        addToast({
+          type: 'success',
+          title: 'Cerimonialista adicionado com sucesso com Sucesso',
+          description: 'O item foi adicionado à sua check-list.',
+        });
+
+        handleAddPlannerDrawer();
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro ao adicionar cerimonialista',
+          description: 'Erro  ao adicionar cerimonialista, tente novamente.',
+        });
+      }
+    },
+    [addToast, eventId, handleAddPlannerDrawer],
+  );
+
+  const handleAddOwner = useCallback(
+    async (data: ICreateEventOwner) => {
+      console.log(data);
+      try {
+        formRef.current?.setErrors([]);
+
+        const schema = Yup.object().shape({
+          owner_id: Yup.string().required('Usuário WePlan é obrigatório.'),
+          description: Yup.string().required('Descrição é obrigatório.'),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+        console.log('a', eventId);
+
+        await api.post(`events/${eventId}/event-owners`, {
+          owner_id: data.owner_id,
+          description: data.description,
+        });
+
+        addToast({
+          type: 'success',
+          title: 'Dono da festa adicionado com sucesso',
+          description: 'Ele já pode contribuir com o evento.',
+        });
+
+        handleAddOwnerDrawer();
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro ao adicionar Dono da Festa',
+          description: 'Erro ao adicionar Dono da Festa, tente novamente.',
+        });
+      }
+    },
+    [addToast, eventId, handleAddOwnerDrawer],
+  );
+
+  const handleAddMember = useCallback(
+    async (data: ICreateEventMember) => {
+      console.log(data);
+      try {
+        formRef.current?.setErrors([]);
+
+        const schema = Yup.object().shape({
+          member_id: Yup.string(),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+        console.log('a', eventId);
+
+        await api.post(`events/${eventId}/event-members`, {
+          member_id: data.member_id,
+        });
+
+        addToast({
+          type: 'success',
+          title: 'Membro da festa adicionado com sucesso',
+          description: 'Ele já pode visualizar as informações do evento.',
+        });
+
+        handleAddMemberDrawer();
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro ao adicionar membro da festa',
+          description: 'Erro ao adicionar membro da festa, tente novamente.',
+        });
+      }
+    },
+    [addToast, eventId, handleAddMemberDrawer],
+  );
 
   const handleDateChange = useCallback((day: Date) => {
     setSelectedDate(day);
@@ -899,13 +1069,68 @@ const EventHostDashboard: React.FC = () => {
           <button type="button" onClick={handleMessagesSection}>
             Mensagens
           </button>
-          <h1>Cerimonialista</h1>
+          <h1>
+            <button type="button" onClick={handleAddPlannerDrawer}>
+              Cerimonialista
+            </button>
+          </h1>
+          {!!addPlannerDrawer && (
+            <Form ref={formRef} onSubmit={handleAddPlanner}>
+              <AddPlannerDrawer>
+                <span>
+                  <button type="button" onClick={handleAddPlannerDrawer}>
+                    <MdClose size={30} />
+                  </button>
+                </span>
+                <h1>Adicionar Cerimonialista</h1>
+
+                <Input
+                  name="planner_id"
+                  type="text"
+                  placeholder="Qual o id do cerimonialista?"
+                />
+                <button type="submit">
+                  <h3>Salvar</h3>
+                </button>
+              </AddPlannerDrawer>
+            </Form>
+          )}
           <span>
             <button type="button" onClick={handleUserProfileWindow}>
               <h3>Sergio Mendes</h3>
             </button>
           </span>
-          <h1>Donos da Festa</h1>
+          <h1>
+            <button type="button" onClick={handleAddOwnerDrawer}>
+              Donos da Festa
+            </button>
+          </h1>
+          {!!addOwnerDrawer && (
+            <Form ref={formRef} onSubmit={handleAddOwner}>
+              <AddOwnerDrawer>
+                <span>
+                  <button type="button" onClick={handleAddOwnerDrawer}>
+                    <MdClose size={30} />
+                  </button>
+                </span>
+                <h1>Adicionar Dono da Festa</h1>
+
+                <Input
+                  name="owner_id"
+                  type="text"
+                  placeholder="Qual o id do usuário?"
+                />
+                <Input
+                  name="description"
+                  type="text"
+                  placeholder="Título do Dono (Noiva, Mãe da noiva, ...)"
+                />
+                <button type="submit">
+                  <h3>Salvar</h3>
+                </button>
+              </AddOwnerDrawer>
+            </Form>
+          )}
           <span>
             <p>Noiva</p>
 
@@ -919,7 +1144,32 @@ const EventHostDashboard: React.FC = () => {
               <h2>Roberto</h2>
             </button>
           </span>
-          <h1>Membros da Festa</h1>
+          <h1>
+            <button type="button" onClick={handleAddMemberDrawer}>
+              Membros da Festa
+            </button>
+          </h1>
+          {!!addMemberDrawer && (
+            <Form ref={formRef} onSubmit={handleAddMember}>
+              <AddMemberDrawer>
+                <span>
+                  <button type="button" onClick={handleAddMemberDrawer}>
+                    <MdClose size={30} />
+                  </button>
+                </span>
+                <h1>Adicionar Membros da Festa</h1>
+
+                <Input
+                  name="member_id"
+                  type="text"
+                  placeholder="Qual o id do usuário?"
+                />
+                <button type="submit">
+                  <h3>Salvar</h3>
+                </button>
+              </AddMemberDrawer>
+            </Form>
+          )}
           <span>
             <p>Mãe da Noiva</p>
             <button type="button" onClick={handleUserProfileWindow}>
