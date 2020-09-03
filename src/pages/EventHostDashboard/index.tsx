@@ -14,7 +14,7 @@ import {
   FiEdit,
   FiUser,
 } from 'react-icons/fi';
-import { MdClose, MdAdd } from 'react-icons/md';
+import { MdClose, MdPersonAdd, MdAdd } from 'react-icons/md';
 import { isAfter } from 'date-fns';
 import { differenceInCalendarDays } from 'date-fns/esm';
 import { useHistory } from 'react-router-dom';
@@ -993,9 +993,13 @@ const EventHostDashboard: React.FC = () => {
             <MyEventsDrawerButton type="button" onClick={handleMyEventsDrawer}>
               <h1>Meus Eventos</h1>
               {myEventsDrawer ? (
-                <FiChevronUp size={30} />
+                <span>
+                  <FiChevronUp size={30} />
+                </span>
               ) : (
-                <FiChevronDown size={30} />
+                <span>
+                  <FiChevronDown size={30} />
+                </span>
               )}
             </MyEventsDrawerButton>
             {myEventsDrawer && (
@@ -1069,11 +1073,10 @@ const EventHostDashboard: React.FC = () => {
           <button type="button" onClick={handleMessagesSection}>
             Mensagens
           </button>
-          <h1>
-            <button type="button" onClick={handleAddPlannerDrawer}>
-              Cerimonialista
-            </button>
-          </h1>
+          <button type="button" onClick={handleAddPlannerDrawer}>
+            <h1>Cerimonialistas</h1>
+            <MdPersonAdd size={24} />
+          </button>
           {!!addPlannerDrawer && (
             <Form ref={formRef} onSubmit={handleAddPlanner}>
               <AddPlannerDrawer>
@@ -1100,11 +1103,10 @@ const EventHostDashboard: React.FC = () => {
               <h3>Sergio Mendes</h3>
             </button>
           </span>
-          <h1>
-            <button type="button" onClick={handleAddOwnerDrawer}>
-              Donos da Festa
-            </button>
-          </h1>
+          <button type="button" onClick={handleAddOwnerDrawer}>
+            <h1>Anfitriões</h1>
+            <MdPersonAdd size={24} />
+          </button>
           {!!addOwnerDrawer && (
             <Form ref={formRef} onSubmit={handleAddOwner}>
               <AddOwnerDrawer>
@@ -1113,7 +1115,7 @@ const EventHostDashboard: React.FC = () => {
                     <MdClose size={30} />
                   </button>
                 </span>
-                <h1>Adicionar Dono da Festa</h1>
+                <h1>Adicionar Anfitrião</h1>
 
                 <Input
                   name="owner_id"
@@ -1123,7 +1125,7 @@ const EventHostDashboard: React.FC = () => {
                 <Input
                   name="description"
                   type="text"
-                  placeholder="Título do Dono (Noiva, Mãe da noiva, ...)"
+                  placeholder="Título do Anfitrião (Noiva, Mãe da noiva, ...)"
                 />
                 <button type="submit">
                   <h3>Salvar</h3>
@@ -1144,11 +1146,10 @@ const EventHostDashboard: React.FC = () => {
               <h2>Roberto</h2>
             </button>
           </span>
-          <h1>
-            <button type="button" onClick={handleAddMemberDrawer}>
-              Membros da Festa
-            </button>
-          </h1>
+          <button type="button" onClick={handleAddMemberDrawer}>
+            <h1>Membros</h1>
+            <MdPersonAdd size={24} />
+          </button>
           {!!addMemberDrawer && (
             <Form ref={formRef} onSubmit={handleAddMember}>
               <AddMemberDrawer>
@@ -1171,15 +1172,8 @@ const EventHostDashboard: React.FC = () => {
             </Form>
           )}
           <span>
-            <p>Mãe da Noiva</p>
             <button type="button" onClick={handleUserProfileWindow}>
-              <h2>@espacofareast</h2>
-            </button>
-          </span>
-          <span>
-            <p>Mãe do Noivo</p>
-            <button type="button" onClick={handleUserProfileWindow}>
-              <h2>Rubia</h2>
+              <h2>Visualizar</h2>
             </button>
           </span>
         </SideBar>
@@ -1796,8 +1790,7 @@ const EventHostDashboard: React.FC = () => {
                                   onClick={() =>
                                     handleWeplanSupplierAppointmentQuestion(
                                       true,
-                                    )
-                                  }
+                                    )}
                                 >
                                   Sim
                                 </button>
@@ -1806,7 +1799,8 @@ const EventHostDashboard: React.FC = () => {
                                   onClick={() =>
                                     handleWeplanSupplierAppointmentQuestion(
                                       false,
-                                    )}
+                                    )
+                                  }
                                 >
                                   Não
                                 </button>
@@ -1820,14 +1814,16 @@ const EventHostDashboard: React.FC = () => {
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    handleAppointmentTypeQuestion('Comercial')}
+                                    handleAppointmentTypeQuestion('Comercial')
+                                  }
                                 >
                                   Comercial
                                 </button>
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    handleAppointmentTypeQuestion('Técnico')}
+                                    handleAppointmentTypeQuestion('Técnico')
+                                  }
                                 >
                                   Técnico
                                 </button>

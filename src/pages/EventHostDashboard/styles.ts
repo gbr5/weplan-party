@@ -107,32 +107,37 @@ export const SideBar = styled.div`
   background: var(--header-background-color);
   width: 100%;
   height: 100%;
-  padding: 86px 16px 40px;
+  padding: 86px 16px 11px;
   display: flex;
   flex-direction: column;
 
-  > h1 {
-    margin-top: 32px;
-    margin-bottom: 16px;
-    margin-right: auto;
-    opacity: 0.9;
-
-    button {
-      font-size: 20px;
-      color: var(--primary-color);
-      background: transparent;
-      border: none;
-    }
-  }
-
   > button {
-    margin-right: auto;
+    width: 100%;
     margin-top: 8px;
     margin-bottom: 8px;
     font-size: 16px;
     color: var(--letter-color-2);
     border: none;
     background: transparent;
+    display: flex;
+    align-items: flex-start;
+    justify-content: left;
+    position: relative;
+
+    > h1 {
+      left: 0;
+      font-size: 20px;
+      color: var(--primary-color);
+      margin: 8px 0 4px;
+      opacity: 0.9;
+    }
+
+    svg {
+      position: absolute;
+      color: var(--title-color);
+      right: 0;
+      margin: 6px 0 4px;
+    }
 
     &:hover {
       opacity: 0.8;
@@ -232,7 +237,8 @@ export const MyEventsDrawerButton = styled.button`
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-bottom: 20px;
+  justify-content: center;
+  margin-bottom: 4px;
 
   > h1 {
     font-size: 24px;
@@ -241,8 +247,15 @@ export const MyEventsDrawerButton = styled.button`
     &:hover {
       opacity: 0.6;
     }
-    &::active {
+    &:active {
       color: var(--title-color);
+    }
+  }
+
+  > span {
+    > svg {
+      top: 0;
+      margin: auto;
     }
   }
 `;
