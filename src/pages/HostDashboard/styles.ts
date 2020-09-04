@@ -117,6 +117,7 @@ export const MyEventsDrawer = styled.div`
   flex-direction: column;
   text-align: left;
   padding: 8px;
+  overflow-y: scroll;
 
   > button {
     background-color: rgba(255, 144, 0, 0.05);
@@ -148,8 +149,8 @@ export const MyEventsDrawerButton = styled.button`
     &:hover {
       opacity: 0.6;
     }
-    &::active {
-      color: var(--title-color);
+    &:active {
+      background-color: rgba(255, 144, 0, 0.15);
     }
   }
 `;

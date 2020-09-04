@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-
 import 'react-day-picker/lib/style.css';
 
 import {
@@ -34,7 +33,6 @@ import {
 import PageHeader from '../../components/PageHeader';
 import MenuButton from '../../components/MenuButton';
 
-import { useAuth } from '../../hooks/auth';
 import api from '../../services/api';
 
 interface IMonthAvailabilityItem {
@@ -110,13 +108,16 @@ const Dashboard: React.FC = () => {
           daysTillDate: differenceInCalendarDays(date, new Date()),
         });
       }
-      setEventId(myNextEvent.id);
     } catch (err) {
       throw Error(err);
     }
-  }, [myEvents, myNextEvent.id]);
+  }, [myEvents]);
 
-  const getMyNextEventCheList = useCallback(() => {
+  useEffect(() => {
+    setEventId(myNextEvent.id);
+  }, [myNextEvent]);
+
+  const getMyNextEventCheckList = useCallback(() => {
     try {
       api
         .get<IEventCheckList[]>(`/events/${eventId}/check-list`)
@@ -149,8 +150,8 @@ const Dashboard: React.FC = () => {
   }, [getMyNextEventGuests]);
 
   useEffect(() => {
-    getMyNextEventCheList();
-  }, [getMyNextEventCheList]);
+    getMyNextEventCheckList();
+  }, [getMyNextEventCheckList]);
 
   useEffect(() => {
     getMyEvents();

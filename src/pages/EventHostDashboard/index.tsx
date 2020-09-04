@@ -15,14 +15,13 @@ import {
   FiUser,
 } from 'react-icons/fi';
 import { MdClose, MdPersonAdd, MdAdd } from 'react-icons/md';
-import { isAfter } from 'date-fns';
 import { differenceInCalendarDays } from 'date-fns/esm';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
 import {
   Container,
-  Content,
+  EventPageContent,
   SubHeader,
   FirstRow,
   LatestNews,
@@ -78,7 +77,6 @@ import UserProfile from '../../components/UserProfile';
 
 import chart from '../../assets/charts.png';
 
-import { useAuth } from '../../hooks/auth';
 import api from '../../services/api';
 import Input from '../../components/Input';
 import { useToast } from '../../hooks/toast';
@@ -158,23 +156,41 @@ interface ICreateEventMember {
   member_id: string;
 }
 
+interface IEventParams {
+  params: {
+    id: string;
+    name: string;
+    date: string;
+    daysTillDate: number;
+  };
+}
+
+interface EventDTO {
+  id: string;
+  name: string;
+  date: Date;
+  event_type: string;
+}
+
 const EventHostDashboard: React.FC = () => {
   const history = useHistory();
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
+  const location = useLocation<IEventParams>();
+
+  const pageEvent = location.state.params;
 
   const [myEvents, setMyEvents] = useState<IEvent[]>([]);
   const [myEventsDrawer, setMyEventsDrawer] = useState(false);
-  const [myNextEvent, setMyNextEvent] = useState<IEvent>({} as IEvent);
-  const [myNextEventCheckList, setMyNextEventCheckList] = useState<
+  const [event, setEvent] = useState<IEvent>({} as IEvent);
+  const [eventDTO, setEventDTO] = useState<EventDTO>({} as EventDTO);
+
+  const [checkListItems, setCheckListItems] = useState<IEventCheckList[]>([]);
+  const [resolvedCheckListItems, setResolvedCheckListItems] = useState<
     IEventCheckList[]
   >([]);
-  const [resolvedCheckList, setResolvedCheckList] = useState<IEventCheckList[]>(
-    [],
-  );
-  const [myNextEventGuests, setMyNextEventGuests] = useState<IEventGuest[]>([]);
+  const [eventGuests, setEventGuests] = useState<IEventGuest[]>([]);
   const [confirmedGuests, setConfirmedGuests] = useState<IEventGuest[]>([]);
-  const [eventId, setEventId] = useState<string>();
 
   const [eventInfoDrawer, setEventInfoDrawer] = useState(false);
   const [budgetDrawer, setBudgetDrawer] = useState(false);
@@ -232,22 +248,6 @@ const EventHostDashboard: React.FC = () => {
   const [addOwnerDrawer, setAddOwnerDrawer] = useState(false);
   const [addMemberDrawer, setAddMemberDrawer] = useState(false);
 
-  useEffect(() => {
-    try {
-      api.get<IEvent[]>('/events').then(response => {
-        setMyEvents(response.data);
-      });
-    } catch (err) {
-      throw Error(err);
-    }
-  }, [myEvents]);
-
-  const handleMyEventDashboard = useCallback(
-    (event: IEvent) => {
-      history.push('/dashboard/my-event', { params: event });
-    },
-    [history],
-  );
   const closeAllWindows = useCallback(() => {
     setMyEventsDrawer(false);
     setCheckedListItemDrawer(false);
@@ -300,14 +300,12 @@ const EventHostDashboard: React.FC = () => {
   }, [addGuestDrawer, closeAllWindows]);
 
   const handleWeplanGuestDrawer = useCallback(() => {
-    closeAllWindows();
     setWeplanGuestDrawer(!weplanGuestDrawer);
-  }, [weplanGuestDrawer, closeAllWindows]);
+  }, [weplanGuestDrawer]);
 
   const handleGuestConfirmedDrawer = useCallback(() => {
-    closeAllWindows();
     setGuestConfirmedDrawer(!guestConfirmedDrawer);
-  }, [guestConfirmedDrawer, closeAllWindows]);
+  }, [guestConfirmedDrawer]);
 
   const handleAddSupplierDrawer = useCallback(() => {
     closeAllWindows();
@@ -379,9 +377,8 @@ const EventHostDashboard: React.FC = () => {
         await schema.validate(data, {
           abortEarly: false,
         });
-        console.log('passou pelo Yup');
 
-        console.log({
+        await api.put(`events/${pageEvent.id}/event-infos`, {
           number_of_guests: data.number_of_guests,
           duration: data.duration,
           budget: data.budget,
@@ -391,17 +388,7 @@ const EventHostDashboard: React.FC = () => {
           city: data.city,
         });
 
-        await api.put(`events/${eventId}/event-infos`, {
-          number_of_guests: data.number_of_guests,
-          duration: data.duration,
-          budget: data.budget,
-          description: data.description,
-          country: data.country,
-          local_state: data.local_state,
-          city: data.city,
-        });
-
-        // await api.put(`events/${eventId}`, {
+        // await api.put(`events/${pageEvent.id}`, {
         //   date: data.date,
         //   name: data.name,
         // });
@@ -427,7 +414,7 @@ const EventHostDashboard: React.FC = () => {
         });
       }
     },
-    [addToast, eventId, handleEventInfoDrawer],
+    [addToast, pageEvent.id, handleEventInfoDrawer],
   );
 
   const handleWeplanGuestQuestion = useCallback(
@@ -460,7 +447,6 @@ const EventHostDashboard: React.FC = () => {
 
   const handleAddGuest = useCallback(
     async (data: ICreateGuest) => {
-      console.log(data);
       try {
         formRef.current?.setErrors([]);
 
@@ -473,20 +459,8 @@ const EventHostDashboard: React.FC = () => {
         await schema.validate(data, {
           abortEarly: false,
         });
-        console.log('passou pelo Yup');
 
-        console.log(
-          {
-            first_name: data.first_name,
-            last_name: data.last_name,
-            description: data.description,
-            weplanUser,
-            confirmed: guestConfirmed,
-          },
-          { event_id: eventId },
-        );
-
-        await api.post(`events/${eventId}/guests`, {
+        await api.post(`events/${pageEvent.id}/guests`, {
           first_name: data.first_name,
           last_name: data.last_name,
           description: data.description,
@@ -515,7 +489,7 @@ const EventHostDashboard: React.FC = () => {
         });
       }
     },
-    [addToast, eventId, handleAddGuestDrawer, weplanUser, guestConfirmed],
+    [addToast, pageEvent.id, handleAddGuestDrawer, weplanUser, guestConfirmed],
   );
 
   const handleIsHiredQuestion = useCallback(
@@ -560,7 +534,6 @@ const EventHostDashboard: React.FC = () => {
 
   const handleAddAppointment = useCallback(
     async (data: ICreateAppointment) => {
-      console.log(data);
       try {
         formRef.current?.setErrors([]);
         const date = new Date(selectedDate);
@@ -578,14 +551,6 @@ const EventHostDashboard: React.FC = () => {
 
         await schema.validate(data, {
           abortEarly: false,
-        });
-        console.log('passou pelo Yup', {
-          subject: data.subject,
-          date,
-          duration_minutes: Number(data.duration_minutes),
-          address: data.address,
-          weplanGuest: weplanSupplierAppointmentUser,
-          appointment_type: appointmentType,
         });
 
         await api.post(`/appointments`, {
@@ -683,7 +648,6 @@ const EventHostDashboard: React.FC = () => {
 
   const handleAddSupplier = useCallback(
     async (data: ICreateSupplier) => {
-      console.log(data);
       try {
         formRef.current?.setErrors([]);
 
@@ -695,15 +659,8 @@ const EventHostDashboard: React.FC = () => {
         await schema.validate(data, {
           abortEarly: false,
         });
-        console.log('passou pelo Yup');
 
-        console.log({
-          supplier_id: data.supplier_id,
-          supplier_sub_category: data.supplier_sub_category,
-          isHired,
-        });
-
-        await api.post(`events/${eventId}/suppliers`, {
+        await api.post(`events/${pageEvent.id}/suppliers`, {
           supplier_id: data.supplier_id,
           supplier_sub_category: data.supplier_sub_category,
           isHired,
@@ -730,12 +687,11 @@ const EventHostDashboard: React.FC = () => {
         });
       }
     },
-    [addToast, eventId, handleAddSupplierDrawer, isHired],
+    [addToast, pageEvent.id, handleAddSupplierDrawer, isHired],
   );
 
   const handleAddCheckListItem = useCallback(
     async (data: ICreateCheckListItem) => {
-      console.log(data);
       try {
         formRef.current?.setErrors([]);
 
@@ -747,15 +703,8 @@ const EventHostDashboard: React.FC = () => {
         await schema.validate(data, {
           abortEarly: false,
         });
-        console.log('passou pelo Yup');
 
-        console.log({
-          name: data.name,
-          priority_level: data.priority_level,
-          checked,
-        });
-
-        await api.post(`events/${eventId}/check-list`, {
+        await api.post(`events/${pageEvent.id}/check-list`, {
           name: data.name,
           priority_level: data.priority_level,
           checked,
@@ -782,12 +731,11 @@ const EventHostDashboard: React.FC = () => {
         });
       }
     },
-    [addToast, eventId, handleAddCheckListDrawer, checked],
+    [addToast, pageEvent.id, handleAddCheckListDrawer, checked],
   );
 
   const handleAddPlanner = useCallback(
     async (data: ICreateEventPlanner) => {
-      console.log(data);
       try {
         formRef.current?.setErrors([]);
 
@@ -799,7 +747,7 @@ const EventHostDashboard: React.FC = () => {
           abortEarly: false,
         });
 
-        await api.post(`events/${eventId}/event-planner`, {
+        await api.post(`events/${pageEvent.id}/event-planner`, {
           planner_id: data.planner_id,
         });
 
@@ -824,12 +772,11 @@ const EventHostDashboard: React.FC = () => {
         });
       }
     },
-    [addToast, eventId, handleAddPlannerDrawer],
+    [addToast, pageEvent.id, handleAddPlannerDrawer],
   );
 
   const handleAddOwner = useCallback(
     async (data: ICreateEventOwner) => {
-      console.log(data);
       try {
         formRef.current?.setErrors([]);
 
@@ -841,9 +788,8 @@ const EventHostDashboard: React.FC = () => {
         await schema.validate(data, {
           abortEarly: false,
         });
-        console.log('a', eventId);
 
-        await api.post(`events/${eventId}/event-owners`, {
+        await api.post(`events/${pageEvent.id}/event-owners`, {
           owner_id: data.owner_id,
           description: data.description,
         });
@@ -869,12 +815,11 @@ const EventHostDashboard: React.FC = () => {
         });
       }
     },
-    [addToast, eventId, handleAddOwnerDrawer],
+    [addToast, pageEvent.id, handleAddOwnerDrawer],
   );
 
   const handleAddMember = useCallback(
     async (data: ICreateEventMember) => {
-      console.log(data);
       try {
         formRef.current?.setErrors([]);
 
@@ -885,9 +830,8 @@ const EventHostDashboard: React.FC = () => {
         await schema.validate(data, {
           abortEarly: false,
         });
-        console.log('a', eventId);
 
-        await api.post(`events/${eventId}/event-members`, {
+        await api.post(`events/${pageEvent.id}/event-members`, {
           member_id: data.member_id,
         });
 
@@ -912,7 +856,7 @@ const EventHostDashboard: React.FC = () => {
         });
       }
     },
-    [addToast, eventId, handleAddMemberDrawer],
+    [addToast, pageEvent.id, handleAddMemberDrawer],
   );
 
   const handleDateChange = useCallback((day: Date) => {
@@ -923,63 +867,98 @@ const EventHostDashboard: React.FC = () => {
     setCurrentMonth(month);
   }, []);
 
-  useEffect(() => {
-    if (myEvents) {
-      const nextEvent = myEvents.find(myEvent => {
-        return isAfter(new Date(myEvent.date), new Date());
-      });
-
-      if (nextEvent) {
-        api.get(`/events/${nextEvent.id}`).then(response => {
-          console.log(response.data);
+  const handleGetGuests = useCallback(() => {
+    try {
+      api
+        .get<IEventGuest[]>(`/events/${pageEvent.id}/guests`)
+        .then(response => {
+          setEventGuests(response.data);
         });
-        const date = new Date(nextEvent.date);
-        const year = date.getFullYear();
-        const month =
-          date.getMonth() < 10 ? `0${date.getMonth()}` : date.getMonth();
-        const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
-        const hour =
-          date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
-        const minute =
-          date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
-
-        setMyNextEvent({
-          id: nextEvent?.id,
-          name: nextEvent?.name,
-          date: `${hour}:${minute} - ${day}/${month}/${year}`,
-          daysTillDate: differenceInCalendarDays(date, new Date()),
-        });
-      }
+      setConfirmedGuests(eventGuests.filter(guest => guest.confirmed === true));
+    } catch (err) {
+      throw new Error('event dashboard, rota guest para o backend');
+      console.log(err);
     }
-  }, [myEvents]);
-  useEffect(() => {
-    setEventId(myNextEvent.id);
-  }, [myNextEvent]);
+  }, [pageEvent.id, eventGuests]);
+
+  const handleGetCheckListItems = useCallback(() => {
+    try {
+      api
+        .get<IEventCheckList[]>(`/events/${pageEvent.id}/check-list`)
+        .then(response => {
+          setCheckListItems(response.data);
+        });
+      setResolvedCheckListItems(
+        checkListItems.filter(item => item.checked === true),
+      );
+    } catch (err) {
+      throw new Error('event dashboard, rota guest para o backend');
+      console.log(err);
+    }
+  }, [pageEvent.id, checkListItems]);
+
+  const handleGetEvents = useCallback(() => {
+    try {
+      api.get<IEvent[]>('/events').then(response => {
+        setMyEvents(response.data);
+      });
+    } catch (err) {
+      throw Error(err);
+    }
+  }, []);
+
+  const handleGetEvent = useCallback(() => {
+    try {
+      api.get<EventDTO>(`/events/${pageEvent.id}`).then(response => {
+        setEventDTO(response.data);
+      });
+    } catch (err) {
+      throw Error(err);
+    }
+  }, [pageEvent]);
+
+  const handleMyEventDashboard = useCallback(
+    (my_event: IEvent) => {
+      history.push('/dashboard/my-event', { params: my_event });
+      closeAllWindows();
+      handleGetEvent();
+    },
+    [history, handleGetEvent, closeAllWindows],
+  );
 
   useEffect(() => {
-    api.get(`/events/${eventId}/check-list`).then(response => {
-      setMyNextEventCheckList(response.data);
+    handleGetEvents();
+  }, [handleGetEvents]);
+
+  useEffect(() => {
+    handleGetEvent();
+  }, [handleGetEvent]);
+
+  useEffect(() => {
+    const date = new Date(eventDTO.date);
+    const year = date.getFullYear();
+    const month =
+      date.getMonth() < 10 ? `0${date.getMonth()}` : date.getMonth();
+    const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
+    const hour = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
+    const minute =
+      date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
+
+    setEvent({
+      id: eventDTO.id,
+      name: eventDTO.name,
+      date: `${hour}:${minute} - ${day}/${month}/${year}`,
+      daysTillDate: differenceInCalendarDays(date, new Date()),
     });
-  }, [myNextEvent, eventId]);
+  }, [eventDTO]);
 
   useEffect(() => {
-    setResolvedCheckList(
-      myNextEventCheckList.filter(checkList => checkList.checked === true),
-    );
-  }, [myNextEventCheckList]);
+    handleGetCheckListItems();
+  }, [handleGetCheckListItems]);
 
   useEffect(() => {
-    api.get(`/events/${eventId}/guestsSection`).then(response => {
-      setMyNextEventGuests(response.data);
-      console.log(response.data);
-    });
-  }, [myNextEvent, eventId]);
-
-  useEffect(() => {
-    setConfirmedGuests(
-      myNextEventGuests.filter(guest => guest.confirmed === true),
-    );
-  }, [myNextEvent, myNextEventGuests]);
+    handleGetGuests();
+  }, [handleGetGuests]);
 
   return (
     <Container>
@@ -987,7 +966,7 @@ const EventHostDashboard: React.FC = () => {
       <PageHeader />
       {!!userProfileWindow && <UserProfile />}
 
-      <Content>
+      <EventPageContent>
         <SideBar>
           <MyEvents>
             <MyEventsDrawerButton type="button" onClick={handleMyEventsDrawer}>
@@ -1004,14 +983,16 @@ const EventHostDashboard: React.FC = () => {
             </MyEventsDrawerButton>
             {myEventsDrawer && (
               <MyEventsDrawer>
-                {myEvents.map(event => (
+                {myEvents.map(myEvent => (
                   <button
                     type="button"
-                    onClick={() => handleMyEventDashboard(event)}
-                    key={event.id}
+                    onClick={() => handleMyEventDashboard(myEvent)}
+                    key={myEvent.id}
                   >
-                    {event.name}
-                    <FiChevronRight size={24} />
+                    {myEvent.name}
+                    <span>
+                      <FiChevronRight size={24} />
+                    </span>
                   </button>
                 ))}
               </MyEventsDrawer>
@@ -1180,7 +1161,7 @@ const EventHostDashboard: React.FC = () => {
         <Main>
           <SubHeader>
             <span>
-              <h1>{myNextEvent.name}</h1>
+              <h1>{event.name}</h1>
               <button type="button" onClick={handleEditEventNameDrawer}>
                 <FiEdit size={30} />
               </button>
@@ -1211,8 +1192,10 @@ const EventHostDashboard: React.FC = () => {
             <FirstRow>
               <div>
                 <button type="button" onClick={handleGuestsSection}>
-                  <h2>N° Convidados</h2>
-                  <p>57/150</p>
+                  <h2>Convidados</h2>
+                  <p>
+                    {confirmedGuests.length}/{eventGuests.length}
+                  </p>
                 </button>
               </div>
               <div>
@@ -1237,9 +1220,11 @@ const EventHostDashboard: React.FC = () => {
               </div>
               <div>
                 <button type="button" onClick={handleCheckListSection}>
-                  <h2>Check List</h2>
+                  <h2>Check-List</h2>
 
-                  <p>4/15</p>
+                  <p>
+                    {resolvedCheckListItems.length}/{checkListItems.length}
+                  </p>
                 </button>
               </div>
             </FirstRow>
@@ -1506,7 +1491,7 @@ const EventHostDashboard: React.FC = () => {
           {!!guestsSection && (
             <GuestSection>
               <EventGuests>
-                <h1>Convidados do Evento</h1>
+                <h1>Convidados</h1>
                 <div>
                   <Guest>
                     <h1>Luisa</h1>
@@ -1976,7 +1961,7 @@ const EventHostDashboard: React.FC = () => {
             </>
           )}
         </Main>
-      </Content>
+      </EventPageContent>
     </Container>
   );
 };

@@ -7,105 +7,22 @@ export const Container = styled.div`
   margin: 0;
   padding: 0;
   height: 100%;
-`;
-
-export const Header = styled.header`
-  position: fixed;
-  top: 0;
-  z-index: 5;
-
-  width: 100%;
-  padding: 16px 0;
-
-  background: var(--header-background-color);
-  box-shadow: var(--box-shadow);
-`;
-
-export const HeaderContent = styled.div`
-  max-width: 95%;
-  margin: 0 auto;
   display: flex;
-  align-items: center;
-
-  > button {
-    background: transparent;
-    border: none;
-  }
 `;
 
-export const Logo = styled.h2`
-  color: var(--primary-color);
-  font-size: 32px;
-`;
-
-export const Profile = styled.div`
-  display: flex;
-  align-items: center;
-  margin-left: 40px;
-
-  > img {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    box-shadow: 5px 5px 5px 5px rgba(0, 0, 0, 0.1);
-  }
-
-  div {
-    display: flex;
-    flex-direction: column;
-    margin-left: 16px;
-    line-height: 24px;
-
-    span {
-      color: var(--letter-color-3);
-    }
-
-    a {
-      text-decoration: none;
-      color: var(--primary-color);
-      transition: 0.2s;
-    }
-
-    a:hover {
-      opacity: 0.7;
-    }
-  }
-`;
-
-export const Menu = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: auto;
-
-  button {
-    background: transparent;
-    border: 0;
-    margin-left: 32px;
-    font-size: 18px;
-    font-weight: 500;
-    color: var(--letter-color-1);
-
-    svg {
-      color: var(--letter-color-1);
-      width: 30px;
-      height: 30px;
-    }
-  }
-`;
-
-export const Content = styled.main`
+export const EventPageContent = styled.main`
   position: relative;
   width: 100%;
-  display: grid;
+  display: flex;
   padding-right: 80px;
-  grid-template-columns: 2fr 9fr;
   gap: 80px;
 `;
 
 export const SideBar = styled.div`
+  margin: 0;
   background: var(--header-background-color);
-  width: 100%;
+  width: 22%;
+  min-width: 220px;
   height: 100%;
   padding: 86px 16px 11px;
   display: flex;
@@ -134,7 +51,7 @@ export const SideBar = styled.div`
 
     svg {
       position: absolute;
-      color: var(--title-color);
+      color: var(--primary-color);
       right: 0;
       margin: 6px 0 4px;
     }
@@ -198,8 +115,8 @@ export const MyEvents = styled.button`
 `;
 
 export const MyEventsDrawer = styled.div`
-  top: 130px;
-  z-index: 10;
+  top: 40px;
+  z-index: 1000;
   left: 0px;
   position: absolute;
   height: 300px;
@@ -210,6 +127,7 @@ export const MyEventsDrawer = styled.div`
   flex-direction: column;
   text-align: left;
   padding: 8px;
+  overflow-y: scroll;
 
   > button {
     background-color: rgba(255, 144, 0, 0.05);
@@ -220,6 +138,14 @@ export const MyEventsDrawer = styled.div`
     border: 1px solid var(--primary-color);
     border-radius: 8px;
     padding: 16px;
+    position: relative;
+
+    > span {
+      > svg {
+        top: 13px;
+        margin: auto;
+      }
+    }
 
     &:hover {
       background-color: rgba(255, 144, 0, 0.15);
@@ -246,9 +172,6 @@ export const MyEventsDrawerButton = styled.button`
 
     &:hover {
       opacity: 0.6;
-    }
-    &:active {
-      color: var(--title-color);
     }
   }
 
