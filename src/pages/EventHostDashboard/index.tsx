@@ -13,6 +13,7 @@ import {
   FiUserPlus,
   FiEdit,
   FiUser,
+  FiSquare,
 } from 'react-icons/fi';
 import { MdClose, MdPersonAdd, MdAdd } from 'react-icons/md';
 import { differenceInCalendarDays } from 'date-fns/esm';
@@ -35,9 +36,6 @@ import {
   Supplier,
   AddSupplierDrawer,
   GuestSection,
-  EventGuests,
-  MyGuests,
-  Guest,
   AddGuestDrawer,
   Financial,
   SideBar,
@@ -69,6 +67,9 @@ import {
   AddPlannerDrawer,
   AddOwnerDrawer,
   AddMemberDrawer,
+  MembersWindow,
+  Guest,
+  GuestNavigationButton,
 } from './styles';
 
 import PageHeader from '../../components/PageHeader';
@@ -76,11 +77,13 @@ import MenuButton from '../../components/MenuButton';
 import UserProfile from '../../components/UserProfile';
 
 import chart from '../../assets/charts.png';
+import avatar_placeholder from '../../assets/avatar_placeholder_cat2.jpeg';
 
 import api from '../../services/api';
 import Input from '../../components/Input';
 import { useToast } from '../../hooks/toast';
 import getValidationErrors from '../../utils/getValidationErros';
+import { useAuth } from '../../hooks/auth';
 
 interface IMonthAvailabilityItem {
   day: number;
@@ -102,6 +105,10 @@ interface IEventCheckList {
 interface IEventGuest {
   id: string;
   confirmed: boolean;
+  host: string;
+  first_name: string;
+  last_name: string;
+  weplanUser: boolean;
 }
 
 interface ICreateGuest {
@@ -172,11 +179,34 @@ interface EventDTO {
   event_type: string;
 }
 
+interface IEventPlanners {
+  id: string;
+  name: string;
+  avatar: string;
+  trimmed_name: string;
+}
+
+interface IEventOwners {
+  id: string;
+  name: string;
+  avatar: string;
+  trimmed_name: string;
+  description: string;
+}
+
+interface IEventMembers {
+  id: string;
+  name: string;
+  avatar: string;
+  trimmed_name: string;
+}
+
 const EventHostDashboard: React.FC = () => {
   const history = useHistory();
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
   const location = useLocation<IEventParams>();
+  const { user } = useAuth();
 
   const pageEvent = location.state.params;
 
@@ -191,6 +221,15 @@ const EventHostDashboard: React.FC = () => {
   >([]);
   const [eventGuests, setEventGuests] = useState<IEventGuest[]>([]);
   const [confirmedGuests, setConfirmedGuests] = useState<IEventGuest[]>([]);
+  const [myGuests, setMyGuests] = useState<IEventGuest[]>([]);
+
+  const [planners, setPlanners] = useState<IEventPlanners[]>([]);
+  const [owners, setOwners] = useState<IEventOwners[]>([]);
+  const [members, setMembers] = useState<IEventMembers[]>([]);
+
+  const [membersWindow, setMembersWindow] = useState(false);
+  const [guestWindow, setGuestWindow] = useState(true);
+  // const [myGuestWindow, setMyGuestWindow] = useState(false);
 
   const [eventInfoDrawer, setEventInfoDrawer] = useState(false);
   const [budgetDrawer, setBudgetDrawer] = useState(false);
@@ -288,6 +327,15 @@ const EventHostDashboard: React.FC = () => {
     closeAllWindows();
     setEventInfoDrawer(!eventInfoDrawer);
   }, [eventInfoDrawer, closeAllWindows]);
+
+  const handleMembersWindow = useCallback(() => {
+    closeAllWindows();
+    setMembersWindow(!membersWindow);
+  }, [membersWindow, closeAllWindows]);
+
+  const handleGuestWindow = useCallback(props => {
+    setGuestWindow(props);
+  }, []);
 
   const handleBudgetDrawer = useCallback(() => {
     closeAllWindows();
@@ -387,11 +435,6 @@ const EventHostDashboard: React.FC = () => {
           local_state: data.local_state,
           city: data.city,
         });
-
-        // await api.put(`events/${pageEvent.id}`, {
-        //   date: data.date,
-        //   name: data.name,
-        // });
 
         addToast({
           type: 'success',
@@ -867,6 +910,45 @@ const EventHostDashboard: React.FC = () => {
     setCurrentMonth(month);
   }, []);
 
+  const getEventPlanners = useCallback(() => {
+    try {
+      api
+        .get<IEventPlanners[]>(`events/${pageEvent.id}/event-planner`)
+        .then(response => {
+          setPlanners(response.data);
+        });
+    } catch (err) {
+      throw new Error('event dashboard, rota guest para o backend');
+      console.log(err);
+    }
+  }, [pageEvent]);
+
+  const getEventOwners = useCallback(() => {
+    try {
+      api
+        .get<IEventOwners[]>(`events/${pageEvent.id}/event-owners`)
+        .then(response => {
+          setOwners(response.data);
+        });
+    } catch (err) {
+      console.log(err);
+      throw new Error('event dashboard, rota guest para o backend');
+    }
+  }, [pageEvent]);
+
+  const getEventMembers = useCallback(() => {
+    try {
+      api
+        .get<IEventMembers[]>(`events/${pageEvent.id}/event-members`)
+        .then(response => {
+          setMembers(response.data);
+        });
+    } catch (err) {
+      throw new Error('event dashboard, rota guest para o backend');
+      console.log(err);
+    }
+  }, [pageEvent]);
+
   const handleGetGuests = useCallback(() => {
     try {
       api
@@ -875,11 +957,12 @@ const EventHostDashboard: React.FC = () => {
           setEventGuests(response.data);
         });
       setConfirmedGuests(eventGuests.filter(guest => guest.confirmed === true));
+      setMyGuests(eventGuests.filter(guest => guest.host === user.name));
     } catch (err) {
       throw new Error('event dashboard, rota guest para o backend');
       console.log(err);
     }
-  }, [pageEvent.id, eventGuests]);
+  }, [pageEvent.id, eventGuests, user]);
 
   const handleGetCheckListItems = useCallback(() => {
     try {
@@ -959,6 +1042,21 @@ const EventHostDashboard: React.FC = () => {
   useEffect(() => {
     handleGetGuests();
   }, [handleGetGuests]);
+
+  useEffect(() => {
+    getEventPlanners();
+  }, [getEventPlanners]);
+
+  useEffect(() => {
+    getEventOwners();
+  }, [getEventOwners]);
+
+  useEffect(() => {
+    getEventMembers();
+  }, [getEventMembers]);
+
+  let guestCount = 0;
+  let myGuestCount = 0;
 
   return (
     <Container>
@@ -1079,11 +1177,13 @@ const EventHostDashboard: React.FC = () => {
               </AddPlannerDrawer>
             </Form>
           )}
-          <span>
-            <button type="button" onClick={handleUserProfileWindow}>
-              <h3>Sergio Mendes</h3>
-            </button>
-          </span>
+          {planners.map(planner => (
+            <span key={planner.id}>
+              <button type="button" onClick={handleUserProfileWindow}>
+                <h2>{planner.name}</h2>
+              </button>
+            </span>
+          ))}
           <button type="button" onClick={handleAddOwnerDrawer}>
             <h1>Anfitriões</h1>
             <MdPersonAdd size={24} />
@@ -1114,23 +1214,19 @@ const EventHostDashboard: React.FC = () => {
               </AddOwnerDrawer>
             </Form>
           )}
-          <span>
-            <p>Noiva</p>
+          {owners.map(owner => (
+            <span key={owner.id}>
+              <button type="button" onClick={handleUserProfileWindow}>
+                <h2>{owner.name}</h2>
+              </button>
+            </span>
+          ))}
 
-            <button type="button" onClick={handleUserProfileWindow}>
-              <h2>Roberta</h2>
-            </button>
-          </span>
-          <span>
-            <p>Noivo</p>
-            <button type="button" onClick={handleUserProfileWindow}>
-              <h2>Roberto</h2>
-            </button>
-          </span>
           <button type="button" onClick={handleAddMemberDrawer}>
             <h1>Membros</h1>
             <MdPersonAdd size={24} />
           </button>
+
           {!!addMemberDrawer && (
             <Form ref={formRef} onSubmit={handleAddMember}>
               <AddMemberDrawer>
@@ -1139,6 +1235,7 @@ const EventHostDashboard: React.FC = () => {
                     <MdClose size={30} />
                   </button>
                 </span>
+
                 <h1>Adicionar Membros da Festa</h1>
 
                 <Input
@@ -1146,17 +1243,53 @@ const EventHostDashboard: React.FC = () => {
                   type="text"
                   placeholder="Qual o id do usuário?"
                 />
+
                 <button type="submit">
                   <h3>Salvar</h3>
                 </button>
               </AddMemberDrawer>
             </Form>
           )}
+
           <span>
-            <button type="button" onClick={handleUserProfileWindow}>
+            <button type="button" onClick={handleMembersWindow}>
               <h2>Visualizar</h2>
             </button>
           </span>
+
+          {!!membersWindow && (
+            <MembersWindow>
+              <span>
+                <h1>{event.name}</h1>
+
+                <button type="button" onClick={handleMembersWindow}>
+                  <MdClose size={30} />
+                </button>
+
+                <div>
+                  <h1>Membros</h1>
+                  <strong>{members.length}</strong>
+                </div>
+              </span>
+
+              <div>
+                {members.map(member => (
+                  <button key={member.id} type="button">
+                    <img
+                      src={
+                        member.avatar === ''
+                          ? avatar_placeholder
+                          : member.avatar
+                      }
+                      alt={member.trimmed_name}
+                    />
+
+                    <h1>{member.name}</h1>
+                  </button>
+                ))}
+              </div>
+            </MembersWindow>
+          )}
         </SideBar>
         <Main>
           <SubHeader>
@@ -1490,57 +1623,87 @@ const EventHostDashboard: React.FC = () => {
           )}
           {!!guestsSection && (
             <GuestSection>
-              <EventGuests>
-                <h1>Convidados</h1>
-                <div>
-                  <Guest>
-                    <h1>Luisa</h1>
-                    <FiCheckSquare />
-                  </Guest>
-                  <Guest>
-                    <h1>Luisa</h1>
-                    <FiCheckSquare />
-                  </Guest>
-                  <Guest>
-                    <h1>Luisa</h1>
-                    <button type="button" onClick={handleUserProfileWindow}>
-                      <FiUser size={24} />
-                    </button>
-                    <FiCheckSquare />
-                  </Guest>
-                  <Guest>
-                    <h1>Luisa</h1>
-                    <FiCheckSquare />
-                  </Guest>
-                </div>
-              </EventGuests>
-              <MyGuests>
-                <h1>Meus Convidados</h1>
+              <span>
+                <GuestNavigationButton
+                  myGuestActive={guestWindow}
+                  type="button"
+                  onClick={() => handleGuestWindow(true)}
+                >
+                  Convidados da Festa
+                </GuestNavigationButton>
+
+                <GuestNavigationButton
+                  type="button"
+                  onClick={() => handleGuestWindow(false)}
+                  myGuestActive={!guestWindow}
+                >
+                  Meus Convidados
+                </GuestNavigationButton>
                 <button type="button" onClick={handleAddGuestDrawer}>
-                  <FiUserPlus size={26} />
+                  <MdPersonAdd size={30} />
                 </button>
-                <div>
-                  <Guest>
-                    <h1>Luisa</h1>
-                    <button type="button" onClick={handleUserProfileWindow}>
-                      <FiUser size={24} />
-                    </button>
-                    <FiCheckSquare />
-                  </Guest>
-                  <Guest>
-                    <h1>Luisa</h1>
-                    <FiCheckSquare />
-                  </Guest>
-                  <Guest>
-                    <h1>Luisa</h1>
-                    <FiCheckSquare />
-                  </Guest>
-                  <Guest>
-                    <h1>Luisa</h1>
-                    <FiCheckSquare />
-                  </Guest>
-                </div>
-              </MyGuests>
+              </span>
+
+              <div>
+                {guestWindow &&
+                  eventGuests.map(eGuest => {
+                    guestCount += 1;
+                    return (
+                      <Guest key={eGuest.id}>
+                        <span>
+                          <p>{guestCount}</p>
+                          <h1>
+                            <strong>{eGuest.first_name}</strong>{' '}
+                            {eGuest.last_name}
+                          </h1>
+                        </span>
+                        {eGuest.weplanUser && (
+                          <button key={eGuest.id} type="button">
+                            <FiUser size={24} />
+                          </button>
+                        )}
+                        <div>
+                          <button key={eGuest.id} type="button">
+                            {eGuest.confirmed ? (
+                              <FiCheckSquare size={24} />
+                            ) : (
+                              <FiSquare size={24} />
+                            )}
+                          </button>
+                        </div>
+                      </Guest>
+                    );
+                  })}
+                {!guestWindow &&
+                  myGuests.map(mGuest => {
+                    myGuestCount += 1;
+                    return (
+                      <Guest key={mGuest.id}>
+                        <span>
+                          <p>{myGuestCount}</p>
+                          <h1>
+                            <strong>{mGuest.first_name}</strong>{' '}
+                            {mGuest.last_name}
+                          </h1>
+                        </span>
+                        {mGuest.weplanUser && (
+                          <button key={mGuest.id} type="button">
+                            <FiUser size={24} />
+                          </button>
+                        )}
+                        <div>
+                          <button key={mGuest.id} type="button">
+                            {mGuest.confirmed ? (
+                              <FiCheckSquare size={24} />
+                            ) : (
+                              <FiSquare size={24} />
+                            )}
+                          </button>
+                        </div>
+                      </Guest>
+                    );
+                  })}
+              </div>
               {!!addGuestDrawer && (
                 <Form ref={formRef} onSubmit={handleAddGuest}>
                   <AddGuestDrawer>

@@ -5,7 +5,7 @@ import { MdHelp } from 'react-icons/md';
 import { FiSettings, FiPower } from 'react-icons/fi';
 import { Header, HeaderContent, Profile, Menu, Logo } from './styles';
 
-import profileImg from '../../assets/guy.jpg';
+import profileImg from '../../assets/avatar_placeholder.jpg';
 import { useAuth } from '../../hooks/auth';
 
 const PageHeader: React.FC = () => {
@@ -14,13 +14,6 @@ const PageHeader: React.FC = () => {
 
   const handleNavigateToDashboard = useCallback(() => {
     history.push('/dashboard');
-  }, [history]);
-
-  const handleNavigateToFriends = useCallback(() => {
-    history.push('/friends');
-  }, [history]);
-  const handleNavigateToEvents = useCallback(() => {
-    history.push('/events');
   }, [history]);
 
   return (

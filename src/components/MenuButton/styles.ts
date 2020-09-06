@@ -4,8 +4,8 @@ import { shade } from 'polished';
 
 export const Button = styled.button`
   position: fixed;
-  bottom: 60px;
-  right: 64px;
+  bottom: 40px;
+  right: 30px;
   z-index: 5;
   width: 60px;
   height: 60px;
@@ -23,9 +23,9 @@ export const Button = styled.button`
 
 export const ButtonContent = styled.div`
   position: fixed;
-  bottom: 110px;
+  bottom: 90px;
+  right: 80px;
   z-index: 50000;
-  right: 110px;
   width: 248px;
   height: 350px;
   background: var(--card-color);

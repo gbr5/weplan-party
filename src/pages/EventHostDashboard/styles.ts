@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import '../../styles/global';
 import { shade } from 'polished';
 
@@ -64,7 +64,8 @@ export const SideBar = styled.div`
   span {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
+    padding-left: 16px;
     margin-bottom: 8px;
 
     > button {
@@ -722,8 +723,84 @@ export const AddAppointmentDrawer = styled.div`
 
 export const SupplierSection = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
+  grid-template-rows: 1fr 3fr;
+  background: var(--header-background-color);
+  border: none;
+  border-radius: 8px;
+  gap: 16px;
+  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
+
+  span {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+
+    > h1 {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      font-size: 24px;
+      color: var(--title-color);
+    }
+
+    > button {
+      position: absolute;
+      top: 0;
+      right: 8px;
+      background: transparent;
+      border: none;
+    }
+  }
+
+  div {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: 32px;
+    width: 100%;
+    gap: 32px;
+
+    button {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      border-radius: 8px;
+      background: var(--letter-color-3);
+      height: 80px;
+      padding: 32px auto;
+      gap: 16px;
+      box-shadow: 2px 2px 6px 2px rgba(0, 0, 0, 0.2);
+      transition: 0.6s;
+
+      > img {
+        margin-left: 14px;
+        height: 60px;
+        width: 60px;
+        border-radius: 50%;
+        box-shadow: 2px 2px 6px 2px rgba(0, 0, 0, 0.2);
+        transition: 0.6s;
+
+        &:hover {
+          box-shadow: 5px 5px 6px 2px rgba(255, 150, 10, 0.4);
+        }
+      }
+
+      > h1 {
+        font-size: 20px;
+        color: var(--letter-color-5);
+      }
+
+      svg {
+        color: var(--primary-color);
+      }
+
+      &:hover {
+        box-shadow: 4px 4px 6px 2px rgba(255, 150, 10, 0.3);
+        opacity: 0.8;
+      }
+    }
+  }
 `;
 
 export const SelectedSuppliers = styled.div`
@@ -871,95 +948,131 @@ export const AddSupplierDrawer = styled.div`
 `;
 
 export const GuestSection = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 32px;
-`;
-
-export const EventGuests = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
-  width: 100%;
-
-  > h1 {
-    font-size: 24px;
-    color: var(--primary-color);
-  }
-
-  > div {
-    padding: 16px;
-    border-radius: 8px;
-    background-color: var(--header-background-color);
-    box-shadow: 2px 2px 3px 2px rgba(50, 50, 50, 0.1);
-    width: 100%;
-
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-  }
-`;
-
-export const MyGuests = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
   position: relative;
 
-  > button {
-    background: transparent;
-    border: none;
-    position: absolute;
-    right: 0;
-    top: 0;
-    color: var(--title-color);
-  }
+  > span {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
 
-  > h1 {
-    font-size: 24px;
-    color: var(--primary-color);
+    > button {
+      font-size: 32px;
+      background: transparent;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      > svg {
+        color: var(--primary-color);
+      }
+    }
   }
 
   > div {
     width: 100%;
-
     padding: 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--card-color);
     border-radius: 8px;
-    background-color: var(--header-background-color);
-    box-shadow: 2px 2px 3px 2px rgba(50, 50, 50, 0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
   }
+`;
+
+interface ButtonProps {
+  myGuestActive: boolean;
+}
+
+export const GuestNavigationButton = styled.button<ButtonProps>`
+  font-size: 32px;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-color);
+  opacity: 0.75;
+
+  &:hover {
+    opacity: 1;
+  }
+  > svg {
+    color: var(--primary-color);
+  }
+
+  ${props =>
+    props.myGuestActive &&
+    css`
+      color: var(--title-color);
+      opacity: 1;
+    `}
 `;
 
 export const Guest = styled.div`
   width: 100%;
-  margin-bottom: 8px;
+  padding: 8px;
+  padding-right: 16px;
   display: flex;
   align-items: center;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--letter-color-4);
+  justify-content: center;
+  background: var(--header-background-color);
+  border-radius: 4px;
 
-  > h1 {
-    font-size: 18px;
-    color: var(--title-color);
+  > span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    > p {
+      color: var(--primary-color);
+      font-size: 16px;
+      margin-left: 8px;
+    }
+
+    > h1 {
+      font-size: 16px;
+      color: var(--title-color);
+      margin-right: auto;
+
+      > strong {
+        font-weight: 500;
+      }
+    }
   }
 
   > button {
     background: transparent;
     border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: var(--primary-color);
-    margin-left: auto;
+    margin: 0 auto;
   }
 
-  > svg {
+  > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-left: auto;
+
+    button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      color: var(--title-color);
+    }
   }
 `;
 
@@ -1793,5 +1906,109 @@ export const AddMemberDrawer = styled.div`
     height: 40px;
     width: 91.5%;
     border-radius: 4px;
+  }
+`;
+
+export const MembersWindow = styled.div`
+  position: fixed;
+  z-index: 10;
+  top: 5%;
+  left: 5%;
+  width: 90%;
+  height: 90%;
+  display: grid;
+  grid-template-rows: 1fr 5fr;
+  background: var(--header-background-color);
+  border: none;
+  border-radius: 8px;
+  gap: 16px;
+  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
+
+  span {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+
+    > h1 {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      font-size: 24px;
+      color: var(--title-color);
+    }
+
+    > button {
+      position: absolute;
+      top: 0;
+      right: 8px;
+      background: transparent;
+      border: none;
+
+      svg {
+        color: red;
+      }
+    }
+
+    > div {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      h1 {
+        font-size: 32px;
+        color: var(--primary-color);
+      }
+
+      strong {
+        font-size: 32px;
+        color: var(--title-color);
+      }
+    }
+  }
+
+  div {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: 32px;
+    width: 100%;
+    gap: 32px;
+
+    button {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      border-radius: 8px;
+      background: var(--letter-color-3);
+      height: 100px;
+      padding: 32px auto;
+      gap: 16px;
+      box-shadow: 2px 2px 6px 2px rgba(0, 0, 0, 0.2);
+      transition: 0.6s;
+
+      > img {
+        margin-left: 14px;
+        height: 80px;
+        width: 80px;
+        border-radius: 50%;
+        box-shadow: 2px 2px 6px 2px rgba(0, 0, 0, 0.2);
+        transition: 0.6s;
+
+        &:hover {
+          box-shadow: 5px 5px 6px 2px rgba(255, 150, 10, 0.4);
+        }
+      }
+
+      > h1 {
+        font-size: 24px;
+        color: var(--letter-color-5);
+      }
+
+      &:hover {
+        box-shadow: 4px 4px 6px 2px rgba(255, 150, 10, 0.3);
+        opacity: 0.8;
+      }
+    }
   }
 `;

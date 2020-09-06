@@ -86,6 +86,8 @@ const Dashboard: React.FC = () => {
         setMyEvents(response.data);
       });
 
+      console.log('host dashboard, linha 89: myEvents', myEvents);
+
       const nextEvent = myEvents.find(myEvent => {
         return isAfter(new Date(myEvent.date), new Date());
       });
