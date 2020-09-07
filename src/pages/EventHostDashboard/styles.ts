@@ -976,14 +976,14 @@ export const GuestSection = styled.div`
 
   > div {
     width: 100%;
-    height: 500px;
+    max-height: 500px;
     padding: 16px;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    align-items: flex-start;
+    grid-template-columns: repeat(2, 1fr);
     gap: 8px;
     background: var(--card-color);
     border-radius: 8px;
+    overflow-y: scroll;
   }
 `;
 
@@ -1018,6 +1018,8 @@ export const GuestNavigationButton = styled.button<ButtonProps>`
 
 export const Guest = styled.div`
   width: 100%;
+  height: 56px;
+  margin: 0 auto;
   padding: 8px;
   padding-right: 16px;
   display: flex;

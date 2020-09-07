@@ -6,7 +6,7 @@ import { Container, Content, FriendsEvents } from './styles';
 
 import PageHeader from '../../components/PageHeader';
 import MenuButton from '../../components/MenuButton';
-import UserProfile from '../../components/UserProfile';
+// import UserProfile from '../../components/UserProfile';
 
 const EventsDashboard: React.FC = () => {
   const [userProfileWindow, setUserProfileWindow] = useState(false);
@@ -23,7 +23,7 @@ const EventsDashboard: React.FC = () => {
       />
       <MenuButton />
       <PageHeader />
-      {!!userProfileWindow && <UserProfile />}
+      {/* {!!userProfileWindow && <UserProfile />} */}
       <Content>
         <button type="button">CONFIRMAR PRESENÇA</button>
         <h1>Nome do Evento</h1>

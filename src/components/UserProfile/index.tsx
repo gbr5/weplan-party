@@ -2,38 +2,53 @@ import React, { useCallback } from 'react';
 
 // import { MdClose } from 'react-icons/md';
 import { useHistory } from 'react-router-dom';
+import { MouseEventHandler } from 'react-select';
+import { MdClose } from 'react-icons/md';
 import { UserProfileWindow } from './styles';
+import avatar_placeholder from '../../assets/avatar_placeholder.jpg';
 
-const UserProfile: React.FC = () => {
+interface IUser {
+  id: string;
+  name: string;
+  avatar: string;
+  first_name: string;
+  last_name: string;
+}
+
+interface IPropsDTO {
+  user: IUser;
+  onChildClick: MouseEventHandler;
+}
+
+const UserProfile: React.FC<IPropsDTO> = ({
+  user,
+  onChildClick,
+}: IPropsDTO) => {
   const history = useHistory();
 
   const handleNavigateToEvents = useCallback(() => {
     history.push('/events');
   }, [history]);
 
+  const avatar = user.avatar === '' ? avatar_placeholder : user.avatar;
+
   return (
     <UserProfileWindow>
-      {/* <span>
-        <button type="button" onClick={handleCreateEventDrawer}>
+      <span>
+        <button type="button" onClick={onChildClick}>
           <MdClose size={30} />
         </button>
-      </span> */}
-      <h1>Nome do usuário</h1>
-      <p>é um fornecedor (perfil sempre aberto)?</p>
-      <p>é uma empresa?</p>
-      <p>se não é fornecedor, o perfil é aberto?</p>
-      <p>se não é fornecedor, é um amigo?</p>
-      <p>
-        se for amigo ou o perfil for aberto, aqui aparecem os contatos da pessoa
-      </p>
+      </span>
+      <img src={avatar} alt={user.name} />
+      <h1>{user.name}</h1>
+      <span>
+        {user.first_name} {user.last_name}
+      </span>
       <div>
         <button type="button" onClick={handleNavigateToEvents}>
-          se for amigo ou o perfil for aberto, aqui aparecem as festas da pessoa
+          Perfil
         </button>
       </div>
-      <button type="button">
-        <h3>Criar</h3>
-      </button>
     </UserProfileWindow>
   );
 };

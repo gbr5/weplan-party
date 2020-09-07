@@ -15,7 +15,7 @@ import {
 
 import PageHeader from '../../components/PageHeader';
 import MenuButton from '../../components/MenuButton';
-import UserProfile from '../../components/UserProfile';
+// import UserProfile from '../../components/UserProfile';
 
 const EventHostDashboard: React.FC = () => {
   const [userProfileWindow, setUserProfileWindow] = useState(false);
@@ -28,7 +28,7 @@ const EventHostDashboard: React.FC = () => {
     <Container>
       <MenuButton />
       <PageHeader />
-      {!!userProfileWindow && <UserProfile />}
+      {/* {!!userProfileWindow && <UserProfile />} */}
       <Content>
         <UsersChat>
           <div>
