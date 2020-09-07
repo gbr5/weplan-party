@@ -70,6 +70,7 @@ import {
   MembersWindow,
   Guest,
   GuestNavigationButton,
+  FriendsList,
 } from './styles';
 
 import PageHeader from '../../components/PageHeader';
@@ -201,6 +202,11 @@ interface IEventMembers {
   trimmed_name: string;
 }
 
+interface IFriends {
+  id: string;
+  name: string;
+}
+
 const EventHostDashboard: React.FC = () => {
   const history = useHistory();
   const formRef = useRef<FormHandles>(null);
@@ -215,6 +221,9 @@ const EventHostDashboard: React.FC = () => {
   const [event, setEvent] = useState<IEvent>({} as IEvent);
   const [eventDTO, setEventDTO] = useState<EventDTO>({} as EventDTO);
 
+  const [friends, setFriends] = useState<IFriends[]>([]);
+  const [friendsWindow, setFriendsWindow] = useState(false);
+
   const [checkListItems, setCheckListItems] = useState<IEventCheckList[]>([]);
   const [resolvedCheckListItems, setResolvedCheckListItems] = useState<
     IEventCheckList[]
@@ -222,7 +231,8 @@ const EventHostDashboard: React.FC = () => {
   const [eventGuests, setEventGuests] = useState<IEventGuest[]>([]);
   const [confirmedGuests, setConfirmedGuests] = useState<IEventGuest[]>([]);
   const [myGuests, setMyGuests] = useState<IEventGuest[]>([]);
-
+  const [guest_id, setGuest_id] = useState('');
+  const [guestName, setGuestName] = useState('');
   const [planners, setPlanners] = useState<IEventPlanners[]>([]);
   const [owners, setOwners] = useState<IEventOwners[]>([]);
   const [members, setMembers] = useState<IEventMembers[]>([]);
@@ -306,6 +316,7 @@ const EventHostDashboard: React.FC = () => {
     setAppointmentTypeDrawer(false);
     setCheckedListItemDrawer(false);
     setAddPlannerDrawer(false);
+    setFriendsWindow(false);
   }, []);
 
   const closeAllSections = useCallback(() => {
@@ -337,6 +348,10 @@ const EventHostDashboard: React.FC = () => {
     setGuestWindow(props);
   }, []);
 
+  const handleFriendsWindow = useCallback(props => {
+    setFriendsWindow(props);
+  }, []);
+
   const handleBudgetDrawer = useCallback(() => {
     closeAllWindows();
     setBudgetDrawer(!budgetDrawer);
@@ -347,9 +362,9 @@ const EventHostDashboard: React.FC = () => {
     setAddGuestDrawer(!addGuestDrawer);
   }, [addGuestDrawer, closeAllWindows]);
 
-  const handleWeplanGuestDrawer = useCallback(() => {
-    setWeplanGuestDrawer(!weplanGuestDrawer);
-  }, [weplanGuestDrawer]);
+  const handleWeplanGuestDrawer = useCallback(props => {
+    setWeplanGuestDrawer(props);
+  }, []);
 
   const handleGuestConfirmedDrawer = useCallback(() => {
     setGuestConfirmedDrawer(!guestConfirmedDrawer);
@@ -463,15 +478,26 @@ const EventHostDashboard: React.FC = () => {
   const handleWeplanGuestQuestion = useCallback(
     (weplan_user: boolean) => {
       if (weplan_user === true) {
-        setWeplanGuestUser('É usuário WePlan S2!');
+        setWeplanGuestUser(`${guestName}`);
         setWeplanUser(true);
+        friendsWindow ? handleFriendsWindow(false) : handleFriendsWindow(true);
       } else {
         setWeplanGuestUser('AINDA não é usuário WePlan!');
         setWeplanUser(false);
       }
-      return handleWeplanGuestDrawer();
+      return handleWeplanGuestDrawer(false);
     },
-    [handleWeplanGuestDrawer],
+    [handleWeplanGuestDrawer, guestName, handleFriendsWindow, friendsWindow],
+  );
+
+  const handleSelectedWeplanUser = useCallback(
+    (id: string, name: string) => {
+      setGuestName(name);
+      setGuest_id(id);
+      setFriendsWindow(false);
+      handleWeplanGuestQuestion(true);
+    },
+    [handleWeplanGuestQuestion],
   );
 
   const handleGuestConfirmedQuestion = useCallback(
@@ -502,13 +528,21 @@ const EventHostDashboard: React.FC = () => {
         await schema.validate(data, {
           abortEarly: false,
         });
-
+        console.log({
+          first_name: data.first_name,
+          last_name: data.last_name,
+          description: data.description,
+          weplanUser,
+          confirmed: guestConfirmed,
+          guest_id,
+        });
         await api.post(`events/${pageEvent.id}/guests`, {
           first_name: data.first_name,
           last_name: data.last_name,
           description: data.description,
           weplanUser,
           confirmed: guestConfirmed,
+          guest_id,
         });
 
         addToast({
@@ -516,6 +550,12 @@ const EventHostDashboard: React.FC = () => {
           title: 'Evento Criado com Sucesso',
           description: 'Você já pode começar a planejar o seu evento.',
         });
+        setGuest_id('');
+        setWeplanGuestUser('');
+        setGuestConfirmedMessage('');
+        setWeplanUser(false);
+        setGuestConfirmed(false);
+        setGuestName('');
 
         handleAddGuestDrawer();
       } catch (err) {
@@ -532,7 +572,14 @@ const EventHostDashboard: React.FC = () => {
         });
       }
     },
-    [addToast, pageEvent.id, handleAddGuestDrawer, weplanUser, guestConfirmed],
+    [
+      addToast,
+      pageEvent.id,
+      handleAddGuestDrawer,
+      weplanUser,
+      guestConfirmed,
+      guest_id,
+    ],
   );
 
   const handleIsHiredQuestion = useCallback(
@@ -544,7 +591,7 @@ const EventHostDashboard: React.FC = () => {
         setIsHiredMessage('Avaliando ...');
         setIsHired(false);
       }
-      return handleWeplanGuestDrawer();
+      return handleWeplanGuestDrawer(false);
     },
     [handleWeplanGuestDrawer],
   );
@@ -558,7 +605,7 @@ const EventHostDashboard: React.FC = () => {
         setWeplanSupplierAppointmentMessage('AINDA não é usuário WePlan!');
         setWeplanSupplierAppointmentUser(false);
       }
-      return handleWeplanGuestDrawer();
+      return handleWeplanGuestDrawer(false);
     },
     [handleWeplanGuestDrawer],
   );
@@ -980,6 +1027,17 @@ const EventHostDashboard: React.FC = () => {
     }
   }, [pageEvent.id, checkListItems]);
 
+  const handleGetFriends = useCallback(() => {
+    try {
+      api.get<IFriends[]>(`/users/friends/list`).then(response => {
+        setFriends(response.data);
+      });
+    } catch (err) {
+      throw new Error('event dashboard, rota friends para o backend');
+      console.log(err);
+    }
+  }, []);
+
   const handleGetEvents = useCallback(() => {
     try {
       api.get<IEvent[]>('/events').then(response => {
@@ -1015,7 +1073,15 @@ const EventHostDashboard: React.FC = () => {
 
   useEffect(() => {
     handleGetEvent();
-  }, [handleGetEvent]);
+    handleGetFriends();
+    handleGetGuests();
+    handleGetCheckListItems();
+  }, [
+    handleGetEvent,
+    handleGetCheckListItems,
+    handleGetGuests,
+    handleGetFriends,
+  ]);
 
   useEffect(() => {
     const date = new Date(eventDTO.date);
@@ -1038,6 +1104,10 @@ const EventHostDashboard: React.FC = () => {
   useEffect(() => {
     handleGetCheckListItems();
   }, [handleGetCheckListItems]);
+
+  useEffect(() => {
+    handleGetFriends();
+  }, [handleGetFriends]);
 
   useEffect(() => {
     handleGetGuests();
@@ -1714,39 +1784,6 @@ const EventHostDashboard: React.FC = () => {
                     </span>
                     <h1>Adicionar Convidado</h1>
 
-                    <div>
-                      {weplanGuestUser === '' ? (
-                        <button type="button" onClick={handleWeplanGuestDrawer}>
-                          Convidado Weplan ?
-                        </button>
-                      ) : (
-                        <h1>
-                          <button
-                            type="button"
-                            onClick={handleWeplanGuestDrawer}
-                          >
-                            {weplanGuestUser}
-                          </button>
-                        </h1>
-                      )}
-                      {guestConfirmedMessage === '' ? (
-                        <button
-                          type="button"
-                          onClick={handleGuestConfirmedDrawer}
-                        >
-                          Confirmado?
-                        </button>
-                      ) : (
-                        <h1>
-                          <button
-                            type="button"
-                            onClick={handleGuestConfirmedDrawer}
-                          >
-                            {guestConfirmedMessage}
-                          </button>
-                        </h1>
-                      )}
-                    </div>
                     {!!weplanGuestDrawer && (
                       <WeplanGuestDrawer>
                         <h1>É usuário WePlan?</h1>
@@ -1799,6 +1836,43 @@ const EventHostDashboard: React.FC = () => {
                       placeholder="Alguma descrição necessária?"
                     />
 
+                    <div>
+                      {guestConfirmedMessage === '' ? (
+                        <button
+                          type="button"
+                          onClick={handleGuestConfirmedDrawer}
+                        >
+                          Confirmado?
+                        </button>
+                      ) : (
+                        <h1>
+                          <button
+                            type="button"
+                            onClick={handleGuestConfirmedDrawer}
+                          >
+                            {guestConfirmedMessage}
+                          </button>
+                        </h1>
+                      )}
+                      {weplanGuestUser === '' ? (
+                        <button
+                          type="button"
+                          onClick={() => handleWeplanGuestDrawer(true)}
+                        >
+                          Convidado Weplan ?
+                        </button>
+                      ) : (
+                        <h1>
+                          <button
+                            type="button"
+                            onClick={() => handleWeplanGuestDrawer(true)}
+                          >
+                            {weplanGuestUser}
+                          </button>
+                        </h1>
+                      )}
+                    </div>
+
                     <button type="submit">
                       <h3>Salvar</h3>
                     </button>
@@ -1806,6 +1880,29 @@ const EventHostDashboard: React.FC = () => {
                 </Form>
               )}
             </GuestSection>
+          )}
+          {friendsWindow && (
+            <FriendsList>
+              <span>
+                <button
+                  type="button"
+                  onClick={() => handleFriendsWindow(false)}
+                >
+                  <MdClose size={30} />
+                </button>
+              </span>
+              {friends.map(friend => (
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleSelectedWeplanUser(friend.id, friend.name)
+                  }
+                  key={friend.id}
+                >
+                  {friend.name}
+                </button>
+              ))}
+            </FriendsList>
           )}
           {!!appointmentsSection && (
             <Appointments>
@@ -1938,7 +2035,8 @@ const EventHostDashboard: React.FC = () => {
                                   onClick={() =>
                                     handleWeplanSupplierAppointmentQuestion(
                                       true,
-                                    )}
+                                    )
+                                  }
                                 >
                                   Sim
                                 </button>
@@ -1947,8 +2045,7 @@ const EventHostDashboard: React.FC = () => {
                                   onClick={() =>
                                     handleWeplanSupplierAppointmentQuestion(
                                       false,
-                                    )
-                                  }
+                                    )}
                                 >
                                   Não
                                 </button>
@@ -1962,16 +2059,14 @@ const EventHostDashboard: React.FC = () => {
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    handleAppointmentTypeQuestion('Comercial')
-                                  }
+                                    handleAppointmentTypeQuestion('Comercial')}
                                 >
                                   Comercial
                                 </button>
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    handleAppointmentTypeQuestion('Técnico')
-                                  }
+                                    handleAppointmentTypeQuestion('Técnico')}
                                 >
                                   Técnico
                                 </button>

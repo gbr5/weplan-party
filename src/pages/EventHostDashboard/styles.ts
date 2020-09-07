@@ -976,11 +976,11 @@ export const GuestSection = styled.div`
 
   > div {
     width: 100%;
+    height: 500px;
     padding: 16px;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-start;
     gap: 8px;
     background: var(--card-color);
     border-radius: 8px;
@@ -2009,6 +2009,62 @@ export const MembersWindow = styled.div`
         box-shadow: 4px 4px 6px 2px rgba(255, 150, 10, 0.3);
         opacity: 0.8;
       }
+    }
+  }
+`;
+
+export const FriendsList = styled.div`
+  top: 20%;
+  z-index: 100000;
+  left: 30%;
+  position: fixed;
+  height: 60%;
+  width: 40%;
+  background-color: var(--background-color);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  padding: 24px;
+  overflow-y: scroll;
+
+  > span {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+
+    button {
+      background: transparent;
+      border: none;
+      color: red;
+    }
+  }
+
+  > button {
+    background-color: var(--primary-color);
+    display: flex;
+    justify-content: center;
+    color: var(--letter-color-1);
+    margin: 8px;
+    border: 1px solid var(--primary-color);
+    border-radius: 8px;
+    padding: 16px;
+    position: relative;
+    box-shadow: 2px 2px 5px 3px rgba(0, 0, 0, 0.2);
+
+    > span {
+      > svg {
+        top: 13px;
+        margin: auto;
+      }
+    }
+
+    &:hover {
+      opacity: 0.8;
+      box-shadow: 2px 2px 5px 3px rgba(255, 150, 10, 0.3);
+    }
+    svg {
+      margin-left: auto;
     }
   }
 `;
