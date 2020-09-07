@@ -1025,6 +1025,11 @@ export const Guest = styled.div`
   justify-content: center;
   background: var(--header-background-color);
   border-radius: 4px;
+  transition: 0.3s;
+
+  &:hover {
+    box-shadow: 1px 1px 3px 2px rgba(255, 150, 10, 0.3);
+  }
 
   > span {
     display: flex;
@@ -1038,10 +1043,18 @@ export const Guest = styled.div`
       margin-left: 8px;
     }
 
-    > h1 {
+    > button {
+      background: transparent;
+      border: none;
       font-size: 16px;
       color: var(--title-color);
       margin-right: auto;
+      transition: 0.3s;
+
+      &:hover {
+        opacity: 0.8;
+        color: var(--primary-color);
+      }
 
       > strong {
         font-weight: 500;
@@ -1057,6 +1070,13 @@ export const Guest = styled.div`
     justify-content: center;
     color: var(--primary-color);
     margin: 0 auto;
+    transition: 0.3s;
+    border-radius: 4px;
+
+    &:hover {
+      opacity: 0.8;
+      box-shadow: 1px 1px 3px 2px rgba(255, 150, 10, 0.3);
+    }
   }
 
   > div {
@@ -1064,6 +1084,13 @@ export const Guest = styled.div`
     align-items: center;
     justify-content: center;
     margin-left: auto;
+    transition: 0.3s;
+    border-radius: 4px;
+
+    &:hover {
+      opacity: 0.8;
+      box-shadow: 1px 1px 3px 2px rgba(255, 150, 10, 0.3);
+    }
 
     button {
       display: flex;
@@ -1128,6 +1155,12 @@ export const AddGuestDrawer = styled.div`
       border-radius: 4px;
       padding: 0 16px;
       border: none;
+      transition: 0.3s;
+
+      &:hover {
+        opacity: 0.8;
+        box-shadow: 1px 1px 3px 2px rgba(255, 150, 10, 0.3);
+      }
     }
 
     > h1 {
@@ -1137,6 +1170,12 @@ export const AddGuestDrawer = styled.div`
         color: var(--primary-color);
         font-size: 24px;
         font-weight: 500;
+        transition: 0.3s;
+
+        &:hover {
+          opacity: 0.8;
+          box-shadow: 1px 1px 3px 2px rgba(255, 150, 10, 0.3);
+        }
       }
     }
   }
@@ -1148,6 +1187,12 @@ export const AddGuestDrawer = styled.div`
     width: 90%;
     border-radius: 4px;
     margin-bottom: 16px;
+    transition: 0.3s;
+
+    &:hover {
+      opacity: 0.8;
+      box-shadow: 1px 1px 3px 2px rgba(255, 150, 10, 0.3);
+    }
   }
 `;
 

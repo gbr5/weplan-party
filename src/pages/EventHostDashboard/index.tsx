@@ -110,6 +110,7 @@ interface IEventGuest {
   first_name: string;
   last_name: string;
   weplanUser: boolean;
+  description: string;
 }
 
 interface ICreateGuest {
@@ -231,6 +232,9 @@ const EventHostDashboard: React.FC = () => {
   const [eventGuests, setEventGuests] = useState<IEventGuest[]>([]);
   const [confirmedGuests, setConfirmedGuests] = useState<IEventGuest[]>([]);
   const [myGuests, setMyGuests] = useState<IEventGuest[]>([]);
+  const [updated_guest, setUpdated_guest] = useState<IEventGuest>(
+    {} as IEventGuest,
+  );
   const [guest_id, setGuest_id] = useState('');
   const [guestName, setGuestName] = useState('');
   const [planners, setPlanners] = useState<IEventPlanners[]>([]);
@@ -297,6 +301,8 @@ const EventHostDashboard: React.FC = () => {
   const [addOwnerDrawer, setAddOwnerDrawer] = useState(false);
   const [addMemberDrawer, setAddMemberDrawer] = useState(false);
 
+  const [editGuestDrawer, setEditGuestDrawer] = useState(false);
+
   const closeAllWindows = useCallback(() => {
     setMyEventsDrawer(false);
     setCheckedListItemDrawer(false);
@@ -338,6 +344,15 @@ const EventHostDashboard: React.FC = () => {
     closeAllWindows();
     setEventInfoDrawer(!eventInfoDrawer);
   }, [eventInfoDrawer, closeAllWindows]);
+
+  const handleEditGuestDrawer = useCallback(
+    (props: IEventGuest) => {
+      closeAllWindows();
+      setUpdated_guest(props);
+      return setEditGuestDrawer(!editGuestDrawer);
+    },
+    [editGuestDrawer, closeAllWindows],
+  );
 
   const handleMembersWindow = useCallback(() => {
     closeAllWindows();
@@ -519,36 +534,48 @@ const EventHostDashboard: React.FC = () => {
       try {
         formRef.current?.setErrors([]);
 
-        const schema = Yup.object().shape({
-          first_name: Yup.string().required('Primeiro nome é obrigatório'),
-          last_name: Yup.string().required('Sobrenome é obrigatório'),
-          description: Yup.string(),
-        });
+        if (weplanUser) {
+          const schema = Yup.object().shape({
+            description: Yup.string(),
+          });
 
-        await schema.validate(data, {
-          abortEarly: false,
-        });
-        console.log({
-          first_name: data.first_name,
-          last_name: data.last_name,
-          description: data.description,
-          weplanUser,
-          confirmed: guestConfirmed,
-          guest_id,
-        });
-        await api.post(`events/${pageEvent.id}/guests`, {
-          first_name: data.first_name,
-          last_name: data.last_name,
-          description: data.description,
-          weplanUser,
-          confirmed: guestConfirmed,
-          guest_id,
-        });
+          await schema.validate(data, {
+            abortEarly: false,
+          });
+
+          await api.post(`events/${pageEvent.id}/guests`, {
+            first_name: '',
+            last_name: '',
+            description: data.description,
+            weplanUser,
+            confirmed: guestConfirmed,
+            guest_id,
+          });
+        } else {
+          const schema = Yup.object().shape({
+            first_name: Yup.string().required('Primeiro nome é obrigatório'),
+            last_name: Yup.string().required('Sobrenome é obrigatório'),
+            description: Yup.string(),
+          });
+
+          await schema.validate(data, {
+            abortEarly: false,
+          });
+
+          await api.post(`events/${pageEvent.id}/guests`, {
+            first_name: data.first_name,
+            last_name: data.last_name,
+            description: data.description,
+            weplanUser,
+            confirmed: guestConfirmed,
+            guest_id,
+          });
+        }
 
         addToast({
           type: 'success',
-          title: 'Evento Criado com Sucesso',
-          description: 'Você já pode começar a planejar o seu evento.',
+          title: 'Convidado criado com sucesso',
+          description: 'As mudanças já foram atualizadas no seu evento.',
         });
         setGuest_id('');
         setWeplanGuestUser('');
@@ -567,8 +594,8 @@ const EventHostDashboard: React.FC = () => {
 
         addToast({
           type: 'error',
-          title: 'Erro ao criar evento',
-          description: 'Erro  ao criar o evento, tente novamente.',
+          title: 'Erro ao criar convidado',
+          description: 'Erro ao criar o convidado, tente novamente.',
         });
       }
     },
@@ -581,6 +608,143 @@ const EventHostDashboard: React.FC = () => {
       guest_id,
     ],
   );
+
+  const handleEditGuest = useCallback(
+    async (data: IEventGuest) => {
+      try {
+        formRef.current?.setErrors([]);
+
+        if (weplanUser) {
+          const schema = Yup.object().shape({
+            description: Yup.string(),
+          });
+
+          await schema.validate(data, {
+            abortEarly: false,
+          });
+          console.log(updated_guest, {
+            first_name: updated_guest.first_name,
+            last_name: updated_guest.last_name,
+            description: data.description,
+            confirmed: updated_guest.confirmed,
+          });
+          await api.put(`events/${pageEvent.id}/guests/${updated_guest.id}`, {
+            first_name: updated_guest.first_name,
+            last_name: updated_guest.last_name,
+            description: data.description,
+            confirmed: updated_guest.confirmed,
+          });
+        } else {
+          const schema = Yup.object().shape({
+            first_name: Yup.string().required('Primeiro nome é obrigatório'),
+            last_name: Yup.string().required('Sobrenome é obrigatório'),
+            description: Yup.string(),
+          });
+
+          await schema.validate(data, {
+            abortEarly: false,
+          });
+          console.log(updated_guest, {
+            first_name: data.first_name,
+            last_name: data.last_name,
+            description: data.description,
+            confirmed: updated_guest.confirmed,
+          });
+          await api.put(`events/${pageEvent.id}/guests/${updated_guest.id}`, {
+            first_name: data.first_name,
+            last_name: data.last_name,
+            description: data.description,
+            confirmed: updated_guest.confirmed,
+          });
+        }
+
+        addToast({
+          type: 'success',
+          title: 'Convidado editado com sucesso',
+          description: 'As mudanças já foram atualizadas no seu evento.',
+        });
+
+        setEditGuestDrawer(false);
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro ao editar convidado',
+          description: 'Erro ao editar o convidado, tente novamente.',
+        });
+      }
+    },
+    [addToast, pageEvent.id, weplanUser, updated_guest],
+  );
+
+  const handleEditConfirmedGuest = useCallback(
+    async (props: IEventGuest) => {
+      try {
+        console.log(props, {
+          first_name: props.first_name,
+          last_name: props.last_name,
+          description: props.description,
+          confirmed: !props.confirmed,
+        });
+        await api.put(`events/${pageEvent.id}/guests/${props.id}`, {
+          first_name: props.first_name,
+          last_name: props.last_name,
+          description: props.description,
+          confirmed: !props.confirmed,
+        });
+
+        addToast({
+          type: 'success',
+          title: 'Convidado editado com sucesso',
+          description: 'As mudanças já foram atualizadas no seu evento.',
+        });
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro ao editar convidado',
+          description: 'Erro ao editar o convidado, tente novamente.',
+        });
+      }
+    },
+    [addToast, pageEvent.id],
+  );
+
+  const handleDeleteGuest = useCallback(async () => {
+    try {
+      await api.delete(`/events/${pageEvent.id}/guests/${updated_guest.id}`);
+
+      addToast({
+        type: 'success',
+        title: 'Convidado excluído com sucesso',
+        description: 'As mudanças já foram atualizadas no seu evento.',
+      });
+
+      setEditGuestDrawer(false);
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        const error = getValidationErrors(err);
+
+        formRef.current?.setErrors(error);
+      }
+
+      addToast({
+        type: 'error',
+        title: 'Erro ao excluir convidado',
+        description: 'Erro ao excluir o convidado, tente novamente.',
+      });
+    }
+  }, [pageEvent, updated_guest, addToast]);
 
   const handleIsHiredQuestion = useCallback(
     (is_hired: boolean) => {
@@ -1722,10 +1886,13 @@ const EventHostDashboard: React.FC = () => {
                       <Guest key={eGuest.id}>
                         <span>
                           <p>{guestCount}</p>
-                          <h1>
+                          <button
+                            type="button"
+                            onClick={() => handleEditGuestDrawer(eGuest)}
+                          >
                             <strong>{eGuest.first_name}</strong>{' '}
                             {eGuest.last_name}
-                          </h1>
+                          </button>
                         </span>
                         {eGuest.weplanUser && (
                           <button key={eGuest.id} type="button">
@@ -1733,7 +1900,11 @@ const EventHostDashboard: React.FC = () => {
                           </button>
                         )}
                         <div>
-                          <button key={eGuest.id} type="button">
+                          <button
+                            key={eGuest.id}
+                            type="button"
+                            onClick={() => handleEditConfirmedGuest(eGuest)}
+                          >
                             {eGuest.confirmed ? (
                               <FiCheckSquare size={24} />
                             ) : (
@@ -1751,10 +1922,13 @@ const EventHostDashboard: React.FC = () => {
                       <Guest key={mGuest.id}>
                         <span>
                           <p>{myGuestCount}</p>
-                          <h1>
+                          <button
+                            type="button"
+                            onClick={() => handleEditGuestDrawer(mGuest)}
+                          >
                             <strong>{mGuest.first_name}</strong>{' '}
                             {mGuest.last_name}
-                          </h1>
+                          </button>
                         </span>
                         {mGuest.weplanUser && (
                           <button key={mGuest.id} type="button">
@@ -1762,7 +1936,11 @@ const EventHostDashboard: React.FC = () => {
                           </button>
                         )}
                         <div>
-                          <button key={mGuest.id} type="button">
+                          <button
+                            key={mGuest.id}
+                            type="button"
+                            onClick={() => handleEditConfirmedGuest(mGuest)}
+                          >
                             {mGuest.confirmed ? (
                               <FiCheckSquare size={24} />
                             ) : (
@@ -1823,12 +2001,20 @@ const EventHostDashboard: React.FC = () => {
                       </GuestConfirmedDrawer>
                     )}
 
-                    <Input name="first_name" type="text" placeholder="Nome" />
-                    <Input
-                      name="last_name"
-                      type="text"
-                      placeholder="Sobrenome"
-                    />
+                    {!weplanUser && (
+                      <>
+                        <Input
+                          name="first_name"
+                          type="text"
+                          placeholder="Nome"
+                        />
+                        <Input
+                          name="last_name"
+                          type="text"
+                          placeholder="Sobrenome"
+                        />
+                      </>
+                    )}
 
                     <Input
                       name="description"
@@ -1880,6 +2066,65 @@ const EventHostDashboard: React.FC = () => {
                 </Form>
               )}
             </GuestSection>
+          )}
+          {editGuestDrawer && (
+            <Form ref={formRef} onSubmit={handleEditGuest}>
+              <AddGuestDrawer>
+                <span>
+                  <button
+                    type="button"
+                    onClick={() => setEditGuestDrawer(false)}
+                  >
+                    <MdClose size={30} />
+                  </button>
+                </span>
+                <h1>Editar Convidado</h1>
+
+                {!!guestConfirmedDrawer && (
+                  <GuestConfirmedDrawer>
+                    <h1>Convidado confirmado?</h1>
+                    <div>
+                      <button
+                        type="button"
+                        onClick={() => handleGuestConfirmedQuestion(true)}
+                      >
+                        Sim
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleGuestConfirmedQuestion(false)}
+                      >
+                        Não
+                      </button>
+                    </div>
+                  </GuestConfirmedDrawer>
+                )}
+
+                {!updated_guest.weplanUser && (
+                  <>
+                    <Input name="first_name" type="text" placeholder="Nome" />
+                    <Input
+                      name="last_name"
+                      type="text"
+                      placeholder="Sobrenome"
+                    />
+                  </>
+                )}
+                <Input
+                  name="description"
+                  type="text"
+                  placeholder="Alguma descrição necessária?"
+                />
+
+                <button type="submit">
+                  <h3>Salvar</h3>
+                </button>
+
+                <button type="button" onClick={handleDeleteGuest}>
+                  <h3>Deletar</h3>
+                </button>
+              </AddGuestDrawer>
+            </Form>
           )}
           {friendsWindow && (
             <FriendsList>
