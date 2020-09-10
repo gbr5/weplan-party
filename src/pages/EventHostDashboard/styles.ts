@@ -2149,3 +2149,65 @@ export const NotHostGuest = styled(Tooltip)`
     }
   }
 `;
+
+export const NumberOfGuestWindow = styled.div`
+  position: absolute;
+  z-index: 1000;
+  top: 20%;
+  left: 30%;
+  width: 40%;
+  height: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 16px auto;
+  background: var(--header-background-color);
+  border-radius: 8px;
+  gap: 32px;
+  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
+  padding: 32px;
+
+  span {
+    position: absolute;
+    top: 2px;
+    right: 4px;
+
+    > button {
+      background: transparent;
+      border: none;
+
+      &:hover {
+        opacity: 0.8;
+      }
+      svg {
+        color: red;
+      }
+    }
+  }
+
+  > h1 {
+    font-size: 24px;
+    color: var(--title-color);
+  }
+
+  > div {
+    display: flex;
+    width: 100%;
+    gap: 16px;
+
+    button {
+      background: var(--primary-color);
+      border: none;
+      height: 40px;
+      width: 100%;
+      font-weight: 500;
+      border-radius: 4px;
+
+      &:hover {
+        opacity: 0.8;
+        box-shadow: 2px 2px 5px 3px rgba(255, 150, 10, 0.3);
+      }
+    }
+  }
+`;

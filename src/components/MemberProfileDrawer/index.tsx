@@ -18,14 +18,14 @@ interface IPropsDTO {
   member: IEventMemberDTO;
   onHandleMemberDrawer: MouseEventHandler;
   onHandleNumberOfGuestDrawer: MouseEventHandler;
-  onHandleDeleteGuestDrawer: MouseEventHandler;
+  onHandleDeleteMemberDrawer: MouseEventHandler;
 }
 
 const MemberProfileDrawer: React.FC<IPropsDTO> = ({
   member,
   onHandleMemberDrawer,
   onHandleNumberOfGuestDrawer,
-  onHandleDeleteGuestDrawer,
+  onHandleDeleteMemberDrawer,
 }: IPropsDTO) => {
   const avatar = member.avatar === '' ? avatar_placeholder : member.avatar;
 
@@ -46,7 +46,7 @@ const MemberProfileDrawer: React.FC<IPropsDTO> = ({
           {member.number_of_guests}
           <FiEdit size={24} />
         </EditMemberButton>
-        <DeleteMemberButton type="button" onClick={onHandleDeleteGuestDrawer}>
+        <DeleteMemberButton type="button" onClick={onHandleDeleteMemberDrawer}>
           Deletar
           <MdDelete size={24} />
         </DeleteMemberButton>

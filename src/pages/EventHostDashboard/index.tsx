@@ -72,6 +72,7 @@ import {
   Guest,
   GuestNavigationButton,
   NotHostGuest,
+  NumberOfGuestWindow,
 } from './styles';
 
 import PageHeader from '../../components/PageHeader';
@@ -87,6 +88,8 @@ import { useToast } from '../../hooks/toast';
 import getValidationErrors from '../../utils/getValidationErros';
 import { useAuth } from '../../hooks/auth';
 import FriendsListDrawer from '../../components/FriendsListDrawer';
+import MemberProfileDrawer from '../../components/MemberProfileDrawer';
+import OwnerProfileDrawer from '../../components/OwnerProfileDrawer';
 
 interface IMonthAvailabilityItem {
   day: number;
@@ -147,13 +150,6 @@ interface IEditEventInfo {
   city: string;
   address: string;
 }
-interface ICreateEventPlanner {
-  planner_id: string;
-}
-interface ICreateEventOwner {
-  owner_id: string;
-  description: string;
-}
 interface IEventParams {
   params: {
     id: string;
@@ -213,7 +209,9 @@ const EventHostDashboard: React.FC = () => {
   const [wpUserName, setWpUserName] = useState('');
   const [planners, setPlanners] = useState<IUserInfoDTO[]>([]);
   const [owners, setOwners] = useState<IEventOwnerDTO[]>([]);
+  const [owner, setOwner] = useState<IEventOwnerDTO>({} as IEventOwnerDTO);
   const [members, setMembers] = useState<IEventMemberDTO[]>([]);
+  const [member, setMember] = useState<IEventMemberDTO>({} as IEventMemberDTO);
   const [membersWindow, setMembersWindow] = useState(false);
   const [guestWindow, setGuestWindow] = useState(true);
   const [eventInfoDrawer, setEventInfoDrawer] = useState(false);
@@ -250,6 +248,13 @@ const EventHostDashboard: React.FC = () => {
   const [addMemberDrawer, setAddMemberDrawer] = useState(false);
   const [editGuestDrawer, setEditGuestDrawer] = useState(false);
   const [myGuestsConfirmed, setMyGuestsConfirmed] = useState(0);
+  const [memberProfileWindow, setMemberProfileWindow] = useState(false);
+  const [ownerProfileWindow, setOwnerProfileWindow] = useState(false);
+  const [numberOfGuestDrawer, setNumberOfGuestDrawer] = useState(false);
+  const [deleteMemberDrawer, setDeleteMemberDrawer] = useState(false);
+  const [deleteOwnerDrawer, setDeleteOwnerDrawer] = useState(false);
+  const [numberOfOwners, setNumberOfOwners] = useState(0);
+  const [numberOfMembers, setNumberOfMembers] = useState(0);
 
   const closeAllWindows = useCallback(() => {
     setMyEventsDrawer(false);
@@ -270,6 +275,9 @@ const EventHostDashboard: React.FC = () => {
     setCheckedListItemDrawer(false);
     setAddPlannerDrawer(false);
     setFriendsWindow(false);
+    setMemberProfileWindow(false);
+    setDeleteMemberDrawer(false);
+    setNumberOfGuestDrawer(false);
   }, []);
   const closeAllSections = useCallback(() => {
     setLatestActionsSection(false);
@@ -297,10 +305,28 @@ const EventHostDashboard: React.FC = () => {
     },
     [editGuestDrawer, closeAllWindows],
   );
+  const handleOwnerProfileWindow = useCallback(
+    (props: IEventOwnerDTO) => {
+      closeAllWindows();
+      setOwner(props);
+      setOwnerProfileWindow(true);
+    },
+    [closeAllWindows],
+  );
+  const handleMemberProfileWindow = useCallback(
+    (props: IEventMemberDTO) => {
+      closeAllWindows();
+      setMember(props);
+      setMemberProfileWindow(true);
+    },
+    [closeAllWindows],
+  );
+
   const handleMembersWindow = useCallback(() => {
     closeAllWindows();
     setMembersWindow(!membersWindow);
   }, [membersWindow, closeAllWindows]);
+
   const handleGuestWindow = useCallback(props => {
     setGuestWindow(props);
   }, []);
@@ -346,11 +372,13 @@ const EventHostDashboard: React.FC = () => {
   const handleAddMemberDrawer = useCallback(() => {
     closeAllWindows();
     setAddMemberDrawer(!addMemberDrawer);
-  }, [addMemberDrawer, closeAllWindows]);
+    setFriendsWindow(!wpUserId);
+  }, [addMemberDrawer, closeAllWindows, wpUserId]);
   const handleAddOwnerDrawer = useCallback(() => {
     closeAllWindows();
     setAddOwnerDrawer(!addOwnerDrawer);
-  }, [addOwnerDrawer, closeAllWindows]);
+    setFriendsWindow(!wpUserId);
+  }, [addOwnerDrawer, closeAllWindows, wpUserId]);
   const handleAddPlannerDrawer = useCallback(() => {
     closeAllWindows();
     setAddPlannerDrawer(!addPlannerDrawer);
@@ -469,6 +497,7 @@ const EventHostDashboard: React.FC = () => {
         .get<IEventOwnerDTO[]>(`events/${eventId}/event-owners`)
         .then(response => {
           setOwners(response.data);
+          setNumberOfOwners(response.data.length);
         });
     } catch (err) {
       console.log(err);
@@ -481,6 +510,7 @@ const EventHostDashboard: React.FC = () => {
         .get<IEventMemberDTO[]>(`events/${eventId}/event-members`)
         .then(response => {
           setMembers(response.data);
+          setNumberOfMembers(response.data.length);
         });
     } catch (err) {
       throw new Error('event dashboard, rota guest para o backend');
@@ -504,7 +534,7 @@ const EventHostDashboard: React.FC = () => {
   }, [eventId, checkListItems]);
   const handleGetEvent = useCallback(() => {
     try {
-      api.get<IEvent>(`/events/${pageEvent.id}`).then(response => {
+      api.get<IEvent>(`/events/${eventId}`).then(response => {
         setEventId(response.data.id);
         const date = new Date(response.data.date);
         const year = date.getFullYear();
@@ -527,27 +557,29 @@ const EventHostDashboard: React.FC = () => {
     } catch (err) {
       throw Error(err);
     }
-  }, [pageEvent.id]);
+  }, [eventId]);
 
   const handleGetFriends = useCallback(() => {
     try {
-      api.get<IUserInfoDTO[]>(`/users/friends/list`).then(response => {
-        setFriends(response.data);
-      });
+      eventId &&
+        api.get<IUserInfoDTO[]>(`/users/friends/list`).then(response => {
+          setFriends(response.data);
+        });
     } catch (err) {
       throw new Error('event dashboard, rota friends para o backend');
       console.log(err);
     }
-  }, []);
+  }, [eventId]);
   const handleGetEvents = useCallback(() => {
     try {
-      api.get<IEvent[]>('/events').then(response => {
-        setMyEvents(response.data);
-      });
+      eventId &&
+        api.get<IEvent[]>('/events').then(response => {
+          setMyEvents(response.data);
+        });
     } catch (err) {
       throw Error(err);
     }
-  }, []);
+  }, [eventId]);
   const handleGetGuests = useCallback(() => {
     try {
       api.get<IEventGuest[]>(`/events/${eventId}/guests`).then(response => {
@@ -642,54 +674,50 @@ const EventHostDashboard: React.FC = () => {
     },
     [addToast, eventId, handleAddCheckListDrawer, checked],
   );
-  const handleAddPlanner = useCallback(
-    async (data: ICreateEventPlanner) => {
-      try {
-        formRef.current?.setErrors([]);
+  const handleAddPlanner = useCallback(async () => {
+    try {
+      await api.post(`events/${eventId}/event-planner`, {
+        planner_id: wpUserId,
+      });
 
-        const schema = Yup.object().shape({
-          planner_id: Yup.string().required('Usuário WePlan é obrigatório'),
-        });
+      addToast({
+        type: 'success',
+        title: 'Cerimonialista adicionado com sucesso com Sucesso',
+        description: 'O item foi adicionado à sua check-list.',
+      });
 
-        await schema.validate(data, {
-          abortEarly: false,
-        });
+      setWpUserId('');
+      setWeplanUser(false);
+      setWpUserName('');
+      setAddPlannerDrawer(false);
 
-        await api.post(`events/${eventId}/event-planner`, {
-          planner_id: data.planner_id,
-        });
+      handleAddPlannerDrawer();
+      handleGetPlanners();
+    } catch (err) {
+      setWpUserId('');
+      setWeplanUser(false);
+      setWpUserName('');
+      if (err instanceof Yup.ValidationError) {
+        const error = getValidationErrors(err);
 
-        addToast({
-          type: 'success',
-          title: 'Cerimonialista adicionado com sucesso com Sucesso',
-          description: 'O item foi adicionado à sua check-list.',
-        });
-
-        handleAddPlannerDrawer();
-      } catch (err) {
-        if (err instanceof Yup.ValidationError) {
-          const error = getValidationErrors(err);
-
-          formRef.current?.setErrors(error);
-        }
-
-        addToast({
-          type: 'error',
-          title: 'Erro ao adicionar cerimonialista',
-          description: 'Erro  ao adicionar cerimonialista, tente novamente.',
-        });
+        formRef.current?.setErrors(error);
       }
-    },
-    [addToast, eventId, handleAddPlannerDrawer],
-  );
+
+      addToast({
+        type: 'error',
+        title: 'Erro ao adicionar cerimonialista',
+        description: 'Erro  ao adicionar cerimonialista, tente novamente.',
+      });
+    }
+  }, [addToast, eventId, handleAddPlannerDrawer, handleGetPlanners, wpUserId]);
   const handleAddOwner = useCallback(
-    async (data: ICreateEventOwner) => {
+    async (data: IEventOwnerDTO) => {
       try {
         formRef.current?.setErrors([]);
 
         const schema = Yup.object().shape({
-          owner_id: Yup.string().required('Usuário WePlan é obrigatório.'),
-          description: Yup.string().required('Descrição é obrigatório.'),
+          description: Yup.string().required('Título é obrigatório.'),
+          number_of_guests: Yup.number(),
         });
 
         await schema.validate(data, {
@@ -697,8 +725,9 @@ const EventHostDashboard: React.FC = () => {
         });
 
         await api.post(`events/${eventId}/event-owners`, {
-          owner_id: data.owner_id,
+          owner_id: wpUserId,
           description: data.description,
+          number_of_guests: data.number_of_guests,
         });
 
         addToast({
@@ -707,8 +736,15 @@ const EventHostDashboard: React.FC = () => {
           description: 'Ele já pode contribuir com o evento.',
         });
 
-        handleAddOwnerDrawer();
+        setWpUserId('');
+        setWeplanUser(false);
+        setWpUserName('');
+        setAddOwnerDrawer(false);
+        handleGetOwners();
       } catch (err) {
+        setWpUserId('');
+        setWeplanUser(false);
+        setWpUserName('');
         if (err instanceof Yup.ValidationError) {
           const error = getValidationErrors(err);
 
@@ -722,23 +758,25 @@ const EventHostDashboard: React.FC = () => {
         });
       }
     },
-    [addToast, eventId, handleAddOwnerDrawer],
+    [addToast, eventId, handleGetOwners, wpUserId],
   );
   const handleAddMember = useCallback(
     async (data: IEventMemberDTO) => {
+      console.log(data, typeof data.number_of_guests);
       try {
         formRef.current?.setErrors([]);
 
         const schema = Yup.object().shape({
-          number_of_guests: Yup.string(),
+          number_of_guests: Yup.number(),
         });
+        console.log('passou pelo Yup - wpUserId: ', wpUserId);
 
         await schema.validate(data, {
           abortEarly: false,
         });
 
         await api.post(`events/${eventId}/event-members`, {
-          number_of_guests: data.number_of_guests,
+          number_of_guests: Number(data.number_of_guests),
           member_id: wpUserId,
         });
 
@@ -751,8 +789,12 @@ const EventHostDashboard: React.FC = () => {
         setWeplanUser(false);
         setWpUserName('');
 
-        handleAddMemberDrawer();
+        setAddMemberDrawer(false);
+        handleGetMembers();
       } catch (err) {
+        setWpUserId('');
+        setWeplanUser(false);
+        setWpUserName('');
         if (err instanceof Yup.ValidationError) {
           const error = getValidationErrors(err);
 
@@ -766,7 +808,7 @@ const EventHostDashboard: React.FC = () => {
         });
       }
     },
-    [addToast, eventId, handleAddMemberDrawer, wpUserId],
+    [addToast, eventId, wpUserId, handleGetMembers],
   );
   const handleAddGuest = useCallback(
     async (data: ICreateGuest) => {
@@ -826,6 +868,11 @@ const EventHostDashboard: React.FC = () => {
           description: 'As mudanças já foram atualizadas no seu evento.',
         });
       } catch (err) {
+        setWpUserId('');
+        setGuestConfirmedMessage('');
+        setWeplanUser(false);
+        setGuestConfirmed(false);
+        setWpUserName('');
         if (err instanceof Yup.ValidationError) {
           const error = getValidationErrors(err);
           formRef.current?.setErrors(error);
@@ -985,6 +1032,102 @@ const EventHostDashboard: React.FC = () => {
       });
     }
   }, [eventId, updated_guest, addToast, handleGetGuests]);
+  const handleDeleteMember = useCallback(async () => {
+    try {
+      await api.delete(`/events/${eventId}/event-members/${member.id}`);
+
+      addToast({
+        type: 'success',
+        title: 'Membro excluído com sucesso',
+        description: 'As mudanças já foram atualizadas no seu evento.',
+      });
+
+      setMemberProfileWindow(false);
+      setDeleteMemberDrawer(false);
+      handleGetMembers();
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        const error = getValidationErrors(err);
+
+        formRef.current?.setErrors(error);
+      }
+
+      addToast({
+        type: 'error',
+        title: 'Erro ao excluir convidado',
+        description: 'Erro ao excluir o convidado, tente novamente.',
+      });
+    }
+  }, [eventId, member, addToast, handleGetMembers]);
+  const handleDeleteOwner = useCallback(async () => {
+    try {
+      await api.delete(`/events/${eventId}/event-owners/${owner.id}`);
+
+      addToast({
+        type: 'success',
+        title: 'Anfitrião excluído com sucesso',
+        description: 'As mudanças já foram atualizadas no seu evento.',
+      });
+
+      setOwnerProfileWindow(false);
+      setDeleteOwnerDrawer(false);
+      handleGetOwners();
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        const error = getValidationErrors(err);
+
+        formRef.current?.setErrors(error);
+      }
+
+      addToast({
+        type: 'error',
+        title: 'Erro ao excluir anfitrião',
+        description: 'Erro ao excluir o convidado, tente novamente.',
+      });
+    }
+  }, [eventId, owner, addToast, handleGetOwners]);
+  const handleEditMember = useCallback(
+    async (data: IEventMemberDTO) => {
+      try {
+        formRef.current?.setErrors([]);
+
+        const schema = Yup.object().shape({
+          number_of_guests: Yup.number(),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+
+        await api.put(`events/${eventId}/event-members/${member.id}`, {
+          number_of_guests: data.number_of_guests,
+        });
+
+        addToast({
+          type: 'success',
+          title: 'Convidado editado com sucesso',
+          description: 'As mudanças já foram atualizadas no seu evento.',
+        });
+
+        setDeleteMemberDrawer(false);
+        setMember({} as IEventMemberDTO);
+        handleGetMembers();
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro ao editar membro',
+          description: 'Erro ao editar o convidado, tente novamente.',
+        });
+      }
+    },
+    [addToast, eventId, member, handleGetMembers],
+  );
   const handleAddAppointment = useCallback(
     async (data: ICreateAppointment) => {
       try {
@@ -1162,20 +1305,79 @@ const EventHostDashboard: React.FC = () => {
           onChildClick={() => setWpUserWindow(false)}
         />
       )} */}
-      {/* {!!memberProfileWindow && (
+      {!!ownerProfileWindow && (
+        <OwnerProfileDrawer
+          owner={owner}
+          onHandleOwnerDrawer={() => setOwnerProfileWindow(false)}
+          onHandleNumberOfGuestDrawer={() => setNumberOfGuestDrawer(true)}
+          onHandleDeleteOwnerDrawer={() => setDeleteOwnerDrawer(true)}
+        />
+      )}
+      {!!memberProfileWindow && (
         <MemberProfileDrawer
-          member={memberProfile}
+          member={member}
           onHandleMemberDrawer={() => setMemberProfileWindow(false)}
           onHandleNumberOfGuestDrawer={() => setNumberOfGuestDrawer(true)}
-          onHandleDeleteGuestDrawer={() => setDeleteGuestDrawer(true)}
+          onHandleDeleteMemberDrawer={() => setDeleteMemberDrawer(true)}
         />
-      )} */}
+      )}
+      {!!numberOfGuestDrawer && (
+        <Form ref={formRef} onSubmit={handleEditMember}>
+          <NumberOfGuestWindow>
+            <span>
+              <button
+                type="button"
+                onClick={() => setNumberOfGuestDrawer(false)}
+              >
+                <MdClose size={30} />
+              </button>
+            </span>
+
+            <h1>Número de convidados</h1>
+            <button type="submit">Salvar</button>
+          </NumberOfGuestWindow>
+        </Form>
+      )}
+      {!!deleteMemberDrawer && (
+        <Form ref={formRef} onSubmit={handleDeleteMember}>
+          <WeplanUserDrawer>
+            <h1>Deseja mesmo deletar o membro?</h1>
+            <div>
+              <button type="button" onClick={handleDeleteMember}>
+                Sim
+              </button>
+              <button
+                type="button"
+                onClick={() => setDeleteMemberDrawer(false)}
+              >
+                Não
+              </button>
+            </div>
+          </WeplanUserDrawer>
+        </Form>
+      )}
+      {!!deleteOwnerDrawer && (
+        <Form ref={formRef} onSubmit={handleDeleteOwner}>
+          <WeplanUserDrawer>
+            <h1>Deseja mesmo deletar o anfitrião?</h1>
+            <div>
+              <button type="button" onClick={handleDeleteOwner}>
+                Sim
+              </button>
+              <button type="button" onClick={() => setDeleteOwnerDrawer(false)}>
+                Não
+              </button>
+            </div>
+          </WeplanUserDrawer>
+        </Form>
+      )}
       {!!friendsWindow && (
         <FriendsListDrawer
           friends={friends}
           onHandleFriendsListDrawer={() => setFriendsWindow(false)}
           handleSelectedFriend={(friend: IUserInfoDTO) =>
-            handleSelectedWeplanUser(friend)}
+            handleSelectedWeplanUser(friend)
+          }
         />
       )}
       <EventPageContent>
@@ -1303,7 +1505,7 @@ const EventHostDashboard: React.FC = () => {
           ))}
 
           <button type="button" onClick={handleAddOwnerDrawer}>
-            <h1>Anfitriões</h1>
+            <h1>Anfitriões: {numberOfOwners}</h1>
             <MdPersonAdd size={24} />
           </button>
 
@@ -1316,17 +1518,19 @@ const EventHostDashboard: React.FC = () => {
                   </button>
                 </span>
                 <h1>Adicionar Anfitrião</h1>
+                {wpUserId === '' && (
+                  <button type="button" onClick={() => setFriendsWindow(true)}>
+                    Escolher usuário
+                  </button>
+                )}
 
-                <Input
-                  name="owner_id"
-                  type="text"
-                  placeholder="Qual o id do usuário?"
-                />
                 <Input
                   name="description"
                   type="text"
                   placeholder="Título do Anfitrião (Noiva, Mãe da noiva, ...)"
                 />
+                <p>Número de convidados é opcional</p>
+                <Input name="number_of_guests" type="number" defaultValue={0} />
                 <button type="submit">
                   <h3>Salvar</h3>
                 </button>
@@ -1334,16 +1538,19 @@ const EventHostDashboard: React.FC = () => {
             </Form>
           )}
 
-          {owners.map(owner => (
-            <span key={owner.id}>
-              <button type="button">
-                <h2>{owner.name}</h2>
+          {owners.map(eventOwner => (
+            <span key={eventOwner.id}>
+              <button
+                type="button"
+                onClick={() => handleOwnerProfileWindow(eventOwner)}
+              >
+                <h2>{eventOwner.name}</h2>
               </button>
             </span>
           ))}
 
           <button type="button" onClick={handleAddMemberDrawer}>
-            <h1>Membros</h1>
+            <h1>Membros: {numberOfMembers}</h1>
             <MdPersonAdd size={24} />
           </button>
 
@@ -1357,12 +1564,15 @@ const EventHostDashboard: React.FC = () => {
                 </span>
 
                 <h1>Adicionar Membro</h1>
-                <p>Número de convidados para membros é opcional</p>
-                <Input
-                  name="number_of_guests"
-                  type="number"
-                  placeholder="Número de convidados"
-                />
+
+                {wpUserId === '' && (
+                  <button type="button" onClick={() => setFriendsWindow(true)}>
+                    Escolher usuário
+                  </button>
+                )}
+
+                <p>Número de convidados é opcional</p>
+                <Input name="number_of_guests" type="number" defaultValue={0} />
 
                 <button type="submit">
                   <h3>Salvar</h3>
@@ -1393,18 +1603,22 @@ const EventHostDashboard: React.FC = () => {
               </span>
 
               <div>
-                {members.map(member => (
-                  <button key={member.id} type="button">
+                {members.map(eventMember => (
+                  <button
+                    key={eventMember.id}
+                    type="button"
+                    onClick={() => handleMemberProfileWindow(eventMember)}
+                  >
                     <img
                       src={
-                        member.avatar === ''
+                        eventMember.avatar === ''
                           ? avatar_placeholder
-                          : member.avatar
+                          : eventMember.avatar
                       }
-                      alt={member.name}
+                      alt={eventMember.name}
                     />
 
-                    <h1>{member.name}</h1>
+                    <h1>{eventMember.name}</h1>
                   </button>
                 ))}
               </div>
@@ -2176,16 +2390,14 @@ const EventHostDashboard: React.FC = () => {
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    handleAppointmentTypeQuestion('Comercial')
-                                  }
+                                    handleAppointmentTypeQuestion('Comercial')}
                                 >
                                   Comercial
                                 </button>
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    handleAppointmentTypeQuestion('Técnico')
-                                  }
+                                    handleAppointmentTypeQuestion('Técnico')}
                                 >
                                   Técnico
                                 </button>

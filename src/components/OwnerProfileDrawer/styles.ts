@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import '../../styles/global';
 
-export const MemberDrawer = styled.div`
+export const OwnerDrawer = styled.div`
   position: fixed;
   z-index: 1000;
   top: 20%;
@@ -58,7 +58,7 @@ export const MemberDrawer = styled.div`
   }
 `;
 
-export const EditMemberButton = styled.button`
+export const EditOwnerButton = styled.button`
   background: var(--primary-color);
   border: none;
   height: 40px;
@@ -76,7 +76,7 @@ export const EditMemberButton = styled.button`
   }
 `;
 
-export const DeleteMemberButton = styled.button`
+export const DeleteOwnerButton = styled.button`
   background: var(--letter-color-4);
   border: none;
   height: 40px;
