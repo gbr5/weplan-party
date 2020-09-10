@@ -15,6 +15,7 @@ import {
   FiEdit,
   FiUser,
   FiSquare,
+  FiEdit3,
 } from 'react-icons/fi';
 import { MdClose, MdPersonAdd, MdAdd } from 'react-icons/md';
 import { differenceInCalendarDays } from 'date-fns/esm';
@@ -58,9 +59,8 @@ import {
   ChatMessages,
   Messages,
   AddCheckListDrawer,
-  WeplanGuestDrawer,
+  WeplanUserDrawer,
   GuestConfirmedDrawer,
-  WeplanSupplierAppointmentDrawer,
   AppointmentTypeDrawer,
   Calendar,
   CheckedListItemDrawer,
@@ -71,12 +71,12 @@ import {
   MembersWindow,
   Guest,
   GuestNavigationButton,
-  FriendsList,
+  NotHostGuest,
 } from './styles';
 
 import PageHeader from '../../components/PageHeader';
 import MenuButton from '../../components/MenuButton';
-import UserProfile from '../../components/UserProfile';
+// import MemberProfileDrawer from '../../components/MemberProfileDrawer';
 
 import chart from '../../assets/charts.png';
 import avatar_placeholder from '../../assets/avatar_placeholder_cat2.jpeg';
@@ -86,24 +86,24 @@ import Input from '../../components/Input';
 import { useToast } from '../../hooks/toast';
 import getValidationErrors from '../../utils/getValidationErros';
 import { useAuth } from '../../hooks/auth';
+import FriendsListDrawer from '../../components/FriendsListDrawer';
 
 interface IMonthAvailabilityItem {
   day: number;
   available: boolean;
 }
-
 interface IEvent {
   id: string;
   name: string;
+  trimmed_name: string;
   date: string;
+  event_type: string;
   daysTillDate: number;
 }
-
 interface IEventCheckList {
   id: string;
   checked: boolean;
 }
-
 interface IEventGuest {
   id: string;
   confirmed: boolean;
@@ -113,7 +113,6 @@ interface IEventGuest {
   weplanUser: boolean;
   description: string;
 }
-
 interface ICreateGuest {
   first_name: string;
   last_name: string;
@@ -121,13 +120,11 @@ interface ICreateGuest {
   confirmed: boolean;
   weplanUser: boolean;
 }
-
 interface ICreateCheckListItem {
   name: string;
   priority_level: number;
   checked: boolean;
 }
-
 interface ICreateAppointment {
   subject: string;
   duration_minutes: number;
@@ -135,12 +132,10 @@ interface ICreateAppointment {
   start_hour: number;
   start_minute: number;
 }
-
 interface ICreateSupplier {
   supplier_id: string;
   supplier_sub_category: number;
 }
-
 interface IEditEventInfo {
   date: Date;
   number_of_guests: number;
@@ -152,20 +147,13 @@ interface IEditEventInfo {
   city: string;
   address: string;
 }
-
 interface ICreateEventPlanner {
   planner_id: string;
 }
-
 interface ICreateEventOwner {
   owner_id: string;
   description: string;
 }
-
-interface ICreateEventMember {
-  member_id: string;
-}
-
 interface IEventParams {
   params: {
     id: string;
@@ -174,31 +162,24 @@ interface IEventParams {
     daysTillDate: number;
   };
 }
-
-interface EventDTO {
-  id: string;
-  name: string;
-  date: Date;
-  event_type: string;
-}
-
-interface IUser {
+interface IUserInfoDTO {
   id: string;
   name: string;
   avatar: string;
-  first_name: string;
-  last_name: string;
 }
-
-interface IEventOwners {
+interface IEventOwnerDTO {
   id: string;
   name: string;
   avatar: string;
   description: string;
-  first_name: string;
-  last_name: string;
+  number_of_guests: number;
 }
-
+interface IEventMemberDTO {
+  id: string;
+  name: string;
+  avatar: string;
+  number_of_guests: number;
+}
 const EventHostDashboard: React.FC = () => {
   const history = useHistory();
   const formRef = useRef<FormHandles>(null);
@@ -207,35 +188,34 @@ const EventHostDashboard: React.FC = () => {
   const { user } = useAuth();
 
   const pageEvent = location.state.params;
+  console.log(pageEvent);
+
+  const [eventId, setEventId] = useState(pageEvent.id);
+
+  const notHostMessage = 'Você não é o anfitrião deste convidado!';
 
   const [myEvents, setMyEvents] = useState<IEvent[]>([]);
   const [myEventsDrawer, setMyEventsDrawer] = useState(false);
   const [event, setEvent] = useState<IEvent>({} as IEvent);
-  const [eventDTO, setEventDTO] = useState<EventDTO>({} as EventDTO);
-
-  const [friends, setFriends] = useState<IUser[]>([]);
+  const [friends, setFriends] = useState<IUserInfoDTO[]>([]);
   const [friendsWindow, setFriendsWindow] = useState(false);
-
   const [checkListItems, setCheckListItems] = useState<IEventCheckList[]>([]);
   const [resolvedCheckListItems, setResolvedCheckListItems] = useState<
     IEventCheckList[]
   >([]);
   const [eventGuests, setEventGuests] = useState<IEventGuest[]>([]);
-  const [confirmedGuests, setConfirmedGuests] = useState<IEventGuest[]>([]);
+  const [confirmedGuests, setConfirmedGuests] = useState(0);
   const [myGuests, setMyGuests] = useState<IEventGuest[]>([]);
   const [updated_guest, setUpdated_guest] = useState<IEventGuest>(
     {} as IEventGuest,
   );
-  const [guest_id, setGuest_id] = useState('');
-  const [guestName, setGuestName] = useState('');
-  const [planners, setPlanners] = useState<IUser[]>([]);
-  const [owners, setOwners] = useState<IEventOwners[]>([]);
-  const [members, setMembers] = useState<IUser[]>([]);
-
+  const [wpUserId, setWpUserId] = useState(''); // wpUser é para usuários dos sistema que não seja o próprio usuário
+  const [wpUserName, setWpUserName] = useState('');
+  const [planners, setPlanners] = useState<IUserInfoDTO[]>([]);
+  const [owners, setOwners] = useState<IEventOwnerDTO[]>([]);
+  const [members, setMembers] = useState<IEventMemberDTO[]>([]);
   const [membersWindow, setMembersWindow] = useState(false);
   const [guestWindow, setGuestWindow] = useState(true);
-  // const [myGuestWindow, setMyGuestWindow] = useState(false);
-
   const [eventInfoDrawer, setEventInfoDrawer] = useState(false);
   const [budgetDrawer, setBudgetDrawer] = useState(false);
   const [addGuestDrawer, setAddGuestDrawer] = useState(false);
@@ -243,7 +223,6 @@ const EventHostDashboard: React.FC = () => {
   const [addAppointmentDrawer, setAddAppointmentDrawer] = useState(false);
   const [editEventNameDrawer, setEditEventNameDrawer] = useState(false);
   const [addCheckListDrawer, setAddCheckListDrawer] = useState(false);
-
   const [latestActionsSection, setLatestActionsSection] = useState(true);
   const [guestsSection, setGuestsSection] = useState(false);
   const [appointmentsSection, setAppointmentsSection] = useState(false);
@@ -251,49 +230,26 @@ const EventHostDashboard: React.FC = () => {
   const [checkListSection, setCheckListSection] = useState(false);
   const [supplierSection, setSupplierSection] = useState(false);
   const [messagesSection, setMessagesSection] = useState(false);
-
-  const [userProfileWindow, setUserProfileWindow] = useState(false);
-
-  const [weplanGuestDrawer, setWeplanGuestDrawer] = useState(false);
+  const [wpUserQuestionDrawer, setWpUserQuestionDrawer] = useState(false);
   const [weplanUser, setWeplanUser] = useState(false);
-  const [weplanGuestUser, setWeplanGuestUser] = useState('');
-
   const [guestConfirmedDrawer, setGuestConfirmedDrawer] = useState(false);
   const [guestConfirmedMessage, setGuestConfirmedMessage] = useState('');
   const [guestConfirmed, setGuestConfirmed] = useState(false);
-
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [currentMonth, setCurrentMonth] = useState(new Date());
-
-  const [
-    weplanSupplierAppointmentDrawer,
-    setWeplanSupplierAppointmentDrawer,
-  ] = useState(false);
-  const [
-    weplanSupplierAppointmentUser,
-    setWeplanSupplierAppointmentUser,
-  ] = useState(false);
-  const [
-    weplanSupplierAppointmentMessage,
-    setWeplanSupplierAppointmentMessage,
-  ] = useState('');
   const [appointmentTypeDrawer, setAppointmentTypeDrawer] = useState(false);
   const [appointmentType, setAppointmentType] = useState('');
-
   const [checkedListItemDrawer, setCheckedListItemDrawer] = useState(false);
   const [CheckedListItemMessage, setCheckedListItemMessage] = useState('');
   const [checked, setChecked] = useState(false);
-
   const [isHiredDrawer, setIsHiredDrawer] = useState(false);
   const [isHiredMessage, setIsHiredMessage] = useState('');
   const [isHired, setIsHired] = useState(false);
-
   const [addPlannerDrawer, setAddPlannerDrawer] = useState(false);
   const [addOwnerDrawer, setAddOwnerDrawer] = useState(false);
   const [addMemberDrawer, setAddMemberDrawer] = useState(false);
-
   const [editGuestDrawer, setEditGuestDrawer] = useState(false);
-  const [profileUser, setProfileUser] = useState<IUser>({} as IUser);
+  const [myGuestsConfirmed, setMyGuestsConfirmed] = useState(0);
 
   const closeAllWindows = useCallback(() => {
     setMyEventsDrawer(false);
@@ -308,15 +264,13 @@ const EventHostDashboard: React.FC = () => {
     setAddSupplierDrawer(false);
     setAddAppointmentDrawer(false);
     setEditEventNameDrawer(false);
-    setWeplanSupplierAppointmentDrawer(false);
-    setWeplanGuestDrawer(false);
+    setWpUserQuestionDrawer(false);
     setGuestConfirmedDrawer(false);
     setAppointmentTypeDrawer(false);
     setCheckedListItemDrawer(false);
     setAddPlannerDrawer(false);
     setFriendsWindow(false);
   }, []);
-
   const closeAllSections = useCallback(() => {
     setLatestActionsSection(false);
     setGuestsSection(false);
@@ -331,12 +285,10 @@ const EventHostDashboard: React.FC = () => {
     closeAllWindows();
     setMyEventsDrawer(!myEventsDrawer);
   }, [myEventsDrawer, closeAllWindows]);
-
   const handleEventInfoDrawer = useCallback(() => {
     closeAllWindows();
     setEventInfoDrawer(!eventInfoDrawer);
   }, [eventInfoDrawer, closeAllWindows]);
-
   const handleEditGuestDrawer = useCallback(
     (props: IEventGuest) => {
       closeAllWindows();
@@ -345,93 +297,164 @@ const EventHostDashboard: React.FC = () => {
     },
     [editGuestDrawer, closeAllWindows],
   );
-
   const handleMembersWindow = useCallback(() => {
     closeAllWindows();
     setMembersWindow(!membersWindow);
   }, [membersWindow, closeAllWindows]);
-
   const handleGuestWindow = useCallback(props => {
     setGuestWindow(props);
   }, []);
-
-  const handleFriendsWindow = useCallback(props => {
-    setFriendsWindow(props);
-  }, []);
-
   const handleBudgetDrawer = useCallback(() => {
     closeAllWindows();
     setBudgetDrawer(!budgetDrawer);
   }, [budgetDrawer, closeAllWindows]);
-
   const handleAddGuestDrawer = useCallback(() => {
     closeAllWindows();
     setAddGuestDrawer(!addGuestDrawer);
   }, [addGuestDrawer, closeAllWindows]);
-
   const handleWeplanGuestDrawer = useCallback(props => {
-    setWeplanGuestDrawer(props);
+    setWpUserQuestionDrawer(props);
   }, []);
-
   const handleGuestConfirmedDrawer = useCallback(() => {
     setGuestConfirmedDrawer(!guestConfirmedDrawer);
   }, [guestConfirmedDrawer]);
-
   const handleAddSupplierDrawer = useCallback(() => {
     closeAllWindows();
     setAddSupplierDrawer(!addSupplierDrawer);
   }, [addSupplierDrawer, closeAllWindows]);
-
   const handleIsHiredDrawer = useCallback(() => {
     setIsHiredDrawer(!isHiredDrawer);
   }, [isHiredDrawer]);
-
   const handleAddAppointmentDrawer = useCallback(() => {
     closeAllWindows();
     setAddAppointmentDrawer(!addAppointmentDrawer);
   }, [addAppointmentDrawer, closeAllWindows]);
-
-  const handleWeplanSupplierAppointmentDrawer = useCallback(() => {
-    setWeplanSupplierAppointmentDrawer(!weplanSupplierAppointmentDrawer);
-  }, [weplanSupplierAppointmentDrawer]);
-
   const handleAppointmentTypeDrawer = useCallback(() => {
     setAppointmentTypeDrawer(!appointmentTypeDrawer);
   }, [appointmentTypeDrawer]);
-
   const handleEditEventNameDrawer = useCallback(() => {
     closeAllWindows();
     setEditEventNameDrawer(!editEventNameDrawer);
   }, [editEventNameDrawer, closeAllWindows]);
-
   const handleCheckedListItemDrawer = useCallback(() => {
     setCheckedListItemDrawer(!checkedListItemDrawer);
   }, [checkedListItemDrawer]);
-
   const handleAddCheckListDrawer = useCallback(() => {
     closeAllWindows();
     setAddCheckListDrawer(!addCheckListDrawer);
   }, [addCheckListDrawer, closeAllWindows]);
-
   const handleAddMemberDrawer = useCallback(() => {
     closeAllWindows();
     setAddMemberDrawer(!addMemberDrawer);
   }, [addMemberDrawer, closeAllWindows]);
-
   const handleAddOwnerDrawer = useCallback(() => {
     closeAllWindows();
     setAddOwnerDrawer(!addOwnerDrawer);
   }, [addOwnerDrawer, closeAllWindows]);
-
   const handleAddPlannerDrawer = useCallback(() => {
     closeAllWindows();
     setAddPlannerDrawer(!addPlannerDrawer);
   }, [addPlannerDrawer, closeAllWindows]);
 
-  const handleGetEventPlanners = useCallback(() => {
+  const handleLatestActionsSection = useCallback(() => {
+    closeAllSections();
+    setLatestActionsSection(true);
+  }, [closeAllSections]);
+  const handleGuestsSection = useCallback(() => {
+    closeAllSections();
+    setGuestsSection(true);
+  }, [closeAllSections]);
+  const handleAppointmentsSection = useCallback(() => {
+    closeAllSections();
+    setAppointmentsSection(true);
+  }, [closeAllSections]);
+  const handleFinanceSection = useCallback(() => {
+    closeAllSections();
+    setFinanceSection(true);
+  }, [closeAllSections]);
+  const handleCheckListSection = useCallback(() => {
+    closeAllSections();
+    setCheckListSection(true);
+  }, [closeAllSections]);
+  const handleSupplierSection = useCallback(() => {
+    closeAllSections();
+    setSupplierSection(true);
+  }, [closeAllSections]);
+  const handleMessagesSection = useCallback(() => {
+    closeAllSections();
+    setMessagesSection(true);
+  }, [closeAllSections]);
+
+  const handleGuestConfirmedQuestion = useCallback(
+    (guest_confirmed: boolean) => {
+      if (guest_confirmed === true) {
+        setGuestConfirmedMessage('Convidado confirmado!');
+        setGuestConfirmed(true);
+      } else {
+        setGuestConfirmedMessage('');
+        setGuestConfirmed(false);
+      }
+      return handleGuestConfirmedDrawer();
+    },
+    [handleGuestConfirmedDrawer],
+  );
+  const handleWeplanUserQuestion = useCallback(
+    (weplan_user: boolean) => {
+      if (weplan_user === true) {
+        setWeplanUser(true);
+        setWpUserQuestionDrawer(false);
+        setFriendsWindow(true);
+      } else {
+        setWeplanUser(false);
+        setWpUserQuestionDrawer(false);
+        setWpUserName('');
+        setWpUserId('');
+      }
+      return handleWeplanGuestDrawer(false);
+    },
+    [handleWeplanGuestDrawer],
+  );
+  const handleIsHiredQuestion = useCallback(
+    (is_hired: boolean) => {
+      if (is_hired === true) {
+        setIsHiredMessage('Contratado S2!');
+        setIsHired(true);
+      } else {
+        setIsHiredMessage('Avaliando ...');
+        setIsHired(false);
+      }
+      return handleWeplanGuestDrawer(false);
+    },
+    [handleWeplanGuestDrawer],
+  );
+  const handleAppointmentTypeQuestion = useCallback(
+    (appointment_type: string) => {
+      if (appointment_type === 'Comercial') {
+        setAppointmentType('Comercial');
+      } else {
+        setAppointmentType('Técnico');
+      }
+      return setAppointmentTypeDrawer(false);
+    },
+    [],
+  );
+
+  const handleSelectedWeplanUser = useCallback((WPUser: IUserInfoDTO) => {
+    setWpUserName(WPUser.name);
+    setWpUserId(WPUser.id);
+    setFriendsWindow(false);
+  }, []);
+  const handleMonthChange = useCallback((month: Date) => {
+    setCurrentMonth(month);
+  }, []);
+  const handleDateChange = useCallback((day: Date) => {
+    setSelectedDate(day);
+  }, []);
+
+  const handleGetPlanners = useCallback(() => {
     try {
       api
-        .get<IUser[]>(`events/${pageEvent.id}/event-planner`)
+        .get<IUserInfoDTO[]>(`events/${eventId}/event-planner`)
         .then(response => {
           setPlanners(response.data);
         });
@@ -439,12 +462,11 @@ const EventHostDashboard: React.FC = () => {
       throw new Error('event dashboard, rota guest para o backend');
       console.log(err);
     }
-  }, [pageEvent]);
-
-  const handleGetEventOwners = useCallback(() => {
+  }, [eventId]);
+  const handleGetOwners = useCallback(() => {
     try {
       api
-        .get<IEventOwners[]>(`events/${pageEvent.id}/event-owners`)
+        .get<IEventOwnerDTO[]>(`events/${eventId}/event-owners`)
         .then(response => {
           setOwners(response.data);
         });
@@ -452,12 +474,11 @@ const EventHostDashboard: React.FC = () => {
       console.log(err);
       throw new Error('event dashboard, rota guest para o backend');
     }
-  }, [pageEvent]);
-
-  const handleGetEventMembers = useCallback(() => {
+  }, [eventId]);
+  const handleGetMembers = useCallback(() => {
     try {
       api
-        .get<IUser[]>(`events/${pageEvent.id}/event-members`)
+        .get<IEventMemberDTO[]>(`events/${eventId}/event-members`)
         .then(response => {
           setMembers(response.data);
         });
@@ -465,27 +486,11 @@ const EventHostDashboard: React.FC = () => {
       throw new Error('event dashboard, rota guest para o backend');
       console.log(err);
     }
-  }, [pageEvent]);
-
-  const handleGetGuests = useCallback(() => {
-    try {
-      api
-        .get<IEventGuest[]>(`/events/${pageEvent.id}/guests`)
-        .then(response => {
-          setEventGuests(response.data);
-        });
-      setConfirmedGuests(eventGuests.filter(guest => guest.confirmed === true));
-      setMyGuests(eventGuests.filter(guest => guest.host === user.name));
-    } catch (err) {
-      throw new Error('event dashboard, rota guest para o backend');
-      console.log(err);
-    }
-  }, [pageEvent.id, eventGuests, user]);
-
+  }, [eventId]);
   const handleGetCheckListItems = useCallback(() => {
     try {
       api
-        .get<IEventCheckList[]>(`/events/${pageEvent.id}/check-list`)
+        .get<IEventCheckList[]>(`/events/${eventId}/check-list`)
         .then(response => {
           setCheckListItems(response.data);
         });
@@ -496,11 +501,37 @@ const EventHostDashboard: React.FC = () => {
       throw new Error('event dashboard, rota guest para o backend');
       console.log(err);
     }
-  }, [pageEvent.id, checkListItems]);
+  }, [eventId, checkListItems]);
+  const handleGetEvent = useCallback(() => {
+    try {
+      api.get<IEvent>(`/events/${pageEvent.id}`).then(response => {
+        setEventId(response.data.id);
+        const date = new Date(response.data.date);
+        const year = date.getFullYear();
+        const month =
+          date.getMonth() < 10 ? `0${date.getMonth()}` : date.getMonth();
+        const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
+        const hour =
+          date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
+        const minute =
+          date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
+        setEvent({
+          id: response.data.id,
+          name: response.data.name,
+          trimmed_name: response.data.trimmed_name,
+          date: `${hour}:${minute} - ${day}/${month}/${year}`,
+          event_type: response.data.event_type,
+          daysTillDate: differenceInCalendarDays(date, new Date()),
+        });
+      });
+    } catch (err) {
+      throw Error(err);
+    }
+  }, [pageEvent.id]);
 
   const handleGetFriends = useCallback(() => {
     try {
-      api.get<IUser[]>(`/users/friends/list`).then(response => {
+      api.get<IUserInfoDTO[]>(`/users/friends/list`).then(response => {
         setFriends(response.data);
       });
     } catch (err) {
@@ -508,7 +539,6 @@ const EventHostDashboard: React.FC = () => {
       console.log(err);
     }
   }, []);
-
   const handleGetEvents = useCallback(() => {
     try {
       api.get<IEvent[]>('/events').then(response => {
@@ -518,26 +548,516 @@ const EventHostDashboard: React.FC = () => {
       throw Error(err);
     }
   }, []);
-
-  const handleGetEvent = useCallback(() => {
+  const handleGetGuests = useCallback(() => {
     try {
-      api.get<EventDTO>(`/events/${pageEvent.id}`).then(response => {
-        setEventDTO(response.data);
+      api.get<IEventGuest[]>(`/events/${eventId}/guests`).then(response => {
+        setEventGuests(response.data);
+        setConfirmedGuests(
+          response.data.filter(guest => guest.confirmed === true).length,
+        );
+        setMyGuests(response.data.filter(guest => guest.host === user.name));
+        setMyGuestsConfirmed(
+          response.data.filter(
+            guest => guest.host === user.name && guest.confirmed === true,
+          ).length,
+        );
       });
     } catch (err) {
-      throw Error(err);
+      throw new Error('event dashboard, rota guest para o backend');
+      console.log(err);
     }
-  }, [pageEvent]);
+  }, [eventId, user]);
 
-  const handleMyEventDashboard = useCallback(
-    (my_event: IEvent) => {
-      history.push('/dashboard/my-event', { params: my_event });
-      closeAllWindows();
-      handleGetEvent();
+  const handleAddSupplier = useCallback(
+    async (data: ICreateSupplier) => {
+      try {
+        formRef.current?.setErrors([]);
+
+        const schema = Yup.object().shape({
+          supplier_id: Yup.string(),
+          supplier_sub_category: Yup.string(),
+        });
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+        await api.post(`events/${eventId}/suppliers`, {
+          supplier_id: data.supplier_id,
+          supplier_sub_category: data.supplier_sub_category,
+          isHired,
+        });
+        addToast({
+          type: 'success',
+          title: 'Fornecedor selecionado com Sucesso',
+          description: 'Você já pode visualizar no dashboard do seu evento.',
+        });
+        handleAddSupplierDrawer();
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+          formRef.current?.setErrors(error);
+        }
+        addToast({
+          type: 'error',
+          title: 'Erro ao selecionar fornecedor',
+          description: 'Erro selecionar fornecedor, tente novamente.',
+        });
+      }
     },
-    [history, handleGetEvent, closeAllWindows],
+    [addToast, eventId, handleAddSupplierDrawer, isHired],
+  );
+  const handleAddCheckListItem = useCallback(
+    async (data: ICreateCheckListItem) => {
+      try {
+        formRef.current?.setErrors([]);
+        const schema = Yup.object().shape({
+          name: Yup.string().required('Nome é obrigatório'),
+          priority_level: Yup.string().required('Sobrenome é obrigatório'),
+        });
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+        await api.post(`events/${eventId}/check-list`, {
+          name: data.name,
+          priority_level: data.priority_level,
+          checked,
+        });
+        addToast({
+          type: 'success',
+          title: 'Item criado com Sucesso',
+          description: 'O item foi adicionado à sua check-list.',
+        });
+        handleAddCheckListDrawer();
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+        addToast({
+          type: 'error',
+          title: 'Erro ao criar item da check-list',
+          description: 'Erro  ao criar o item, tente novamente.',
+        });
+      }
+    },
+    [addToast, eventId, handleAddCheckListDrawer, checked],
+  );
+  const handleAddPlanner = useCallback(
+    async (data: ICreateEventPlanner) => {
+      try {
+        formRef.current?.setErrors([]);
+
+        const schema = Yup.object().shape({
+          planner_id: Yup.string().required('Usuário WePlan é obrigatório'),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+
+        await api.post(`events/${eventId}/event-planner`, {
+          planner_id: data.planner_id,
+        });
+
+        addToast({
+          type: 'success',
+          title: 'Cerimonialista adicionado com sucesso com Sucesso',
+          description: 'O item foi adicionado à sua check-list.',
+        });
+
+        handleAddPlannerDrawer();
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro ao adicionar cerimonialista',
+          description: 'Erro  ao adicionar cerimonialista, tente novamente.',
+        });
+      }
+    },
+    [addToast, eventId, handleAddPlannerDrawer],
+  );
+  const handleAddOwner = useCallback(
+    async (data: ICreateEventOwner) => {
+      try {
+        formRef.current?.setErrors([]);
+
+        const schema = Yup.object().shape({
+          owner_id: Yup.string().required('Usuário WePlan é obrigatório.'),
+          description: Yup.string().required('Descrição é obrigatório.'),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+
+        await api.post(`events/${eventId}/event-owners`, {
+          owner_id: data.owner_id,
+          description: data.description,
+        });
+
+        addToast({
+          type: 'success',
+          title: 'Dono da festa adicionado com sucesso',
+          description: 'Ele já pode contribuir com o evento.',
+        });
+
+        handleAddOwnerDrawer();
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro ao adicionar Dono da Festa',
+          description: 'Erro ao adicionar Dono da Festa, tente novamente.',
+        });
+      }
+    },
+    [addToast, eventId, handleAddOwnerDrawer],
+  );
+  const handleAddMember = useCallback(
+    async (data: IEventMemberDTO) => {
+      try {
+        formRef.current?.setErrors([]);
+
+        const schema = Yup.object().shape({
+          number_of_guests: Yup.string(),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+
+        await api.post(`events/${eventId}/event-members`, {
+          number_of_guests: data.number_of_guests,
+          member_id: wpUserId,
+        });
+
+        addToast({
+          type: 'success',
+          title: 'Membro da festa adicionado com sucesso',
+          description: 'Ele já pode visualizar as informações do evento.',
+        });
+        setWpUserId('');
+        setWeplanUser(false);
+        setWpUserName('');
+
+        handleAddMemberDrawer();
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro ao adicionar membro da festa',
+          description: 'Erro ao adicionar membro da festa, tente novamente.',
+        });
+      }
+    },
+    [addToast, eventId, handleAddMemberDrawer, wpUserId],
+  );
+  const handleAddGuest = useCallback(
+    async (data: ICreateGuest) => {
+      try {
+        formRef.current?.setErrors([]);
+
+        if (weplanUser) {
+          const schema = Yup.object().shape({
+            description: Yup.string(),
+          });
+
+          await schema.validate(data, {
+            abortEarly: false,
+          });
+
+          await api.post(`events/${eventId}/guests`, {
+            first_name: '0',
+            last_name: '0',
+            description: data.description,
+            weplanUser,
+            confirmed: guestConfirmed,
+            user_id: wpUserId,
+          });
+        } else {
+          const schema = Yup.object().shape({
+            first_name: Yup.string().required('Primeiro nome é obrigatório'),
+            last_name: Yup.string().required('Sobrenome é obrigatório'),
+            description: Yup.string(),
+          });
+
+          await schema.validate(data, {
+            abortEarly: false,
+          });
+
+          await api.post(`events/${eventId}/guests`, {
+            first_name: data.first_name,
+            last_name: data.last_name,
+            description: data.description,
+            weplanUser,
+            confirmed: guestConfirmed,
+            user_id: '0',
+          });
+        }
+
+        setWpUserId('');
+        setGuestConfirmedMessage('');
+        setWeplanUser(false);
+        setGuestConfirmed(false);
+        setWpUserName('');
+
+        handleAddGuestDrawer();
+        handleGetGuests();
+
+        return addToast({
+          type: 'success',
+          title: 'Convidado criado com sucesso',
+          description: 'As mudanças já foram atualizadas no seu evento.',
+        });
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+          formRef.current?.setErrors(error);
+        }
+        return addToast({
+          type: 'error',
+          title: 'Erro ao criar convidado',
+          description: 'Erro ao criar o convidado, tente novamente.',
+        });
+      }
+    },
+    [
+      addToast,
+      eventId,
+      handleAddGuestDrawer,
+      weplanUser,
+      guestConfirmed,
+      wpUserId,
+      handleGetGuests,
+    ],
   );
 
+  const handleEditGuest = useCallback(
+    async (data: IEventGuest) => {
+      try {
+        formRef.current?.setErrors([]);
+
+        if (weplanUser) {
+          const schema = Yup.object().shape({
+            description: Yup.string(),
+          });
+
+          await schema.validate(data, {
+            abortEarly: false,
+          });
+          console.log(updated_guest, {
+            first_name: updated_guest.first_name,
+            last_name: updated_guest.last_name,
+            description: data.description,
+            confirmed: updated_guest.confirmed,
+          });
+          await api.put(`events/${eventId}/guests/${updated_guest.id}`, {
+            first_name: updated_guest.first_name,
+            last_name: updated_guest.last_name,
+            description: data.description,
+            confirmed: updated_guest.confirmed,
+          });
+        } else {
+          const schema = Yup.object().shape({
+            first_name: Yup.string().required('Primeiro nome é obrigatório'),
+            last_name: Yup.string().required('Sobrenome é obrigatório'),
+            description: Yup.string(),
+          });
+
+          await schema.validate(data, {
+            abortEarly: false,
+          });
+          console.log(updated_guest, {
+            first_name: data.first_name,
+            last_name: data.last_name,
+            description: data.description,
+            confirmed: updated_guest.confirmed,
+          });
+          await api.put(`events/${eventId}/guests/${updated_guest.id}`, {
+            first_name: data.first_name,
+            last_name: data.last_name,
+            description: data.description,
+            confirmed: updated_guest.confirmed,
+          });
+        }
+
+        addToast({
+          type: 'success',
+          title: 'Convidado editado com sucesso',
+          description: 'As mudanças já foram atualizadas no seu evento.',
+        });
+
+        setEditGuestDrawer(false);
+        handleGetGuests();
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro ao editar convidado',
+          description: 'Erro ao editar o convidado, tente novamente.',
+        });
+      }
+    },
+    [addToast, eventId, weplanUser, updated_guest, handleGetGuests],
+  );
+  const handleEditConfirmedGuest = useCallback(
+    async (props: IEventGuest) => {
+      try {
+        console.log(props, {
+          first_name: props.first_name,
+          last_name: props.last_name,
+          description: props.description,
+          confirmed: !props.confirmed,
+        });
+        await api.put(`events/${eventId}/guests/${props.id}`, {
+          first_name: props.first_name,
+          last_name: props.last_name,
+          description: props.description,
+          confirmed: !props.confirmed,
+        });
+
+        addToast({
+          type: 'success',
+          title: 'Convidado editado com sucesso',
+          description: 'As mudanças já foram atualizadas no seu evento.',
+        });
+        handleGetGuests();
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro ao editar convidado',
+          description: 'Erro ao editar o convidado, tente novamente.',
+        });
+      }
+    },
+    [addToast, eventId, handleGetGuests],
+  );
+  const handleDeleteGuest = useCallback(async () => {
+    try {
+      await api.delete(`/events/${eventId}/guests/${updated_guest.id}`);
+
+      addToast({
+        type: 'success',
+        title: 'Convidado excluído com sucesso',
+        description: 'As mudanças já foram atualizadas no seu evento.',
+      });
+
+      setEditGuestDrawer(false);
+      handleGetGuests();
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        const error = getValidationErrors(err);
+
+        formRef.current?.setErrors(error);
+      }
+
+      addToast({
+        type: 'error',
+        title: 'Erro ao excluir convidado',
+        description: 'Erro ao excluir o convidado, tente novamente.',
+      });
+    }
+  }, [eventId, updated_guest, addToast, handleGetGuests]);
+  const handleAddAppointment = useCallback(
+    async (data: ICreateAppointment) => {
+      try {
+        formRef.current?.setErrors([]);
+        const date = new Date(selectedDate);
+
+        date.setHours(Number(data.start_hour));
+        date.setMinutes(Number(data.start_minute));
+
+        const schema = Yup.object().shape({
+          subject: Yup.string().required('Assunto é obrigatório'),
+          duration_minutes: Yup.number(),
+          address: Yup.string(),
+          start_hour: Yup.number().required(),
+          start_minute: Yup.number().required(),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+
+        await api.post(`/appointments`, {
+          subject: data.subject,
+          date,
+          duration_minutes: Number(data.duration_minutes),
+          address: data.address,
+          weplanGuest: weplanUser,
+          appointment_type: appointmentType,
+        });
+
+        addToast({
+          type: 'success',
+          title: 'Agendamento Criado com Sucesso',
+          description:
+            'Você já pode visualizar no seu dashboard de agendamentos.',
+        });
+
+        handleAddAppointmentDrawer();
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro ao criar agendamento',
+          description: 'Erro  ao criar o agendamento, tente novamente.',
+        });
+      }
+    },
+    [
+      addToast,
+      handleAddAppointmentDrawer,
+      weplanUser,
+      appointmentType,
+      selectedDate,
+    ],
+  );
+  const handleCheckListChecked = useCallback(
+    (item_checked: boolean) => {
+      if (item_checked === true) {
+        setCheckedListItemMessage('Feito! =D');
+        setChecked(true);
+      } else {
+        setCheckedListItemMessage('Em progresso! No Worries ;D');
+        setChecked(false);
+      }
+      return handleCheckedListItemDrawer();
+    },
+    [handleCheckedListItemDrawer],
+  );
   const handleEditEventInfo = useCallback(
     async (data: IEditEventInfo) => {
       try {
@@ -558,7 +1078,7 @@ const EventHostDashboard: React.FC = () => {
           abortEarly: false,
         });
 
-        await api.put(`events/${pageEvent.id}/event-infos`, {
+        await api.put(`events/${eventId}/event-infos`, {
           number_of_guests: data.number_of_guests,
           duration: data.duration,
           budget: data.budget,
@@ -589,731 +1109,45 @@ const EventHostDashboard: React.FC = () => {
         });
       }
     },
-    [addToast, pageEvent.id, handleEventInfoDrawer],
+    [addToast, eventId, handleEventInfoDrawer],
   );
 
-  const handleWeplanGuestQuestion = useCallback(
-    (weplan_user: boolean) => {
-      if (weplan_user === true) {
-        setWeplanGuestUser(`${guestName}`);
-        setWeplanUser(true);
-        friendsWindow ? handleFriendsWindow(false) : handleFriendsWindow(true);
-      } else {
-        setWeplanGuestUser('AINDA não é usuário WePlan!');
-        setWeplanUser(false);
-      }
-      return handleWeplanGuestDrawer(false);
-    },
-    [handleWeplanGuestDrawer, guestName, handleFriendsWindow, friendsWindow],
-  );
+  const handleMyEventDashboard = useCallback(
+    (my_event: IEvent) => {
+      closeAllWindows();
+      setEvent(my_event);
 
-  const handleSelectedWeplanUser = useCallback(
-    (id: string, name: string) => {
-      setGuestName(name);
-      setGuest_id(id);
-      setFriendsWindow(false);
-      handleWeplanGuestQuestion(true);
-    },
-    [handleWeplanGuestQuestion],
-  );
-
-  const handleGuestConfirmedQuestion = useCallback(
-    (guest_confirmed: boolean) => {
-      if (guest_confirmed === true) {
-        setGuestConfirmedMessage('Convidado confirmado!');
-        setGuestConfirmed(true);
-      } else {
-        setGuestConfirmedMessage('');
-        setGuestConfirmed(false);
-      }
-      return handleGuestConfirmedDrawer();
-    },
-    [handleGuestConfirmedDrawer],
-  );
-
-  const handleEditGuest = useCallback(
-    async (data: IEventGuest) => {
-      try {
-        formRef.current?.setErrors([]);
-
-        if (weplanUser) {
-          const schema = Yup.object().shape({
-            description: Yup.string(),
-          });
-
-          await schema.validate(data, {
-            abortEarly: false,
-          });
-          console.log(updated_guest, {
-            first_name: updated_guest.first_name,
-            last_name: updated_guest.last_name,
-            description: data.description,
-            confirmed: updated_guest.confirmed,
-          });
-          await api.put(`events/${pageEvent.id}/guests/${updated_guest.id}`, {
-            first_name: updated_guest.first_name,
-            last_name: updated_guest.last_name,
-            description: data.description,
-            confirmed: updated_guest.confirmed,
-          });
-        } else {
-          const schema = Yup.object().shape({
-            first_name: Yup.string().required('Primeiro nome é obrigatório'),
-            last_name: Yup.string().required('Sobrenome é obrigatório'),
-            description: Yup.string(),
-          });
-
-          await schema.validate(data, {
-            abortEarly: false,
-          });
-          console.log(updated_guest, {
-            first_name: data.first_name,
-            last_name: data.last_name,
-            description: data.description,
-            confirmed: updated_guest.confirmed,
-          });
-          await api.put(`events/${pageEvent.id}/guests/${updated_guest.id}`, {
-            first_name: data.first_name,
-            last_name: data.last_name,
-            description: data.description,
-            confirmed: updated_guest.confirmed,
-          });
-        }
-
-        addToast({
-          type: 'success',
-          title: 'Convidado editado com sucesso',
-          description: 'As mudanças já foram atualizadas no seu evento.',
-        });
-
-        setEditGuestDrawer(false);
-        handleGetGuests();
-      } catch (err) {
-        if (err instanceof Yup.ValidationError) {
-          const error = getValidationErrors(err);
-
-          formRef.current?.setErrors(error);
-        }
-
-        addToast({
-          type: 'error',
-          title: 'Erro ao editar convidado',
-          description: 'Erro ao editar o convidado, tente novamente.',
-        });
-      }
-    },
-    [addToast, pageEvent.id, weplanUser, updated_guest, handleGetGuests],
-  );
-
-  const handleEditConfirmedGuest = useCallback(
-    async (props: IEventGuest) => {
-      try {
-        console.log(props, {
-          first_name: props.first_name,
-          last_name: props.last_name,
-          description: props.description,
-          confirmed: !props.confirmed,
-        });
-        await api.put(`events/${pageEvent.id}/guests/${props.id}`, {
-          first_name: props.first_name,
-          last_name: props.last_name,
-          description: props.description,
-          confirmed: !props.confirmed,
-        });
-
-        addToast({
-          type: 'success',
-          title: 'Convidado editado com sucesso',
-          description: 'As mudanças já foram atualizadas no seu evento.',
-        });
-        handleGetGuests();
-      } catch (err) {
-        if (err instanceof Yup.ValidationError) {
-          const error = getValidationErrors(err);
-
-          formRef.current?.setErrors(error);
-        }
-
-        addToast({
-          type: 'error',
-          title: 'Erro ao editar convidado',
-          description: 'Erro ao editar o convidado, tente novamente.',
-        });
-      }
-    },
-    [addToast, pageEvent, handleGetGuests],
-  );
-
-  const handleDeleteGuest = useCallback(async () => {
-    try {
-      await api.delete(`/events/${pageEvent.id}/guests/${updated_guest.id}`);
-
-      addToast({
-        type: 'success',
-        title: 'Convidado excluído com sucesso',
-        description: 'As mudanças já foram atualizadas no seu evento.',
+      return history.push(`/dashboard/my-event/${my_event.trimmed_name}`, {
+        params: my_event,
       });
-
-      setEditGuestDrawer(false);
-      handleGetGuests();
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const error = getValidationErrors(err);
-
-        formRef.current?.setErrors(error);
-      }
-
-      addToast({
-        type: 'error',
-        title: 'Erro ao excluir convidado',
-        description: 'Erro ao excluir o convidado, tente novamente.',
-      });
-    }
-  }, [pageEvent, updated_guest, addToast, handleGetGuests]);
-
-  const handleIsHiredQuestion = useCallback(
-    (is_hired: boolean) => {
-      if (is_hired === true) {
-        setIsHiredMessage('Contratado S2!');
-        setIsHired(true);
-      } else {
-        setIsHiredMessage('Avaliando ...');
-        setIsHired(false);
-      }
-      return handleWeplanGuestDrawer(false);
     },
-    [handleWeplanGuestDrawer],
-  );
-
-  const handleWeplanSupplierAppointmentQuestion = useCallback(
-    (weplan_user: boolean) => {
-      if (weplan_user === true) {
-        setWeplanSupplierAppointmentMessage('É usuário WePlan S2!');
-        setWeplanSupplierAppointmentUser(true);
-      } else {
-        setWeplanSupplierAppointmentMessage('AINDA não é usuário WePlan!');
-        setWeplanSupplierAppointmentUser(false);
-      }
-      return handleWeplanGuestDrawer(false);
-    },
-    [handleWeplanGuestDrawer],
-  );
-
-  const handleAppointmentTypeQuestion = useCallback(
-    (appointment_type: string) => {
-      if (appointment_type === 'Comercial') {
-        setAppointmentType('Comercial');
-      } else {
-        setAppointmentType('Técnico');
-      }
-      return handleGuestConfirmedDrawer();
-    },
-    [handleGuestConfirmedDrawer],
-  );
-
-  const handleAddAppointment = useCallback(
-    async (data: ICreateAppointment) => {
-      try {
-        formRef.current?.setErrors([]);
-        const date = new Date(selectedDate);
-
-        date.setHours(Number(data.start_hour));
-        date.setMinutes(Number(data.start_minute));
-
-        const schema = Yup.object().shape({
-          subject: Yup.string().required('Assunto é obrigatório'),
-          duration_minutes: Yup.number(),
-          address: Yup.string(),
-          start_hour: Yup.number().required(),
-          start_minute: Yup.number().required(),
-        });
-
-        await schema.validate(data, {
-          abortEarly: false,
-        });
-
-        await api.post(`/appointments`, {
-          subject: data.subject,
-          date,
-          duration_minutes: Number(data.duration_minutes),
-          address: data.address,
-          weplanGuest: weplanSupplierAppointmentUser,
-          appointment_type: appointmentType,
-        });
-
-        addToast({
-          type: 'success',
-          title: 'Agendamento Criado com Sucesso',
-          description:
-            'Você já pode visualizar no seu dashboard de agendamentos.',
-        });
-
-        handleAddAppointmentDrawer();
-      } catch (err) {
-        if (err instanceof Yup.ValidationError) {
-          const error = getValidationErrors(err);
-
-          formRef.current?.setErrors(error);
-        }
-
-        addToast({
-          type: 'error',
-          title: 'Erro ao criar agendamento',
-          description: 'Erro  ao criar o agendamento, tente novamente.',
-        });
-      }
-    },
-    [
-      addToast,
-      handleAddAppointmentDrawer,
-      weplanSupplierAppointmentUser,
-      appointmentType,
-      selectedDate,
-    ],
-  );
-
-  const handleUserProfileWindow = useCallback(
-    (userProfile: IUser | undefined) => {
-      console.log(userProfile);
-      if (userProfile) {
-        setUserProfileWindow(!userProfileWindow);
-        setProfileUser(userProfile);
-      }
-    },
-    [userProfileWindow],
-  );
-
-  const handleCheckListChecked = useCallback(
-    (item_checked: boolean) => {
-      if (item_checked === true) {
-        setCheckedListItemMessage('Feito! =D');
-        setChecked(true);
-      } else {
-        setCheckedListItemMessage('Em progresso! No Worries ;D');
-        setChecked(false);
-      }
-      return handleCheckedListItemDrawer();
-    },
-    [handleCheckedListItemDrawer],
-  );
-
-  const handleLatestActionsSection = useCallback(() => {
-    closeAllSections();
-    setLatestActionsSection(true);
-  }, [closeAllSections]);
-
-  const handleGuestsSection = useCallback(() => {
-    closeAllSections();
-    setGuestsSection(true);
-  }, [closeAllSections]);
-
-  const handleAppointmentsSection = useCallback(() => {
-    closeAllSections();
-    setAppointmentsSection(true);
-  }, [closeAllSections]);
-
-  const handleFinanceSection = useCallback(() => {
-    closeAllSections();
-    setFinanceSection(true);
-  }, [closeAllSections]);
-
-  const handleCheckListSection = useCallback(() => {
-    closeAllSections();
-    setCheckListSection(true);
-  }, [closeAllSections]);
-
-  const handleSupplierSection = useCallback(() => {
-    closeAllSections();
-    setSupplierSection(true);
-  }, [closeAllSections]);
-
-  const handleMessagesSection = useCallback(() => {
-    closeAllSections();
-    setMessagesSection(true);
-  }, [closeAllSections]);
-
-  const handleAddSupplier = useCallback(
-    async (data: ICreateSupplier) => {
-      try {
-        formRef.current?.setErrors([]);
-
-        const schema = Yup.object().shape({
-          supplier_id: Yup.string(),
-          supplier_sub_category: Yup.string(),
-        });
-
-        await schema.validate(data, {
-          abortEarly: false,
-        });
-
-        await api.post(`events/${pageEvent.id}/suppliers`, {
-          supplier_id: data.supplier_id,
-          supplier_sub_category: data.supplier_sub_category,
-          isHired,
-        });
-
-        addToast({
-          type: 'success',
-          title: 'Fornecedor selecionado com Sucesso',
-          description: 'Você já pode visualizar no dashboard do seu evento.',
-        });
-
-        handleAddSupplierDrawer();
-      } catch (err) {
-        if (err instanceof Yup.ValidationError) {
-          const error = getValidationErrors(err);
-
-          formRef.current?.setErrors(error);
-        }
-
-        addToast({
-          type: 'error',
-          title: 'Erro ao selecionar fornecedor',
-          description: 'Erro selecionar fornecedor, tente novamente.',
-        });
-      }
-    },
-    [addToast, pageEvent.id, handleAddSupplierDrawer, isHired],
-  );
-
-  const handleAddCheckListItem = useCallback(
-    async (data: ICreateCheckListItem) => {
-      try {
-        formRef.current?.setErrors([]);
-
-        const schema = Yup.object().shape({
-          name: Yup.string().required('Nome é obrigatório'),
-          priority_level: Yup.string().required('Sobrenome é obrigatório'),
-        });
-
-        await schema.validate(data, {
-          abortEarly: false,
-        });
-
-        await api.post(`events/${pageEvent.id}/check-list`, {
-          name: data.name,
-          priority_level: data.priority_level,
-          checked,
-        });
-
-        addToast({
-          type: 'success',
-          title: 'Item criado com Sucesso',
-          description: 'O item foi adicionado à sua check-list.',
-        });
-
-        handleAddCheckListDrawer();
-      } catch (err) {
-        if (err instanceof Yup.ValidationError) {
-          const error = getValidationErrors(err);
-
-          formRef.current?.setErrors(error);
-        }
-
-        addToast({
-          type: 'error',
-          title: 'Erro ao criar item da check-list',
-          description: 'Erro  ao criar o item, tente novamente.',
-        });
-      }
-    },
-    [addToast, pageEvent.id, handleAddCheckListDrawer, checked],
-  );
-
-  const handleAddPlanner = useCallback(
-    async (data: ICreateEventPlanner) => {
-      try {
-        formRef.current?.setErrors([]);
-
-        const schema = Yup.object().shape({
-          planner_id: Yup.string().required('Usuário WePlan é obrigatório'),
-        });
-
-        await schema.validate(data, {
-          abortEarly: false,
-        });
-
-        await api.post(`events/${pageEvent.id}/event-planner`, {
-          planner_id: data.planner_id,
-        });
-
-        addToast({
-          type: 'success',
-          title: 'Cerimonialista adicionado com sucesso com Sucesso',
-          description: 'O item foi adicionado à sua check-list.',
-        });
-
-        handleAddPlannerDrawer();
-      } catch (err) {
-        if (err instanceof Yup.ValidationError) {
-          const error = getValidationErrors(err);
-
-          formRef.current?.setErrors(error);
-        }
-
-        addToast({
-          type: 'error',
-          title: 'Erro ao adicionar cerimonialista',
-          description: 'Erro  ao adicionar cerimonialista, tente novamente.',
-        });
-      }
-    },
-    [addToast, pageEvent.id, handleAddPlannerDrawer],
-  );
-
-  const handleAddOwner = useCallback(
-    async (data: ICreateEventOwner) => {
-      try {
-        formRef.current?.setErrors([]);
-
-        const schema = Yup.object().shape({
-          owner_id: Yup.string().required('Usuário WePlan é obrigatório.'),
-          description: Yup.string().required('Descrição é obrigatório.'),
-        });
-
-        await schema.validate(data, {
-          abortEarly: false,
-        });
-
-        await api.post(`events/${pageEvent.id}/event-owners`, {
-          owner_id: data.owner_id,
-          description: data.description,
-        });
-
-        addToast({
-          type: 'success',
-          title: 'Dono da festa adicionado com sucesso',
-          description: 'Ele já pode contribuir com o evento.',
-        });
-
-        handleAddOwnerDrawer();
-      } catch (err) {
-        if (err instanceof Yup.ValidationError) {
-          const error = getValidationErrors(err);
-
-          formRef.current?.setErrors(error);
-        }
-
-        addToast({
-          type: 'error',
-          title: 'Erro ao adicionar Dono da Festa',
-          description: 'Erro ao adicionar Dono da Festa, tente novamente.',
-        });
-      }
-    },
-    [addToast, pageEvent.id, handleAddOwnerDrawer],
-  );
-
-  const handleAddMember = useCallback(
-    async (data: ICreateEventMember) => {
-      try {
-        formRef.current?.setErrors([]);
-
-        const schema = Yup.object().shape({
-          member_id: Yup.string(),
-        });
-
-        await schema.validate(data, {
-          abortEarly: false,
-        });
-
-        await api.post(`events/${pageEvent.id}/event-members`, {
-          member_id: data.member_id,
-        });
-
-        addToast({
-          type: 'success',
-          title: 'Membro da festa adicionado com sucesso',
-          description: 'Ele já pode visualizar as informações do evento.',
-        });
-
-        handleAddMemberDrawer();
-      } catch (err) {
-        if (err instanceof Yup.ValidationError) {
-          const error = getValidationErrors(err);
-
-          formRef.current?.setErrors(error);
-        }
-
-        addToast({
-          type: 'error',
-          title: 'Erro ao adicionar membro da festa',
-          description: 'Erro ao adicionar membro da festa, tente novamente.',
-        });
-      }
-    },
-    [addToast, pageEvent.id, handleAddMemberDrawer],
-  );
-
-  const handleDateChange = useCallback((day: Date) => {
-    setSelectedDate(day);
-  }, []);
-
-  const handleMonthChange = useCallback((month: Date) => {
-    setCurrentMonth(month);
-  }, []);
-
-  const handleAddGuest = useCallback(
-    async (data: ICreateGuest) => {
-      try {
-        formRef.current?.setErrors([]);
-
-        if (weplanUser) {
-          const schema = Yup.object().shape({
-            description: Yup.string(),
-          });
-
-          await schema.validate(data, {
-            abortEarly: false,
-          });
-          console.log({
-            first_name: '',
-            last_name: '',
-            description: data.description,
-            weplanUser,
-            confirmed: guestConfirmed,
-            user_id: guest_id,
-          });
-
-          await api.post(`events/${pageEvent.id}/guests`, {
-            first_name: '0',
-            last_name: '0',
-            description: data.description,
-            weplanUser,
-            confirmed: guestConfirmed,
-            user_id: guest_id,
-          });
-        } else {
-          const schema = Yup.object().shape({
-            first_name: Yup.string().required('Primeiro nome é obrigatório'),
-            last_name: Yup.string().required('Sobrenome é obrigatório'),
-            description: Yup.string(),
-          });
-
-          await schema.validate(data, {
-            abortEarly: false,
-          });
-
-          console.log({
-            first_name: data.first_name,
-            last_name: data.last_name,
-            description: data.description,
-            weplanUser,
-            confirmed: guestConfirmed,
-            user_id: guest_id,
-          });
-          await api.post(`events/${pageEvent.id}/guests`, {
-            first_name: data.first_name,
-            last_name: data.last_name,
-            description: data.description,
-            weplanUser: false,
-            confirmed: guestConfirmed,
-            user_id: '0',
-          });
-        }
-
-        addToast({
-          type: 'success',
-          title: 'Convidado criado com sucesso',
-          description: 'As mudanças já foram atualizadas no seu evento.',
-        });
-        setGuest_id('');
-        setWeplanGuestUser('');
-        setGuestConfirmedMessage('');
-        setWeplanUser(false);
-        setGuestConfirmed(false);
-        setGuestName('');
-
-        handleAddGuestDrawer();
-        handleGetGuests();
-      } catch (err) {
-        if (err instanceof Yup.ValidationError) {
-          const error = getValidationErrors(err);
-
-          formRef.current?.setErrors(error);
-        }
-
-        addToast({
-          type: 'error',
-          title: 'Erro ao criar convidado',
-          description: 'Erro ao criar o convidado, tente novamente.',
-        });
-      }
-    },
-    [
-      addToast,
-      pageEvent.id,
-      handleAddGuestDrawer,
-      weplanUser,
-      guestConfirmed,
-      guest_id,
-      handleGetGuests,
-    ],
+    [history, closeAllWindows],
   );
 
   useEffect(() => {
     handleGetEvents();
   }, [handleGetEvents]);
-
   useEffect(() => {
     handleGetEvent();
-    // handleGetFriends();
-    // handleGetGuests();
-    // handleGetCheckListItems();
-    // handleGetEventMembers();
-    // handleGetEventPlanners();
-    // handleGetEventOwners();
-  }, [
-    handleGetEvent,
-    // handleGetCheckListItems,
-    // handleGetGuests,
-    // handleGetFriends,
-    // handleGetEventMembers,
-    // handleGetEventPlanners,
-    // handleGetEventOwners,
-  ]);
-
-  useEffect(() => {
-    const date = new Date(eventDTO.date);
-    const year = date.getFullYear();
-    const month =
-      date.getMonth() < 10 ? `0${date.getMonth()}` : date.getMonth();
-    const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
-    const hour = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
-    const minute =
-      date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
-
-    setEvent({
-      id: eventDTO.id,
-      name: eventDTO.name,
-      date: `${hour}:${minute} - ${day}/${month}/${year}`,
-      daysTillDate: differenceInCalendarDays(date, new Date()),
-    });
-  }, [eventDTO]);
-
+  }, [handleGetEvent]);
   useEffect(() => {
     handleGetCheckListItems();
   }, [handleGetCheckListItems]);
-
   useEffect(() => {
     handleGetFriends();
   }, [handleGetFriends]);
-
   useEffect(() => {
     handleGetGuests();
   }, [handleGetGuests]);
-
   useEffect(() => {
-    handleGetEventPlanners();
-  }, [handleGetEventPlanners]);
-
+    handleGetPlanners();
+  }, [handleGetPlanners]);
   useEffect(() => {
-    handleGetEventOwners();
-  }, [handleGetEventOwners]);
-
+    handleGetOwners();
+  }, [handleGetOwners]);
   useEffect(() => {
-    handleGetEventMembers();
-  }, [handleGetEventMembers]);
+    handleGetMembers();
+  }, [handleGetMembers]);
 
   let guestCount = 0;
   let myGuestCount = 0;
@@ -1322,13 +1156,28 @@ const EventHostDashboard: React.FC = () => {
     <Container>
       <MenuButton />
       <PageHeader />
-      {!!userProfileWindow && (
+      {/* {!!wpUserWindow && (
         <UserProfile
           user={profileUser}
-          onChildClick={() => setUserProfileWindow(false)}
+          onChildClick={() => setWpUserWindow(false)}
+        />
+      )} */}
+      {/* {!!memberProfileWindow && (
+        <MemberProfileDrawer
+          member={memberProfile}
+          onHandleMemberDrawer={() => setMemberProfileWindow(false)}
+          onHandleNumberOfGuestDrawer={() => setNumberOfGuestDrawer(true)}
+          onHandleDeleteGuestDrawer={() => setDeleteGuestDrawer(true)}
+        />
+      )} */}
+      {!!friendsWindow && (
+        <FriendsListDrawer
+          friends={friends}
+          onHandleFriendsListDrawer={() => setFriendsWindow(false)}
+          handleSelectedFriend={(friend: IUserInfoDTO) =>
+            handleSelectedWeplanUser(friend)}
         />
       )}
-
       <EventPageContent>
         <SideBar>
           <MyEvents>
@@ -1421,6 +1270,7 @@ const EventHostDashboard: React.FC = () => {
             <h1>Cerimonialistas</h1>
             <MdPersonAdd size={24} />
           </button>
+
           {!!addPlannerDrawer && (
             <Form ref={formRef} onSubmit={handleAddPlanner}>
               <AddPlannerDrawer>
@@ -1436,26 +1286,27 @@ const EventHostDashboard: React.FC = () => {
                   type="text"
                   placeholder="Qual o id do cerimonialista?"
                 />
+
                 <button type="submit">
                   <h3>Salvar</h3>
                 </button>
               </AddPlannerDrawer>
             </Form>
           )}
+
           {planners.map(planner => (
             <span key={planner.id}>
-              <button
-                type="button"
-                onClick={() => handleUserProfileWindow(planner)}
-              >
+              <button type="button">
                 <h2>{planner.name}</h2>
               </button>
             </span>
           ))}
+
           <button type="button" onClick={handleAddOwnerDrawer}>
             <h1>Anfitriões</h1>
             <MdPersonAdd size={24} />
           </button>
+
           {!!addOwnerDrawer && (
             <Form ref={formRef} onSubmit={handleAddOwner}>
               <AddOwnerDrawer>
@@ -1482,12 +1333,10 @@ const EventHostDashboard: React.FC = () => {
               </AddOwnerDrawer>
             </Form>
           )}
+
           {owners.map(owner => (
             <span key={owner.id}>
-              <button
-                type="button"
-                onClick={() => handleUserProfileWindow(owner)}
-              >
+              <button type="button">
                 <h2>{owner.name}</h2>
               </button>
             </span>
@@ -1507,12 +1356,12 @@ const EventHostDashboard: React.FC = () => {
                   </button>
                 </span>
 
-                <h1>Adicionar Membros da Festa</h1>
-
+                <h1>Adicionar Membro</h1>
+                <p>Número de convidados para membros é opcional</p>
                 <Input
-                  name="member_id"
-                  type="text"
-                  placeholder="Qual o id do usuário?"
+                  name="number_of_guests"
+                  type="number"
+                  placeholder="Número de convidados"
                 />
 
                 <button type="submit">
@@ -1570,7 +1419,6 @@ const EventHostDashboard: React.FC = () => {
                 <FiEdit size={30} />
               </button>
             </span>
-
             {!!editEventNameDrawer && (
               <>
                 <EditEventNameCloseButton
@@ -1582,9 +1430,7 @@ const EventHostDashboard: React.FC = () => {
                 <EditEventNameDrawer>
                   <span>
                     <h2>Nome do Evento</h2>
-
                     <input type="text" />
-
                     <button type="button">
                       <h3>Salvar</h3>
                     </button>
@@ -1592,13 +1438,12 @@ const EventHostDashboard: React.FC = () => {
                 </EditEventNameDrawer>
               </>
             )}
-
             <FirstRow>
               <div>
                 <button type="button" onClick={handleGuestsSection}>
                   <h2>Convidados</h2>
                   <p>
-                    {confirmedGuests.length}/{eventGuests.length}
+                    {confirmedGuests}/{eventGuests.length}
                   </p>
                 </button>
               </div>
@@ -1609,7 +1454,6 @@ const EventHostDashboard: React.FC = () => {
                   <p>R$ 215.000,00</p>
                 </button>
               </div>
-
               <div>
                 <button type="button" onClick={handleAppointmentsSection}>
                   <h2>Compromissos</h2>
@@ -1625,14 +1469,12 @@ const EventHostDashboard: React.FC = () => {
               <div>
                 <button type="button" onClick={handleCheckListSection}>
                   <h2>Check-List</h2>
-
                   <p>
                     {resolvedCheckListItems.length}/{checkListItems.length}
                   </p>
                 </button>
               </div>
             </FirstRow>
-
             {!!budgetDrawer && (
               <BudgetDrawer>
                 <BudgetCloseButton type="button" onClick={handleBudgetDrawer}>
@@ -1771,21 +1613,16 @@ const EventHostDashboard: React.FC = () => {
                         </div>
                       </IsHiredDrawer>
                     )}
-
                     <Input
                       name="supplier_id"
                       type="text"
                       placeholder="ID do fornecedor"
                     />
-
-                    {/* <Input name= type="text" placeholder="Usuário We Plan?" /> */}
-
                     <Input
                       name="supplier_sub_category"
                       type="text"
                       placeholder="Qual o serviço contratado?"
                     />
-
                     <button type="submit">
                       <h3>Salvar</h3>
                     </button>
@@ -1799,7 +1636,6 @@ const EventHostDashboard: React.FC = () => {
               <UsersChat>
                 <div>
                   <h1>Contatos</h1>
-
                   <UserChat>
                     <h1>Rullus</h1>
                     <FiChevronRight />
@@ -1808,18 +1644,22 @@ const EventHostDashboard: React.FC = () => {
                     <h1>ZCM</h1>
                     <FiChevronRight />
                   </UserChat>
+
                   <UserChat>
                     <h1>Company</h1>
                     <FiChevronRight />
                   </UserChat>
+
                   <UserChat>
                     <h1>Vagalumens</h1>
                     <FiChevronRight />
                   </UserChat>
+
                   <UserChat>
                     <h1>ZCM</h1>
                     <FiChevronRight />
                   </UserChat>
+
                   <UserChat>
                     <h1>Company</h1>
                     <FiChevronRight />
@@ -1837,11 +1677,10 @@ const EventHostDashboard: React.FC = () => {
               <ChatMessages>
                 <div>
                   <span>
-                    <button type="button" onClick={() => {}}>
+                    <button type="button">
                       <h1>Rullus</h1>
                     </button>
                   </span>
-
                   <Messages>
                     <span>Rullus: </span>
                     <p>
@@ -1851,6 +1690,7 @@ const EventHostDashboard: React.FC = () => {
                     </p>
                     <p>14:20</p>
                   </Messages>
+
                   <Messages>
                     <span>Você: </span>
                     <p>
@@ -1885,13 +1725,13 @@ const EventHostDashboard: React.FC = () => {
                     <p>Um beijo, bom fim de semana.</p>
                     <p>14:32</p>
                   </Messages>
-
                   <input type="text" />
                   <button type="button">Enviar</button>
                 </div>
               </ChatMessages>
             </MessagesSection>
           )}
+
           {!!guestsSection && (
             <GuestSection>
               <span>
@@ -1910,57 +1750,88 @@ const EventHostDashboard: React.FC = () => {
                 >
                   Meus Convidados
                 </GuestNavigationButton>
-                <button type="button" onClick={handleAddGuestDrawer}>
-                  <MdPersonAdd size={30} />
-                </button>
+
+                <span>
+                  <button type="button" onClick={handleAddGuestDrawer}>
+                    <MdPersonAdd size={30} />
+                  </button>
+                </span>
               </span>
+
+              {!guestWindow && (
+                <h3>
+                  {myGuestsConfirmed}/{myGuests.length}
+                </h3>
+              )}
+
+              {guestWindow && (
+                <h3>
+                  {confirmedGuests}/{eventGuests.length}
+                </h3>
+              )}
 
               <div>
                 {guestWindow &&
                   eventGuests.map(eGuest => {
-                    const eUser = friends.find(
-                      friend =>
-                        friend.first_name === eGuest.first_name ||
-                        friend.last_name === eGuest.last_name,
-                    );
-
                     guestCount += 1;
+
                     return (
                       <Guest key={eGuest.id}>
                         <span>
                           <p>{guestCount}</p>
-                          <button type="button">
-                            <strong>{eGuest.first_name}</strong>{' '}
-                            {eGuest.last_name}
-                          </button>
+                          {eGuest.host === user.name ? (
+                            <button
+                              type="button"
+                              onClick={() => handleEditGuestDrawer(eGuest)}
+                            >
+                              <strong>{eGuest.first_name}</strong>{' '}
+                              {eGuest.last_name}
+                              <FiEdit3 size={16} />
+                            </button>
+                          ) : (
+                            <NotHostGuest title={notHostMessage}>
+                              <strong>{eGuest.first_name}</strong>{' '}
+                              {eGuest.last_name}
+                            </NotHostGuest>
+                          )}
                         </span>
+
                         {eGuest.weplanUser && (
-                          <button
-                            onClick={() => handleUserProfileWindow(eUser)}
-                            type="button"
-                          >
+                          <button type="button">
                             <FiUser size={24} />
                           </button>
                         )}
-                        <div>
-                          <button key={eGuest.id} type="button">
-                            {eGuest.confirmed ? (
-                              <FiCheckSquare size={24} />
-                            ) : (
-                              <FiSquare size={24} />
-                            )}
-                          </button>
-                        </div>
+
+                        {eGuest.host === user.name ? (
+                          <div>
+                            <button
+                              type="button"
+                              onClick={() => handleEditConfirmedGuest(eGuest)}
+                            >
+                              {eGuest.confirmed ? (
+                                <FiCheckSquare size={24} />
+                              ) : (
+                                <FiSquare size={24} />
+                              )}
+                            </button>
+                          </div>
+                        ) : (
+                          <div>
+                            <NotHostGuest title={notHostMessage}>
+                              {eGuest.confirmed ? (
+                                <FiCheckSquare size={24} />
+                              ) : (
+                                <FiSquare size={24} />
+                              )}
+                            </NotHostGuest>
+                          </div>
+                        )}
                       </Guest>
                     );
                   })}
+
                 {!guestWindow &&
                   myGuests.map(mGuest => {
-                    const mUser = friends.find(
-                      friend =>
-                        friend.first_name === mGuest.first_name ||
-                        friend.last_name === mGuest.last_name,
-                    );
                     myGuestCount += 1;
                     return (
                       <Guest key={mGuest.id}>
@@ -1972,13 +1843,11 @@ const EventHostDashboard: React.FC = () => {
                           >
                             <strong>{mGuest.first_name}</strong>{' '}
                             {mGuest.last_name}
+                            <FiEdit3 size={16} />
                           </button>
                         </span>
                         {mGuest.weplanUser && (
-                          <button
-                            onClick={() => handleUserProfileWindow(mUser)}
-                            type="button"
-                          >
+                          <button type="button">
                             <FiUser size={24} />
                           </button>
                         )}
@@ -2009,45 +1878,6 @@ const EventHostDashboard: React.FC = () => {
                     </span>
                     <h1>Adicionar Convidado</h1>
 
-                    {!!weplanGuestDrawer && (
-                      <WeplanGuestDrawer>
-                        <h1>É usuário WePlan?</h1>
-                        <div>
-                          <button
-                            type="button"
-                            onClick={() => handleWeplanGuestQuestion(true)}
-                          >
-                            Sim
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleWeplanGuestQuestion(false)}
-                          >
-                            Não
-                          </button>
-                        </div>
-                      </WeplanGuestDrawer>
-                    )}
-                    {!!guestConfirmedDrawer && (
-                      <GuestConfirmedDrawer>
-                        <h1>Convidado confirmado?</h1>
-                        <div>
-                          <button
-                            type="button"
-                            onClick={() => handleGuestConfirmedQuestion(true)}
-                          >
-                            Sim
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleGuestConfirmedQuestion(false)}
-                          >
-                            Não
-                          </button>
-                        </div>
-                      </GuestConfirmedDrawer>
-                    )}
-
                     {!weplanUser && (
                       <>
                         <Input
@@ -2066,7 +1896,7 @@ const EventHostDashboard: React.FC = () => {
                     <Input
                       name="description"
                       type="text"
-                      placeholder="Alguma descrição necessária?"
+                      defaultValue="Descrição"
                     />
 
                     <div>
@@ -2087,10 +1917,10 @@ const EventHostDashboard: React.FC = () => {
                           </button>
                         </h1>
                       )}
-                      {weplanGuestUser === '' ? (
+                      {wpUserName === '' ? (
                         <button
                           type="button"
-                          onClick={() => handleWeplanGuestDrawer(true)}
+                          onClick={() => setWpUserQuestionDrawer(true)}
                         >
                           Convidado Weplan ?
                         </button>
@@ -2098,9 +1928,9 @@ const EventHostDashboard: React.FC = () => {
                         <h1>
                           <button
                             type="button"
-                            onClick={() => handleWeplanGuestDrawer(true)}
+                            onClick={() => setWpUserQuestionDrawer(true)}
                           >
-                            {weplanGuestUser}
+                            {wpUserName}
                           </button>
                         </h1>
                       )}
@@ -2149,8 +1979,14 @@ const EventHostDashboard: React.FC = () => {
 
                 {!updated_guest.weplanUser && (
                   <>
-                    <Input name="first_name" type="text" placeholder="Nome" />
                     <Input
+                      defaultValue={updated_guest.first_name}
+                      name="first_name"
+                      type="text"
+                      placeholder="Nome"
+                    />
+                    <Input
+                      defaultValue={updated_guest.last_name}
                       name="last_name"
                       type="text"
                       placeholder="Sobrenome"
@@ -2158,6 +1994,7 @@ const EventHostDashboard: React.FC = () => {
                   </>
                 )}
                 <Input
+                  defaultValue={updated_guest.description}
                   name="description"
                   type="text"
                   placeholder="Alguma descrição necessária?"
@@ -2173,29 +2010,43 @@ const EventHostDashboard: React.FC = () => {
               </AddGuestDrawer>
             </Form>
           )}
-          {friendsWindow && (
-            <FriendsList>
-              <span>
+          {!!wpUserQuestionDrawer && (
+            <WeplanUserDrawer>
+              <h1>É usuário WePlan?</h1>
+              <div>
                 <button
                   type="button"
-                  onClick={() => handleFriendsWindow(false)}
+                  onClick={() => handleWeplanUserQuestion(true)}
                 >
+                  Sim
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleWeplanUserQuestion(false)}
+                >
+                  Não
+                </button>
+              </div>
+            </WeplanUserDrawer>
+          )}
+          {/* {friendsWindow && (
+            <FriendsList>
+              <span>
+                <button type="button" onClick={() => setFriendsWindow(false)}>
                   <MdClose size={30} />
                 </button>
               </span>
               {friends.map(friend => (
                 <button
                   type="button"
-                  onClick={() =>
-                    handleSelectedWeplanUser(friend.id, friend.name)
-                  }
+                  onClick={() => handleSelectedWeplanUser(friend)}
                   key={friend.id}
                 >
                   {friend.name}
                 </button>
               ))}
             </FriendsList>
-          )}
+          )} */}
           {!!appointmentsSection && (
             <Appointments>
               <NextAppointment>
@@ -2284,10 +2135,10 @@ const EventHostDashboard: React.FC = () => {
                       </div>
                       <span>
                         <div>
-                          {weplanSupplierAppointmentMessage === '' ? (
+                          {wpUserName === '' ? (
                             <button
                               type="button"
-                              onClick={handleWeplanSupplierAppointmentDrawer}
+                              onClick={() => setWpUserQuestionDrawer(true)}
                             >
                               Fornecedor Weplan ?
                             </button>
@@ -2295,9 +2146,9 @@ const EventHostDashboard: React.FC = () => {
                             <h1>
                               <button
                                 type="button"
-                                onClick={handleWeplanSupplierAppointmentDrawer}
+                                onClick={() => setWpUserQuestionDrawer(true)}
                               >
-                                {weplanSupplierAppointmentMessage}
+                                {wpUserName}
                               </button>
                             </h1>
                           )}
@@ -2318,32 +2169,6 @@ const EventHostDashboard: React.FC = () => {
                               </button>
                             </h1>
                           )}
-                          {!!weplanSupplierAppointmentDrawer && (
-                            <WeplanSupplierAppointmentDrawer>
-                              <h1>Fornecedor é usuário WePlan?</h1>
-                              <div>
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    handleWeplanSupplierAppointmentQuestion(
-                                      true,
-                                    )
-                                  }
-                                >
-                                  Sim
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    handleWeplanSupplierAppointmentQuestion(
-                                      false,
-                                    )}
-                                >
-                                  Não
-                                </button>
-                              </div>
-                            </WeplanSupplierAppointmentDrawer>
-                          )}
                           {!!appointmentTypeDrawer && (
                             <AppointmentTypeDrawer>
                               <h1>Qual o tipo de compromisso?</h1>
@@ -2351,14 +2176,16 @@ const EventHostDashboard: React.FC = () => {
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    handleAppointmentTypeQuestion('Comercial')}
+                                    handleAppointmentTypeQuestion('Comercial')
+                                  }
                                 >
                                   Comercial
                                 </button>
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    handleAppointmentTypeQuestion('Técnico')}
+                                    handleAppointmentTypeQuestion('Técnico')
+                                  }
                                 >
                                   Técnico
                                 </button>

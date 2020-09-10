@@ -26,6 +26,8 @@ export default createGlobalStyle`
     --toast-error-background-color: #fddede;
     --green-background-color: rgba(10, 200, 0)
     --window-box-shadow: rgba(255, 150, 10, 0.3);
+    --green-icon: #47c101;
+    --red-icon: #cf4444;
   }
 
   /* Dark Mode */

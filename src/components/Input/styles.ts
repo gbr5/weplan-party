@@ -19,7 +19,8 @@ export const Container = styled.div<ContainerProps>`
   color: var(--letter-color-5);
   box-shadow: var(--box-shadow);
 
-  display: flex;
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr;
   align-items: center;
 
   & + div {
@@ -46,9 +47,10 @@ export const Container = styled.div<ContainerProps>`
 
   input {
     flex: 1;
+    width: 100%;
     background: transparent;
     border: 0;
-    color: var(--letter-color-1);
+    color: var(--header-background-color);
 
     &::placeholder {
       color: var(--letter-color-5);
@@ -62,8 +64,19 @@ export const Container = styled.div<ContainerProps>`
 
 export const Error = styled(Tooltip)`
   height: 20px;
-  margin-left: 16px;
+  font-size: 16px;
+  color: var(--title-color);
+  margin-right: auto;
+  transition: 0.3s;
 
+  &:hover {
+    opacity: 0.8;
+    color: var(--primary-color);
+  }
+
+  > strong {
+    font-weight: 500;
+  }
   svg {
     margin: 0;
   }

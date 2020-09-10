@@ -43,6 +43,7 @@ interface IMonthAvailabilityItem {
 interface IEvent {
   id: string;
   name: string;
+  trimmed_name: string;
   date: string;
   daysTillDate: number;
 }
@@ -61,32 +62,62 @@ const Dashboard: React.FC = () => {
   const [myEvents, setMyEvents] = useState<IEvent[]>([]);
   const [myEventsDrawer, setMyEventsDrawer] = useState(false);
   const [myNextEvent, setMyNextEvent] = useState<IEvent>({} as IEvent);
-  const [myNextEventCheckList, setMyNextEventCheckList] = useState<
-    IEventCheckList[]
-  >([]);
-  const [resolvedCheckList, setResolvedCheckList] = useState<IEventCheckList[]>(
-    [],
-  );
-  const [myNextEventGuests, setMyNextEventGuests] = useState<IEventGuest[]>([]);
-  const [confirmedGuests, setConfirmedGuests] = useState<IEventGuest[]>([]);
-  const [eventId, setEventId] = useState<string>();
+  const [myNextEventCheckList, setMyNextEventCheckList] = useState(0);
+  const [resolvedCheckList, setResolvedCheckList] = useState(0);
+  const [myNextEventGuests, setMyNextEventGuests] = useState(0);
+  const [confirmedGuests, setConfirmedGuests] = useState(0);
 
   const history = useHistory();
 
   const handleMyEventDashboard = useCallback(
     (event: IEvent) => {
-      history.push('/dashboard/my-event', { params: event });
+      history.push(`/dashboard/my-event/${event.trimmed_name}`, {
+        params: event,
+      });
     },
     [history],
   );
+
+  const getMyNextEventCheckList = useCallback(() => {
+    try {
+      api
+        .get<IEventCheckList[]>(`/events/${myNextEvent.id}/check-list`)
+        .then(response => {
+          setMyNextEventCheckList(response.data.length);
+          setResolvedCheckList(
+            response.data.filter(checkList => checkList.checked === true)
+              .length,
+          );
+        });
+    } catch (err) {
+      throw new Error('host dashboard, rota checklist para o backend');
+    }
+  }, [myNextEvent]);
+
+  const getMyNextEventGuests = useCallback(() => {
+    try {
+      api
+        .get<IEventGuest[]>(`/events/${myNextEvent.id}/guests`)
+        .then(response => {
+          setMyNextEventGuests(response.data.length);
+          setConfirmedGuests(
+            response.data.filter(guest => guest.confirmed === true).length,
+          );
+        });
+    } catch (err) {
+      throw new Error('host dashboard, rota guests para o backend');
+    }
+  }, [myNextEvent]);
+
+  const handleMyEventsDrawer = useCallback(() => {
+    setMyEventsDrawer(!myEventsDrawer);
+  }, [myEventsDrawer]);
 
   const getMyEvents = useCallback(() => {
     try {
       api.get<IEvent[]>('/events').then(response => {
         setMyEvents(response.data);
       });
-
-      console.log('host dashboard, linha 89: myEvents', myEvents);
 
       const nextEvent = myEvents.find(myEvent => {
         return isAfter(new Date(myEvent.date), new Date());
@@ -104,8 +135,9 @@ const Dashboard: React.FC = () => {
           date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
 
         setMyNextEvent({
-          id: nextEvent?.id,
-          name: nextEvent?.name,
+          id: nextEvent.id,
+          name: nextEvent.name,
+          trimmed_name: nextEvent.trimmed_name,
           date: `${hour}:${minute} - ${day}/${month}/${year}`,
           daysTillDate: differenceInCalendarDays(date, new Date()),
         });
@@ -116,36 +148,8 @@ const Dashboard: React.FC = () => {
   }, [myEvents]);
 
   useEffect(() => {
-    setEventId(myNextEvent.id);
-  }, [myNextEvent]);
-
-  const getMyNextEventCheckList = useCallback(() => {
-    try {
-      api
-        .get<IEventCheckList[]>(`/events/${eventId}/check-list`)
-        .then(response => {
-          setMyNextEventCheckList(response.data);
-        });
-      setResolvedCheckList(
-        myNextEventCheckList.filter(checkList => checkList.checked === true),
-      );
-    } catch (err) {
-      throw new Error('host dashboard, rota checklist para o backend');
-    }
-  }, [eventId, myNextEventCheckList]);
-
-  const getMyNextEventGuests = useCallback(() => {
-    try {
-      api.get<IEventGuest[]>(`/events/${eventId}/guests`).then(response => {
-        setMyNextEventGuests(response.data);
-      });
-      setConfirmedGuests(
-        myNextEventGuests.filter(guest => guest.confirmed === true),
-      );
-    } catch (err) {
-      throw new Error('host dashboard, rota guests para o backend');
-    }
-  }, [eventId, myNextEventGuests]);
+    getMyEvents();
+  }, [getMyEvents]);
 
   useEffect(() => {
     getMyNextEventGuests();
@@ -154,14 +158,6 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     getMyNextEventCheckList();
   }, [getMyNextEventCheckList]);
-
-  useEffect(() => {
-    getMyEvents();
-  }, [getMyEvents]);
-
-  const handleMyEventsDrawer = useCallback(() => {
-    setMyEventsDrawer(!myEventsDrawer);
-  }, [myEventsDrawer]);
 
   return (
     <Container>
@@ -222,7 +218,7 @@ const Dashboard: React.FC = () => {
               >
                 <MyNextEventTitle>
                   <strong>Meu próximo evento:</strong>
-                  <h2>{myNextEvent?.name}</h2>
+                  <h2>{myNextEvent.name}</h2>
                   <span>{myNextEvent.date}</span>
                 </MyNextEventTitle>
 
@@ -237,18 +233,14 @@ const Dashboard: React.FC = () => {
                   <Fields>
                     <p>Convidados:</p>
                     <h2>
-                      {confirmedGuests !== [] ? confirmedGuests.length : '0'}/
-                      {myNextEventGuests.length}
+                      {confirmedGuests}/{myNextEventGuests}
                     </h2>
                   </Fields>
 
                   <Fields>
                     <p>Check-list:</p>
                     <h2>
-                      {resolvedCheckList !== []
-                        ? resolvedCheckList.length
-                        : '0'}
-                      /{myNextEventCheckList.length}
+                      {resolvedCheckList}/{myNextEventCheckList}
                     </h2>
                   </Fields>
 

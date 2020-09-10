@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components';
 import '../../styles/global';
 import { shade } from 'polished';
+import Tooltip from '../../components/Tooltip';
 
 export const Container = styled.div`
   position: relative;
@@ -950,26 +951,50 @@ export const AddSupplierDrawer = styled.div`
 export const GuestSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 16px;
   position: relative;
 
+  > h3 {
+    font-size: 24px;
+    color: var(--title-color);
+    margin: 0 auto;
+  }
+
   > span {
-    width: 100%;
-    display: flex;
+    width: 80%;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     align-items: center;
     justify-content: center;
     gap: 32px;
+    border-bottom: 1px solid var(--primary-color);
 
-    > button {
-      font-size: 32px;
-      background: transparent;
-      border: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    > span {
+      position: absolute;
+      top: 54px;
+      right: 24px;
 
-      > svg {
-        color: var(--primary-color);
+      > button {
+        font-size: 32px;
+        background: transparent;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        > svg {
+          color: var(--primary-color);
+          border-radius: 50%;
+          transition: 0.4s;
+
+          &:hover {
+            color: var(--title-color);
+            /* opacity: 0.8; */
+            background: rgba(255, 150, 10, 0.3);
+            box-shadow: 0px 0px 6px 6px rgba(255, 150, 10, 0.3);
+          }
+        }
       }
     }
   }
@@ -999,7 +1024,8 @@ export const GuestNavigationButton = styled.button<ButtonProps>`
   align-items: center;
   justify-content: center;
   color: var(--primary-color);
-  opacity: 0.75;
+  opacity: 0.65;
+  transition: 0.4s;
 
   &:hover {
     opacity: 1;
@@ -1013,6 +1039,7 @@ export const GuestNavigationButton = styled.button<ButtonProps>`
     css`
       color: var(--title-color);
       opacity: 1;
+      transition: 0.4s;
     `}
 `;
 
@@ -1029,8 +1056,16 @@ export const Guest = styled.div`
   border-radius: 4px;
   transition: 0.3s;
 
+  &:last-child {
+    margin-bottom: 16px;
+  }
+
   &:hover {
     box-shadow: 1px 1px 3px 2px rgba(255, 150, 10, 0.3);
+
+    p {
+      color: var(--title-color);
+    }
   }
 
   > span {
@@ -1056,10 +1091,22 @@ export const Guest = styled.div`
       &:hover {
         opacity: 0.8;
         color: var(--primary-color);
+
+        svg {
+          opacity: 1;
+          color: var(--title-color);
+        }
       }
 
       > strong {
         font-weight: 500;
+      }
+
+      > svg {
+        opacity: 0.3;
+        color: var(--title-color);
+        transition: 0.3s;
+        margin-left: 16px;
       }
     }
   }
@@ -1089,11 +1136,6 @@ export const Guest = styled.div`
     transition: 0.3s;
     border-radius: 4px;
 
-    &:hover {
-      opacity: 0.8;
-      box-shadow: 1px 1px 3px 2px rgba(255, 150, 10, 0.3);
-    }
-
     button {
       display: flex;
       align-items: center;
@@ -1101,6 +1143,12 @@ export const Guest = styled.div`
       background: transparent;
       border: none;
       color: var(--title-color);
+      transition: 0.4s;
+
+      &:hover {
+        opacity: 0.8;
+        color: var(--primary-color);
+      }
     }
   }
 `;
@@ -1122,6 +1170,7 @@ export const AddGuestDrawer = styled.div`
   gap: 16px;
   box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
   padding: 32px;
+  transition: 0.4s;
 
   span {
     position: absolute;
@@ -1132,6 +1181,9 @@ export const AddGuestDrawer = styled.div`
       background: transparent;
       border: none;
 
+      &:hover {
+        opacity: 0.8;
+      }
       svg {
         color: red;
       }
@@ -1537,20 +1589,21 @@ export const Messages = styled.div`
   }
 `;
 
-export const WeplanGuestDrawer = styled.div`
+export const WeplanUserDrawer = styled.div`
   position: absolute;
-  z-index: 10;
-  top: 30%;
-  left: 0;
-  width: 200px;
-  height: 300px;
+  z-index: 1000;
+  top: 20%;
+  left: 30%;
+  width: 40%;
+  height: 250px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   margin: 16px auto;
   background: var(--header-background-color);
   border-radius: 8px;
-  gap: 16px;
+  gap: 32px;
   box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
   padding: 32px;
 
@@ -1561,14 +1614,21 @@ export const WeplanGuestDrawer = styled.div`
 
   > div {
     display: flex;
+    width: 100%;
     gap: 16px;
 
     button {
       background: var(--primary-color);
       border: none;
       height: 40px;
-      width: 90%;
+      width: 100%;
+      font-weight: 500;
       border-radius: 4px;
+
+      &:hover {
+        opacity: 0.8;
+        box-shadow: 2px 2px 5px 3px rgba(255, 150, 10, 0.3);
+      }
     }
   }
 `;
@@ -2060,58 +2120,32 @@ export const MembersWindow = styled.div`
   }
 `;
 
-export const FriendsList = styled.div`
-  top: 20%;
-  z-index: 100000;
-  left: 30%;
-  position: fixed;
-  height: 60%;
-  width: 40%;
-  background-color: var(--background-color);
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-  padding: 24px;
-  overflow-y: scroll;
+export const NotHostGuest = styled(Tooltip)`
+  font-size: 16px;
+  color: var(--title-color);
+  margin: auto auto auto 0;
+  transition: 0.3s;
 
-  > span {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-
-    button {
-      background: transparent;
-      border: none;
-      color: red;
-    }
+  &:hover {
+    opacity: 0.8;
+    color: var(--primary-color);
   }
 
-  > button {
-    background-color: var(--primary-color);
-    display: flex;
-    justify-content: center;
+  > strong {
+    font-weight: 500;
+  }
+
+  svg {
+    margin: 0;
+  }
+
+  span {
+    background: var(--red-color);
     color: var(--letter-color-1);
-    margin: 8px;
-    border: 1px solid var(--primary-color);
-    border-radius: 8px;
-    padding: 16px;
-    position: relative;
-    box-shadow: 2px 2px 5px 3px rgba(0, 0, 0, 0.2);
+    text-align: center;
 
-    > span {
-      > svg {
-        top: 13px;
-        margin: auto;
-      }
-    }
-
-    &:hover {
-      opacity: 0.8;
-      box-shadow: 2px 2px 5px 3px rgba(255, 150, 10, 0.3);
-    }
-    svg {
-      margin-left: auto;
+    &::before {
+      border-color: var(--red-color) transparent;
     }
   }
 `;
