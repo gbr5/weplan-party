@@ -36,14 +36,14 @@ const MemberProfileDrawer: React.FC<IPropsDTO> = ({
           <MdClose size={30} />
         </button>
       </span>
-      <button type="button">
-        <img src={avatar} alt={member.name} />
-        <h1>{member.name}</h1>
-      </button>
+      <img src={avatar} alt={member.name} />
+
+      <h1>{member.name}</h1>
+
       <div>
         <EditMemberButton type="button" onClick={onHandleNumberOfGuestDrawer}>
           Número de convidados:
-          {member.number_of_guests}
+          <strong>{member.number_of_guests}</strong>
           <FiEdit size={24} />
         </EditMemberButton>
         <DeleteMemberButton type="button" onClick={onHandleDeleteMemberDrawer}>

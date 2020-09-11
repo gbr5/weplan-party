@@ -118,7 +118,7 @@ export const MyEvents = styled.button`
 
 export const MyEventsDrawer = styled.div`
   top: 40px;
-  z-index: 1000;
+  z-index: 10;
   left: 0px;
   position: absolute;
   height: 300px;
@@ -286,7 +286,7 @@ export const SubHeader = styled.div`
 export const EditEventNameDrawer = styled.div`
   top: 140px;
   left: 535px;
-  z-index: 100;
+  z-index: 10;
   position: absolute;
   height: 178px;
   width: 400px;
@@ -411,7 +411,7 @@ export const FirstRow = styled.div`
 export const BudgetDrawer = styled.div`
   top: 240px;
   left: 435px;
-  z-index: 100;
+  z-index: 10;
   position: absolute;
   height: 178px;
   width: 300px;
@@ -1635,18 +1635,19 @@ export const WeplanUserDrawer = styled.div`
 
 export const GuestConfirmedDrawer = styled.div`
   position: absolute;
-  z-index: 10;
+  z-index: 1000;
   top: 30%;
-  left: 0;
-  width: 200px;
+  left: 30%;
+  width: 40%;
   height: 300px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   margin: 16px auto;
   background: var(--header-background-color);
   border-radius: 8px;
-  gap: 16px;
+  gap: 32px;
   box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
   padding: 32px;
 
@@ -1657,13 +1658,15 @@ export const GuestConfirmedDrawer = styled.div`
 
   > div {
     display: flex;
+    width: 100%;
     gap: 16px;
 
     button {
       background: var(--primary-color);
       border: none;
       height: 40px;
-      width: 90%;
+      font-weight: 500;
+      width: 100%;
       border-radius: 4px;
     }
   }
@@ -1671,7 +1674,7 @@ export const GuestConfirmedDrawer = styled.div`
 
 export const WeplanSupplierAppointmentDrawer = styled.div`
   position: absolute;
-  z-index: 10;
+  z-index: 100;
   top: 30%;
   left: 0;
   width: 200px;
@@ -1707,7 +1710,7 @@ export const WeplanSupplierAppointmentDrawer = styled.div`
 
 export const AppointmentTypeDrawer = styled.div`
   position: absolute;
-  z-index: 10;
+  z-index: 100;
   top: 30%;
   left: 0;
   width: 200px;
@@ -1802,7 +1805,7 @@ export const Calendar = styled.aside`
 
 export const CheckedListItemDrawer = styled.div`
   position: absolute;
-  z-index: 10;
+  z-index: 100;
   top: 30%;
   left: 0;
   width: 200px;
@@ -1838,7 +1841,7 @@ export const CheckedListItemDrawer = styled.div`
 
 export const IsHiredDrawer = styled.div`
   position: absolute;
-  z-index: 10;
+  z-index: 100;
   top: 30%;
   left: 0;
   width: 200px;
@@ -2062,6 +2065,8 @@ export const MembersWindow = styled.div`
       display: flex;
       align-items: center;
       justify-content: center;
+      gap: 16px;
+      margin: 0 auto;
 
       h1 {
         font-size: 32px;
@@ -2074,48 +2079,49 @@ export const MembersWindow = styled.div`
       }
     }
   }
+`;
 
-  div {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    padding: 32px;
-    width: 100%;
-    gap: 32px;
+export const MembersContainer = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 32px;
+  width: 100%;
+  gap: 32px;
+  overflow-y: scroll;
 
-    button {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      border-radius: 8px;
-      background: var(--letter-color-3);
-      height: 100px;
-      padding: 32px auto;
-      gap: 16px;
+  button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    border-radius: 8px;
+    background: var(--letter-color-3);
+    height: 100px;
+    padding: 32px auto;
+    gap: 16px;
+    box-shadow: 2px 2px 6px 2px rgba(0, 0, 0, 0.2);
+    transition: 0.6s;
+
+    > img {
+      margin-left: 14px;
+      height: 80px;
+      width: 80px;
+      border-radius: 50%;
       box-shadow: 2px 2px 6px 2px rgba(0, 0, 0, 0.2);
       transition: 0.6s;
 
-      > img {
-        margin-left: 14px;
-        height: 80px;
-        width: 80px;
-        border-radius: 50%;
-        box-shadow: 2px 2px 6px 2px rgba(0, 0, 0, 0.2);
-        transition: 0.6s;
-
-        &:hover {
-          box-shadow: 5px 5px 6px 2px rgba(255, 150, 10, 0.4);
-        }
-      }
-
-      > h1 {
-        font-size: 24px;
-        color: var(--letter-color-5);
-      }
-
       &:hover {
-        box-shadow: 4px 4px 6px 2px rgba(255, 150, 10, 0.3);
-        opacity: 0.8;
+        box-shadow: 5px 5px 6px 2px rgba(255, 150, 10, 0.4);
       }
+    }
+
+    > h1 {
+      font-size: 24px;
+      color: var(--letter-color-5);
+    }
+
+    &:hover {
+      box-shadow: 4px 4px 6px 2px rgba(255, 150, 10, 0.3);
+      opacity: 0.8;
     }
   }
 `;
@@ -2153,7 +2159,7 @@ export const NotHostGuest = styled(Tooltip)`
 export const NumberOfGuestWindow = styled.div`
   position: absolute;
   z-index: 1000;
-  top: 20%;
+  top: 25%;
   left: 30%;
   width: 40%;
   height: 250px;
@@ -2191,23 +2197,17 @@ export const NumberOfGuestWindow = styled.div`
     color: var(--title-color);
   }
 
-  > div {
-    display: flex;
+  button {
+    background: var(--primary-color);
+    border: none;
+    height: 40px;
     width: 100%;
-    gap: 16px;
+    font-weight: 500;
+    border-radius: 4px;
 
-    button {
-      background: var(--primary-color);
-      border: none;
-      height: 40px;
-      width: 100%;
-      font-weight: 500;
-      border-radius: 4px;
-
-      &:hover {
-        opacity: 0.8;
-        box-shadow: 2px 2px 5px 3px rgba(255, 150, 10, 0.3);
-      }
+    &:hover {
+      opacity: 0.8;
+      box-shadow: 2px 2px 5px 3px rgba(255, 150, 10, 0.3);
     }
   }
 `;

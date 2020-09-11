@@ -32,21 +32,17 @@ export const MemberDrawer = styled.div`
       }
     }
   }
+  > img {
+    height: 150px;
+    width: 150px;
+    border-radius: 50%;
+    box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.2);
+  }
 
-  > button {
-    display: flex;
-    align-items: center;
-    width: 100%;
-
-    > img {
-      border-radius: 50%;
-      box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.2);
-    }
-
-    > h1 {
-      font-size: 24px;
-      color: var(--title-color);
-    }
+  > h1 {
+    font-size: 24px;
+    color: var(--title-color);
+    margin-bottom: 32px;
   }
 
   > div {
@@ -65,14 +61,32 @@ export const EditMemberButton = styled.button`
   width: 100%;
   border-radius: 4px;
   box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.2);
-  transition: 0.4s;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  font-weight: 500;
+  color: var(--letter-color-5);
+
+  > strong {
+    font-weight: 600px;
+    margin-right: 16px;
+  }
 
   &:hover {
     opacity: 0.8;
     box-shadow: 0px 0px 3px 2px rgba(255, 150, 10, 0.3);
+
+    > svg {
+      opacity: 1;
+      color: var(--green-icon);
+    }
   }
   > svg {
-    color: var(--green-icon);
+    opacity: 0.8;
+    color: var(--letter-color-5);
+    transition: 0.3s;
   }
 `;
 
@@ -83,13 +97,27 @@ export const DeleteMemberButton = styled.button`
   width: 100%;
   border-radius: 4px;
   box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.2);
-  transition: 0.4s;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  font-weight: 500;
+  color: var(--letter-color-5);
 
   &:hover {
     opacity: 0.8;
     box-shadow: 0px 0px 3px 2px rgba(255, 150, 10, 0.3);
+    background: var(--red-color);
+
+    > svg {
+      opacity: 1;
+      color: var(--title-color);
+    }
   }
   > svg {
+    opacity: 0.8;
     color: var(--red-icon);
+    transition: 0.3s;
   }
 `;

@@ -114,7 +114,6 @@ const MenuButton: React.FC = () => {
 
   const handlePostEventInfo = useCallback(
     async (data: ICreateEventInfo) => {
-      console.log(data);
       try {
         const formattedName = eventName
           .toLowerCase()
@@ -123,9 +122,7 @@ const MenuButton: React.FC = () => {
             return word[0].toUpperCase() + word.slice(1);
           })
           .join(' ');
-        console.log(eventName, myEvents);
         const new_event = myEvents.find(event => event.name === formattedName);
-        console.log(new_event);
 
         formRef.current?.setErrors([]);
 
@@ -161,7 +158,6 @@ const MenuButton: React.FC = () => {
           description: 'O item foi adicionado à sua check-list.',
         });
         if (new_event) {
-          console.log('chegou aqui, 156');
           handleMyEventDashboard(new_event?.id);
         }
         handleEventInfoDrawer();
@@ -215,7 +211,6 @@ const MenuButton: React.FC = () => {
         });
 
         setEventName(data.name);
-        console.log(data.name);
         await api.post('/events', {
           name: data.name,
           date,

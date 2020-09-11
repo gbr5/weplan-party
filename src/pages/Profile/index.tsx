@@ -102,10 +102,8 @@ const Profile: React.FC = () => {
             'Suas informações do perfil foram atualizadas com sucesso.',
         });
       } catch (err) {
-        console.log(err);
         if (err instanceof Yup.ValidationError) {
           const error = getValidationErrors(err);
-          console.log(error);
 
           formRef.current?.setErrors(error);
         }

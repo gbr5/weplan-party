@@ -19,8 +19,7 @@ export const Container = styled.div<ContainerProps>`
   color: var(--letter-color-5);
   box-shadow: var(--box-shadow);
 
-  display: grid;
-  grid-template-columns: 3fr 1fr 1fr;
+  display: flex;
   align-items: center;
 
   & + div {

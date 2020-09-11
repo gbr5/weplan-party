@@ -2,8 +2,8 @@ import React from 'react';
 
 import { MouseEventHandler } from 'react-select';
 import { MdClose, MdDelete } from 'react-icons/md';
-import { FiEdit } from 'react-icons/fi';
-import { OwnerDrawer, EditOwnerButton, DeleteOwnerButton } from './styles';
+import { FiEdit3 } from 'react-icons/fi';
+import { OwnerDrawer, DeleteOwnerButton } from './styles';
 import avatar_placeholder from '../../assets/avatar_placeholder.jpg';
 
 interface IEventOwnerDTO {
@@ -11,6 +11,7 @@ interface IEventOwnerDTO {
   name: string;
   avatar: string;
   number_of_guests: number;
+  description: string;
 }
 
 interface IPropsDTO {
@@ -35,16 +36,26 @@ const OwnerProfileDrawer: React.FC<IPropsDTO> = ({
           <MdClose size={30} />
         </button>
       </span>
-      <button type="button">
-        <img src={avatar} alt={owner.name} />
-        <h1>{owner.name}</h1>
+      <img src={avatar} alt={owner.name} />
+
+      <button type="button" onClick={onHandleNumberOfGuestDrawer}>
+        <FiEdit3 size={24} />
+
+        <h1>
+          username:
+          <strong>{owner.name}</strong>
+        </h1>
+        <div>
+          <h2>
+            Descrição: <strong>{owner.description}</strong>
+          </h2>
+          <h2>
+            Número de convidados: <strong>{owner.number_of_guests}</strong>
+          </h2>
+        </div>
       </button>
+
       <div>
-        <EditOwnerButton type="button" onClick={onHandleNumberOfGuestDrawer}>
-          Número de convidados:
-          {owner.number_of_guests}
-          <FiEdit size={24} />
-        </EditOwnerButton>
         <DeleteOwnerButton type="button" onClick={onHandleDeleteOwnerDrawer}>
           Deletar
           <MdDelete size={24} />
