@@ -22,7 +22,6 @@ import { differenceInCalendarDays } from 'date-fns/esm';
 import { useHistory, useLocation } from 'react-router-dom';
 import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
-import { render } from 'react-dom';
 import {
   Container,
   EventPageContent,
@@ -75,11 +74,12 @@ import {
   NotHostGuest,
   NumberOfGuestWindow,
   MembersContainer,
+  EditEventInfoDrawer,
+  EventInfo,
 } from './styles';
 
 import PageHeader from '../../components/PageHeader';
 import MenuButton from '../../components/MenuButton';
-// import MemberProfileDrawer from '../../components/MemberProfileDrawer';
 
 import chart from '../../assets/charts.png';
 import avatar_placeholder from '../../assets/avatar_placeholder_cat2.jpeg';
@@ -93,10 +93,6 @@ import FriendsListDrawer from '../../components/FriendsListDrawer';
 import MemberProfileDrawer from '../../components/MemberProfileDrawer';
 import OwnerProfileDrawer from '../../components/OwnerProfileDrawer';
 
-interface IMonthAvailabilityItem {
-  day: number;
-  available: boolean;
-}
 interface IEvent {
   id: string;
   name: string;
@@ -178,6 +174,16 @@ interface IEventMemberDTO {
   avatar: string;
   number_of_guests: number;
 }
+interface IEventInfo {
+  number_of_guests: number;
+  duration: number;
+  budget: number;
+  description: string;
+  country: string;
+  local_state: string;
+  city: string;
+  address: string;
+}
 const EventHostDashboard: React.FC = () => {
   const history = useHistory();
   const formRef = useRef<FormHandles>(null);
@@ -213,9 +219,11 @@ const EventHostDashboard: React.FC = () => {
   const [owner, setOwner] = useState<IEventOwnerDTO>({} as IEventOwnerDTO);
   const [members, setMembers] = useState<IEventMemberDTO[]>([]);
   const [member, setMember] = useState<IEventMemberDTO>({} as IEventMemberDTO);
+  const [eventInfo, setEventInfo] = useState<IEventInfo>({} as IEventInfo);
   const [membersWindow, setMembersWindow] = useState(false);
   const [guestWindow, setGuestWindow] = useState(true);
   const [eventInfoDrawer, setEventInfoDrawer] = useState(false);
+  const [editEventInfoDrawer, setEditEventInfoDrawer] = useState(false);
   const [budgetDrawer, setBudgetDrawer] = useState(false);
   const [addGuestDrawer, setAddGuestDrawer] = useState(false);
   const [addSupplierDrawer, setAddSupplierDrawer] = useState(false);
@@ -537,6 +545,17 @@ const EventHostDashboard: React.FC = () => {
     }
   }, [eventId, checkListItems]);
 
+  const handleGetEventInfo = useCallback(() => {
+    console.log('Entrou aqui no get event info');
+    try {
+      api.get<IEventInfo>(`/events/${eventId}/event-info`).then(response => {
+        console.log('552', response.data);
+        setEventInfo(response.data);
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
+  }, [eventId]);
   const handleGetFriends = useCallback(() => {
     try {
       eventId &&
@@ -893,6 +912,51 @@ const EventHostDashboard: React.FC = () => {
     ],
   );
 
+  const handleEditEventInfo = useCallback(
+    async (data: IEventInfo) => {
+      try {
+        formRef.current?.setErrors([]);
+
+        const schema = Yup.object().shape({
+          duration: Yup.number(),
+          number_of_guests: Yup.number(),
+          budget: Yup.number(),
+          description: Yup.string(),
+          country: Yup.string(),
+          local_state: Yup.string(),
+          city: Yup.string(),
+          address: Yup.string(),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+
+        await api.put(`events/${eventId}/event-info`, data);
+        setEventInfo(data);
+        setEditEventInfoDrawer(false);
+
+        addToast({
+          type: 'success',
+          title: 'Informações editadas com sucesso',
+          description: 'As mudanças já foram atualizadas no seu evento.',
+        });
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro ao editar informações do evento',
+          description: 'Tente novamente.',
+        });
+      }
+    },
+    [addToast, eventId],
+  );
   const handleEditGuest = useCallback(
     async (data: IEventGuest) => {
       console.log(data);
@@ -1237,59 +1301,6 @@ const EventHostDashboard: React.FC = () => {
     },
     [handleCheckedListItemDrawer],
   );
-  const handleEditEventInfo = useCallback(
-    async (data: IEditEventInfo) => {
-      try {
-        formRef.current?.setErrors([]);
-
-        const schema = Yup.object().shape({
-          date: Yup.date().required(),
-          number_of_guests: Yup.string().required('Nome é obrigatório'),
-          duration: Yup.number().required('Sobrenome é obrigatório'),
-          budget: Yup.number(),
-          description: Yup.string(),
-          country: Yup.string(),
-          local_state: Yup.string(),
-          city: Yup.string(),
-        });
-
-        await schema.validate(data, {
-          abortEarly: false,
-        });
-
-        await api.put(`events/${eventId}/event-infos`, {
-          number_of_guests: data.number_of_guests,
-          duration: data.duration,
-          budget: data.budget,
-          description: data.description,
-          country: data.country,
-          local_state: data.local_state,
-          city: data.city,
-        });
-
-        addToast({
-          type: 'success',
-          title: 'Item criado com Sucesso',
-          description: 'O item foi adicionado à sua check-list.',
-        });
-
-        handleEventInfoDrawer();
-      } catch (err) {
-        if (err instanceof Yup.ValidationError) {
-          const error = getValidationErrors(err);
-
-          formRef.current?.setErrors(error);
-        }
-
-        addToast({
-          type: 'error',
-          title: 'Erro ao criar item da check-list',
-          description: 'Erro  ao criar o item, tente novamente.',
-        });
-      }
-    },
-    [addToast, eventId, handleEventInfoDrawer],
-  );
 
   const handleMyEventDashboard = useCallback(
     (my_event: IEvent) => {
@@ -1301,11 +1312,6 @@ const EventHostDashboard: React.FC = () => {
     },
     [closeAllWindows, history],
   );
-
-  // useEffect(() => {
-  //   pageEvent.id !== eventId && setEventId(pageEvent.id);
-  //   handleGetGuests();
-  // }, [pageEvent, eventId, handleGetGuests]);
 
   useEffect(() => {
     handleGetEvents();
@@ -1331,6 +1337,9 @@ const EventHostDashboard: React.FC = () => {
   useEffect(() => {
     handleGetMembers();
   }, [handleGetMembers]);
+  useEffect(() => {
+    handleGetEventInfo();
+  }, [handleGetEventInfo]);
 
   let guestCount = 0;
   let myGuestCount = 0;
@@ -1446,8 +1455,61 @@ const EventHostDashboard: React.FC = () => {
           friends={friends}
           onHandleFriendsListDrawer={() => setFriendsWindow(false)}
           handleSelectedFriend={(friend: IUserInfoDTO) =>
-            handleSelectedWeplanUser(friend)}
+            handleSelectedWeplanUser(friend)
+          }
         />
+      )}
+      {!!eventInfoDrawer && (
+        <EventInfoDrawer>
+          <span>
+            <button type="button" onClick={handleEventInfoDrawer}>
+              <MdClose size={30} />
+            </button>
+          </span>
+          <h1>Informações do evento</h1>
+          <h2>{event.name}</h2>
+          <EventInfo>
+            <span>
+              <div>
+                <div>
+                  <p>Duração: </p>
+                  <h3>{eventInfo.duration}</h3>
+                </div>
+                <div>
+                  <p>N° de convidados: </p>
+                  <h3>{eventInfo.number_of_guests}</h3>
+                </div>
+                <div>
+                  <p>Orçamento: </p>
+                  <h3>{eventInfo.budget}</h3>
+                </div>
+              </div>
+              <div>
+                <div>
+                  <p>País: </p>
+                  <h3>{eventInfo.country}</h3>
+                </div>
+                <div>
+                  <p>Estado: </p>
+                  <h3>{eventInfo.local_state}</h3>
+                </div>
+                <div>
+                  <p>Cidade: </p>
+                  <h3>{eventInfo.city}</h3>
+                </div>
+              </div>
+            </span>
+            <div>
+              <p>Endereço: </p>
+              <h3>{eventInfo.address}</h3>
+            </div>
+          </EventInfo>
+          <button type="button" onClick={() => setEditEventInfoDrawer(true)}>
+            <h3>
+              Editar <FiEdit3 size={24} />
+            </h3>
+          </button>
+        </EventInfoDrawer>
       )}
       <EventPageContent>
         <SideBar>
@@ -1484,48 +1546,71 @@ const EventHostDashboard: React.FC = () => {
           <button type="button" onClick={handleEventInfoDrawer}>
             Informações do Evento
           </button>
-          {!!eventInfoDrawer && (
+
+          {!!editEventInfoDrawer && (
             <Form ref={formRef} onSubmit={handleEditEventInfo}>
-              <EventInfoDrawer>
+              <EditEventInfoDrawer>
                 <span>
-                  <button type="button" onClick={handleEventInfoDrawer}>
+                  <button
+                    type="button"
+                    onClick={() => setEditEventInfoDrawer(false)}
+                  >
                     <MdClose size={30} />
                   </button>
                 </span>
-                <h1>Informações do evento</h1>
+                <h1>Editar informações do evento</h1>
                 <div>
                   <div>
                     <Input
+                      defaultValue={eventInfo.duration}
                       name="duration"
                       type="number"
                       placeholder="Duração (em horas)"
                     />
                     <Input
+                      defaultValue={eventInfo.number_of_guests}
                       name="number_of_guests"
                       type="number"
                       placeholder="Número de convidados"
                     />
                     <Input
+                      defaultValue={eventInfo.budget}
                       name="budget"
                       type="number"
                       placeholder="Orçamento"
                     />
                   </div>
                   <div>
-                    <Input name="country" type="text" placeholder="País" />
                     <Input
+                      defaultValue={eventInfo.country}
+                      name="country"
+                      type="text"
+                      placeholder="País"
+                    />
+                    <Input
+                      defaultValue={eventInfo.local_state}
                       name="local_state"
                       type="text"
                       placeholder="Estado"
                     />
-                    <Input name="city" type="text" placeholder="Cidade" />
+                    <Input
+                      defaultValue={eventInfo.city}
+                      name="city"
+                      type="text"
+                      placeholder="Cidade"
+                    />
                   </div>
-                  <Input name="address" type="text" placeholder="Endereço" />
+                  <Input
+                    defaultValue={eventInfo.address}
+                    name="address"
+                    type="text"
+                    placeholder="Endereço"
+                  />
                 </div>
                 <button type="submit">
                   <h3>Salvar</h3>
                 </button>
-              </EventInfoDrawer>
+              </EditEventInfoDrawer>
             </Form>
           )}
           <button type="button" onClick={handleLatestActionsSection}>
@@ -2440,16 +2525,14 @@ const EventHostDashboard: React.FC = () => {
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    handleAppointmentTypeQuestion('Comercial')
-                                  }
+                                    handleAppointmentTypeQuestion('Comercial')}
                                 >
                                   Comercial
                                 </button>
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    handleAppointmentTypeQuestion('Técnico')
-                                  }
+                                    handleAppointmentTypeQuestion('Técnico')}
                                 >
                                   Técnico
                                 </button>
