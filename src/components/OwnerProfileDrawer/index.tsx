@@ -5,6 +5,7 @@ import { MdClose, MdDelete } from 'react-icons/md';
 import { FiEdit3 } from 'react-icons/fi';
 import { OwnerDrawer, DeleteOwnerButton } from './styles';
 import avatar_placeholder from '../../assets/avatar_placeholder.jpg';
+import { useAuth } from '../../hooks/auth';
 
 interface IEventOwnerDTO {
   id: string;
@@ -28,6 +29,7 @@ const OwnerProfileDrawer: React.FC<IPropsDTO> = ({
   onHandleDeleteOwnerDrawer,
 }: IPropsDTO) => {
   const avatar = owner.avatar === '' ? avatar_placeholder : owner.avatar;
+  const { user } = useAuth();
 
   return (
     <OwnerDrawer>
@@ -55,12 +57,14 @@ const OwnerProfileDrawer: React.FC<IPropsDTO> = ({
         </div>
       </button>
 
-      <div>
-        <DeleteOwnerButton type="button" onClick={onHandleDeleteOwnerDrawer}>
-          Deletar
-          <MdDelete size={24} />
-        </DeleteOwnerButton>
-      </div>
+      {owner.id !== user.id && (
+        <div>
+          <DeleteOwnerButton type="button" onClick={onHandleDeleteOwnerDrawer}>
+            Deletar
+            <MdDelete size={24} />
+          </DeleteOwnerButton>
+        </div>
+      )}
     </OwnerDrawer>
   );
 };

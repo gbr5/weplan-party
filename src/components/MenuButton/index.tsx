@@ -46,6 +46,7 @@ interface ICreateEventInfo {
 interface IEvent {
   id: string;
   name: string;
+  trimmed_name: string;
 }
 
 const MenuButton: React.FC = () => {
@@ -58,6 +59,7 @@ const MenuButton: React.FC = () => {
   const [eventInfoDrawer, setEventInfoDrawer] = useState(false);
   const [myEvents, setMyEvents] = useState<IEvent[]>([]);
   const [eventName, setEventName] = useState('');
+  const [trimmed_name, setTrimmed_name] = useState('');
 
   const formRef = useRef<FormHandles>(null);
 
@@ -87,9 +89,9 @@ const MenuButton: React.FC = () => {
 
   const handleMyEventDashboard = useCallback(
     (event_id: string) => {
-      history.push('/dashboard/my-event', { params: event_id });
+      history.push(`/dashboard/my-event/${trimmed_name}`, { params: event_id });
     },
-    [history],
+    [history, trimmed_name],
   );
 
   const handleDateChange = useCallback((day: Date) => {
@@ -115,14 +117,7 @@ const MenuButton: React.FC = () => {
   const handlePostEventInfo = useCallback(
     async (data: ICreateEventInfo) => {
       try {
-        const formattedName = eventName
-          .toLowerCase()
-          .split(' ')
-          .map(word => {
-            return word[0].toUpperCase() + word.slice(1);
-          })
-          .join(' ');
-        const new_event = myEvents.find(event => event.name === formattedName);
+        const new_event = myEvents.find(event => event.name === eventName);
 
         formRef.current?.setErrors([]);
 
@@ -210,13 +205,13 @@ const MenuButton: React.FC = () => {
           abortEarly: false,
         });
 
-        setEventName(data.name);
-        await api.post('/events', {
+        const event = await api.post<IEvent>('/events', {
           name: data.name,
           date,
           event_type: eventType,
         });
-
+        setEventName(event.data.name);
+        setTrimmed_name(event.data.trimmed_name);
         addToast({
           type: 'success',
           title: 'Evento Criado com Sucesso',
