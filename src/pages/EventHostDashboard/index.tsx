@@ -22,6 +22,7 @@ import { differenceInCalendarDays } from 'date-fns/esm';
 import { useHistory, useLocation } from 'react-router-dom';
 import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
+import { format, setHours, setMinutes } from 'date-fns';
 import {
   Container,
   EventPageContent,
@@ -103,6 +104,8 @@ interface IEvent {
 }
 interface IEventCheckList {
   id: string;
+  name: string;
+  priority_level: number;
   checked: boolean;
 }
 interface IEventGuest {
@@ -132,6 +135,20 @@ interface ICreateAppointment {
   address: string;
   start_hour: number;
   start_minute: number;
+  weplanGuest: boolean;
+  appointment_type: string;
+}
+interface IAppointmentDTO {
+  id: string;
+  subject: string;
+  duration_minutes: number;
+  address: string;
+  date: string;
+  start_hour: number;
+  start_minute: number;
+  days_till_date: number;
+  weplanGuest: boolean;
+  appointment_type: string;
 }
 interface ICreateSupplier {
   supplier_id: string;
@@ -203,9 +220,16 @@ const EventHostDashboard: React.FC = () => {
   const [friends, setFriends] = useState<IUserInfoDTO[]>([]);
   const [friendsWindow, setFriendsWindow] = useState(false);
   const [checkListItems, setCheckListItems] = useState<IEventCheckList[]>([]);
-  const [resolvedCheckListItems, setResolvedCheckListItems] = useState<
-    IEventCheckList[]
-  >([]);
+  const [resolvedCheckListItems, setResolvedCheckListItems] = useState(0);
+  const [checkListItem, setCheckListItem] = useState<IEventCheckList>(
+    {} as IEventCheckList,
+  );
+  const [editCheckListItemWindow, setEditCheckListItemWindow] = useState(false);
+  const [appointments, setAppointments] = useState<IAppointmentDTO[]>([]);
+  const [appointment, setAppointment] = useState<IAppointmentDTO>(
+    {} as IAppointmentDTO,
+  );
+  const [editAppointmentDrawer, setEditAppointmentDrawer] = useState(false);
   const [eventGuests, setEventGuests] = useState<IEventGuest[]>([]);
   const [confirmedGuests, setConfirmedGuests] = useState(0);
   const [myGuests, setMyGuests] = useState<IEventGuest[]>([]);
@@ -219,8 +243,8 @@ const EventHostDashboard: React.FC = () => {
   const [owner, setOwner] = useState<IEventOwnerDTO>({} as IEventOwnerDTO);
   const [members, setMembers] = useState<IEventMemberDTO[]>([]);
   const [member, setMember] = useState<IEventMemberDTO>({} as IEventMemberDTO);
-  const [eventInfo, setEventInfo] = useState<IEventInfo>({} as IEventInfo);
   const [membersWindow, setMembersWindow] = useState(false);
+  const [eventInfo, setEventInfo] = useState<IEventInfo>({} as IEventInfo);
   const [guestWindow, setGuestWindow] = useState(true);
   const [eventInfoDrawer, setEventInfoDrawer] = useState(false);
   const [editEventInfoDrawer, setEditEventInfoDrawer] = useState(false);
@@ -343,6 +367,10 @@ const EventHostDashboard: React.FC = () => {
     setMembersWindow(!membersWindow);
   }, [membersWindow, closeAllWindows]);
 
+  const handleEditCheckListItemWindow = useCallback(props => {
+    setCheckListItem(props);
+    setEditCheckListItemWindow(true);
+  }, []);
   const handleGuestWindow = useCallback(props => {
     setGuestWindow(props);
   }, []);
@@ -381,6 +409,14 @@ const EventHostDashboard: React.FC = () => {
   const handleCheckedListItemDrawer = useCallback(() => {
     setCheckedListItemDrawer(!checkedListItemDrawer);
   }, [checkedListItemDrawer]);
+  const handleEditAppointmentDrawer = useCallback(
+    props => {
+      closeAllWindows();
+      setEditAppointmentDrawer(true);
+      setAppointment(props);
+    },
+    [closeAllWindows],
+  );
   const handleAddCheckListDrawer = useCallback(() => {
     closeAllWindows();
     setAddCheckListDrawer(!addCheckListDrawer);
@@ -495,6 +531,52 @@ const EventHostDashboard: React.FC = () => {
     setSelectedDate(day);
   }, []);
 
+  const handleGetAppointments = useCallback(() => {
+    try {
+      api
+        .get<IAppointmentDTO[]>(`appointments/my-appointments`)
+        .then(response =>
+          setAppointments(
+            response.data.map(ap => {
+              const date = new Date(ap.date);
+              const tillMinutes =
+                setMinutes(date, ap.duration_minutes).getMinutes() < 10
+                  ? `0${date.getMinutes()}`
+                  : date.getMinutes();
+              const tillHour =
+                setMinutes(date, ap.duration_minutes).getHours() < 10
+                  ? `0${date.getHours()}`
+                  : date.getHours();
+              const year = date.getFullYear();
+              const month =
+                date.getMonth() < 10 ? `0${date.getMonth()}` : date.getMonth();
+              const day =
+                date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
+              const hour =
+                date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
+              const minute =
+                date.getMinutes() < 10
+                  ? `0${date.getMinutes()}`
+                  : date.getMinutes();
+              return {
+                id: ap.id,
+                subject: ap.subject,
+                duration_minutes: ap.duration_minutes,
+                address: ap.address,
+                date: `${hour}:${minute} às ${tillHour}:${tillMinutes} | ${day}/${month}/${year}`,
+                start_hour: Number(hour),
+                start_minute: Number(minute),
+                days_till_date: differenceInCalendarDays(date, new Date()),
+                weplanGuest: ap.weplanGuest,
+                appointment_type: ap.appointment_type,
+              };
+            }),
+          ),
+        );
+    } catch (err) {
+      throw new Error(err);
+    }
+  }, []);
   const handleGetPlanners = useCallback(() => {
     try {
       api
@@ -536,15 +618,14 @@ const EventHostDashboard: React.FC = () => {
         .get<IEventCheckList[]>(`/events/${eventId}/check-list`)
         .then(response => {
           setCheckListItems(response.data);
+          setResolvedCheckListItems(
+            response.data.filter(item => item.checked === true).length,
+          );
         });
-      setResolvedCheckListItems(
-        checkListItems.filter(item => item.checked === true),
-      );
     } catch (err) {
       throw new Error(err);
     }
-  }, [eventId, checkListItems]);
-
+  }, [eventId]);
   const handleGetEventInfo = useCallback(() => {
     console.log('Entrou aqui no get event info');
     try {
@@ -678,6 +759,7 @@ const EventHostDashboard: React.FC = () => {
           description: 'O item foi adicionado à sua check-list.',
         });
         handleAddCheckListDrawer();
+        handleGetCheckListItems();
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const error = getValidationErrors(err);
@@ -691,7 +773,13 @@ const EventHostDashboard: React.FC = () => {
         });
       }
     },
-    [addToast, eventId, handleAddCheckListDrawer, checked],
+    [
+      addToast,
+      eventId,
+      handleAddCheckListDrawer,
+      handleGetCheckListItems,
+      checked,
+    ],
   );
   const handleAddPlanner = useCallback(async () => {
     try {
@@ -1288,6 +1376,69 @@ const EventHostDashboard: React.FC = () => {
       selectedDate,
     ],
   );
+  const handleEditAppointment = useCallback(
+    async (data: ICreateAppointment) => {
+      try {
+        console.log(data);
+        formRef.current?.setErrors([]);
+        const date = new Date(selectedDate);
+
+        date.setHours(Number(data.start_hour));
+        date.setMinutes(Number(data.start_minute));
+
+        const schema = Yup.object().shape({
+          subject: Yup.string().required('Assunto é obrigatório'),
+          duration_minutes: Yup.number(),
+          address: Yup.string(),
+          start_hour: Yup.number().required(),
+          start_minute: Yup.number().required(),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+
+        await api.put(`/appointments/${appointment.id}`, {
+          subject: data.subject,
+          date,
+          duration_minutes: Number(data.duration_minutes),
+          address: data.address,
+          weplanGuest: weplanUser,
+          appointment_type: appointmentType,
+        });
+
+        addToast({
+          type: 'success',
+          title: 'Agendamento Criado com Sucesso',
+          description:
+            'Você já pode visualizar no seu dashboard de agendamentos.',
+        });
+
+        setEditAppointmentDrawer(false);
+        handleGetAppointments();
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro ao criar agendamento',
+          description: 'Erro  ao criar o agendamento, tente novamente.',
+        });
+      }
+    },
+    [
+      addToast,
+      handleGetAppointments,
+      weplanUser,
+      appointmentType,
+      selectedDate,
+      appointment.id,
+    ],
+  );
   const handleCheckListChecked = useCallback(
     (item_checked: boolean) => {
       if (item_checked === true) {
@@ -1301,6 +1452,104 @@ const EventHostDashboard: React.FC = () => {
     },
     [handleCheckedListItemDrawer],
   );
+  const handleEditCheckListItem = useCallback(
+    async (data: IEventCheckList) => {
+      try {
+        formRef.current?.setErrors([]);
+
+        const schema = Yup.object().shape({
+          name: Yup.string().required(),
+          priority_level: Yup.string().required(),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+
+        await api.put(`events/${eventId}/check-list/${checkListItem.id}`, {
+          name: data.name,
+          priority_level: Number(data.priority_level),
+          checked: checkListItem.checked,
+        });
+
+        addToast({
+          type: 'success',
+          title: 'Item editado com sucesso',
+          description: 'As mudanças já foram atualizadas no seu evento.',
+        });
+
+        setEditCheckListItemWindow(false);
+        setCheckListItem({} as IEventCheckList);
+        handleGetCheckListItems();
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro ao editar item',
+          description: 'Erro ao editar o item do check-list, tente novamente.',
+        });
+      }
+    },
+    [addToast, eventId, checkListItem, handleGetCheckListItems],
+  );
+  const handleEditCheckedCheckListItem = useCallback(
+    async (data: IEventCheckList) => {
+      try {
+        await api.put(`events/${eventId}/check-list/${data.id}`, {
+          name: data.name,
+          priority_level: Number(data.priority_level),
+          checked: !data.checked,
+        });
+
+        addToast({
+          type: 'success',
+          title: 'Item editado com sucesso',
+          description: 'As mudanças já foram atualizadas no seu evento.',
+        });
+
+        setEditCheckListItemWindow(false);
+        setCheckListItem({} as IEventCheckList);
+        handleGetCheckListItems();
+      } catch (err) {
+        throw new Error(err);
+
+        addToast({
+          type: 'error',
+          title: 'Erro ao editar item',
+          description: 'Erro ao editar o item do check-list, tente novamente.',
+        });
+      }
+    },
+    [addToast, eventId, handleGetCheckListItems],
+  );
+  const handleDeleteCheckListItem = useCallback(async () => {
+    try {
+      await api.delete(`events/${eventId}/check-list/${checkListItem.id}`);
+
+      addToast({
+        type: 'success',
+        title: 'Item deletado com sucesso',
+        description: 'As mudanças já foram atualizadas no seu evento.',
+      });
+
+      setEditCheckListItemWindow(false);
+      setCheckListItem({} as IEventCheckList);
+      handleGetCheckListItems();
+    } catch (err) {
+      throw new Error(err);
+
+      addToast({
+        type: 'error',
+        title: 'Erro ao deletar item',
+        description: 'Erro ao deletar o item do check-list, tente novamente.',
+      });
+    }
+  }, [addToast, eventId, checkListItem, handleGetCheckListItems]);
 
   const handleMyEventDashboard = useCallback(
     (my_event: IEvent) => {
@@ -1340,10 +1589,13 @@ const EventHostDashboard: React.FC = () => {
   useEffect(() => {
     handleGetEventInfo();
   }, [handleGetEventInfo]);
+  useEffect(() => {
+    handleGetAppointments();
+  }, [handleGetAppointments]);
 
   let guestCount = 0;
   let myGuestCount = 0;
-
+  console.log(appointments);
   return (
     <Container>
       <MenuButton />
@@ -1455,8 +1707,7 @@ const EventHostDashboard: React.FC = () => {
           friends={friends}
           onHandleFriendsListDrawer={() => setFriendsWindow(false)}
           handleSelectedFriend={(friend: IUserInfoDTO) =>
-            handleSelectedWeplanUser(friend)
-          }
+            handleSelectedWeplanUser(friend)}
         />
       )}
       {!!eventInfoDrawer && (
@@ -1510,6 +1761,331 @@ const EventHostDashboard: React.FC = () => {
             </h3>
           </button>
         </EventInfoDrawer>
+      )}
+      {!!addCheckListDrawer && (
+        <Form ref={formRef} onSubmit={handleAddCheckListItem}>
+          <AddCheckListDrawer>
+            <span>
+              <button type="button" onClick={handleAddCheckListDrawer}>
+                <MdClose size={30} />
+              </button>
+            </span>
+            <h1>Adicionar</h1>
+
+            {CheckedListItemMessage === '' ? (
+              <button type="button" onClick={handleCheckedListItemDrawer}>
+                Tarefa realizada ?
+              </button>
+            ) : (
+              <h1>
+                <button type="button" onClick={handleCheckedListItemDrawer}>
+                  {CheckedListItemMessage}
+                </button>
+              </h1>
+            )}
+            {!!checkedListItemDrawer && (
+              <CheckedListItemDrawer>
+                <h1>Tarefa Realizada?</h1>
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => handleCheckListChecked(true)}
+                  >
+                    Sim!
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleCheckListChecked(false)}
+                  >
+                    Ainda não ...
+                  </button>
+                </div>
+              </CheckedListItemDrawer>
+            )}
+            <Input name="name" type="text" placeholder="Nome" />
+
+            <Input
+              name="priority_level"
+              type="text"
+              placeholder="Nível de prioridade (1 a 5)"
+            />
+
+            <button type="submit">
+              <h3>Salvar</h3>
+            </button>
+          </AddCheckListDrawer>
+        </Form>
+      )}
+      {!!editCheckListItemWindow && (
+        <Form ref={formRef} onSubmit={handleEditCheckListItem}>
+          <AddCheckListDrawer>
+            <span>
+              <button
+                type="button"
+                onClick={() => setEditCheckListItemWindow(false)}
+              >
+                <MdClose size={30} />
+              </button>
+            </span>
+            <h1>Número de convidados</h1>
+
+            <Input name="name" type="text" defaultValue={checkListItem.name} />
+            <Input
+              name="priority_level"
+              type="number"
+              defaultValue={checkListItem.priority_level}
+            />
+            <button type="submit">Salvar</button>
+            <button type="button" onClick={handleDeleteCheckListItem}>
+              Deletar
+            </button>
+          </AddCheckListDrawer>
+        </Form>
+      )}
+      {!!deleteMemberDrawer && (
+        <Form ref={formRef} onSubmit={handleDeleteMember}>
+          <WeplanUserDrawer>
+            <h1>Deseja mesmo deletar o membro?</h1>
+            <div>
+              <button type="button" onClick={handleDeleteMember}>
+                Sim
+              </button>
+              <button
+                type="button"
+                onClick={() => setDeleteMemberDrawer(false)}
+              >
+                Não
+              </button>
+            </div>
+          </WeplanUserDrawer>
+        </Form>
+      )}
+      {!!addAppointmentDrawer && (
+        <Form ref={formRef} onSubmit={handleAddAppointment}>
+          <AddAppointmentDrawer>
+            <div>
+              <div>
+                <span>
+                  <button type="button" onClick={handleAddAppointmentDrawer}>
+                    <MdClose size={30} />
+                  </button>
+                </span>
+                <h1>Adicionar Compromisso</h1>
+
+                <Input name="subject" type="text" placeholder="Assunto" />
+
+                <Input type="text" placeholder="Hora" name="start_hour" />
+                <Input type="text" placeholder="Minuto" name="start_minute" />
+                <Input
+                  name="duration_minutes"
+                  type="number"
+                  placeholder="Duração em minutos"
+                />
+              </div>
+              <span>
+                <div>
+                  {wpUserName === '' ? (
+                    <button
+                      type="button"
+                      onClick={() => setWpUserQuestionDrawer(true)}
+                    >
+                      Fornecedor Weplan ?
+                    </button>
+                  ) : (
+                    <h1>
+                      <button
+                        type="button"
+                        onClick={() => setWpUserQuestionDrawer(true)}
+                      >
+                        {wpUserName}
+                      </button>
+                    </h1>
+                  )}
+                  {appointmentType === '' ? (
+                    <button type="button" onClick={handleAppointmentTypeDrawer}>
+                      Qual o tipo de compromisso ?
+                    </button>
+                  ) : (
+                    <h1>
+                      <button
+                        type="button"
+                        onClick={handleAppointmentTypeDrawer}
+                      >
+                        {appointmentType}
+                      </button>
+                    </h1>
+                  )}
+                  {!!appointmentTypeDrawer && (
+                    <AppointmentTypeDrawer>
+                      <h1>Qual o tipo de compromisso?</h1>
+                      <div>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleAppointmentTypeQuestion('Comercial')
+                          }
+                        >
+                          Comercial
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleAppointmentTypeQuestion('Técnico')
+                          }
+                        >
+                          Técnico
+                        </button>
+                      </div>
+                    </AppointmentTypeDrawer>
+                  )}
+                </div>
+                <Calendar>
+                  <DayPicker
+                    weekdaysShort={['D', 'S', 'T', 'Q', 'Q', 'S', 'S']}
+                    fromMonth={new Date()}
+                    onMonthChange={handleMonthChange}
+                    selectedDays={selectedDate}
+                    onDayClick={handleDateChange}
+                    months={[
+                      'Janeiro',
+                      'Fevereiro',
+                      'Março',
+                      'Abril',
+                      'Maio',
+                      'Junho',
+                      'Julho',
+                      'Agosto',
+                      'Setembro',
+                      'Outubro',
+                      'Novembro',
+                      'Dezembro',
+                    ]}
+                  />
+                </Calendar>
+                <Input name="address" type="text" placeholder="Endereço" />
+              </span>
+            </div>
+            <button type="submit">
+              <h3>Salvar</h3>
+            </button>
+          </AddAppointmentDrawer>
+        </Form>
+      )}
+      {!!editAppointmentDrawer && (
+        <Form ref={formRef} onSubmit={handleEditAppointment}>
+          <AddAppointmentDrawer>
+            <div>
+              <div>
+                <span>
+                  <button type="button" onClick={handleEditAppointmentDrawer}>
+                    <MdClose size={30} />
+                  </button>
+                </span>
+                <h1>Editar Compromisso</h1>
+
+                <Input
+                  name="subject"
+                  type="text"
+                  defaultValue={appointment.subject}
+                  placeholder="Assunto"
+                />
+
+                <Input
+                  type="text"
+                  defaultValue={appointment.start_hour}
+                  placeholder="Hora"
+                  name="start_hour"
+                />
+                <Input
+                  type="text"
+                  defaultValue={appointment.start_minute}
+                  placeholder="Minuto"
+                  name="start_minute"
+                />
+                <Input
+                  name="duration_minutes"
+                  type="number"
+                  defaultValue={appointment.duration_minutes}
+                  placeholder="Duração em minutos"
+                />
+              </div>
+              <span>
+                <div>
+                  <h1>
+                    <button
+                      type="button"
+                      onClick={() => setWpUserQuestionDrawer(true)}
+                    >
+                      {appointment.weplanGuest
+                        ? 'Fornecedor Weplan ?'
+                        : wpUserName}
+                    </button>
+                  </h1>
+                  <h1>
+                    <button type="button" onClick={handleAppointmentTypeDrawer}>
+                      {appointment.appointment_type}
+                    </button>
+                  </h1>
+                  {!!appointmentTypeDrawer && (
+                    <AppointmentTypeDrawer>
+                      <h1>Qual o tipo de compromisso?</h1>
+                      <div>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleAppointmentTypeQuestion('Comercial')
+                          }
+                        >
+                          Comercial
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleAppointmentTypeQuestion('Técnico')
+                          }
+                        >
+                          Técnico
+                        </button>
+                      </div>
+                    </AppointmentTypeDrawer>
+                  )}
+                </div>
+                <Calendar>
+                  <DayPicker
+                    weekdaysShort={['D', 'S', 'T', 'Q', 'Q', 'S', 'S']}
+                    fromMonth={new Date()}
+                    onMonthChange={handleMonthChange}
+                    selectedDays={selectedDate}
+                    onDayClick={handleDateChange}
+                    months={[
+                      'Janeiro',
+                      'Fevereiro',
+                      'Março',
+                      'Abril',
+                      'Maio',
+                      'Junho',
+                      'Julho',
+                      'Agosto',
+                      'Setembro',
+                      'Outubro',
+                      'Novembro',
+                      'Dezembro',
+                    ]}
+                  />
+                </Calendar>
+                <Input
+                  name="address"
+                  type="text"
+                  placeholder="Endereço"
+                  defaultValue={appointment.address}
+                />
+              </span>
+            </div>
+            <button type="submit">
+              <h3>Salvar</h3>
+            </button>
+          </AddAppointmentDrawer>
+        </Form>
       )}
       <EventPageContent>
         <SideBar>
@@ -1818,14 +2394,13 @@ const EventHostDashboard: React.FC = () => {
               <div>
                 <button type="button" onClick={handleBudgetDrawer}>
                   <h2>Orçamento</h2>
-
-                  <p>R$ 215.000,00</p>
+                  <p>R$ {eventInfo.budget ? eventInfo.budget : ''}</p>
                 </button>
               </div>
               <div>
                 <button type="button" onClick={handleAppointmentsSection}>
                   <h2>Compromissos</h2>
-                  <p>4</p>
+                  <p>{appointments.length}</p>
                 </button>
               </div>
               <div>
@@ -1838,7 +2413,7 @@ const EventHostDashboard: React.FC = () => {
                 <button type="button" onClick={handleCheckListSection}>
                   <h2>Check-List</h2>
                   <p>
-                    {resolvedCheckListItems.length}/{checkListItems.length}
+                    {resolvedCheckListItems}/{checkListItems.length}
                   </p>
                 </button>
               </div>
@@ -2398,7 +2973,7 @@ const EventHostDashboard: React.FC = () => {
           )}
           {!!appointmentsSection && (
             <Appointments>
-              <NextAppointment>
+              {/* <NextAppointment>
                 <h1>Próximo Compromisso</h1>
                 <div>
                   <div>
@@ -2408,174 +2983,33 @@ const EventHostDashboard: React.FC = () => {
 
                   <p>Rua Engenheiro Almir Almirante, 47, lourdes</p>
                 </div>
-              </NextAppointment>
+              </NextAppointment> */}
               <MyAppointments>
                 <h1>Meus Compromissos</h1>
                 <button type="button" onClick={handleAddAppointmentDrawer}>
                   <MdAdd size={30} />
                 </button>
                 <div>
-                  <Appointment>
-                    <div>
-                      <h1>Rullus Buffet</h1>
-                      <span>17/10/2020 - 14:00</span>
-                    </div>
-                    <p>Rua Engenheiro Almir Almirante, 47, lourdes</p>
-                  </Appointment>
-                  <Appointment>
-                    <div>
-                      <h1>Rullus Buffet</h1>
-                      <span>17/10/2020 - 14:00</span>
-                    </div>
-                    <p>Rua Engenheiro Almir Almirante, 47, lourdes</p>
-                  </Appointment>
-                  <Appointment>
-                    <div>
-                      <h1>Rullus Buffet</h1>
-                      <span>17/10/2020 - 14:00</span>
-                    </div>
-                    <p>Rua Engenheiro Almir Almirante, 47, lourdes</p>
-                  </Appointment>
-                  <Appointment>
-                    <div>
-                      <h1>Rullus Buffet</h1>
-                      <span>17/10/2020 - 14:00</span>
-                    </div>
-                    <p>Rua Engenheiro Almir Almirante, 47, lourdes</p>
-                  </Appointment>
+                  {appointments.map(thisAppointment => (
+                    <Appointment
+                      type="button"
+                      key={thisAppointment.id}
+                      onClick={() =>
+                        handleEditAppointmentDrawer(thisAppointment)
+                      }
+                    >
+                      <div>
+                        <h1>{thisAppointment.subject}</h1>
+                        <span>
+                          Faltam {thisAppointment.days_till_date} dias
+                        </span>
+                        <span>{thisAppointment.date}</span>
+                      </div>
+                      <p>Endereço: {thisAppointment.address}</p>
+                    </Appointment>
+                  ))}
                 </div>
               </MyAppointments>
-              {!!addAppointmentDrawer && (
-                <Form ref={formRef} onSubmit={handleAddAppointment}>
-                  <AddAppointmentDrawer>
-                    <div>
-                      <div>
-                        <span>
-                          <button
-                            type="button"
-                            onClick={handleAddAppointmentDrawer}
-                          >
-                            <MdClose size={30} />
-                          </button>
-                        </span>
-                        <h1>Adicionar Compromisso</h1>
-
-                        <Input
-                          name="subject"
-                          type="text"
-                          placeholder="Assunto"
-                        />
-
-                        <Input
-                          type="text"
-                          placeholder="Hora"
-                          name="start_hour"
-                        />
-                        <Input
-                          type="text"
-                          placeholder="Minuto"
-                          name="start_minute"
-                        />
-                        <Input
-                          name="duration_minutes"
-                          type="number"
-                          placeholder="Duração em minutos"
-                        />
-                      </div>
-                      <span>
-                        <div>
-                          {wpUserName === '' ? (
-                            <button
-                              type="button"
-                              onClick={() => setWpUserQuestionDrawer(true)}
-                            >
-                              Fornecedor Weplan ?
-                            </button>
-                          ) : (
-                            <h1>
-                              <button
-                                type="button"
-                                onClick={() => setWpUserQuestionDrawer(true)}
-                              >
-                                {wpUserName}
-                              </button>
-                            </h1>
-                          )}
-                          {appointmentType === '' ? (
-                            <button
-                              type="button"
-                              onClick={handleAppointmentTypeDrawer}
-                            >
-                              Qual o tipo de compromisso ?
-                            </button>
-                          ) : (
-                            <h1>
-                              <button
-                                type="button"
-                                onClick={handleAppointmentTypeDrawer}
-                              >
-                                {appointmentType}
-                              </button>
-                            </h1>
-                          )}
-                          {!!appointmentTypeDrawer && (
-                            <AppointmentTypeDrawer>
-                              <h1>Qual o tipo de compromisso?</h1>
-                              <div>
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    handleAppointmentTypeQuestion('Comercial')}
-                                >
-                                  Comercial
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    handleAppointmentTypeQuestion('Técnico')}
-                                >
-                                  Técnico
-                                </button>
-                              </div>
-                            </AppointmentTypeDrawer>
-                          )}
-                        </div>
-                        <Calendar>
-                          <DayPicker
-                            weekdaysShort={['D', 'S', 'T', 'Q', 'Q', 'S', 'S']}
-                            fromMonth={new Date()}
-                            onMonthChange={handleMonthChange}
-                            selectedDays={selectedDate}
-                            onDayClick={handleDateChange}
-                            months={[
-                              'Janeiro',
-                              'Fevereiro',
-                              'Março',
-                              'Abril',
-                              'Maio',
-                              'Junho',
-                              'Julho',
-                              'Agosto',
-                              'Setembro',
-                              'Outubro',
-                              'Novembro',
-                              'Dezembro',
-                            ]}
-                          />
-                        </Calendar>
-                        <Input
-                          name="address"
-                          type="text"
-                          placeholder="Endereço"
-                        />
-                      </span>
-                    </div>
-                    <button type="submit">
-                      <h3>Salvar</h3>
-                    </button>
-                  </AddAppointmentDrawer>
-                </Form>
-              )}
             </Appointments>
           )}
           {!!financeSection && (
@@ -2601,88 +3035,35 @@ const EventHostDashboard: React.FC = () => {
             </Financial>
           )}
           {!!checkListSection && (
-            <>
-              <CheckList>
-                <strong>Check List</strong>
-                <button type="button" onClick={handleAddCheckListDrawer}>
-                  <MdAdd size={30} />
-                </button>
-                <ul>
-                  <li>
-                    <span>Cerimonialista</span>
-                    <FiCheckSquare size={24} />
-                  </li>
-                  <li>
-                    <span>Espaço</span>
-                    <FiCheckSquare size={24} />
-                  </li>
-                  <li>
-                    <span>Decoração</span>
-                    <FiCheckSquare size={24} />
-                  </li>
-                </ul>
-              </CheckList>
-              {!!addCheckListDrawer && (
-                <Form ref={formRef} onSubmit={handleAddCheckListItem}>
-                  <AddCheckListDrawer>
-                    <span>
-                      <button type="button" onClick={handleAddCheckListDrawer}>
-                        <MdClose size={30} />
-                      </button>
-                    </span>
-                    <h1>Adicionar</h1>
-
-                    {CheckedListItemMessage === '' ? (
-                      <button
-                        type="button"
-                        onClick={handleCheckedListItemDrawer}
-                      >
-                        Tarefa realizada ?
-                      </button>
-                    ) : (
-                      <h1>
-                        <button
-                          type="button"
-                          onClick={handleCheckedListItemDrawer}
-                        >
-                          {CheckedListItemMessage}
-                        </button>
-                      </h1>
-                    )}
-                    {!!checkedListItemDrawer && (
-                      <CheckedListItemDrawer>
-                        <h1>Tarefa Realizada?</h1>
-                        <div>
-                          <button
-                            type="button"
-                            onClick={() => handleCheckListChecked(true)}
-                          >
-                            Sim!
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleCheckListChecked(false)}
-                          >
-                            Ainda não ...
-                          </button>
-                        </div>
-                      </CheckedListItemDrawer>
-                    )}
-                    <Input name="name" type="text" placeholder="Nome" />
-
-                    <Input
-                      name="priority_level"
-                      type="text"
-                      placeholder="Nível de prioridade (1 a 5)"
-                    />
-
-                    <button type="submit">
-                      <h3>Salvar</h3>
+            <CheckList>
+              <strong>Check List</strong>
+              <button type="button" onClick={handleAddCheckListDrawer}>
+                <MdAdd size={30} />
+              </button>
+              <ul>
+                {checkListItems.map(item => (
+                  <li key={item.id}>
+                    <button
+                      type="button"
+                      onClick={() => handleEditCheckListItemWindow(item)}
+                    >
+                      <span>{item.name}</span>
                     </button>
-                  </AddCheckListDrawer>
-                </Form>
-              )}
-            </>
+                    <span>prioridade: {item.priority_level}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleEditCheckedCheckListItem(item)}
+                    >
+                      {item.checked ? (
+                        <FiCheckSquare size={24} />
+                      ) : (
+                        <FiSquare size={24} />
+                      )}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </CheckList>
           )}
         </Main>
       </EventPageContent>

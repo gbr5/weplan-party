@@ -598,9 +598,7 @@ export const BudgetCloseButton = styled.button`
 `;
 
 export const Appointments = styled.div`
-  display: grid;
-  grid-template-columns: 2fr 3fr;
-  gap: 32px;
+  display: flex;
 `;
 
 export const NextAppointment = styled.div`
@@ -683,7 +681,7 @@ export const MyAppointments = styled.div`
   }
 `;
 
-export const Appointment = styled.div`
+export const Appointment = styled.button`
   width: 100%;
   margin-bottom: 8px;
 
@@ -1369,13 +1367,14 @@ export const AddGuestDrawer = styled.div`
 `;
 
 export const CheckList = styled.section`
-  height: 100%;
+  height: 400px;
   background: var(--header-background-color);
   padding: 24px;
   border-radius: 8px;
   margin-bottom: 24px;
   box-shadow: 1px 1px 5px 4px rgba(90, 90, 90, 0.02);
   position: relative;
+  overflow-y: scroll;
 
   > button {
     right: 16px;
@@ -1403,15 +1402,20 @@ export const CheckList = styled.section`
     grid-template-columns: 4fr 16fr 1fr;
     align-items: center;
     border-bottom: 1px solid var(--letter-color-4);
+    color: var(--title-color);
 
-    img {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
+    > span {
+      margin: 0 auto;
     }
 
-    span {
-      margin-right: auto;
+    button {
+      background: transparent;
+      border: none;
+      color: var(--primary-color);
+
+      > span {
+        margin-right: auto;
+      }
     }
   }
 
@@ -1423,10 +1427,10 @@ export const CheckList = styled.section`
 export const AddCheckListDrawer = styled.div`
   position: fixed;
   z-index: 10;
-  top: 150px;
-  left: 400px;
-  width: 600px;
-  height: 340px;
+  top: 20%;
+  left: 20%;
+  width: 60%;
+  height: 60%;
   display: flex;
   flex-direction: column;
   align-items: center;
