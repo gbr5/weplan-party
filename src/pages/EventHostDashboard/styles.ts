@@ -20,7 +20,7 @@ export const EventPageContent = styled.main`
 `;
 
 export const SideBar = styled.div`
-  margin: 0;
+  margin: 32px 0 0 0;
   background: var(--header-background-color);
   width: 22%;
   min-width: 220px;
@@ -41,6 +41,22 @@ export const SideBar = styled.div`
     align-items: flex-start;
     justify-content: left;
     position: relative;
+    gap: 16px;
+
+    > h5 {
+      font-size: 22px;
+      color: var(--title-color);
+      display: flex;
+      justify-content: center;
+      align-items: unset;
+      margin-top: 16px;
+      margin-bottom: 16px;
+
+      > svg {
+        color: var(--title-color);
+        opacity: 0.3;
+      }
+    }
 
     > h1 {
       left: 0;
@@ -59,9 +75,31 @@ export const SideBar = styled.div`
 
     &:hover {
       opacity: 0.8;
+
+      > h5 {
+        > svg {
+          opacity: 1;
+        }
+      }
     }
   }
+  /*
+  span {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-right: auto;
+    font-size: 24px;
+    color: var(--letter-color-3);
+    margin-bottom: 16px;
 
+    > button {
+      background: transparent;
+      border: none;
+      margin-left: 32px;
+      color: var(--title-color);
+    }
+  } */
   span {
     display: flex;
     flex-direction: column;
@@ -75,6 +113,9 @@ export const SideBar = styled.div`
       font-size: 16px;
       border: none;
       background: transparent;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
 
       &:hover {
         opacity: 0.8;
@@ -108,6 +149,7 @@ export const MyEvents = styled.button`
   align-items: center;
   font-size: 20px;
   color: var(--primary-color);
+  margin-bottom: 24px;
 
   img {
     width: 176px;
@@ -376,31 +418,6 @@ export const Main = styled.div`
   gap: 32px;
 `;
 
-export const SubHeader = styled.div`
-  margin: 60px auto 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-
-  span {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-right: auto;
-    font-size: 24px;
-    color: var(--letter-color-3);
-    margin-bottom: 16px;
-
-    > button {
-      background: transparent;
-      border: none;
-      margin-left: 32px;
-      color: var(--title-color);
-    }
-  }
-`;
-
 export const EditEventNameDrawer = styled.div`
   top: 140px;
   left: 535px;
@@ -485,6 +502,7 @@ export const FirstRow = styled.div`
   border-radius: 10px;
   position: relative;
   gap: 80px;
+  margin: 112px auto 16px;
 
   div {
     display: flex;
@@ -597,327 +615,12 @@ export const BudgetCloseButton = styled.button`
   color: red;
 `;
 
-export const Appointments = styled.div`
-  display: flex;
-`;
-
-export const NextAppointment = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
-
-  > h1 {
-    font-size: 24px;
-    color: var(--primary-color);
-  }
-
-  > div {
-    padding: 16px;
-    border-radius: 8px;
-    background-color: var(--header-background-color);
-    box-shadow: 2px 2px 10px 5px rgba(100, 50, 50, 0.3);
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-
-    > p {
-      font-size: 16px;
-      color: var(--letter-color-2);
-    }
-
-    > div {
-      display: flex;
-      align-items: flex-start;
-      gap: 16px;
-
-      > h1 {
-        font-size: 18px;
-        color: var(--title-color);
-      }
-
-      > span {
-        font-size: 16px;
-        color: var(--letter-color-1);
-      }
-    }
-  }
-`;
-
-export const MyAppointments = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
-  position: relative;
-
-  > button {
-    right: 0;
-    position: absolute;
-    background: transparent;
-    border: none;
-    color: var(--title-color);
-  }
-
-  > h1 {
-    font-size: 24px;
-    color: var(--primary-color);
-  }
-
-  > div {
-    width: 100%;
-
-    padding: 16px;
-    border-radius: 8px;
-    background-color: var(--header-background-color);
-    box-shadow: 2px 2px 3px 2px rgba(50, 50, 50, 0.1);
-
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-  }
-`;
-
-export const Appointment = styled.button`
-  width: 100%;
-  margin-bottom: 8px;
-
-  > p {
-    font-size: 16px;
-    color: var(--letter-color-2);
-  }
-
-  > div {
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-    margin-bottom: 8px;
-
-    > h1 {
-      font-size: 18px;
-      color: var(--title-color);
-    }
-
-    > span {
-      margin-left: auto;
-      font-size: 16px;
-      color: var(--letter-color-1);
-    }
-  }
-`;
-
-export const AddAppointmentDrawer = styled.div`
-  position: fixed;
-  z-index: 10;
-  top: 5%;
-  left: 2%;
-  width: 96%;
-  height: 85%;
-  display: flex;
-  flex-direction: column;
-  /* grid-template-columns: 2fr 1fr; */
-  align-items: center;
-  justify-content: center;
-  margin: 16px auto;
-  background: var(--header-background-color);
-  border-radius: 8px;
-  gap: 16px;
-  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
-  padding: 32px;
-
-  > h1 {
-    font-size: 24px;
-    color: var(--title-color);
-  }
-
-  > div {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    width: 100%;
-    gap: 32px;
-
-    > span {
-      margin: auto 0;
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      gap: 16px;
-
-      > div {
-        display: flex;
-
-        > button {
-          height: 40px;
-          width: 90%;
-          border-radius: 4px;
-          padding: 0 16px;
-          border: none;
-          margin: 16px;
-        }
-      }
-    }
-
-    > div {
-      margin: auto 0;
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      gap: 16px;
-
-      > h1 {
-        font-size: 24px;
-        color: var(--title-color);
-        margin-bottom: 40px;
-      }
-
-      > button {
-        height: 40px;
-        width: 90%;
-        border-radius: 4px;
-        padding: 0 16px;
-        border: none;
-        margin: 16px;
-      }
-
-      span {
-        position: absolute;
-        top: 4px;
-        right: 4px;
-        > button {
-          background: transparent;
-          border: none;
-
-          svg {
-            color: red;
-          }
-        }
-      }
-      /*
-      > input {
-        height: 40px;
-        width: 90%;
-        border-radius: 4px;
-        padding: 0 16px;
-        border: none;
-        margin: 16px;
-      } */
-
-      > p {
-        margin-top: 32px;
-        font-size: 20px;
-        color: var(--primary-color);
-      }
-
-      div {
-        display: flex;
-        gap: 16px;
-        margin-right: 16px;
-
-        > input {
-          height: 40px;
-          width: 90%;
-          border-radius: 4px;
-          padding: 0 16px;
-          border: none;
-          margin: 16px;
-        }
-      }
-    }
-  }
-
-  > button {
-    margin-top: 16px;
-    background: var(--primary-color);
-    border: none;
-    height: 40px;
-    width: 100%;
-    border-radius: 4px;
-  }
-`;
-
 export const SupplierSection = styled.div`
   display: grid;
-  grid-template-rows: 1fr 3fr;
-  background: var(--header-background-color);
+  grid-template-columns: 1fr 1fr;
   border: none;
-  border-radius: 8px;
   gap: 16px;
-  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
-
-  span {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-
-    > h1 {
-      position: absolute;
-      top: 24px;
-      left: 24px;
-      font-size: 24px;
-      color: var(--title-color);
-    }
-
-    > button {
-      position: absolute;
-      top: 0;
-      right: 8px;
-      background: transparent;
-      border: none;
-    }
-  }
-
-  div {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    padding: 32px;
-    width: 100%;
-    gap: 32px;
-
-    button {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      border-radius: 8px;
-      background: var(--letter-color-3);
-      height: 80px;
-      padding: 32px auto;
-      gap: 16px;
-      box-shadow: 2px 2px 6px 2px rgba(0, 0, 0, 0.2);
-      transition: 0.6s;
-
-      > img {
-        margin-left: 14px;
-        height: 60px;
-        width: 60px;
-        border-radius: 50%;
-        box-shadow: 2px 2px 6px 2px rgba(0, 0, 0, 0.2);
-        transition: 0.6s;
-
-        &:hover {
-          box-shadow: 5px 5px 6px 2px rgba(255, 150, 10, 0.4);
-        }
-      }
-
-      > h1 {
-        font-size: 20px;
-        color: var(--letter-color-5);
-      }
-
-      svg {
-        color: var(--primary-color);
-      }
-
-      &:hover {
-        box-shadow: 4px 4px 6px 2px rgba(255, 150, 10, 0.3);
-        opacity: 0.8;
-      }
-    }
-  }
+  width: 100%;
 `;
 
 export const SelectedSuppliers = styled.div`
@@ -927,15 +630,11 @@ export const SelectedSuppliers = styled.div`
   gap: 16px;
   width: 100%;
   position: relative;
-
-  > button {
-    background: transparent;
-    border: none;
-    position: absolute;
-    right: 0;
-    top: 0;
-    color: var(--title-color);
-  }
+  background: var(--header-background-color);
+  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
+  border-radius: 8px;
+  padding: 16px;
+  height: 350px;
 
   > h1 {
     font-size: 24px;
@@ -953,6 +652,27 @@ export const SelectedSuppliers = styled.div`
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
+  }
+  > button {
+    background: transparent;
+    border: none;
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    color: var(--title-color);
+
+    svg {
+      color: var(--primary-color);
+      border-radius: 50%;
+      transition: 0.4s;
+
+      &:hover {
+        color: var(--title-color);
+        /* opacity: 0.8; */
+        background: rgba(255, 150, 10, 0.3);
+        box-shadow: 0px 0px 6px 6px rgba(255, 150, 10, 0.3);
+      }
+    }
   }
 `;
 
@@ -963,15 +683,10 @@ export const HiredSuppliers = styled.div`
   align-items: flex-start;
   gap: 16px;
   position: relative;
-
-  > button {
-    background: transparent;
-    border: none;
-    position: absolute;
-    right: 0;
-    top: 0;
-    color: var(--title-color);
-  }
+  background: var(--header-background-color);
+  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
+  border-radius: 8px;
+  padding: 16px;
 
   > h1 {
     font-size: 24px;
@@ -989,6 +704,27 @@ export const HiredSuppliers = styled.div`
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
+  }
+  > button {
+    background: transparent;
+    border: none;
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    color: var(--title-color);
+
+    svg {
+      color: var(--primary-color);
+      border-radius: 50%;
+      transition: 0.4s;
+
+      &:hover {
+        color: var(--title-color);
+        /* opacity: 0.8; */
+        background: rgba(255, 150, 10, 0.3);
+        box-shadow: 0px 0px 6px 6px rgba(255, 150, 10, 0.3);
+      }
+    }
   }
 `;
 
@@ -1789,78 +1525,6 @@ export const GuestConfirmedDrawer = styled.div`
       height: 40px;
       font-weight: 500;
       width: 100%;
-      border-radius: 4px;
-    }
-  }
-`;
-
-export const WeplanSupplierAppointmentDrawer = styled.div`
-  position: absolute;
-  z-index: 100;
-  top: 30%;
-  left: 0;
-  width: 200px;
-  height: 300px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 16px auto;
-  background: var(--header-background-color);
-  border-radius: 8px;
-  gap: 16px;
-  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
-  padding: 32px;
-
-  > h1 {
-    font-size: 24px;
-    color: var(--title-color);
-  }
-
-  > div {
-    display: flex;
-    gap: 16px;
-
-    button {
-      background: var(--primary-color);
-      border: none;
-      height: 40px;
-      width: 90%;
-      border-radius: 4px;
-    }
-  }
-`;
-
-export const AppointmentTypeDrawer = styled.div`
-  position: absolute;
-  z-index: 100;
-  top: 30%;
-  left: 0;
-  width: 200px;
-  height: 300px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 16px auto;
-  background: var(--header-background-color);
-  border-radius: 8px;
-  gap: 16px;
-  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
-  padding: 32px;
-
-  > h1 {
-    font-size: 24px;
-    color: var(--title-color);
-  }
-
-  > div {
-    display: flex;
-    gap: 16px;
-
-    button {
-      background: var(--primary-color);
-      border: none;
-      height: 40px;
-      width: 90%;
       border-radius: 4px;
     }
   }
