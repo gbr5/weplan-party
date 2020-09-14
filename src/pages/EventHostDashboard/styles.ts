@@ -749,10 +749,10 @@ export const Supplier = styled.div`
 export const AddSupplierDrawer = styled.div`
   position: fixed;
   z-index: 10;
-  top: 150px;
-  left: 400px;
-  width: 600px;
-  height: 400px;
+  top: 25%;
+  left: 25%;
+  width: 50%;
+  height: 50%;
   display: flex;
   flex-direction: column;
   align-items: center;

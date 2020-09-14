@@ -113,8 +113,14 @@ interface ICreateCheckListItem {
   checked: boolean;
 }
 interface ICreateSupplier {
-  supplier_id: string;
-  supplier_sub_category: number;
+  name: string;
+  supplier_sub_category: string;
+}
+interface IEventSupplierDTO {
+  id: string;
+  name: string;
+  supplier_sub_category: string;
+  isHired: boolean;
 }
 interface IEditEventInfo {
   date: Date;
@@ -202,6 +208,12 @@ const EventHostDashboard: React.FC = () => {
   const [members, setMembers] = useState<IEventMemberDTO[]>([]);
   const [member, setMember] = useState<IEventMemberDTO>({} as IEventMemberDTO);
   const [membersWindow, setMembersWindow] = useState(false);
+  const [selectedSuppliers, setSelectedSuppliers] = useState<
+    IEventSupplierDTO[]
+  >([]);
+  const [hiredSuppliers, setHiredSuppliers] = useState<IEventSupplierDTO[]>([]);
+  const [budget, setBudget] = useState('');
+  const [suppliersWindow, setSuppliersWindow] = useState(false);
   const [eventInfo, setEventInfo] = useState<IEventInfo>({} as IEventInfo);
   const [guestWindow, setGuestWindow] = useState(true);
   const [eventInfoDrawer, setEventInfoDrawer] = useState(false);
@@ -242,6 +254,7 @@ const EventHostDashboard: React.FC = () => {
   const [deleteOwnerDrawer, setDeleteOwnerDrawer] = useState(false);
   const [numberOfOwners, setNumberOfOwners] = useState(0);
   const [numberOfMembers, setNumberOfMembers] = useState(0);
+  const [eventDate, setEventDate] = useState(new Date());
 
   const closeAllWindows = useCallback(() => {
     setMyEventsDrawer(false);
@@ -446,6 +459,22 @@ const EventHostDashboard: React.FC = () => {
     [handleWeplanGuestDrawer],
   );
 
+  const handleGetSuppliers = useCallback(() => {
+    try {
+      api
+        .get<IEventSupplierDTO[]>(`events/${eventId}/event-suppliers`)
+        .then(response => {
+          setSelectedSuppliers(
+            response.data.filter(selected => selected.isHired === false),
+          );
+          setHiredSuppliers(
+            response.data.filter(selected => selected.isHired === true),
+          );
+        });
+    } catch (err) {
+      throw new Error(err);
+    }
+  }, [eventId]);
   const handleGetPlanners = useCallback(() => {
     try {
       api
@@ -565,6 +594,7 @@ const EventHostDashboard: React.FC = () => {
           event_type: response.data.event_type,
           daysTillDate: differenceInCalendarDays(date, new Date()),
         });
+        setEventDate(date);
       });
     } catch (err) {
       throw Error(err);
@@ -573,27 +603,34 @@ const EventHostDashboard: React.FC = () => {
 
   const handleAddSupplier = useCallback(
     async (data: ICreateSupplier) => {
+      console.log('supplierData:', data, 'isHired:', isHired);
       try {
         formRef.current?.setErrors([]);
 
         const schema = Yup.object().shape({
-          supplier_id: Yup.string(),
-          supplier_sub_category: Yup.string(),
+          name: Yup.string().required(),
+          supplier_sub_category: Yup.string().required(),
         });
         await schema.validate(data, {
           abortEarly: false,
         });
-        await api.post(`events/${eventId}/suppliers`, {
-          supplier_id: data.supplier_id,
+        console.log('passou pelo YUP:', data);
+
+        await api.post(`events/${eventId}/event-suppliers`, {
+          name: data.name,
           supplier_sub_category: data.supplier_sub_category,
           isHired,
+          weplanUser: false,
         });
+
+        setAddSupplierDrawer(false);
+        handleGetSuppliers();
         addToast({
           type: 'success',
-          title: 'Fornecedor selecionado com Sucesso',
-          description: 'Você já pode visualizar no dashboard do seu evento.',
+          title: `${data.name} adicionado com Sucesso`,
+          description:
+            'Você já pode visualizar as alterações na página do seu evento.',
         });
-        handleAddSupplierDrawer();
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const error = getValidationErrors(err);
@@ -606,7 +643,7 @@ const EventHostDashboard: React.FC = () => {
         });
       }
     },
-    [addToast, eventId, handleAddSupplierDrawer, isHired],
+    [addToast, eventId, handleGetSuppliers, isHired],
   );
   const handleAddCheckListItem = useCallback(
     async (data: ICreateCheckListItem) => {
@@ -874,7 +911,6 @@ const EventHostDashboard: React.FC = () => {
   const handleEditEventInfo = useCallback(
     async (data: IEventInfo) => {
       try {
-        console.log(data);
         formRef.current?.setErrors([]);
 
         const schema = Yup.object().shape({
@@ -917,6 +953,93 @@ const EventHostDashboard: React.FC = () => {
     },
     [addToast, eventId],
   );
+  const handleEditBudget = useCallback(
+    async (data: IEventInfo) => {
+      try {
+        formRef.current?.setErrors([]);
+
+        const schema = Yup.object().shape({
+          budget: Yup.string().required(),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+
+        await api.put(`events/${eventId}/event-info`, {
+          duration: eventInfo.duration,
+          number_of_guests: eventInfo.number_of_guests,
+          budget: Number(data.budget),
+          description: eventInfo.description,
+          country: eventInfo.country,
+          local_state: eventInfo.local_state,
+          city: eventInfo.city,
+          address: eventInfo.address,
+        });
+
+        setBudgetDrawer(false);
+        handleGetEventInfo();
+        addToast({
+          type: 'success',
+          title: 'Informações editadas com sucesso',
+          description: 'As mudanças já foram atualizadas no seu evento.',
+        });
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+        addToast({
+          type: 'error',
+          title: 'Erro ao editar informações do evento',
+          description: 'Tente novamente.',
+        });
+      }
+    },
+    [addToast, eventId, eventInfo, budget],
+  );
+  const handleEditEventName = useCallback(
+    async (data: IEvent) => {
+      try {
+        formRef.current?.setErrors([]);
+
+        const schema = Yup.object().shape({
+          name: Yup.string().required(),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+
+        await api.put(`events/${eventId}`, {
+          name: data.name,
+          date: eventDate,
+        });
+
+        setEditEventNameDrawer(false);
+        handleGetEvent();
+        addToast({
+          type: 'success',
+          title: 'Informações editadas com sucesso',
+          description: 'As mudanças já foram atualizadas no seu evento.',
+        });
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+        addToast({
+          type: 'error',
+          title: 'Erro ao editar informações do evento',
+          description: 'Tente novamente.',
+        });
+      }
+    },
+    [addToast, eventId, eventInfo, budget],
+  );
+
   const handleEditGuest = useCallback(
     async (data: IEventGuest) => {
       console.log(data);
@@ -1195,6 +1318,33 @@ const EventHostDashboard: React.FC = () => {
     },
     [addToast, eventId, handleGetCheckListItems],
   );
+  const handleEditHiredSupplier = useCallback(
+    async (data: IEventSupplierDTO) => {
+      try {
+        await api.put(`events/${eventId}/event-suppliers/${data.id}`, {
+          name: data.name,
+          supplier_sub_category: 'French_Catering',
+          isHired: !data.isHired,
+        });
+
+        addToast({
+          type: 'success',
+          title: 'Fornecedor editado com sucesso',
+          description: 'As mudanças já foram atualizadas no seu evento.',
+        });
+
+        handleGetSuppliers();
+      } catch (err) {
+        addToast({
+          type: 'error',
+          title: 'Erro ao editar forncedor',
+          description: 'Erro ao editar o item do check-list, tente novamente.',
+        });
+        throw new Error(err);
+      }
+    },
+    [addToast, eventId, handleGetSuppliers],
+  );
 
   const handleDeleteGuest = useCallback(async () => {
     try {
@@ -1312,6 +1462,9 @@ const EventHostDashboard: React.FC = () => {
   );
 
   useEffect(() => {
+    handleGetSuppliers();
+  }, [handleGetSuppliers]);
+  useEffect(() => {
     handleGetCheckListItems();
   }, [handleGetCheckListItems]);
   useEffect(() => {
@@ -1364,7 +1517,7 @@ const EventHostDashboard: React.FC = () => {
         />
       )} */}
       {!!editEventNameDrawer && (
-        <>
+        <Form ref={formRef} onSubmit={handleEditEventName}>
           <EditEventNameCloseButton
             type="button"
             onClick={handleEditEventNameDrawer}
@@ -1374,13 +1527,18 @@ const EventHostDashboard: React.FC = () => {
           <EditEventNameDrawer>
             <span>
               <h2>Nome do Evento</h2>
-              <input type="text" />
-              <button type="button">
+              <Input
+                name="name"
+                placeholder="Nome do evento"
+                defaultValue={event.name}
+                type="text"
+              />
+              <button type="submit">
                 <h3>Salvar</h3>
               </button>
             </span>
           </EditEventNameDrawer>
-        </>
+        </Form>
       )}
       {!!ownerProfileWindow && (
         <OwnerProfileDrawer
@@ -1635,6 +1793,58 @@ const EventHostDashboard: React.FC = () => {
               </button>
             </div>
           </WeplanUserDrawer>
+        </Form>
+      )}
+      {!!addSupplierDrawer && (
+        <Form ref={formRef} onSubmit={handleAddSupplier}>
+          <AddSupplierDrawer>
+            <span>
+              <button type="button" onClick={handleAddSupplierDrawer}>
+                <MdClose size={30} />
+              </button>
+            </span>
+            <h1>Adicionar Fornecedor</h1>
+
+            {isHiredMessage === '' ? (
+              <button type="button" onClick={handleIsHiredDrawer}>
+                Contratado?
+              </button>
+            ) : (
+              <h1>
+                <button type="button" onClick={handleIsHiredDrawer}>
+                  {isHiredMessage}
+                </button>
+              </h1>
+            )}
+            {!!isHiredDrawer && (
+              <IsHiredDrawer>
+                <h1>Fornecedor contratado?</h1>
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => handleIsHiredQuestion(true)}
+                  >
+                    Sim
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleIsHiredQuestion(false)}
+                  >
+                    Não
+                  </button>
+                </div>
+              </IsHiredDrawer>
+            )}
+            <Input name="name" type="text" placeholder="Nome do fornecedor" />
+            <Input
+              name="supplier_sub_category"
+              type="text"
+              placeholder="Qual o serviço contratado?"
+            />
+            <button type="submit">
+              <h3>Salvar</h3>
+            </button>
+          </AddSupplierDrawer>
         </Form>
       )}
 
@@ -1922,7 +2132,10 @@ const EventHostDashboard: React.FC = () => {
             <div>
               <button type="button" onClick={handleSupplierSection}>
                 <h2>Fornecedores</h2>
-                <p>3</p>
+                <p>
+                  {hiredSuppliers.length}/
+                  {selectedSuppliers.length + hiredSuppliers.length}
+                </p>
               </button>
             </div>
             <div>
@@ -1941,20 +2154,27 @@ const EventHostDashboard: React.FC = () => {
             </div>
           </FirstRow>
           {!!budgetDrawer && (
-            <BudgetDrawer>
-              <BudgetCloseButton type="button" onClick={handleBudgetDrawer}>
-                <MdClose size={30} />
-              </BudgetCloseButton>
-              <span>
-                <h2>Novo Orçamento</h2>
+            <Form ref={formRef} onSubmit={handleEditBudget}>
+              <BudgetDrawer>
+                <BudgetCloseButton type="button" onClick={handleBudgetDrawer}>
+                  <MdClose size={30} />
+                </BudgetCloseButton>
+                <span>
+                  <h2>Novo Orçamento</h2>
 
-                <input type="text" />
+                  <Input
+                    name="budget"
+                    placeholder="Orçamento"
+                    defaultValue={eventInfo.budget}
+                    type="text"
+                  />
 
-                <button type="button">
-                  <h3>Salvar</h3>
-                </button>
-              </span>
-            </BudgetDrawer>
+                  <button type="submit">
+                    <h3>Salvar</h3>
+                  </button>
+                </span>
+              </BudgetDrawer>
+            </Form>
           )}
           {!!latestActionsSection && (
             <LatestNews>
@@ -2123,22 +2343,22 @@ const EventHostDashboard: React.FC = () => {
                   <FiUserPlus size={26} />
                 </button>
                 <div>
-                  <Supplier>
-                    <h1>Rullus</h1>
-                    <FiChevronRight />
-                  </Supplier>
-                  <Supplier>
-                    <h1>ZCM</h1>
-                    <FiChevronRight />
-                  </Supplier>
-                  <Supplier>
-                    <h1>Company</h1>
-                    <FiChevronRight />
-                  </Supplier>
-                  <Supplier>
-                    <h1>Vagalumens</h1>
-                    <FiChevronRight />
-                  </Supplier>
+                  <h2>{selectedSuppliers.length}</h2>
+                  {selectedSuppliers.map(selected => (
+                    <Supplier key={selected.id}>
+                      <h1>{selected.name}</h1>
+                      <button
+                        type="button"
+                        onClick={() => handleEditHiredSupplier(selected)}
+                      >
+                        {selected.isHired ? (
+                          <FiCheckSquare size={24} />
+                        ) : (
+                          <FiSquare size={24} />
+                        )}
+                      </button>
+                    </Supplier>
+                  ))}
                 </div>
               </SelectedSuppliers>
               <HiredSuppliers>
@@ -2147,80 +2367,24 @@ const EventHostDashboard: React.FC = () => {
                   <FiUserPlus size={26} />
                 </button>
                 <div>
-                  <Supplier>
-                    <h1>Far East</h1>
-                    <FiChevronRight />
-                  </Supplier>
-                  <Supplier>
-                    <h1>Sergio Mendes</h1>
-                    <FiChevronRight />
-                  </Supplier>
-                  <Supplier>
-                    <h1>Luisa Fotógrafa</h1>
-                    <FiChevronRight />
-                  </Supplier>
-                  <Supplier>
-                    <h1>Marcela Ferrari</h1>
-                    <FiChevronRight />
-                  </Supplier>
+                  <h2>{hiredSuppliers.length}</h2>
+                  {hiredSuppliers.map(hired => (
+                    <Supplier key={hired.id}>
+                      <h1>{hired.name}</h1>
+                      <button
+                        type="button"
+                        onClick={() => handleEditHiredSupplier(hired)}
+                      >
+                        {hired.isHired ? (
+                          <FiCheckSquare size={24} />
+                        ) : (
+                          <FiSquare size={24} />
+                        )}
+                      </button>
+                    </Supplier>
+                  ))}
                 </div>
               </HiredSuppliers>
-              {!!addSupplierDrawer && (
-                <Form ref={formRef} onSubmit={handleAddSupplier}>
-                  <AddSupplierDrawer>
-                    <span>
-                      <button type="button" onClick={handleAddSupplierDrawer}>
-                        <MdClose size={30} />
-                      </button>
-                    </span>
-                    <h1>Adicionar Fornecedor</h1>
-
-                    {isHiredMessage === '' ? (
-                      <button type="button" onClick={handleIsHiredDrawer}>
-                        Contratado?
-                      </button>
-                    ) : (
-                      <h1>
-                        <button type="button" onClick={handleIsHiredDrawer}>
-                          {isHiredMessage}
-                        </button>
-                      </h1>
-                    )}
-                    {!!isHiredDrawer && (
-                      <IsHiredDrawer>
-                        <h1>Fornecedor contratado?</h1>
-                        <div>
-                          <button
-                            type="button"
-                            onClick={() => handleIsHiredQuestion(true)}
-                          >
-                            Sim
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleIsHiredQuestion(false)}
-                          >
-                            Não
-                          </button>
-                        </div>
-                      </IsHiredDrawer>
-                    )}
-                    <Input
-                      name="supplier_id"
-                      type="text"
-                      placeholder="ID do fornecedor"
-                    />
-                    <Input
-                      name="supplier_sub_category"
-                      type="text"
-                      placeholder="Qual o serviço contratado?"
-                    />
-                    <button type="submit">
-                      <h3>Salvar</h3>
-                    </button>
-                  </AddSupplierDrawer>
-                </Form>
-              )}
             </SupplierSection>
           )}
           {!!messagesSection && (
