@@ -75,32 +75,21 @@ export const Profile = styled.div`
   align-items: center;
   margin-left: 40px;
 
-  > img {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    box-shadow: 5px 5px 5px 5px rgba(0, 0, 0, 0.1);
+  a {
+    text-decoration: none;
+    color: var(--primary-color);
+    transition: 0.2s;
+
+    > img {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      box-shadow: 5px 5px 5px 5px rgba(0, 0, 0, 0.1);
+    }
   }
 
-  div {
-    display: flex;
-    flex-direction: column;
-    margin-left: 16px;
-    line-height: 24px;
-
-    span {
-      color: var(--letter-color-3);
-    }
-
-    a {
-      text-decoration: none;
-      color: var(--primary-color);
-      transition: 0.2s;
-    }
-
-    a:hover {
-      opacity: 0.7;
-    }
+  a:hover {
+    opacity: 0.7;
   }
 `;
 

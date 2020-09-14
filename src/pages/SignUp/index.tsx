@@ -35,34 +35,153 @@ interface SignUpForm {
   password: string;
 }
 
+interface IPersonUser {
+  person_id: string;
+  first_name: string;
+  last_name: string;
+}
+interface ICompanyUser {
+  company_id: string;
+  name: string;
+}
+
 const SignUp: React.FC = () => {
+  const [userId, setUserId] = useState('');
   const [isSupplier, setIsSupplier] = useState(false);
   const [options, setOptions] = useState(true);
-  const [isCompanyQuestion, setIsCompanyQuestion] = useState(false);
+  const [isCompanyQuestion, setIsCompanyQuestion] = useState(true);
   const [isCompany, setIsCompany] = useState(false);
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
   const history = useHistory();
 
   const handleUserSupplier = useCallback(() => {
-    setIsSupplier(true);
+    setIsCompany(true);
     setOptions(false);
+    setIsSupplier(true);
+    setIsCompanyQuestion(false);
   }, []);
 
   const handleUserHost = useCallback(() => {
-    setIsSupplier(false);
-    setOptions(false);
-  }, []);
-
-  const handleIsCompany = useCallback(() => {
-    setIsCompany(true);
-    setIsCompanyQuestion(true);
-  }, []);
-
-  const handleIsPerson = useCallback(() => {
     setIsCompany(false);
-    setIsCompanyQuestion(true);
+    setOptions(false);
+    setIsSupplier(false);
+    setIsCompanyQuestion(false);
   }, []);
+
+  const handleCompanyInfo = useCallback(() => {
+    setIsSupplier(true);
+    setIsCompanyQuestion(true);
+    console.log(
+      'companyInfo',
+      'isSupplier',
+      isSupplier,
+      'isCompanyQuestion',
+      isCompanyQuestion,
+    );
+  }, [isSupplier, isCompanyQuestion]);
+
+  const handlePersonInfo = useCallback(() => {
+    setIsSupplier(false);
+    setIsCompanyQuestion(true);
+    console.log(
+      'companyInfo',
+      'isSupplier',
+      isSupplier,
+      'isCompanyQuestion',
+      isCompanyQuestion,
+    );
+  }, [isSupplier, isCompanyQuestion]);
+
+  const handleSubmitPersonInfo = useCallback(
+    async (data: IPersonUser) => {
+      try {
+        formRef.current?.setErrors({});
+
+        const schema = Yup.object().shape({
+          person_id: Yup.string().required('CPF é obrigatório'),
+          first_name: Yup.string().required('Nome é obrigatório'),
+          last_name: Yup.string().required('Sobrenome é obrigatório'),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+
+        await api.post('/person-info', {
+          person_id: data.person_id,
+          first_name: data.first_name,
+          last_name: data.last_name,
+          user_id: userId,
+        });
+
+        history.push('/');
+
+        addToast({
+          type: 'success',
+          title: 'Cadastro realizado!',
+          description: 'Você já pode fazer seu login no GoBarber!',
+        });
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro no cadastro',
+          description: 'Ocorreu um erro ao fazer o cadastro, tente novamente.',
+        });
+      }
+    },
+    [addToast, history, userId],
+  );
+
+  const handleSubmitCompanyInfo = useCallback(
+    async (data: ICompanyUser) => {
+      try {
+        formRef.current?.setErrors({});
+
+        const schema = Yup.object().shape({
+          company_id: Yup.string().required('CNPJ é obrigatório'),
+          name: Yup.string().required('Nome é obrigatório'),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+
+        await api.post('/company-info', {
+          company_id: data.company_id,
+          name: data.name,
+          user_id: userId,
+        });
+
+        history.push('/');
+
+        addToast({
+          type: 'success',
+          title: 'Cadastro realizado!',
+          description: 'Você já pode fazer seu login no GoBarber!',
+        });
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro no cadastro',
+          description: 'Ocorreu um erro ao fazer o cadastro, tente novamente.',
+        });
+      }
+    },
+    [addToast, history, userId],
+  );
 
   const handleSubmit = useCallback(
     async (data: SignUpForm) => {
@@ -92,9 +211,19 @@ const SignUp: React.FC = () => {
           isCompany,
         };
 
-        await api.post('/users', validatedData);
+        const response = await api.post('/users', validatedData);
+        setUserId(response.data.id);
 
-        history.push('/');
+        setOptions(false);
+        setIsCompanyQuestion(true);
+
+        if (isCompany) {
+          console.log('isCompany', isCompany);
+          handleCompanyInfo();
+        } else {
+          console.log('isCompany', isCompany);
+          handlePersonInfo();
+        }
 
         addToast({
           type: 'success',
@@ -115,7 +244,7 @@ const SignUp: React.FC = () => {
         });
       }
     },
-    [addToast, history, isCompany],
+    [addToast, handleCompanyInfo, handlePersonInfo, isCompany],
   );
 
   return (
@@ -123,13 +252,24 @@ const SignUp: React.FC = () => {
       <Background />
       <Content>
         <AnimationContainer>
-          {options && (
+          {options && isCompanyQuestion && (
             <>
-              <img src={logoImg} alt="GoBarber" />
+              <h1>WePlan</h1>
+              <QuestionContainer>
+                <QuestionTitle>Quem é você?</QuestionTitle>
+                <SubContainer>
+                  <ButtonContainer>
+                    <Button onClick={handleUserHost}>Usuário final</Button>
+                  </ButtonContainer>
+                  <ButtonContainer>
+                    <Button onClick={handleUserSupplier}>Fornecedor</Button>
+                  </ButtonContainer>
+                </SubContainer>
+              </QuestionContainer>
 
-              {isCompanyQuestion === false ? (
+              {/* {isCompanyQuestion === false ? (
                 <QuestionContainer>
-                  <QuestionTitle>Quero criar um perfil de</QuestionTitle>
+                  <QuestionTitle>Quem é você?</QuestionTitle>
                   <SubContainer>
                     <ButtonContainer>
                       <ButtonContainerTitle>Pessoa Física</ButtonContainerTitle>
@@ -152,26 +292,24 @@ const SignUp: React.FC = () => {
                   <QuestionTitle>Quem é você?</QuestionTitle>
                   <SubContainer>
                     <ButtonContainer>
-                      <ButtonContainerTitle>Anfitrião</ButtonContainerTitle>
-                      <Button onClick={handleUserHost}>Dono da Festa</Button>
+                      <Button onClick={handleUserHost}>Usuário final</Button>
                     </ButtonContainer>
                     <ButtonContainer>
-                      <ButtonContainerTitle>Fornecedor</ButtonContainerTitle>
-                      <Button onClick={handleUserSupplier}>
-                        Faço a FESTA acontecer
-                      </Button>
+                      <Button onClick={handleUserSupplier}>Fornecedor</Button>
                     </ButtonContainer>
                   </SubContainer>
                 </QuestionContainer>
-              )}
+              )} */}
             </>
           )}
 
-          {!options &&
+          {/* {!options &&
             (isSupplier ? (
               <Form ref={formRef} onSubmit={handleSubmit}>
-                <h1>Faço a FESTA acontecer</h1>
-                <h1>Faça seu cadastro</h1>
+                <QuestionTitle>
+                  <strong>Fornecedor</strong>
+                  Faça seu cadastro
+                </QuestionTitle>
 
                 <Input
                   name="name"
@@ -202,8 +340,10 @@ const SignUp: React.FC = () => {
               </Form>
             ) : (
               <Form ref={formRef} onSubmit={handleSubmit}>
-                <h1>Dono da festa</h1>
-                <h1>Faça seu cadastro</h1>
+                <QuestionTitle>
+                  <strong>Usuário Final</strong>
+                  Faça seu cadastro
+                </QuestionTitle>
 
                 <Input
                   name="name"
@@ -230,6 +370,90 @@ const SignUp: React.FC = () => {
                   type="password"
                   placeholder="Confirme a sua senha"
                 />
+                <Button type="submit">Cadastrar</Button>
+              </Form>
+            ))} */}
+          {!options && !isCompanyQuestion && (
+            <Form ref={formRef} onSubmit={handleSubmit}>
+              <QuestionTitle>
+                <strong>WePlan</strong>
+                Faça seu cadastro
+              </QuestionTitle>
+
+              <Input name="name" icon={FiUser} type="text" placeholder="Nome" />
+              <Input
+                name="email"
+                icon={FiMail}
+                type="text"
+                placeholder="E-mail"
+              />
+              <Input
+                name="password"
+                icon={FiLock}
+                type="password"
+                placeholder="Senha"
+              />
+              <Input
+                name="password_confirmation"
+                icon={FiLock}
+                type="password"
+                placeholder="Confirme a sua senha"
+              />
+
+              <Button type="submit">Cadastrar</Button>
+            </Form>
+          )}
+
+          {!options &&
+            isCompanyQuestion &&
+            (isSupplier ? (
+              <Form ref={formRef} onSubmit={handleSubmitCompanyInfo}>
+                <QuestionTitle>
+                  <strong>Usuário Final</strong>
+                  Faça seu cadastro
+                </QuestionTitle>
+
+                <Input
+                  name="name"
+                  icon={FiUser}
+                  type="text"
+                  placeholder="Razão social"
+                />
+                <Input
+                  name="company_id"
+                  icon={FiUser}
+                  type="text"
+                  placeholder="CNPJ"
+                />
+
+                <Button type="submit">Cadastrar</Button>
+              </Form>
+            ) : (
+              <Form ref={formRef} onSubmit={handleSubmitPersonInfo}>
+                <QuestionTitle>
+                  <strong>Usuário Final</strong>
+                  Faça seu cadastro
+                </QuestionTitle>
+
+                <Input
+                  name="first_name"
+                  icon={FiUser}
+                  type="text"
+                  placeholder="Prénome"
+                />
+                <Input
+                  name="last_name"
+                  icon={FiUser}
+                  type="text"
+                  placeholder="Sobrenome"
+                />
+                <Input
+                  name="person_id"
+                  icon={FiUser}
+                  type="text"
+                  placeholder="CPF"
+                />
+
                 <Button type="submit">Cadastrar</Button>
               </Form>
             ))}

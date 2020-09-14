@@ -40,6 +40,23 @@ interface IMonthAvailabilityItem {
   available: boolean;
 }
 
+interface IFriendsEvents {
+  guest_id: string;
+  event_name: string;
+  host: string;
+  date: Date;
+  confirmed: boolean;
+}
+
+interface INextFriendsEvent {
+  guest_id: string;
+  event_name: string;
+  host: string;
+  date: string;
+  daysTillDate: number;
+  confirmed: boolean;
+}
+
 interface IEvent {
   id: string;
   name: string;
@@ -60,6 +77,10 @@ interface IEventGuest {
 
 const Dashboard: React.FC = () => {
   const [myEvents, setMyEvents] = useState<IEvent[]>([]);
+  const [myFriendsEvents, setMyFriendsEvents] = useState<IFriendsEvents[]>([]);
+  const [myNextFriendsEvent, setMyNextFriendsEvent] = useState<
+    INextFriendsEvent
+  >({} as INextFriendsEvent);
   const [myEventsDrawer, setMyEventsDrawer] = useState(false);
   const [myNextEvent, setMyNextEvent] = useState<IEvent>({} as IEvent);
   const [myNextEventCheckList, setMyNextEventCheckList] = useState(0);
@@ -147,6 +168,41 @@ const Dashboard: React.FC = () => {
     }
   }, [myEvents]);
 
+  const handleGetMyFriendsEvents = useCallback(() => {
+    try {
+      api.get<IFriendsEvents[]>('/friends-events').then(response => {
+        setMyFriendsEvents(response.data);
+      });
+
+      const nextFriendsEvent = myFriendsEvents.find(myEvent => {
+        return isAfter(new Date(myEvent.date), new Date());
+      });
+
+      if (nextFriendsEvent) {
+        const date = new Date(nextFriendsEvent.date);
+        const year = date.getFullYear();
+        const month =
+          date.getMonth() < 10 ? `0${date.getMonth()}` : date.getMonth();
+        const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
+        const hour =
+          date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
+        const minute =
+          date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
+
+        setMyNextFriendsEvent({
+          guest_id: nextFriendsEvent.guest_id,
+          event_name: nextFriendsEvent.event_name,
+          host: nextFriendsEvent.host,
+          date: `${hour}:${minute} - ${day}/${month}/${year}`,
+          daysTillDate: differenceInCalendarDays(date, new Date()),
+          confirmed: nextFriendsEvent.confirmed,
+        });
+      }
+    } catch (err) {
+      throw Error(err);
+    }
+  }, [myFriendsEvents]);
+
   useEffect(() => {
     getMyEvents();
   }, [getMyEvents]);
@@ -158,6 +214,10 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     getMyNextEventCheckList();
   }, [getMyNextEventCheckList]);
+
+  useEffect(() => {
+    handleGetMyFriendsEvents();
+  }, [handleGetMyFriendsEvents]);
 
   return (
     <Container>
@@ -199,11 +259,11 @@ const Dashboard: React.FC = () => {
                   src="https://images.unsplash.com/photo-1496843916299-590492c751f4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"
                   alt=""
                 />
-                <strong>Pedrinho Magalhães 6 anos</strong>
+                <strong>{myNextFriendsEvent.event_name}</strong>
               </div>
               <span>
                 <FiClock />
-                17/10/2020 - 14:00
+                {myNextFriendsEvent.date}
               </span>
               <FiChevronRight size={24} />
             </FirstRow>

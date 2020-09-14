@@ -2,7 +2,7 @@ import styled, { keyframes } from 'styled-components';
 import { shade } from 'polished';
 import '../../styles/global';
 
-import signInBackgroundImg from '../../assets/sign-in-background.png';
+import signInBackgroundImg from '../../assets/signInImage1.jpg';
 
 export const Container = styled.div`
   height: 100vh;
@@ -42,17 +42,24 @@ export const AnimationContainer = styled.div`
 
   animation: ${appearFromLeft} 1s;
 
+  h1 {
+    color: var(--primary-color);
+    font-size: 80px;
+  }
+
   form {
     margin: 40px 0;
     width: 340px;
     text-align: center;
 
     h1 {
+      color: var(--title-color);
       margin-bottom: 24px;
+      font-size: 32px;
     }
 
     a {
-      color: var(--letter-color-3);
+      color: var(--letter-color-5);
       display: block;
       margin-top: 24px;
       text-decoration: none;
@@ -66,10 +73,12 @@ export const AnimationContainer = styled.div`
 
   > a {
     color: var(--primary-color);
+    font-weight: 500;
     display: block;
     margin-top: 24px;
     text-decoration: none;
     transition: color 0.15s;
+    font-size: 24px;
 
     display: flex;
     align-items: center;

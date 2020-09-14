@@ -70,7 +70,7 @@ const PageHeader: React.FC = ({ children }) => {
   const [appointmentType, setAppointmentType] = useState('');
   const [addAppointmentDrawer, setAddAppointmentDrawer] = useState(false);
 
-  const { signOut, user } = useAuth();
+  const { signOut } = useAuth();
   const history = useHistory();
 
   const closeAllWindows = useCallback(() => {
@@ -328,13 +328,9 @@ const PageHeader: React.FC = ({ children }) => {
           </button>
 
           <Profile>
-            <img src={profileImg} alt="oi" />
-            <div>
-              <span>Bem-vindo,</span>
-              <Link to="/profile">
-                <strong>{user.name}</strong>
-              </Link>
-            </div>
+            <Link to="/profile">
+              <img src={profileImg} alt="oi" />
+            </Link>
           </Profile>
           {children}
           <Menu>

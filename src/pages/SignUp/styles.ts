@@ -79,6 +79,12 @@ export const AnimationContainer = styled.div`
   place-content: center;
 
   animation: ${appearFromDown} 1.2s;
+
+  h1 {
+    color: var(--primary-color);
+    font-size: 80px;
+  }
+
   form {
     margin: 40px 0;
     width: 340px;
@@ -107,6 +113,8 @@ export const AnimationContainer = styled.div`
     margin-top: 24px;
     text-decoration: none;
     transition: color 0.15s;
+    font-size: 24px;
+    font-weight: 500;
 
     display: flex;
     align-items: center;
@@ -155,15 +163,25 @@ export const ButtonContainerTitle = styled.div`
 `;
 
 export const QuestionTitle = styled.h2`
-  color: var(--primary-color);
+  color: var(--title-color);
   font-size: 32px;
-  margin-top: 40px;
+  margin: 32px auto;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+
+  > strong {
+    font-size: 40px;
+    color: var(--primary-color);
+  }
 `;
 
 export const QuestionContainer = styled.div`
   display: grid;
-  grid-template-rows: 1fr 4fr;
+  grid-template-rows: 2fr 7fr;
   justify-content: center;
   align-items: center;
 `;
