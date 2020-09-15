@@ -212,8 +212,7 @@ const EventHostDashboard: React.FC = () => {
     IEventSupplierDTO[]
   >([]);
   const [hiredSuppliers, setHiredSuppliers] = useState<IEventSupplierDTO[]>([]);
-  const [budget, setBudget] = useState('');
-  const [suppliersWindow, setSuppliersWindow] = useState(false);
+  const [supplierWindow, setSupplierWindow] = useState(false);
   const [eventInfo, setEventInfo] = useState<IEventInfo>({} as IEventInfo);
   const [guestWindow, setGuestWindow] = useState(true);
   const [eventInfoDrawer, setEventInfoDrawer] = useState(false);
@@ -329,6 +328,10 @@ const EventHostDashboard: React.FC = () => {
     closeAllWindows();
     setMembersWindow(!membersWindow);
   }, [membersWindow, closeAllWindows]);
+  const handleSupplierWindow = useCallback(() => {
+    closeAllWindows();
+    setSupplierWindow(!supplierWindow);
+  }, [supplierWindow, closeAllWindows]);
 
   const handleEditCheckListItemWindow = useCallback(props => {
     setCheckListItem(props);
@@ -997,7 +1000,7 @@ const EventHostDashboard: React.FC = () => {
         });
       }
     },
-    [addToast, eventId, eventInfo, budget],
+    [addToast, eventId, eventInfo, handleGetEventInfo],
   );
   const handleEditEventName = useCallback(
     async (data: IEvent) => {
@@ -1037,7 +1040,7 @@ const EventHostDashboard: React.FC = () => {
         });
       }
     },
-    [addToast, eventId, eventInfo, budget],
+    [addToast, eventId, handleGetEvent, eventDate],
   );
 
   const handleEditGuest = useCallback(
@@ -2345,7 +2348,11 @@ const EventHostDashboard: React.FC = () => {
                 <div>
                   <h2>{selectedSuppliers.length}</h2>
                   {selectedSuppliers.map(selected => (
-                    <Supplier key={selected.id}>
+                    <Supplier
+                      key={selected.id}
+                      type="button"
+                      onClick={handleSupplierWindow}
+                    >
                       <h1>{selected.name}</h1>
                       <button
                         type="button"

@@ -728,7 +728,9 @@ export const HiredSuppliers = styled.div`
   }
 `;
 
-export const Supplier = styled.div`
+export const Supplier = styled.button`
+  background: transparent;
+  border: none;
   width: 100%;
   margin-bottom: 8px;
   display: flex;
