@@ -7,7 +7,6 @@ import {
   FiChevronUp,
   FiCheckSquare,
   FiUserPlus,
-  FiEdit,
   FiUser,
   FiSquare,
   FiEdit3,
@@ -1497,8 +1496,8 @@ const EventHostDashboard: React.FC = () => {
 
   let guestCount = 0;
   let myGuestCount = 0;
-  const supplierCount = 0;
-  const hiredSupplierCount = 0;
+  // const supplierCount = 0;
+  // const hiredSupplierCount = 0;
 
   return (
     <Container>
@@ -1644,8 +1643,7 @@ const EventHostDashboard: React.FC = () => {
           friends={friends}
           onHandleFriendsListDrawer={() => setFriendsWindow(false)}
           handleSelectedFriend={(friend: IUserInfoDTO) =>
-            handleSelectedWeplanUser(friend)
-          }
+            handleSelectedWeplanUser(friend)}
         />
       )}
       {!!eventInfoDrawer && (

@@ -113,9 +113,10 @@ const PageHeader: React.FC = ({ children }) => {
     [closeAllWindows],
   );
   const handleAddAppointmentDrawer = useCallback(() => {
+    console.log(currentMonth);
     closeAllWindows();
     setAddAppointmentDrawer(!addAppointmentDrawer);
-  }, [addAppointmentDrawer, closeAllWindows]);
+  }, [addAppointmentDrawer, closeAllWindows, currentMonth]);
 
   const handleGetAppointments = useCallback(() => {
     try {
@@ -262,7 +263,7 @@ const PageHeader: React.FC = ({ children }) => {
 
         setEditAppointmentDrawer(false);
         setAppointmentType('');
-        handleGetAppointments();
+        return handleGetAppointments();
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const error = getValidationErrors(err);

@@ -118,7 +118,7 @@ const MenuButton: React.FC = () => {
     async (data: ICreateEventInfo) => {
       try {
         const new_event = myEvents.find(event => event.name === eventName);
-
+        console.log(currentMonth);
         formRef.current?.setErrors([]);
 
         const schema = Yup.object().shape({
@@ -176,6 +176,7 @@ const MenuButton: React.FC = () => {
       myEvents,
       eventName,
       handleMyEventDashboard,
+      currentMonth,
     ],
   );
 

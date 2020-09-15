@@ -1,7 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { FiArrowLeft, FiMail, FiLock, FiUser } from 'react-icons/fi';
-import { MdBusiness } from 'react-icons/md';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
@@ -11,8 +10,6 @@ import api from '../../services/api';
 import { useToast } from '../../hooks/toast';
 
 import getValidationErrors from '../../utils/getValidationErros';
-
-import logoImg from '../../assets/logo.svg';
 
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -25,7 +22,6 @@ import {
   QuestionContainer,
   SubContainer,
   ButtonContainer,
-  ButtonContainerTitle,
   QuestionTitle,
 } from './styles';
 
