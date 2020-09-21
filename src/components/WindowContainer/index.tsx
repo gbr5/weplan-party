@@ -9,10 +9,8 @@ interface WindowContainerProps extends HTMLAttributes<HTMLDivElement> {
   // children: ;
 }
 
-const WindowContainer: React.FC<WindowContainerProps> = (
-  { containerStyle = {}, onHandleCloseWindow },
-  { children },
-) => {
+const WindowContainer: React.FC<WindowContainerProps> = props => {
+  const { containerStyle = {}, onHandleCloseWindow, children } = props;
   return (
     <Container style={containerStyle}>
       <button type="button" onClick={onHandleCloseWindow}>

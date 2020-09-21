@@ -38,9 +38,7 @@ import {
   CheckList,
   BudgetDrawer,
   EventInfoDrawer,
-  BudgetCloseButton,
   EditEventNameDrawer,
-  EditEventNameCloseButton,
   MessagesSection,
   UsersChat,
   UserChat,
@@ -75,6 +73,7 @@ import { useAuth } from '../../hooks/auth';
 import FriendsListDrawer from '../../components/FriendsListDrawer';
 import MemberProfileDrawer from '../../components/MemberProfileDrawer';
 import OwnerProfileDrawer from '../../components/OwnerProfileDrawer';
+import WindowContainer from '../../components/WindowContainer';
 
 interface IEvent {
   id: string;
@@ -1519,28 +1518,33 @@ const EventHostDashboard: React.FC = () => {
         />
       )} */}
       {!!editEventNameDrawer && (
-        <Form ref={formRef} onSubmit={handleEditEventName}>
-          <EditEventNameCloseButton
-            type="button"
-            onClick={handleEditEventNameDrawer}
-          >
-            <MdClose size={30} />
-          </EditEventNameCloseButton>
-          <EditEventNameDrawer>
-            <span>
-              <h2>Nome do Evento</h2>
-              <Input
-                name="name"
-                placeholder="Nome do evento"
-                defaultValue={event.name}
-                type="text"
-              />
-              <button type="submit">
-                <h3>Salvar</h3>
-              </button>
-            </span>
-          </EditEventNameDrawer>
-        </Form>
+        <WindowContainer
+          onHandleCloseWindow={handleEditEventNameDrawer}
+          containerStyle={{
+            zIndex: 10,
+            top: '140px',
+            left: '535px',
+            height: '250px',
+            width: '440px',
+          }}
+        >
+          <Form ref={formRef} onSubmit={handleEditEventName}>
+            <EditEventNameDrawer>
+              <span>
+                <h2>Nome do Evento</h2>
+                <Input
+                  name="name"
+                  placeholder="Nome do evento"
+                  defaultValue={event.name}
+                  type="text"
+                />
+                <button type="submit">
+                  <h3>Salvar</h3>
+                </button>
+              </span>
+            </EditEventNameDrawer>
+          </Form>
+        </WindowContainer>
       )}
       {!!ownerProfileWindow && (
         <OwnerProfileDrawer
@@ -1559,54 +1563,72 @@ const EventHostDashboard: React.FC = () => {
         />
       )}
       {!!numberOfGuestDrawer && (
-        <Form ref={formRef} onSubmit={handleEditMember}>
-          <NumberOfGuestWindow>
-            <span>
-              <button
-                type="button"
-                onClick={() => setNumberOfGuestDrawer(false)}
-              >
-                <MdClose size={30} />
-              </button>
-            </span>
-            <h1>Número de convidados</h1>
+        <WindowContainer
+          onHandleCloseWindow={() => setNumberOfGuestDrawer(false)}
+          containerStyle={{
+            zIndex: 1000,
+            top: '25%',
+            left: '30%',
+            height: '50%',
+            width: '40%',
+          }}
+        >
+          <Form ref={formRef} onSubmit={handleEditMember}>
+            <NumberOfGuestWindow>
+              <h1>Número de convidados</h1>
 
-            <Input
-              name="number_of_guests"
-              type="number"
-              defaultValue={member.number_of_guests}
-            />
+              <Input
+                name="number_of_guests"
+                type="number"
+                defaultValue={member.number_of_guests}
+              />
 
-            <button type="submit">Salvar</button>
-          </NumberOfGuestWindow>
-        </Form>
+              <button type="submit">Salvar</button>
+            </NumberOfGuestWindow>
+          </Form>
+        </WindowContainer>
       )}
       {!!editOwnerDrawer && (
-        <Form ref={formRef} onSubmit={handleEditOwner}>
-          <NumberOfGuestWindow>
-            <span>
-              <button type="button" onClick={() => setEditOwnerDrawer(false)}>
-                <MdClose size={30} />
-              </button>
-            </span>
-            <h1>Número de convidados</h1>
+        <WindowContainer
+          onHandleCloseWindow={() => setEditOwnerDrawer(false)}
+          containerStyle={{
+            zIndex: 1000,
+            top: '22,5%',
+            left: '30%',
+            height: '55%',
+            width: '40%',
+          }}
+        >
+          <Form ref={formRef} onSubmit={handleEditOwner}>
+            <NumberOfGuestWindow>
+              <h1>Número de convidados</h1>
 
-            <Input
-              name="description"
-              type="text"
-              defaultValue={owner.description}
-            />
-            <Input
-              name="number_of_guests"
-              type="number"
-              defaultValue={owner.number_of_guests}
-            />
-            <button type="submit">Salvar</button>
-          </NumberOfGuestWindow>
-        </Form>
+              <Input
+                name="description"
+                type="text"
+                defaultValue={owner.description}
+              />
+              <Input
+                name="number_of_guests"
+                type="number"
+                defaultValue={owner.number_of_guests}
+              />
+              <button type="submit">Salvar</button>
+            </NumberOfGuestWindow>
+          </Form>
+        </WindowContainer>
       )}
       {!!deleteMemberDrawer && (
-        <Form ref={formRef} onSubmit={handleDeleteMember}>
+        <WindowContainer
+          onHandleCloseWindow={() => setDeleteMemberDrawer(false)}
+          containerStyle={{
+            zIndex: 1000,
+            top: '25%',
+            left: '30%',
+            height: '50%',
+            width: '40%',
+          }}
+        >
           <WeplanUserDrawer>
             <h1>Deseja mesmo deletar o membro?</h1>
             <div>
@@ -1621,232 +1643,385 @@ const EventHostDashboard: React.FC = () => {
               </button>
             </div>
           </WeplanUserDrawer>
-        </Form>
+        </WindowContainer>
       )}
       {!!deleteOwnerDrawer && (
-        <Form ref={formRef} onSubmit={handleDeleteOwner}>
-          <WeplanUserDrawer>
-            <h1>Deseja mesmo deletar o anfitrião?</h1>
-            <div>
-              <button type="button" onClick={handleDeleteOwner}>
-                Sim
-              </button>
-              <button type="button" onClick={() => setDeleteOwnerDrawer(false)}>
-                Não
-              </button>
-            </div>
-          </WeplanUserDrawer>
-        </Form>
+        <WindowContainer
+          onHandleCloseWindow={() => setDeleteOwnerDrawer(false)}
+          containerStyle={{
+            zIndex: 1000,
+            top: '20%',
+            left: '30%',
+            height: '60%',
+            width: '40%',
+          }}
+        >
+          <Form ref={formRef} onSubmit={handleDeleteOwner}>
+            <WeplanUserDrawer>
+              <h1>Deseja mesmo deletar o anfitrião?</h1>
+              <div>
+                <button type="button" onClick={handleDeleteOwner}>
+                  Sim
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDeleteOwnerDrawer(false)}
+                >
+                  Não
+                </button>
+              </div>
+            </WeplanUserDrawer>
+          </Form>
+        </WindowContainer>
       )}
       {!!friendsWindow && (
         <FriendsListDrawer
           friends={friends}
           onHandleFriendsListDrawer={() => setFriendsWindow(false)}
           handleSelectedFriend={(friend: IUserInfoDTO) =>
-            handleSelectedWeplanUser(friend)}
+            handleSelectedWeplanUser(friend)
+          }
         />
       )}
       {!!eventInfoDrawer && (
-        <EventInfoDrawer>
-          <span>
-            <button type="button" onClick={handleEventInfoDrawer}>
-              <MdClose size={30} />
+        <WindowContainer
+          onHandleCloseWindow={() => setEventInfoDrawer(false)}
+          containerStyle={{
+            zIndex: 10,
+            top: '5%',
+            left: '5%',
+            height: '90%',
+            width: '90%',
+          }}
+        >
+          <EventInfoDrawer>
+            <h1>Informações do evento</h1>
+            <h2>{event.name}</h2>
+            <EventInfo>
+              <span>
+                <div>
+                  <div>
+                    <p>Duração: </p>
+                    <h3>{eventInfo.duration}</h3>
+                  </div>
+                  <div>
+                    <p>N° de convidados: </p>
+                    <h3>{eventInfo.number_of_guests}</h3>
+                  </div>
+                  <div>
+                    <p>Orçamento: </p>
+                    <h3>{eventInfo.budget}</h3>
+                  </div>
+                </div>
+                <div>
+                  <div>
+                    <p>País: </p>
+                    <h3>{eventInfo.country}</h3>
+                  </div>
+                  <div>
+                    <p>Estado: </p>
+                    <h3>{eventInfo.local_state}</h3>
+                  </div>
+                  <div>
+                    <p>Cidade: </p>
+                    <h3>{eventInfo.city}</h3>
+                  </div>
+                </div>
+              </span>
+              <div>
+                <p>Endereço: </p>
+                <h3>{eventInfo.address}</h3>
+              </div>
+            </EventInfo>
+            <button type="button" onClick={() => setEditEventInfoDrawer(true)}>
+              <h3>
+                Editar <FiEdit3 size={24} />
+              </h3>
             </button>
-          </span>
-          <h1>Informações do evento</h1>
-          <h2>{event.name}</h2>
-          <EventInfo>
-            <span>
+          </EventInfoDrawer>
+        </WindowContainer>
+      )}
+      {!!editEventInfoDrawer && (
+        <WindowContainer
+          onHandleCloseWindow={() => setEditEventInfoDrawer(false)}
+          containerStyle={{
+            zIndex: 100,
+            top: '15%',
+            left: '20%',
+            height: '70%',
+            width: '60%',
+          }}
+        >
+          <Form ref={formRef} onSubmit={handleEditEventInfo}>
+            <EditEventInfoDrawer>
+              <h1>Editar informações do evento</h1>
               <div>
                 <div>
-                  <p>Duração: </p>
-                  <h3>{eventInfo.duration}</h3>
+                  <Input
+                    defaultValue={eventInfo.duration}
+                    name="duration"
+                    type="number"
+                    placeholder="Duração (em horas)"
+                  />
+                  <Input
+                    defaultValue={eventInfo.number_of_guests}
+                    name="number_of_guests"
+                    type="number"
+                    placeholder="Número de convidados"
+                  />
+                  <Input
+                    defaultValue={eventInfo.budget}
+                    name="budget"
+                    type="number"
+                    placeholder="Orçamento"
+                  />
                 </div>
                 <div>
-                  <p>N° de convidados: </p>
-                  <h3>{eventInfo.number_of_guests}</h3>
+                  <Input
+                    defaultValue={eventInfo.country}
+                    name="country"
+                    type="text"
+                    placeholder="País"
+                  />
+                  <Input
+                    defaultValue={eventInfo.local_state}
+                    name="local_state"
+                    type="text"
+                    placeholder="Estado"
+                  />
+                  <Input
+                    defaultValue={eventInfo.city}
+                    name="city"
+                    type="text"
+                    placeholder="Cidade"
+                  />
                 </div>
-                <div>
-                  <p>Orçamento: </p>
-                  <h3>{eventInfo.budget}</h3>
-                </div>
+                <Input
+                  defaultValue={eventInfo.address}
+                  name="address"
+                  type="text"
+                  placeholder="Endereço"
+                />
               </div>
-              <div>
-                <div>
-                  <p>País: </p>
-                  <h3>{eventInfo.country}</h3>
-                </div>
-                <div>
-                  <p>Estado: </p>
-                  <h3>{eventInfo.local_state}</h3>
-                </div>
-                <div>
-                  <p>Cidade: </p>
-                  <h3>{eventInfo.city}</h3>
-                </div>
-              </div>
-            </span>
-            <div>
-              <p>Endereço: </p>
-              <h3>{eventInfo.address}</h3>
-            </div>
-          </EventInfo>
-          <button type="button" onClick={() => setEditEventInfoDrawer(true)}>
-            <h3>
-              Editar <FiEdit3 size={24} />
-            </h3>
-          </button>
-        </EventInfoDrawer>
+              <button type="submit">
+                <h3>Salvar</h3>
+              </button>
+            </EditEventInfoDrawer>
+          </Form>
+        </WindowContainer>
       )}
       {!!addCheckListDrawer && (
-        <Form ref={formRef} onSubmit={handleAddCheckListItem}>
-          <AddCheckListDrawer>
-            <span>
-              <button type="button" onClick={handleAddCheckListDrawer}>
-                <MdClose size={30} />
-              </button>
-            </span>
-            <h1>Adicionar</h1>
+        <WindowContainer
+          onHandleCloseWindow={() => setAddCheckListDrawer(false)}
+          containerStyle={{
+            zIndex: 10,
+            top: '20%',
+            left: '20%',
+            height: '60%',
+            width: '60%',
+          }}
+        >
+          <Form ref={formRef} onSubmit={handleAddCheckListItem}>
+            <AddCheckListDrawer>
+              <h1>Adicionar</h1>
 
-            {CheckedListItemMessage === '' ? (
-              <button type="button" onClick={handleCheckedListItemDrawer}>
-                Tarefa realizada ?
-              </button>
-            ) : (
-              <h1>
+              {CheckedListItemMessage === '' ? (
                 <button type="button" onClick={handleCheckedListItemDrawer}>
-                  {CheckedListItemMessage}
+                  Tarefa realizada ?
                 </button>
-              </h1>
-            )}
-            {!!checkedListItemDrawer && (
-              <CheckedListItemDrawer>
-                <h1>Tarefa Realizada?</h1>
-                <div>
-                  <button
-                    type="button"
-                    onClick={() => handleCheckListChecked(true)}
-                  >
-                    Sim!
+              ) : (
+                <h1>
+                  <button type="button" onClick={handleCheckedListItemDrawer}>
+                    {CheckedListItemMessage}
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => handleCheckListChecked(false)}
-                  >
-                    Ainda não ...
-                  </button>
-                </div>
-              </CheckedListItemDrawer>
-            )}
-            <Input name="name" type="text" placeholder="Nome" />
+                </h1>
+              )}
+              {!!checkedListItemDrawer && (
+                <CheckedListItemDrawer>
+                  <h1>Tarefa Realizada?</h1>
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => handleCheckListChecked(true)}
+                    >
+                      Sim!
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleCheckListChecked(false)}
+                    >
+                      Ainda não ...
+                    </button>
+                  </div>
+                </CheckedListItemDrawer>
+              )}
+              <Input name="name" type="text" placeholder="Nome" />
 
-            <Input
-              name="priority_level"
-              type="text"
-              placeholder="Nível de prioridade (1 a 5)"
-            />
+              <Input
+                name="priority_level"
+                type="text"
+                placeholder="Nível de prioridade (1 a 5)"
+              />
 
-            <button type="submit">
-              <h3>Salvar</h3>
-            </button>
-          </AddCheckListDrawer>
-        </Form>
+              <button type="submit">
+                <h3>Salvar</h3>
+              </button>
+            </AddCheckListDrawer>
+          </Form>
+        </WindowContainer>
       )}
       {!!editCheckListItemWindow && (
-        <Form ref={formRef} onSubmit={handleEditCheckListItem}>
-          <AddCheckListDrawer>
-            <span>
-              <button
-                type="button"
-                onClick={() => setEditCheckListItemWindow(false)}
-              >
-                <MdClose size={30} />
-              </button>
-            </span>
-            <h1>Número de convidados</h1>
+        <WindowContainer
+          onHandleCloseWindow={() => setEditCheckListItemWindow(false)}
+          containerStyle={{
+            zIndex: 100,
+            top: '20%',
+            left: '20%',
+            height: '60%',
+            width: '60%',
+          }}
+        >
+          <Form ref={formRef} onSubmit={handleEditCheckListItem}>
+            <AddCheckListDrawer>
+              <h1>Número de convidados</h1>
 
-            <Input name="name" type="text" defaultValue={checkListItem.name} />
-            <Input
-              name="priority_level"
-              type="number"
-              defaultValue={checkListItem.priority_level}
-            />
-            <button type="submit">Salvar</button>
-            <button type="button" onClick={handleDeleteCheckListItem}>
-              Deletar
-            </button>
-          </AddCheckListDrawer>
-        </Form>
-      )}
-      {!!deleteMemberDrawer && (
-        <Form ref={formRef} onSubmit={handleDeleteMember}>
-          <WeplanUserDrawer>
-            <h1>Deseja mesmo deletar o membro?</h1>
-            <div>
-              <button type="button" onClick={handleDeleteMember}>
-                Sim
+              <Input
+                name="name"
+                type="text"
+                defaultValue={checkListItem.name}
+              />
+              <Input
+                name="priority_level"
+                type="number"
+                defaultValue={checkListItem.priority_level}
+              />
+              <button type="submit">Salvar</button>
+              <button type="button" onClick={handleDeleteCheckListItem}>
+                Deletar
               </button>
-              <button
-                type="button"
-                onClick={() => setDeleteMemberDrawer(false)}
-              >
-                Não
-              </button>
-            </div>
-          </WeplanUserDrawer>
-        </Form>
+            </AddCheckListDrawer>
+          </Form>
+        </WindowContainer>
       )}
       {!!addSupplierDrawer && (
-        <Form ref={formRef} onSubmit={handleAddSupplier}>
-          <AddSupplierDrawer>
-            <span>
-              <button type="button" onClick={handleAddSupplierDrawer}>
-                <MdClose size={30} />
-              </button>
-            </span>
-            <h1>Adicionar Fornecedor</h1>
+        <WindowContainer
+          onHandleCloseWindow={() => setAddSupplierDrawer(false)}
+          containerStyle={{
+            zIndex: 100,
+            top: '20%',
+            left: '20%',
+            height: '60%',
+            width: '60%',
+          }}
+        >
+          <Form ref={formRef} onSubmit={handleAddSupplier}>
+            <AddSupplierDrawer>
+              <h1>Adicionar Fornecedor</h1>
 
-            {isHiredMessage === '' ? (
-              <button type="button" onClick={handleIsHiredDrawer}>
-                Contratado?
-              </button>
-            ) : (
-              <h1>
+              {isHiredMessage === '' ? (
                 <button type="button" onClick={handleIsHiredDrawer}>
-                  {isHiredMessage}
+                  Contratado?
                 </button>
-              </h1>
-            )}
-            {!!isHiredDrawer && (
-              <IsHiredDrawer>
-                <h1>Fornecedor contratado?</h1>
-                <div>
+              ) : (
+                <h1>
+                  <button type="button" onClick={handleIsHiredDrawer}>
+                    {isHiredMessage}
+                  </button>
+                </h1>
+              )}
+              {!!isHiredDrawer && (
+                <IsHiredDrawer>
+                  <h1>Fornecedor contratado?</h1>
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => handleIsHiredQuestion(true)}
+                    >
+                      Sim
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleIsHiredQuestion(false)}
+                    >
+                      Não
+                    </button>
+                  </div>
+                </IsHiredDrawer>
+              )}
+              <Input name="name" type="text" placeholder="Nome do fornecedor" />
+              <Input
+                name="supplier_sub_category"
+                type="text"
+                placeholder="Qual o serviço contratado?"
+              />
+              <button type="submit">
+                <h3>Salvar</h3>
+              </button>
+            </AddSupplierDrawer>
+          </Form>
+        </WindowContainer>
+      )}
+      {!!addGuestDrawer && (
+        <WindowContainer
+          onHandleCloseWindow={() => setAddGuestDrawer(false)}
+          containerStyle={{
+            zIndex: 100,
+            top: '5%',
+            left: '20%',
+            height: '90%',
+            width: '60%',
+          }}
+        >
+          <Form ref={formRef} onSubmit={handleAddGuest}>
+            <AddGuestDrawer>
+              <h1>Adicionar Convidado</h1>
+
+              {!weplanUser && (
+                <>
+                  <Input name="first_name" type="text" placeholder="Nome" />
+                  <Input name="last_name" type="text" placeholder="Sobrenome" />
+                </>
+              )}
+
+              <Input name="description" type="text" defaultValue="Descrição" />
+
+              <div>
+                {guestConfirmedMessage === '' ? (
+                  <button type="button" onClick={handleGuestConfirmedDrawer}>
+                    Confirmado?
+                  </button>
+                ) : (
+                  <h1>
+                    <button type="button" onClick={handleGuestConfirmedDrawer}>
+                      {guestConfirmedMessage}
+                    </button>
+                  </h1>
+                )}
+                {wpUserName === '' ? (
                   <button
                     type="button"
-                    onClick={() => handleIsHiredQuestion(true)}
+                    onClick={() => setWpUserQuestionDrawer(true)}
                   >
-                    Sim
+                    Convidado Weplan ?
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => handleIsHiredQuestion(false)}
-                  >
-                    Não
-                  </button>
-                </div>
-              </IsHiredDrawer>
-            )}
-            <Input name="name" type="text" placeholder="Nome do fornecedor" />
-            <Input
-              name="supplier_sub_category"
-              type="text"
-              placeholder="Qual o serviço contratado?"
-            />
-            <button type="submit">
-              <h3>Salvar</h3>
-            </button>
-          </AddSupplierDrawer>
-        </Form>
+                ) : (
+                  <h1>
+                    <button
+                      type="button"
+                      onClick={() => setWpUserQuestionDrawer(true)}
+                    >
+                      {wpUserName}
+                    </button>
+                  </h1>
+                )}
+              </div>
+
+              <button type="submit">
+                <h3>Salvar</h3>
+              </button>
+            </AddGuestDrawer>
+          </Form>
+        </WindowContainer>
       )}
 
       <EventPageContent>
@@ -1884,73 +2059,6 @@ const EventHostDashboard: React.FC = () => {
           <button type="button" onClick={handleEventInfoDrawer}>
             Informações do Evento
           </button>
-
-          {!!editEventInfoDrawer && (
-            <Form ref={formRef} onSubmit={handleEditEventInfo}>
-              <EditEventInfoDrawer>
-                <span>
-                  <button
-                    type="button"
-                    onClick={() => setEditEventInfoDrawer(false)}
-                  >
-                    <MdClose size={30} />
-                  </button>
-                </span>
-                <h1>Editar informações do evento</h1>
-                <div>
-                  <div>
-                    <Input
-                      defaultValue={eventInfo.duration}
-                      name="duration"
-                      type="number"
-                      placeholder="Duração (em horas)"
-                    />
-                    <Input
-                      defaultValue={eventInfo.number_of_guests}
-                      name="number_of_guests"
-                      type="number"
-                      placeholder="Número de convidados"
-                    />
-                    <Input
-                      defaultValue={eventInfo.budget}
-                      name="budget"
-                      type="number"
-                      placeholder="Orçamento"
-                    />
-                  </div>
-                  <div>
-                    <Input
-                      defaultValue={eventInfo.country}
-                      name="country"
-                      type="text"
-                      placeholder="País"
-                    />
-                    <Input
-                      defaultValue={eventInfo.local_state}
-                      name="local_state"
-                      type="text"
-                      placeholder="Estado"
-                    />
-                    <Input
-                      defaultValue={eventInfo.city}
-                      name="city"
-                      type="text"
-                      placeholder="Cidade"
-                    />
-                  </div>
-                  <Input
-                    defaultValue={eventInfo.address}
-                    name="address"
-                    type="text"
-                    placeholder="Endereço"
-                  />
-                </div>
-                <button type="submit">
-                  <h3>Salvar</h3>
-                </button>
-              </EditEventInfoDrawer>
-            </Form>
-          )}
           <button type="button" onClick={handleLatestActionsSection}>
             Últimas Atualizações
           </button>
@@ -1963,26 +2071,32 @@ const EventHostDashboard: React.FC = () => {
           </button>
 
           {!!addPlannerDrawer && (
-            <Form ref={formRef} onSubmit={handleAddPlanner}>
-              <AddPlannerDrawer>
-                <span>
-                  <button type="button" onClick={handleAddPlannerDrawer}>
-                    <MdClose size={30} />
+            <WindowContainer
+              onHandleCloseWindow={() => setAddPlannerDrawer(false)}
+              containerStyle={{
+                zIndex: 100,
+                top: '20%',
+                left: '20%',
+                height: '60%',
+                width: '60%',
+              }}
+            >
+              <Form ref={formRef} onSubmit={handleAddPlanner}>
+                <AddPlannerDrawer>
+                  <h1>Adicionar Cerimonialista</h1>
+
+                  <Input
+                    name="planner_id"
+                    type="text"
+                    placeholder="Qual o id do cerimonialista?"
+                  />
+
+                  <button type="submit">
+                    <h3>Salvar</h3>
                   </button>
-                </span>
-                <h1>Adicionar Cerimonialista</h1>
-
-                <Input
-                  name="planner_id"
-                  type="text"
-                  placeholder="Qual o id do cerimonialista?"
-                />
-
-                <button type="submit">
-                  <h3>Salvar</h3>
-                </button>
-              </AddPlannerDrawer>
-            </Form>
+                </AddPlannerDrawer>
+              </Form>
+            </WindowContainer>
           )}
 
           {planners.map(planner => (
@@ -1999,32 +2113,45 @@ const EventHostDashboard: React.FC = () => {
           </button>
 
           {!!addOwnerDrawer && (
-            <Form ref={formRef} onSubmit={handleAddOwner}>
-              <AddOwnerDrawer>
-                <span>
-                  <button type="button" onClick={handleAddOwnerDrawer}>
-                    <MdClose size={30} />
-                  </button>
-                </span>
-                <h1>Adicionar Anfitrião</h1>
-                {wpUserId === '' && (
-                  <button type="button" onClick={() => setFriendsWindow(true)}>
-                    Escolher usuário
-                  </button>
-                )}
+            <WindowContainer
+              onHandleCloseWindow={() => setAddOwnerDrawer(false)}
+              containerStyle={{
+                zIndex: 100,
+                top: '20%',
+                left: '20%',
+                height: '60%',
+                width: '60%',
+              }}
+            >
+              <Form ref={formRef} onSubmit={handleAddOwner}>
+                <AddOwnerDrawer>
+                  <h1>Adicionar Anfitrião</h1>
+                  {wpUserId === '' && (
+                    <button
+                      type="button"
+                      onClick={() => setFriendsWindow(true)}
+                    >
+                      Escolher usuário
+                    </button>
+                  )}
 
-                <Input
-                  name="description"
-                  type="text"
-                  placeholder="Título do Anfitrião (Noiva, Mãe da noiva, ...)"
-                />
-                <p>Número de convidados é opcional</p>
-                <Input name="number_of_guests" type="number" defaultValue={0} />
-                <button type="submit">
-                  <h3>Salvar</h3>
-                </button>
-              </AddOwnerDrawer>
-            </Form>
+                  <Input
+                    name="description"
+                    type="text"
+                    placeholder="Título do Anfitrião (Noiva, Mãe da noiva, ...)"
+                  />
+                  <p>Número de convidados é opcional</p>
+                  <Input
+                    name="number_of_guests"
+                    type="number"
+                    defaultValue={0}
+                  />
+                  <button type="submit">
+                    <h3>Salvar</h3>
+                  </button>
+                </AddOwnerDrawer>
+              </Form>
+            </WindowContainer>
           )}
 
           {owners.map(eventOwner => (
@@ -2044,30 +2171,42 @@ const EventHostDashboard: React.FC = () => {
           </button>
 
           {!!addMemberDrawer && (
-            <Form ref={formRef} onSubmit={handleAddMember}>
-              <AddMemberDrawer>
-                <span>
-                  <button type="button" onClick={handleAddMemberDrawer}>
-                    <MdClose size={30} />
+            <WindowContainer
+              onHandleCloseWindow={() => setAddMemberDrawer(false)}
+              containerStyle={{
+                zIndex: 100,
+                top: '20%',
+                left: '20%',
+                height: '60%',
+                width: '60%',
+              }}
+            >
+              <Form ref={formRef} onSubmit={handleAddMember}>
+                <AddMemberDrawer>
+                  <h1>Adicionar Membro</h1>
+
+                  {wpUserId === '' && (
+                    <button
+                      type="button"
+                      onClick={() => setFriendsWindow(true)}
+                    >
+                      Escolher usuário
+                    </button>
+                  )}
+
+                  <p>Número de convidados é opcional</p>
+                  <Input
+                    name="number_of_guests"
+                    type="number"
+                    defaultValue={0}
+                  />
+
+                  <button type="submit">
+                    <h3>Salvar</h3>
                   </button>
-                </span>
-
-                <h1>Adicionar Membro</h1>
-
-                {wpUserId === '' && (
-                  <button type="button" onClick={() => setFriendsWindow(true)}>
-                    Escolher usuário
-                  </button>
-                )}
-
-                <p>Número de convidados é opcional</p>
-                <Input name="number_of_guests" type="number" defaultValue={0} />
-
-                <button type="submit">
-                  <h3>Salvar</h3>
-                </button>
-              </AddMemberDrawer>
-            </Form>
+                </AddMemberDrawer>
+              </Form>
+            </WindowContainer>
           )}
 
           <span>
@@ -2077,41 +2216,39 @@ const EventHostDashboard: React.FC = () => {
           </span>
 
           {!!membersWindow && (
-            <MembersWindow>
-              <span>
-                <h1>{event.name}</h1>
+            <WindowContainer
+              onHandleCloseWindow={() => setMembersWindow(false)}
+              containerStyle={{
+                zIndex: 100,
+                top: '5%',
+                left: '5%',
+                height: '90%',
+                width: '90%',
+              }}
+            >
+              <MembersWindow>
+                <MembersContainer>
+                  {members.map(eventMember => (
+                    <button
+                      key={eventMember.id}
+                      type="button"
+                      onClick={() => handleMemberProfileWindow(eventMember)}
+                    >
+                      <img
+                        src={
+                          eventMember.avatar === ''
+                            ? avatar_placeholder
+                            : eventMember.avatar
+                        }
+                        alt={eventMember.name}
+                      />
 
-                <button type="button" onClick={handleMembersWindow}>
-                  <MdClose size={30} />
-                </button>
-
-                <div>
-                  <h1>Membros:</h1>
-                  <strong>{members.length}</strong>
-                </div>
-              </span>
-
-              <MembersContainer>
-                {members.map(eventMember => (
-                  <button
-                    key={eventMember.id}
-                    type="button"
-                    onClick={() => handleMemberProfileWindow(eventMember)}
-                  >
-                    <img
-                      src={
-                        eventMember.avatar === ''
-                          ? avatar_placeholder
-                          : eventMember.avatar
-                      }
-                      alt={eventMember.name}
-                    />
-
-                    <h1>{eventMember.name}</h1>
-                  </button>
-                ))}
-              </MembersContainer>
-            </MembersWindow>
+                      <h1>{eventMember.name}</h1>
+                    </button>
+                  ))}
+                </MembersContainer>
+              </MembersWindow>
+            </WindowContainer>
           )}
         </SideBar>
         <Main>
@@ -2155,27 +2292,35 @@ const EventHostDashboard: React.FC = () => {
             </div>
           </FirstRow>
           {!!budgetDrawer && (
-            <Form ref={formRef} onSubmit={handleEditBudget}>
-              <BudgetDrawer>
-                <BudgetCloseButton type="button" onClick={handleBudgetDrawer}>
-                  <MdClose size={30} />
-                </BudgetCloseButton>
-                <span>
-                  <h2>Novo Orçamento</h2>
+            <WindowContainer
+              onHandleCloseWindow={() => setBudgetDrawer(false)}
+              containerStyle={{
+                zIndex: 10,
+                top: '30%',
+                left: '40%',
+                height: '40%',
+                width: '30%',
+              }}
+            >
+              <Form ref={formRef} onSubmit={handleEditBudget}>
+                <BudgetDrawer>
+                  <span>
+                    <h2>Novo Orçamento</h2>
 
-                  <Input
-                    name="budget"
-                    placeholder="Orçamento"
-                    defaultValue={eventInfo.budget}
-                    type="text"
-                  />
+                    <Input
+                      name="budget"
+                      placeholder="Orçamento"
+                      defaultValue={eventInfo.budget}
+                      type="text"
+                    />
 
-                  <button type="submit">
-                    <h3>Salvar</h3>
-                  </button>
-                </span>
-              </BudgetDrawer>
-            </Form>
+                    <button type="submit">
+                      <h3>Salvar</h3>
+                    </button>
+                  </span>
+                </BudgetDrawer>
+              </Form>
+            </WindowContainer>
           )}
           {!!latestActionsSection && (
             <LatestNews>
@@ -2629,127 +2774,56 @@ const EventHostDashboard: React.FC = () => {
                     );
                   })}
               </div>
-              {!!addGuestDrawer && (
-                <Form ref={formRef} onSubmit={handleAddGuest}>
-                  <AddGuestDrawer>
-                    <span>
-                      <button type="button" onClick={handleAddGuestDrawer}>
-                        <MdClose size={30} />
-                      </button>
-                    </span>
-                    <h1>Adicionar Convidado</h1>
-
-                    {!weplanUser && (
-                      <>
-                        <Input
-                          name="first_name"
-                          type="text"
-                          placeholder="Nome"
-                        />
-                        <Input
-                          name="last_name"
-                          type="text"
-                          placeholder="Sobrenome"
-                        />
-                      </>
-                    )}
-
-                    <Input
-                      name="description"
-                      type="text"
-                      defaultValue="Descrição"
-                    />
-
-                    <div>
-                      {guestConfirmedMessage === '' ? (
-                        <button
-                          type="button"
-                          onClick={handleGuestConfirmedDrawer}
-                        >
-                          Confirmado?
-                        </button>
-                      ) : (
-                        <h1>
-                          <button
-                            type="button"
-                            onClick={handleGuestConfirmedDrawer}
-                          >
-                            {guestConfirmedMessage}
-                          </button>
-                        </h1>
-                      )}
-                      {wpUserName === '' ? (
-                        <button
-                          type="button"
-                          onClick={() => setWpUserQuestionDrawer(true)}
-                        >
-                          Convidado Weplan ?
-                        </button>
-                      ) : (
-                        <h1>
-                          <button
-                            type="button"
-                            onClick={() => setWpUserQuestionDrawer(true)}
-                          >
-                            {wpUserName}
-                          </button>
-                        </h1>
-                      )}
-                    </div>
-
-                    <button type="submit">
-                      <h3>Salvar</h3>
-                    </button>
-                  </AddGuestDrawer>
-                </Form>
-              )}
             </GuestSection>
           )}
           {editGuestDrawer && (
-            <Form ref={formRef} onSubmit={handleEditGuest}>
-              <AddGuestDrawer>
-                <span>
-                  <button
-                    type="button"
-                    onClick={() => setEditGuestDrawer(false)}
-                  >
-                    <MdClose size={30} />
+            <WindowContainer
+              onHandleCloseWindow={() => setEditGuestDrawer(false)}
+              containerStyle={{
+                zIndex: 100,
+                top: '5%',
+                left: '20%',
+                height: '90%',
+                width: '60%',
+              }}
+            >
+              <Form ref={formRef} onSubmit={handleEditGuest}>
+                <AddGuestDrawer>
+                  <h1>Editar Convidado</h1>
+
+                  {!updated_guest.weplanUser && (
+                    <>
+                      <Input
+                        defaultValue={updated_guest.first_name}
+                        name="first_name"
+                        type="text"
+                        placeholder="Nome"
+                      />
+                      <Input
+                        defaultValue={updated_guest.last_name}
+                        name="last_name"
+                        type="text"
+                        placeholder="Sobrenome"
+                      />
+                    </>
+                  )}
+                  <Input
+                    defaultValue={updated_guest.description}
+                    name="description"
+                    type="text"
+                    placeholder="Alguma descrição necessária?"
+                  />
+
+                  <button type="submit">
+                    <h3>Salvar</h3>
                   </button>
-                </span>
-                <h1>Editar Convidado</h1>
 
-                {!updated_guest.weplanUser && (
-                  <>
-                    <Input
-                      defaultValue={updated_guest.first_name}
-                      name="first_name"
-                      type="text"
-                      placeholder="Nome"
-                    />
-                    <Input
-                      defaultValue={updated_guest.last_name}
-                      name="last_name"
-                      type="text"
-                      placeholder="Sobrenome"
-                    />
-                  </>
-                )}
-                <Input
-                  defaultValue={updated_guest.description}
-                  name="description"
-                  type="text"
-                  placeholder="Alguma descrição necessária?"
-                />
-
-                <button type="submit">
-                  <h3>Salvar</h3>
-                </button>
-
-                <button type="button" onClick={handleDeleteGuest}>
-                  <h3>Deletar</h3>
-                </button>
-              </AddGuestDrawer>
-            </Form>
+                  <button type="button" onClick={handleDeleteGuest}>
+                    <h3>Deletar</h3>
+                  </button>
+                </AddGuestDrawer>
+              </Form>
+            </WindowContainer>
           )}
           {!!guestConfirmedDrawer && (
             <GuestConfirmedDrawer>

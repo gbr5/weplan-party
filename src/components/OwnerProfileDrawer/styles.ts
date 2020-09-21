@@ -2,6 +2,10 @@ import styled from 'styled-components';
 import '../../styles/global';
 
 export const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
   > img {
     height: 150px;
     width: 150px;
@@ -112,7 +116,7 @@ export const DeleteOwnerButton = styled.button`
   border-radius: 4px;
   box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.2);
   transition: 0.3s;
-  color: var(--letter-color-5);
+  color: var(--title-color);
   font-weight: 500;
 
   &:hover {

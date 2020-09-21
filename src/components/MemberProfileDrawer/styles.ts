@@ -2,36 +2,10 @@ import styled from 'styled-components';
 import '../../styles/global';
 
 export const MemberDrawer = styled.div`
-  position: fixed;
-  z-index: 1000;
-  top: 20%;
-  left: 20%;
-  width: 60%;
-  height: 60%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  margin: 16px auto;
-  background: var(--header-background-color);
-  border-radius: 8px;
-  gap: 16px;
-  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
-  padding: 32px;
 
-  > span {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    > button {
-      background: transparent;
-      border: none;
-
-      svg {
-        color: red;
-      }
-    }
-  }
   > img {
     height: 150px;
     width: 150px;
@@ -42,7 +16,7 @@ export const MemberDrawer = styled.div`
   > h1 {
     font-size: 24px;
     color: var(--title-color);
-    margin-bottom: 32px;
+    margin: 40px;
   }
 
   > div {
@@ -103,7 +77,7 @@ export const DeleteMemberButton = styled.button`
   justify-content: center;
   gap: 24px;
   font-weight: 500;
-  color: var(--letter-color-5);
+  color: var(--title-color);
 
   &:hover {
     opacity: 0.8;

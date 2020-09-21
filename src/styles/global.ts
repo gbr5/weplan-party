@@ -3,6 +3,7 @@ import { createGlobalStyle } from 'styled-components';
 export default createGlobalStyle`
   :root {
     --primary-color: ${props => props.theme.colors.primary};
+    --secondary-color: ${props => props.theme.colors.secondary};
     --title-color: ${props => props.theme.colors.title};
     --background-color: ${props => props.theme.colors.background};
     /* #312e38 */
@@ -10,11 +11,11 @@ export default createGlobalStyle`
     /* #28262e */
     --card-color: ${props => props.theme.colors.card};
     /* #3e3a47 */
-    --letter-color-1: #FFF;
-    --letter-color-2: rgb(149, 152, 158);
-    --letter-color-3: rgb(179, 182, 178);
-    --letter-color-4: rgb(120, 122, 125);
-    --letter-color-5: rgb(20, 22, 25);
+    --letter-color-1: ${props => props.theme.colors.letter1};
+    --letter-color-2: ${props => props.theme.colors.letter2};
+    --letter-color-3: ${props => props.theme.colors.letter3};
+    --letter-color-4: ${props => props.theme.colors.letter4};
+    --letter-color-5: ${props => props.theme.colors.letter5};
     --box-shadow: 1px 2px 2px 3px rgba(0, 0, 0, 0.1);
     --red-color: #c53030;
     --input-container-color: rgb(179, 182, 178);

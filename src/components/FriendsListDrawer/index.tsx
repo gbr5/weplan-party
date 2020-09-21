@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { MouseEventHandler } from 'react-select';
 import { MdClose } from 'react-icons/md';
 import { FriendsList, FriendButton } from './styles';
+import WindowContainer from '../WindowContainer';
 
 interface IFriendsDTO {
   id: string;
@@ -25,24 +26,30 @@ const FriendsListDrawer: React.FC<IPropsDTO> = ({
   const [weplanUser, setWeplanUser] = useState<IFriendsDTO>({} as IFriendsDTO);
 
   return (
-    <FriendsList onSubmit={() => handleSelectedFriend(weplanUser)}>
-      <span>
-        <button type="button" onClick={onHandleFriendsListDrawer}>
-          <MdClose size={30} />
-        </button>
-      </span>
-      {friends.map(friend => (
-        <FriendButton
-          selectedFriend={friend.id === weplanUser.id}
-          type="button"
-          onClick={() => setWeplanUser(friend)}
-          key={friend.id}
-        >
-          {friend.name}
-        </FriendButton>
-      ))}
-      <div>{weplanUser && <button type="submit">Salvar</button>}</div>
-    </FriendsList>
+    <WindowContainer
+      onHandleCloseWindow={onHandleFriendsListDrawer}
+      containerStyle={{
+        zIndex: 10000,
+        top: '20%',
+        left: '30%',
+        height: '60%',
+        width: '40%',
+      }}
+    >
+      <FriendsList onSubmit={() => handleSelectedFriend(weplanUser)}>
+        {friends.map(friend => (
+          <FriendButton
+            selectedFriend={friend.id === weplanUser.id}
+            type="button"
+            onClick={() => setWeplanUser(friend)}
+            key={friend.id}
+          >
+            {friend.name}
+          </FriendButton>
+        ))}
+        <div>{weplanUser && <button type="submit">Salvar</button>}</div>
+      </FriendsList>
+    </WindowContainer>
   );
 };
 

@@ -36,14 +36,9 @@ const OwnerProfileDrawer: React.FC<IPropsDTO> = ({
   return (
     <WindowContainer
       onHandleCloseWindow={onHandleOwnerDrawer}
-      containerStyle={{ top: '10%', left: '10%', height: '80%', width: '80%' }}
+      containerStyle={{ top: '20%', left: '25%', height: '60%', width: '50%' }}
     >
       <Container>
-        <span>
-          <button type="button" onClick={onHandleOwnerDrawer}>
-            <MdClose size={30} />
-          </button>
-        </span>
         <img src={avatar} alt={owner.name} />
 
         <button type="button" onClick={onHandleNumberOfGuestDrawer}>

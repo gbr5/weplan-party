@@ -14,6 +14,11 @@ declare module 'styled-components' {
 
       title: string;
       text: string;
+      letter1: string;
+      letter2: string;
+      letter3: string;
+      letter4: string;
+      letter5: string;
 
       toastInfoColor: string;
       toastInfoBackgroundColor: string;

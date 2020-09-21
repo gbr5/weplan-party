@@ -228,37 +228,11 @@ export const MyEventsDrawerButton = styled.button`
 `;
 
 export const EventInfoDrawer = styled.div`
-  z-index: 10;
-  top: 5%;
-  left: 5%;
-  width: 90%;
-  height: 90%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: var(--header-background-color);
-  border-radius: 8px;
-  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
-  padding: 32px;
   text-align: center;
-  gap: 32px;
-  position: absolute;
-
-  span {
-    position: absolute;
-    top: 0;
-    right: 8px;
-
-    > button {
-      background: transparent;
-      border: none;
-
-      svg {
-        color: red;
-      }
-    }
-  }
 
   > h1 {
     font-size: 24px;
@@ -346,36 +320,12 @@ export const EventInfo = styled.div`
 `;
 
 export const EditEventInfoDrawer = styled.div`
-  position: fixed;
-  z-index: 10;
-  top: 110px;
-  left: 400px;
-  width: 600px;
-  height: 450px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 16px auto;
-  background: var(--header-background-color);
-  border-radius: 8px;
-  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
-  padding: 32px;
   gap: 16px;
-
-  span {
-    position: absolute;
-    top: 0;
-    right: 8px;
-    > button {
-      background: transparent;
-      border: none;
-
-      svg {
-        color: red;
-      }
-    }
-  }
+  width: 100%;
 
   > h1 {
     font-size: 24px;
@@ -419,14 +369,6 @@ export const Main = styled.div`
 `;
 
 export const EditEventNameDrawer = styled.div`
-  top: 140px;
-  left: 535px;
-  z-index: 10;
-  position: absolute;
-  height: 178px;
-  width: 400px;
-  background-color: var(--card-color);
-  opacity: 0.95;
   border-radius: 0 0 8px 8px;
   display: flex;
   flex-direction: column;
@@ -545,15 +487,6 @@ export const FirstRow = styled.div`
 `;
 
 export const BudgetDrawer = styled.div`
-  top: 240px;
-  left: 435px;
-  z-index: 10;
-  position: absolute;
-  height: 178px;
-  width: 300px;
-  background-color: var(--card-color);
-  opacity: 0.95;
-  border-radius: 0 0 8px 8px;
   display: flex;
   flex-direction: column;
   text-align: left;
@@ -604,15 +537,6 @@ export const BudgetDrawer = styled.div`
       background-color: rgba(255, 144, 0, 0.15);
     }
   }
-`;
-
-export const BudgetCloseButton = styled.button`
-  position: absolute;
-  top: 0;
-  right: 0;
-  background: transparent;
-  border: none;
-  color: red;
 `;
 
 export const SupplierSection = styled.div`
@@ -749,36 +673,11 @@ export const Supplier = styled.button`
 `;
 
 export const AddSupplierDrawer = styled.div`
-  position: fixed;
-  z-index: 10;
-  top: 25%;
-  left: 25%;
-  width: 50%;
-  height: 50%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 16px auto;
-  background: var(--header-background-color);
-  border-radius: 8px;
   gap: 16px;
-  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
-  padding: 32px;
-
-  span {
-    position: absolute;
-    top: 2px;
-    right: 4px;
-    > button {
-      background: transparent;
-      border: none;
-
-      svg {
-        color: red;
-      }
-    }
-  }
 
   > h1 {
     font-size: 24px;
@@ -1008,41 +907,13 @@ export const Guest = styled.div`
 `;
 
 export const AddGuestDrawer = styled.div`
-  position: fixed;
-  z-index: 10;
-  top: 5%;
-  left: 20%;
-  width: 60%;
-  height: 90%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 16px auto;
-  background: var(--header-background-color);
-  border-radius: 8px;
   gap: 16px;
-  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
-  padding: 32px;
   transition: 0.4s;
-
-  span {
-    position: absolute;
-    top: 2px;
-    right: 4px;
-
-    > button {
-      background: transparent;
-      border: none;
-
-      &:hover {
-        opacity: 0.8;
-      }
-      svg {
-        color: red;
-      }
-    }
-  }
+  width: 100%;
 
   > h1 {
     font-size: 32px;
@@ -1163,36 +1034,12 @@ export const CheckList = styled.section`
 `;
 
 export const AddCheckListDrawer = styled.div`
-  position: fixed;
-  z-index: 10;
-  top: 20%;
-  left: 20%;
-  width: 60%;
-  height: 60%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 16px auto;
-  background: var(--header-background-color);
-  border-radius: 8px;
-  gap: 16px;
-  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
-  padding: 32px;
-
-  span {
-    position: absolute;
-    top: 2px;
-    right: 4px;
-    > button {
-      background: transparent;
-      border: none;
-
-      svg {
-        color: red;
-      }
-    }
-  }
+  gap: 32px;
+  width: 100%;
 
   > h1 {
     font-size: 24px;
@@ -1450,22 +1297,11 @@ export const Messages = styled.div`
 `;
 
 export const WeplanUserDrawer = styled.div`
-  position: absolute;
-  z-index: 1000;
-  top: 20%;
-  left: 30%;
-  width: 40%;
-  height: 250px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 16px auto;
-  background: var(--header-background-color);
-  border-radius: 8px;
   gap: 32px;
-  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
-  padding: 32px;
 
   > h1 {
     font-size: 24px;
@@ -1664,36 +1500,11 @@ export const IsHiredDrawer = styled.div`
 `;
 
 export const AddPlannerDrawer = styled.div`
-  position: fixed;
-  z-index: 10;
-  top: 110px;
-  left: 400px;
-  width: 600px;
-  height: 300px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 16px auto;
-  background: var(--header-background-color);
-  border-radius: 8px;
-  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
-  padding: 32px;
   gap: 16px;
-
-  span {
-    position: absolute;
-    top: 0;
-    right: 8px;
-    > button {
-      background: transparent;
-      border: none;
-
-      svg {
-        color: red;
-      }
-    }
-  }
 
   > h1 {
     font-size: 24px;
@@ -1712,36 +1523,11 @@ export const AddPlannerDrawer = styled.div`
 `;
 
 export const AddOwnerDrawer = styled.div`
-  position: fixed;
-  z-index: 10;
-  top: 110px;
-  left: 400px;
-  width: 600px;
-  height: 300px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 16px auto;
-  background: var(--header-background-color);
-  border-radius: 8px;
-  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
-  padding: 32px;
   gap: 16px;
-
-  span {
-    position: absolute;
-    top: 0;
-    right: 8px;
-    > button {
-      background: transparent;
-      border: none;
-
-      svg {
-        color: red;
-      }
-    }
-  }
 
   > h1 {
     font-size: 24px;
@@ -1760,36 +1546,11 @@ export const AddOwnerDrawer = styled.div`
 `;
 
 export const AddMemberDrawer = styled.div`
-  position: fixed;
-  z-index: 10;
-  top: 110px;
-  left: 400px;
-  width: 600px;
-  height: 300px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 16px auto;
-  background: var(--header-background-color);
-  border-radius: 8px;
-  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
-  padding: 32px;
   gap: 16px;
-
-  span {
-    position: absolute;
-    top: 0;
-    right: 8px;
-    > button {
-      background: transparent;
-      border: none;
-
-      svg {
-        color: red;
-      }
-    }
-  }
 
   > h1 {
     font-size: 24px;
@@ -1808,19 +1569,9 @@ export const AddMemberDrawer = styled.div`
 `;
 
 export const MembersWindow = styled.div`
-  position: fixed;
-  z-index: 10;
-  top: 5%;
-  left: 5%;
-  width: 90%;
-  height: 90%;
   display: grid;
   grid-template-rows: 1fr 5fr;
-  background: var(--header-background-color);
-  border: none;
-  border-radius: 8px;
   gap: 16px;
-  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
 
   span {
     position: relative;
@@ -1835,18 +1586,6 @@ export const MembersWindow = styled.div`
       left: 24px;
       font-size: 24px;
       color: var(--title-color);
-    }
-
-    > button {
-      position: absolute;
-      top: 0;
-      right: 8px;
-      background: transparent;
-      border: none;
-
-      svg {
-        color: red;
-      }
     }
 
     > div {
@@ -1945,40 +1684,12 @@ export const NotHostGuest = styled(Tooltip)`
 `;
 
 export const NumberOfGuestWindow = styled.div`
-  position: absolute;
-  z-index: 1000;
-  top: 25%;
-  left: 30%;
-  width: 40%;
-  height: 250px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 16px auto;
-  background: var(--header-background-color);
-  border-radius: 8px;
   gap: 32px;
-  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
-  padding: 32px;
-
-  span {
-    position: absolute;
-    top: 2px;
-    right: 4px;
-
-    > button {
-      background: transparent;
-      border: none;
-
-      &:hover {
-        opacity: 0.8;
-      }
-      svg {
-        color: red;
-      }
-    }
-  }
+  width: 100%;
 
   > h1 {
     font-size: 24px;

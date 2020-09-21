@@ -20,6 +20,20 @@ export const HeaderContent = styled.div`
   display: flex;
   align-items: center;
 
+  > h1 {
+    margin-right: 32px;
+
+    > button {
+      background: transparent;
+      border: none;
+      color: var(--letter-color-1);
+    }
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
   > button {
     background: transparent;
     border: none;

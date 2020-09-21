@@ -2,31 +2,12 @@ import styled, { css } from 'styled-components';
 import '../../styles/global';
 
 export const FriendsList = styled.form`
-  top: 20%;
-  z-index: 100000;
-  left: 30%;
-  position: fixed;
-  height: 60%;
-  width: 40%;
-  background-color: var(--background-color);
-  border-radius: 8px;
   display: flex;
   flex-direction: column;
   text-align: left;
   padding: 24px;
   overflow-y: scroll;
-
-  > span {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-
-    button {
-      background: transparent;
-      border: none;
-      color: red;
-    }
-  }
+  width: 100%;
 
   > div {
     display: flex;
