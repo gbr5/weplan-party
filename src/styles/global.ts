@@ -2,13 +2,13 @@ import { createGlobalStyle } from 'styled-components';
 
 export default createGlobalStyle`
   :root {
-    --primary-color: #ff9000;
-    --title-color: rgb(255, 200, 55);
-    --background-color: rgb(76, 82, 85);
+    --primary-color: ${props => props.theme.colors.primary};
+    --title-color: ${props => props.theme.colors.title};
+    --background-color: ${props => props.theme.colors.background};
     /* #312e38 */
-    --header-background-color: rgb(45, 50, 53);
+    --header-background-color: ${props => props.theme.colors.header};
     /* #28262e */
-    --card-color: rgb(58, 62, 61);
+    --card-color: ${props => props.theme.colors.card};
     /* #3e3a47 */
     --letter-color-1: #FFF;
     --letter-color-2: rgb(149, 152, 158);
@@ -18,16 +18,19 @@ export default createGlobalStyle`
     --box-shadow: 1px 2px 2px 3px rgba(0, 0, 0, 0.1);
     --red-color: #c53030;
     --input-container-color: rgb(179, 182, 178);
-    --toast-info-color: #3172b7;
-    --toast-info-background-color: #ebf8ff;
-    --toast-success-color: #2e656a;
-    --toast-success-background-color: #e6fffa;
-    --toast-error-color: #c53030;
-    --toast-error-background-color: #fddede;
+    --toast-info-color: ${props => props.theme.colors.toastInfoColor};
+    --toast-info-background-color: ${props =>
+      props.theme.colors.toastInfoBackgroundColor};
+    --toast-success-color: ${props => props.theme.colors.toastSuccessColor};
+    --toast-success-background-color: ${props =>
+      props.theme.colors.toastSuccessBackgroundColor};
+    --toast-error-color: ${props => props.theme.colors.toastErrorColor};
+    --toast-error-background-color: ${props =>
+      props.theme.colors.toastErrorBackgroundColor};
     --green-background-color: rgba(10, 200, 0)
-    --window-box-shadow: rgba(255, 150, 10, 0.3);
-    --green-icon: #47c101;
-    --red-icon: #cf4444;
+    --window-box-shadow: ${props => props.theme.colors.windowBoxShadow};
+    --green-icon: ${props => props.theme.colors.green};
+    --red-icon: ${props => props.theme.colors.red};
   }
 
   /* Dark Mode */
@@ -66,8 +69,8 @@ export default createGlobalStyle`
   }
 
   body {
-    background: var(--background-color);
-    color: var(--letter-color-1);
+    background: ${props => props.theme.colors.background};
+    color: ${props => props.theme.colors.text};
     -webkit-font-smoothing: antialiased;
   }
 

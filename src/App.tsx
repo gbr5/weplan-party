@@ -7,15 +7,17 @@ import AppProvider from './hooks/index';
 
 import Routes from './routes/index';
 
-const App: React.FC = () => (
-  <>
-    <Router>
-      <AppProvider>
-        <Routes />
-      </AppProvider>
-      <GlobalStyle />
-    </Router>
-  </>
-);
+const App: React.FC = () => {
+  return (
+    <>
+      <Router>
+        <AppProvider>
+          <Routes />
+          <GlobalStyle />
+        </AppProvider>
+      </Router>
+    </>
+  );
+};
 
 export default App;

@@ -1,4 +1,12 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useContext,
+} from 'react';
+import Swicth from 'react-switch';
+import { ThemeContext } from 'styled-components';
 import { differenceInCalendarDays, setMinutes } from 'date-fns';
 import 'react-day-picker/lib/style.css';
 import DayPicker from 'react-day-picker';
@@ -23,6 +31,7 @@ import {
   MyAppointments,
   Appointment,
 } from './styles';
+import { useToggleTheme } from '../../hooks/theme';
 
 import profileImg from '../../assets/avatar_placeholder.jpg';
 import { useAuth } from '../../hooks/auth';
@@ -55,6 +64,7 @@ interface IAppointmentDTO {
 }
 
 const PageHeader: React.FC = ({ children }) => {
+  const { colors } = useContext(ThemeContext);
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
 
@@ -71,6 +81,7 @@ const PageHeader: React.FC = ({ children }) => {
   const [addAppointmentDrawer, setAddAppointmentDrawer] = useState(false);
 
   const { signOut } = useAuth();
+  const { toggleTheme, themeBoolean } = useToggleTheme();
   const history = useHistory();
 
   const closeAllWindows = useCallback(() => {
@@ -263,7 +274,7 @@ const PageHeader: React.FC = ({ children }) => {
 
         setEditAppointmentDrawer(false);
         setAppointmentType('');
-        return handleGetAppointments();
+        handleGetAppointments();
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const error = getValidationErrors(err);
@@ -335,6 +346,18 @@ const PageHeader: React.FC = ({ children }) => {
           </Profile>
           {children}
           <Menu>
+            <Swicth
+              // eslint-disable-next-line @typescript-eslint/no-empty-function
+              onChange={toggleTheme}
+              checked={themeBoolean}
+              checkedIcon={false}
+              uncheckedIcon={false}
+              height={10}
+              width={40}
+              handleDiameter={20}
+              offColor={colors.secondary}
+              onColor={colors.primary}
+            />
             <button type="button" onClick={handleAppointmentsWindow}>
               <MdSchedule size={30} />
             </button>
