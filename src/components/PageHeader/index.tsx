@@ -13,7 +13,7 @@ import DayPicker from 'react-day-picker';
 import * as Yup from 'yup';
 
 import { useHistory, Link } from 'react-router-dom';
-import { MdAdd, MdClose, MdHelp, MdMenu, MdSchedule } from 'react-icons/md';
+import { MdAdd, MdHelp, MdMenu, MdSchedule } from 'react-icons/md';
 import { FiSettings, FiPower } from 'react-icons/fi';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
