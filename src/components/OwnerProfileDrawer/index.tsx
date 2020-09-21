@@ -3,9 +3,11 @@ import React from 'react';
 import { MouseEventHandler } from 'react-select';
 import { MdClose, MdDelete } from 'react-icons/md';
 import { FiEdit3 } from 'react-icons/fi';
-import { OwnerDrawer, DeleteOwnerButton } from './styles';
+import { Container, DeleteOwnerButton } from './styles';
 import avatar_placeholder from '../../assets/avatar_placeholder.jpg';
 import { useAuth } from '../../hooks/auth';
+
+import WindowContainer from '../WindowContainer';
 
 interface IEventOwnerDTO {
   id: string;
@@ -32,40 +34,48 @@ const OwnerProfileDrawer: React.FC<IPropsDTO> = ({
   const { user } = useAuth();
 
   return (
-    <OwnerDrawer>
-      <span>
-        <button type="button" onClick={onHandleOwnerDrawer}>
-          <MdClose size={30} />
+    <WindowContainer
+      onHandleCloseWindow={onHandleOwnerDrawer}
+      containerStyle={{ top: '10%', left: '10%', height: '80%', width: '80%' }}
+    >
+      <Container>
+        <span>
+          <button type="button" onClick={onHandleOwnerDrawer}>
+            <MdClose size={30} />
+          </button>
+        </span>
+        <img src={avatar} alt={owner.name} />
+
+        <button type="button" onClick={onHandleNumberOfGuestDrawer}>
+          <FiEdit3 size={24} />
+
+          <h1>
+            username:
+            <strong>{owner.name}</strong>
+          </h1>
+          <div>
+            <h2>
+              Descrição: <strong>{owner.description}</strong>
+            </h2>
+            <h2>
+              Número de convidados: <strong>{owner.number_of_guests}</strong>
+            </h2>
+          </div>
         </button>
-      </span>
-      <img src={avatar} alt={owner.name} />
 
-      <button type="button" onClick={onHandleNumberOfGuestDrawer}>
-        <FiEdit3 size={24} />
-
-        <h1>
-          username:
-          <strong>{owner.name}</strong>
-        </h1>
-        <div>
-          <h2>
-            Descrição: <strong>{owner.description}</strong>
-          </h2>
-          <h2>
-            Número de convidados: <strong>{owner.number_of_guests}</strong>
-          </h2>
-        </div>
-      </button>
-
-      {owner.id !== user.id && (
-        <div>
-          <DeleteOwnerButton type="button" onClick={onHandleDeleteOwnerDrawer}>
-            Deletar
-            <MdDelete size={24} />
-          </DeleteOwnerButton>
-        </div>
-      )}
-    </OwnerDrawer>
+        {owner.id !== user.id && (
+          <div>
+            <DeleteOwnerButton
+              type="button"
+              onClick={onHandleDeleteOwnerDrawer}
+            >
+              Deletar
+              <MdDelete size={24} />
+            </DeleteOwnerButton>
+          </div>
+        )}
+      </Container>
+    </WindowContainer>
   );
 };
 

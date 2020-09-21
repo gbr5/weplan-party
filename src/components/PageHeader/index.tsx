@@ -22,7 +22,7 @@ import {
   HeaderContent,
   Profile,
   Menu,
-  Logo,
+  // Logo,
   EditAppointmentDrawer,
   AppointmentTypeDrawer,
   Calendar,
@@ -34,12 +34,15 @@ import {
 import { useToggleTheme } from '../../hooks/theme';
 
 import profileImg from '../../assets/avatar_placeholder.jpg';
+import logo from '../../assets/weplan_logo.svg';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 
 import Input from '../Input';
 import api from '../../services/api';
 import getValidationErrors from '../../utils/getValidationErros';
+
+import WindowContainer from '../WindowContainer';
 
 interface ICreateAppointment {
   subject: string;
@@ -79,6 +82,7 @@ const PageHeader: React.FC = ({ children }) => {
   const [appointmentTypeDrawer, setAppointmentTypeDrawer] = useState(false);
   const [appointmentType, setAppointmentType] = useState('');
   const [addAppointmentDrawer, setAddAppointmentDrawer] = useState(false);
+  const [windowContainer, setWindowContainer] = useState(false);
 
   const { signOut } = useAuth();
   const { toggleTheme, themeBoolean } = useToggleTheme();
@@ -336,7 +340,8 @@ const PageHeader: React.FC = ({ children }) => {
       <Header>
         <HeaderContent>
           <button type="button" onClick={handleNavigateToDashboard}>
-            <Logo>WePlan</Logo>
+            <img src={logo} alt="WePlan" />
+            {/* <Logo>WePlan</Logo> */}
           </button>
 
           <Profile>
@@ -361,7 +366,7 @@ const PageHeader: React.FC = ({ children }) => {
             <button type="button" onClick={handleAppointmentsWindow}>
               <MdSchedule size={30} />
             </button>
-            <button type="button" onClick={signOut}>
+            <button type="button" onClick={() => setWindowContainer(true)}>
               <MdHelp size={30} />
             </button>
             <button type="button" onClick={signOut}>
@@ -599,6 +604,19 @@ const PageHeader: React.FC = ({ children }) => {
             </div>
           </MyAppointments>
         </Appointments>
+      )}
+      {!!windowContainer && (
+        <WindowContainer
+          onHandleCloseWindow={() => setWindowContainer(false)}
+          containerStyle={{
+            top: '10%',
+            left: '10%',
+            height: '80%',
+            width: '80%',
+          }}
+        >
+          <h1>Deu Certo</h1>
+        </WindowContainer>
       )}
     </>
   );

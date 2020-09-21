@@ -1,37 +1,7 @@
 import styled from 'styled-components';
 import '../../styles/global';
 
-export const OwnerDrawer = styled.div`
-  position: fixed;
-  z-index: 1000;
-  top: 20%;
-  left: 25%;
-  width: 50%;
-  height: 450px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin: 16px auto;
-  background: var(--header-background-color);
-  border-radius: 8px;
-  gap: 16px;
-  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
-  padding: 32px;
-
-  > span {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    > button {
-      background: transparent;
-      border: none;
-
-      svg {
-        color: red;
-      }
-    }
-  }
+export const Container = styled.div`
   > img {
     height: 150px;
     width: 150px;
