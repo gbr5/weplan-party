@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { MouseEventHandler } from 'react-select';
-import { MdClose, MdDelete } from 'react-icons/md';
+import { MdDelete } from 'react-icons/md';
 import { FiEdit3 } from 'react-icons/fi';
 import { Container, DeleteOwnerButton } from './styles';
 import avatar_placeholder from '../../assets/avatar_placeholder.jpg';

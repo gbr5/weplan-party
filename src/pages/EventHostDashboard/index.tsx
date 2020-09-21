@@ -11,7 +11,7 @@ import {
   FiSquare,
   FiEdit3,
 } from 'react-icons/fi';
-import { MdClose, MdPersonAdd, MdAdd } from 'react-icons/md';
+import { MdPersonAdd, MdAdd } from 'react-icons/md';
 import { differenceInCalendarDays } from 'date-fns/esm';
 import { useHistory, useLocation } from 'react-router-dom';
 import { Form } from '@unform/web';
@@ -1679,8 +1679,7 @@ const EventHostDashboard: React.FC = () => {
           friends={friends}
           onHandleFriendsListDrawer={() => setFriendsWindow(false)}
           handleSelectedFriend={(friend: IUserInfoDTO) =>
-            handleSelectedWeplanUser(friend)
-          }
+            handleSelectedWeplanUser(friend)}
         />
       )}
       {!!eventInfoDrawer && (

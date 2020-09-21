@@ -1,6 +1,5 @@
 import React from 'react';
 
-// import { MdClose } from 'react-icons/md';
 import { MouseEventHandler } from 'react-select';
 import { MdDelete } from 'react-icons/md';
 import { FiEdit } from 'react-icons/fi';

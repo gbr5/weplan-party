@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 
 // import { MdClose } from 'react-icons/md';
 import { MouseEventHandler } from 'react-select';
-import { MdClose } from 'react-icons/md';
 import { FriendsList, FriendButton } from './styles';
 import WindowContainer from '../WindowContainer';
 
