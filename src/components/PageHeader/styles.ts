@@ -129,30 +129,6 @@ export const Menu = styled.div`
   }
 `;
 
-export const Appointments = styled.div`
-  z-index: 1000;
-  position: fixed;
-  top: 20%;
-  left: 15%;
-  width: 70%;
-  height: 60%;
-  display: flex;
-  background: var(--background-color);
-  padding: 32px;
-
-  > button {
-    background: transparent;
-    border: none;
-    position: absolute;
-    top: 0;
-    right: 8px;
-
-    svg {
-      color: red;
-    }
-  }
-`;
-
 export const MyAppointments = styled.div`
   width: 100%;
   display: flex;
@@ -239,41 +215,17 @@ export const Appointment = styled.button`
 `;
 
 export const AddAppointmentDrawer = styled.div`
-  position: fixed;
-  z-index: 10;
-  top: 5%;
-  left: 2%;
-  width: 96%;
-  height: 85%;
   display: flex;
   flex-direction: column;
-  /* grid-template-columns: 2fr 1fr; */
   align-items: center;
   justify-content: center;
-  margin: 16px auto;
-  background: var(--header-background-color);
-  border-radius: 8px;
   gap: 16px;
-  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
-  padding: 32px;
-
-  span {
-    position: absolute;
-    top: 0;
-    right: 8px;
-    > button {
-      background: transparent;
-      border: none;
-
-      svg {
-        color: red;
-      }
-    }
-  }
+  width: 100%;
 
   > h1 {
-    font-size: 24px;
+    font-size: 32px;
     color: var(--title-color);
+    margin-bottom: 24px;
   }
 
   > div {
@@ -310,12 +262,6 @@ export const AddAppointmentDrawer = styled.div`
       width: 100%;
       gap: 16px;
 
-      > h1 {
-        font-size: 24px;
-        color: var(--title-color);
-        margin-bottom: 40px;
-      }
-
       > button {
         height: 40px;
         width: 90%;
@@ -325,29 +271,6 @@ export const AddAppointmentDrawer = styled.div`
         margin: 16px;
       }
 
-      span {
-        position: absolute;
-        top: 4px;
-        right: 4px;
-        > button {
-          background: transparent;
-          border: none;
-
-          svg {
-            color: red;
-          }
-        }
-      }
-      /*
-      > input {
-        height: 40px;
-        width: 90%;
-        border-radius: 4px;
-        padding: 0 16px;
-        border: none;
-        margin: 16px;
-      } */
-
       > p {
         margin-top: 32px;
         font-size: 20px;
@@ -356,145 +279,55 @@ export const AddAppointmentDrawer = styled.div`
 
       div {
         display: flex;
-        gap: 16px;
-        margin-right: 16px;
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
 
-        > input {
+        > button {
+          background: var(--primary-color);
+          border: none;
           height: 40px;
-          width: 90%;
+          width: 100%;
           border-radius: 4px;
           padding: 0 16px;
-          border: none;
-          margin: 16px;
+        }
+
+        > h1 {
+          height: 40px;
+          width: 100%;
+          color: var(--primary-color);
+
+          > button {
+            background: transparent;
+            border: none;
+            border-radius: 4px;
+            padding: 0 16px;
+            color: var(--primary-color);
+            font-weight: 500;
+            font-size: 24px;
+          }
         }
       }
     }
   }
 
   > button {
-    margin-top: 16px;
     background: var(--primary-color);
     border: none;
+    margin-top: 16px;
     height: 40px;
     width: 100%;
     border-radius: 4px;
-  }
-`;
-
-export const EditAppointmentDrawer = styled.div`
-  position: fixed;
-  z-index: 10;
-  top: 5%;
-  left: 2%;
-  width: 96%;
-  height: 85%;
-  display: flex;
-  flex-direction: column;
-  /* grid-template-columns: 2fr 1fr; */
-  align-items: center;
-  justify-content: center;
-  margin: 16px auto;
-  background: var(--header-background-color);
-  border-radius: 8px;
-  gap: 16px;
-  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
-  padding: 32px;
-
-  > h1 {
-    font-size: 24px;
-    color: var(--title-color);
-  }
-
-  > div {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    width: 100%;
-    gap: 32px;
-
-    > span {
-      margin: auto 0;
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      gap: 16px;
-
-      > div {
-        display: flex;
-
-        > button {
-          height: 40px;
-          width: 90%;
-          border-radius: 4px;
-          padding: 0 16px;
-          border: none;
-          margin: 16px;
-        }
-      }
-    }
-
-    > div {
-      margin: auto 0;
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      gap: 16px;
-
-      > h1 {
-        font-size: 24px;
-        color: var(--title-color);
-        margin-bottom: 40px;
-      }
-
-      > button {
-        height: 40px;
-        width: 90%;
-        border-radius: 4px;
-        padding: 0 16px;
-        border: none;
-        margin: 16px;
-      }
-
-      span {
-        position: absolute;
-        top: 4px;
-        right: 4px;
-        > button {
-          background: transparent;
-          border: none;
-
-          svg {
-            color: red;
-          }
-        }
-      }
-
-      > p {
-        margin-top: 32px;
-        font-size: 20px;
-        color: var(--primary-color);
-      }
-
-      div {
-        display: flex;
-        gap: 16px;
-        margin-right: 16px;
-
-        > input {
-          height: 40px;
-          width: 90%;
-          border-radius: 4px;
-          padding: 0 16px;
-          border: none;
-          margin: 16px;
-        }
-      }
-    }
   }
 
   > span {
     display: flex;
     align-items: stretch;
     justify-content: center;
+    height: 40px;
+    width: 100%;
+    gap: 32px;
 
     > button {
       margin-top: 16px;
@@ -506,6 +339,9 @@ export const EditAppointmentDrawer = styled.div`
     }
 
     > div {
+      height: 40px;
+      width: 100%;
+
       > button {
         margin-top: 16px;
         background: var(--red-color);
@@ -519,22 +355,11 @@ export const EditAppointmentDrawer = styled.div`
 `;
 
 export const AppointmentTypeDrawer = styled.div`
-  position: absolute;
-  z-index: 100;
-  top: 30%;
-  left: 30%;
-  width: 40%;
-  height: 40%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 16px auto;
-  background: var(--header-background-color);
-  border-radius: 8px;
   gap: 16px;
-  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
-  padding: 32px;
 
   > h1 {
     font-size: 24px;
@@ -556,21 +381,10 @@ export const AppointmentTypeDrawer = styled.div`
 `;
 
 export const WeplanSupplierAppointmentDrawer = styled.div`
-  position: absolute;
-  z-index: 100;
-  top: 30%;
-  left: 0;
-  width: 200px;
-  height: 300px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 16px auto;
-  background: var(--header-background-color);
-  border-radius: 8px;
   gap: 16px;
-  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
-  padding: 32px;
 
   > h1 {
     font-size: 24px;

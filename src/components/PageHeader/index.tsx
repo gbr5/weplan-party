@@ -22,12 +22,9 @@ import {
   HeaderContent,
   Profile,
   Menu,
-  // Logo,
-  EditAppointmentDrawer,
   AppointmentTypeDrawer,
   Calendar,
   AddAppointmentDrawer,
-  Appointments,
   MyAppointments,
   Appointment,
 } from './styles';
@@ -385,204 +382,251 @@ const PageHeader: React.FC = ({ children }) => {
         </HeaderContent>
       </Header>
       {!!appointmentTypeDrawer && (
-        <AppointmentTypeDrawer>
-          <h1>Qual o tipo de compromisso?</h1>
-          <div>
-            <button
-              type="button"
-              onClick={() => handleAppointmentTypeQuestion('Comercial')}
-            >
-              Comercial
-            </button>
-            <button
-              type="button"
-              onClick={() => handleAppointmentTypeQuestion('Técnico')}
-            >
-              Técnico
-            </button>
-          </div>
-        </AppointmentTypeDrawer>
+        <WindowContainer
+          onHandleCloseWindow={() => setAppointmentTypeDrawer(false)}
+          containerStyle={{
+            zIndex: 1000,
+            top: '2%',
+            left: '5%',
+            height: '96%',
+            width: '90%',
+          }}
+        >
+          <AppointmentTypeDrawer>
+            <h1>Qual o tipo de compromisso?</h1>
+            <div>
+              <button
+                type="button"
+                onClick={() => handleAppointmentTypeQuestion('Comercial')}
+              >
+                Comercial
+              </button>
+              <button
+                type="button"
+                onClick={() => handleAppointmentTypeQuestion('Técnico')}
+              >
+                Técnico
+              </button>
+            </div>
+          </AppointmentTypeDrawer>
+        </WindowContainer>
       )}
 
       {!!addAppointmentDrawer && (
-        <Form ref={formRef} onSubmit={handleAddAppointment}>
-          <AddAppointmentDrawer>
-            <div>
+        <WindowContainer
+          onHandleCloseWindow={() => setAddAppointmentDrawer(false)}
+          containerStyle={{
+            zIndex: 100,
+            top: '2%',
+            left: '5%',
+            height: '96%',
+            width: '90%',
+          }}
+        >
+          <Form ref={formRef} onSubmit={handleAddAppointment}>
+            <AddAppointmentDrawer>
+              <h1>Adicionar Compromisso</h1>
               <div>
-                <span>
-                  <button type="button" onClick={handleAddAppointmentDrawer}>
-                    <MdClose size={30} />
-                  </button>
-                </span>
-                <h1>Adicionar Compromisso</h1>
-
-                <Input name="subject" type="text" placeholder="Assunto" />
-
-                <Input type="text" placeholder="Hora" name="start_hour" />
-                <Input type="text" placeholder="Minuto" name="start_minute" />
-                <Input
-                  name="duration_minutes"
-                  type="number"
-                  placeholder="Duração em minutos"
-                />
-              </div>
-              <span>
                 <div>
-                  {appointmentType === '' ? (
-                    <button type="button" onClick={handleAppointmentTypeDrawer}>
-                      Tipo de compromisso
-                    </button>
-                  ) : (
+                  <div>
+                    {appointmentType === '' ? (
+                      <button
+                        type="button"
+                        onClick={handleAppointmentTypeDrawer}
+                      >
+                        Tipo de compromisso
+                      </button>
+                    ) : (
+                      <h1>
+                        <button
+                          type="button"
+                          onClick={handleAppointmentTypeDrawer}
+                        >
+                          {appointmentType}
+                        </button>
+                      </h1>
+                    )}
+                  </div>
+                  <Input
+                    name="subject"
+                    type="text"
+                    placeholder="Assunto"
+                    containerStyle={{ height: '50px' }}
+                  />
+
+                  <Input
+                    type="text"
+                    placeholder="Hora"
+                    name="start_hour"
+                    containerStyle={{ height: '50px' }}
+                  />
+                  <Input
+                    type="text"
+                    placeholder="Minuto"
+                    name="start_minute"
+                    containerStyle={{ height: '50px' }}
+                  />
+                  <Input
+                    name="duration_minutes"
+                    type="number"
+                    placeholder="Duração em minutos"
+                    containerStyle={{ height: '50px' }}
+                  />
+                </div>
+                <span>
+                  <Calendar>
+                    <DayPicker
+                      weekdaysShort={['D', 'S', 'T', 'Q', 'Q', 'S', 'S']}
+                      fromMonth={new Date()}
+                      onMonthChange={handleMonthChange}
+                      selectedDays={selectedDate}
+                      onDayClick={handleDateChange}
+                      months={[
+                        'Janeiro',
+                        'Fevereiro',
+                        'Março',
+                        'Abril',
+                        'Maio',
+                        'Junho',
+                        'Julho',
+                        'Agosto',
+                        'Setembro',
+                        'Outubro',
+                        'Novembro',
+                        'Dezembro',
+                      ]}
+                    />
+                  </Calendar>
+                </span>
+              </div>
+              <Input
+                name="address"
+                type="text"
+                placeholder="Endereço"
+                containerStyle={{ height: '50px' }}
+              />
+              <button type="submit">
+                <h3>Salvar</h3>
+              </button>
+            </AddAppointmentDrawer>
+          </Form>
+        </WindowContainer>
+      )}
+      {!!editAppointmentDrawer && (
+        <WindowContainer
+          onHandleCloseWindow={() => setEditAppointmentDrawer(false)}
+          containerStyle={{
+            zIndex: 100,
+            top: '2%',
+            left: '5%',
+            height: '96%',
+            width: '90%',
+          }}
+        >
+          <Form ref={formRef} onSubmit={handleEditAppointment}>
+            <AddAppointmentDrawer>
+              <h1>Editar Compromisso</h1>
+              <div>
+                <div>
+                  <div>
                     <h1>
                       <button
                         type="button"
                         onClick={handleAppointmentTypeDrawer}
                       >
-                        {appointmentType}
+                        {appointment.appointment_type}
                       </button>
                     </h1>
-                  )}
-                </div>
-                <Calendar>
-                  <DayPicker
-                    weekdaysShort={['D', 'S', 'T', 'Q', 'Q', 'S', 'S']}
-                    fromMonth={new Date()}
-                    onMonthChange={handleMonthChange}
-                    selectedDays={selectedDate}
-                    onDayClick={handleDateChange}
-                    months={[
-                      'Janeiro',
-                      'Fevereiro',
-                      'Março',
-                      'Abril',
-                      'Maio',
-                      'Junho',
-                      'Julho',
-                      'Agosto',
-                      'Setembro',
-                      'Outubro',
-                      'Novembro',
-                      'Dezembro',
-                    ]}
+                  </div>
+
+                  <Input
+                    name="subject"
+                    type="text"
+                    defaultValue={appointment.subject}
+                    placeholder="Assunto"
+                    containerStyle={{ height: '50px' }}
                   />
-                </Calendar>
-                <Input name="address" type="text" placeholder="Endereço" />
-              </span>
-            </div>
-            <button type="submit">
-              <h3>Salvar</h3>
-            </button>
-          </AddAppointmentDrawer>
-        </Form>
-      )}
-      {!!editAppointmentDrawer && (
-        <Form ref={formRef} onSubmit={handleEditAppointment}>
-          <EditAppointmentDrawer>
-            <div>
-              <div>
+
+                  <Input
+                    type="text"
+                    defaultValue={appointment.start_hour}
+                    placeholder="Hora"
+                    name="start_hour"
+                    containerStyle={{ height: '50px' }}
+                  />
+                  <Input
+                    type="text"
+                    defaultValue={appointment.start_minute}
+                    placeholder="Minuto"
+                    name="start_minute"
+                    containerStyle={{ height: '50px' }}
+                  />
+                  <Input
+                    name="duration_minutes"
+                    type="number"
+                    defaultValue={appointment.duration_minutes}
+                    placeholder="Duração em minutos"
+                    containerStyle={{ height: '50px' }}
+                  />
+                </div>
                 <span>
-                  <button
-                    type="button"
-                    onClick={() => setEditAppointmentDrawer(false)}
-                  >
-                    <MdClose size={30} />
-                  </button>
+                  <Calendar>
+                    <DayPicker
+                      weekdaysShort={['D', 'S', 'T', 'Q', 'Q', 'S', 'S']}
+                      fromMonth={new Date()}
+                      onMonthChange={handleMonthChange}
+                      selectedDays={selectedDate}
+                      onDayClick={handleDateChange}
+                      months={[
+                        'Janeiro',
+                        'Fevereiro',
+                        'Março',
+                        'Abril',
+                        'Maio',
+                        'Junho',
+                        'Julho',
+                        'Agosto',
+                        'Setembro',
+                        'Outubro',
+                        'Novembro',
+                        'Dezembro',
+                      ]}
+                    />
+                  </Calendar>
                 </span>
-                <h1>Editar Compromisso</h1>
-
-                <Input
-                  name="subject"
-                  type="text"
-                  defaultValue={appointment.subject}
-                  placeholder="Assunto"
-                />
-
-                <Input
-                  type="text"
-                  defaultValue={appointment.start_hour}
-                  placeholder="Hora"
-                  name="start_hour"
-                />
-                <Input
-                  type="text"
-                  defaultValue={appointment.start_minute}
-                  placeholder="Minuto"
-                  name="start_minute"
-                />
-                <Input
-                  name="duration_minutes"
-                  type="number"
-                  defaultValue={appointment.duration_minutes}
-                  placeholder="Duração em minutos"
-                />
               </div>
+              <Input
+                name="address"
+                type="text"
+                placeholder="Endereço"
+                defaultValue={appointment.address}
+                containerStyle={{ height: '50px' }}
+              />
               <span>
-                <div>
-                  {/* <h1>
-                    <button
-                      type="button"
-                      onClick={() => setWpUserQuestionDrawer(true)}
-                    >
-                      {appointment.weplanGuest
-                        ? 'Fornecedor Weplan ?'
-                        : wpUserName}
-                    </button>
-                  </h1> */}
-                  <h1>
-                    <button type="button" onClick={handleAppointmentTypeDrawer}>
-                      {appointment.appointment_type}
-                    </button>
-                  </h1>
-                </div>
-                <Calendar>
-                  <DayPicker
-                    weekdaysShort={['D', 'S', 'T', 'Q', 'Q', 'S', 'S']}
-                    fromMonth={new Date()}
-                    onMonthChange={handleMonthChange}
-                    selectedDays={selectedDate}
-                    onDayClick={handleDateChange}
-                    months={[
-                      'Janeiro',
-                      'Fevereiro',
-                      'Março',
-                      'Abril',
-                      'Maio',
-                      'Junho',
-                      'Julho',
-                      'Agosto',
-                      'Setembro',
-                      'Outubro',
-                      'Novembro',
-                      'Dezembro',
-                    ]}
-                  />
-                </Calendar>
-                <Input
-                  name="address"
-                  type="text"
-                  placeholder="Endereço"
-                  defaultValue={appointment.address}
-                />
-              </span>
-            </div>
-            <span>
-              <button type="submit">
-                <h3>Salvar</h3>
-              </button>
-              <div>
-                <button type="button" onClick={handleDeleteAppointment}>
-                  <h3>Delete</h3>
+                <button type="submit">
+                  <h3>Salvar</h3>
                 </button>
-              </div>
-            </span>
-          </EditAppointmentDrawer>
-        </Form>
+                <div>
+                  <button type="button" onClick={handleDeleteAppointment}>
+                    <h3>Delete</h3>
+                  </button>
+                </div>
+              </span>
+            </AddAppointmentDrawer>
+          </Form>
+        </WindowContainer>
       )}
       {!!appointmentsWindow && (
-        <Appointments>
-          <button type="button" onClick={() => setAppointmentsWindow(false)}>
-            <MdClose size={30} />
-          </button>
+        <WindowContainer
+          onHandleCloseWindow={() => setAppointmentsWindow(false)}
+          containerStyle={{
+            zIndex: 10,
+            top: '2%',
+            left: '5%',
+            height: '96%',
+            width: '90%',
+          }}
+        >
           <MyAppointments>
             <h1>Meus Compromissos</h1>
             <button type="button" onClick={handleAddAppointmentDrawer}>
@@ -609,19 +653,19 @@ const PageHeader: React.FC = ({ children }) => {
               ))}
             </div>
           </MyAppointments>
-        </Appointments>
+        </WindowContainer>
       )}
       {!!windowContainer && (
         <WindowContainer
           onHandleCloseWindow={() => setWindowContainer(false)}
           containerStyle={{
-            top: '10%',
-            left: '10%',
-            height: '80%',
-            width: '80%',
+            top: '2%',
+            left: '5%',
+            height: '96%',
+            width: '90%',
           }}
         >
-          <h1>Deu Certo</h1>
+          <h1>Opções de ajuda</h1>
         </WindowContainer>
       )}
     </>

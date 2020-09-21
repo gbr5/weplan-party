@@ -491,6 +491,7 @@ export const BudgetDrawer = styled.div`
   flex-direction: column;
   text-align: left;
   padding: 8px;
+  width: 100%;
 
   > span {
     background-color: rgba(255, 144, 0, 0.05);
@@ -678,6 +679,7 @@ export const AddSupplierDrawer = styled.div`
   align-items: center;
   justify-content: center;
   gap: 16px;
+  width: 100%;
 
   > h1 {
     font-size: 24px;
@@ -1302,6 +1304,7 @@ export const WeplanUserDrawer = styled.div`
   align-items: center;
   justify-content: center;
   gap: 32px;
+  width: 100%;
 
   > h1 {
     font-size: 24px;
@@ -1330,22 +1333,12 @@ export const WeplanUserDrawer = styled.div`
 `;
 
 export const GuestConfirmedDrawer = styled.div`
-  position: absolute;
-  z-index: 1000;
-  top: 30%;
-  left: 30%;
-  width: 40%;
-  height: 300px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 16px auto;
-  background: var(--header-background-color);
-  border-radius: 8px;
   gap: 32px;
-  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
-  padding: 32px;
+  width: 100%;
 
   > h1 {
     font-size: 24px;
@@ -1428,21 +1421,12 @@ export const Calendar = styled.aside`
 `;
 
 export const CheckedListItemDrawer = styled.div`
-  position: absolute;
-  z-index: 100;
-  top: 30%;
-  left: 0;
-  width: 200px;
-  height: 350px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 16px auto;
-  background: var(--header-background-color);
-  border-radius: 8px;
   gap: 16px;
-  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
-  padding: 32px;
+  width: 100%;
 
   > h1 {
     font-size: 24px;
@@ -1452,6 +1436,7 @@ export const CheckedListItemDrawer = styled.div`
   > div {
     display: flex;
     gap: 16px;
+    width: 100%;
 
     button {
       background: var(--primary-color);
@@ -1464,21 +1449,12 @@ export const CheckedListItemDrawer = styled.div`
 `;
 
 export const IsHiredDrawer = styled.div`
-  position: absolute;
-  z-index: 100;
-  top: 30%;
-  left: 0;
-  width: 200px;
-  height: 350px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 16px auto;
-  background: var(--header-background-color);
-  border-radius: 8px;
   gap: 16px;
-  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
-  padding: 32px;
+  width: 100%;
 
   > h1 {
     font-size: 24px;
@@ -1488,6 +1464,7 @@ export const IsHiredDrawer = styled.div`
   > div {
     display: flex;
     gap: 16px;
+    width: 100%;
 
     button {
       background: var(--primary-color);
@@ -1505,6 +1482,7 @@ export const AddPlannerDrawer = styled.div`
   align-items: center;
   justify-content: center;
   gap: 16px;
+  width: 100%;
 
   > h1 {
     font-size: 24px;
@@ -1528,6 +1506,7 @@ export const AddOwnerDrawer = styled.div`
   align-items: center;
   justify-content: center;
   gap: 16px;
+  width: 100%;
 
   > h1 {
     font-size: 24px;
@@ -1551,6 +1530,7 @@ export const AddMemberDrawer = styled.div`
   align-items: center;
   justify-content: center;
   gap: 16px;
+  width: 100%;
 
   > h1 {
     font-size: 24px;
@@ -1572,6 +1552,7 @@ export const MembersWindow = styled.div`
   display: grid;
   grid-template-rows: 1fr 5fr;
   gap: 16px;
+  width: 100%;
 
   span {
     position: relative;

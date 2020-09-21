@@ -451,9 +451,11 @@ const EventHostDashboard: React.FC = () => {
       if (is_hired === true) {
         setIsHiredMessage('Contratado S2!');
         setIsHired(true);
+        setIsHiredDrawer(false);
       } else {
         setIsHiredMessage('Avaliando ...');
         setIsHired(false);
+        setIsHiredDrawer(false);
       }
       return handleWeplanGuestDrawer(false);
     },
@@ -1679,7 +1681,8 @@ const EventHostDashboard: React.FC = () => {
           friends={friends}
           onHandleFriendsListDrawer={() => setFriendsWindow(false)}
           handleSelectedFriend={(friend: IUserInfoDTO) =>
-            handleSelectedWeplanUser(friend)}
+            handleSelectedWeplanUser(friend)
+          }
         />
       )}
       {!!eventInfoDrawer && (
@@ -1835,25 +1838,6 @@ const EventHostDashboard: React.FC = () => {
                   </button>
                 </h1>
               )}
-              {!!checkedListItemDrawer && (
-                <CheckedListItemDrawer>
-                  <h1>Tarefa Realizada?</h1>
-                  <div>
-                    <button
-                      type="button"
-                      onClick={() => handleCheckListChecked(true)}
-                    >
-                      Sim!
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleCheckListChecked(false)}
-                    >
-                      Ainda não ...
-                    </button>
-                  </div>
-                </CheckedListItemDrawer>
-              )}
               <Input name="name" type="text" placeholder="Nome" />
 
               <Input
@@ -1873,7 +1857,7 @@ const EventHostDashboard: React.FC = () => {
         <WindowContainer
           onHandleCloseWindow={() => setEditCheckListItemWindow(false)}
           containerStyle={{
-            zIndex: 100,
+            zIndex: 10,
             top: '20%',
             left: '20%',
             height: '60%',
@@ -1902,11 +1886,42 @@ const EventHostDashboard: React.FC = () => {
           </Form>
         </WindowContainer>
       )}
+      {!!checkedListItemDrawer && (
+        <WindowContainer
+          onHandleCloseWindow={() => setCheckedListItemDrawer(false)}
+          containerStyle={{
+            zIndex: 10,
+            top: '20%',
+            left: '20%',
+            height: '60%',
+            width: '60%',
+          }}
+        >
+          <CheckedListItemDrawer>
+            <h1>Tarefa Realizada?</h1>
+            <div>
+              <button
+                type="button"
+                onClick={() => handleCheckListChecked(true)}
+              >
+                Sim!
+              </button>
+              <button
+                type="button"
+                onClick={() => handleCheckListChecked(false)}
+              >
+                Ainda não ...
+              </button>
+            </div>
+          </CheckedListItemDrawer>
+        </WindowContainer>
+      )}
+
       {!!addSupplierDrawer && (
         <WindowContainer
           onHandleCloseWindow={() => setAddSupplierDrawer(false)}
           containerStyle={{
-            zIndex: 100,
+            zIndex: 10,
             top: '20%',
             left: '20%',
             height: '60%',
@@ -1928,25 +1943,6 @@ const EventHostDashboard: React.FC = () => {
                   </button>
                 </h1>
               )}
-              {!!isHiredDrawer && (
-                <IsHiredDrawer>
-                  <h1>Fornecedor contratado?</h1>
-                  <div>
-                    <button
-                      type="button"
-                      onClick={() => handleIsHiredQuestion(true)}
-                    >
-                      Sim
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleIsHiredQuestion(false)}
-                    >
-                      Não
-                    </button>
-                  </div>
-                </IsHiredDrawer>
-              )}
               <Input name="name" type="text" placeholder="Nome do fornecedor" />
               <Input
                 name="supplier_sub_category"
@@ -1964,7 +1960,7 @@ const EventHostDashboard: React.FC = () => {
         <WindowContainer
           onHandleCloseWindow={() => setAddGuestDrawer(false)}
           containerStyle={{
-            zIndex: 100,
+            zIndex: 10,
             top: '5%',
             left: '20%',
             height: '90%',
@@ -2022,6 +2018,271 @@ const EventHostDashboard: React.FC = () => {
           </Form>
         </WindowContainer>
       )}
+      {editGuestDrawer && (
+        <WindowContainer
+          onHandleCloseWindow={() => setEditGuestDrawer(false)}
+          containerStyle={{
+            zIndex: 10,
+            top: '5%',
+            left: '20%',
+            height: '90%',
+            width: '60%',
+          }}
+        >
+          <Form ref={formRef} onSubmit={handleEditGuest}>
+            <AddGuestDrawer>
+              <h1>Editar Convidado</h1>
+
+              {!updated_guest.weplanUser && (
+                <>
+                  <Input
+                    defaultValue={updated_guest.first_name}
+                    name="first_name"
+                    type="text"
+                    placeholder="Nome"
+                  />
+                  <Input
+                    defaultValue={updated_guest.last_name}
+                    name="last_name"
+                    type="text"
+                    placeholder="Sobrenome"
+                  />
+                </>
+              )}
+              <Input
+                defaultValue={updated_guest.description}
+                name="description"
+                type="text"
+                placeholder="Alguma descrição necessária?"
+              />
+
+              <button type="submit">
+                <h3>Salvar</h3>
+              </button>
+
+              <button type="button" onClick={handleDeleteGuest}>
+                <h3>Deletar</h3>
+              </button>
+            </AddGuestDrawer>
+          </Form>
+        </WindowContainer>
+      )}
+      {!!guestConfirmedDrawer && (
+        <WindowContainer
+          onHandleCloseWindow={() => setGuestConfirmedDrawer(false)}
+          containerStyle={{
+            zIndex: 10,
+            top: '5%',
+            left: '20%',
+            height: '90%',
+            width: '60%',
+          }}
+        >
+          <GuestConfirmedDrawer>
+            <h1>Convidado confirmado?</h1>
+            <div>
+              <button
+                type="button"
+                onClick={() => handleGuestConfirmedQuestion(true)}
+              >
+                Sim
+              </button>
+              <button
+                type="button"
+                onClick={() => handleGuestConfirmedQuestion(false)}
+              >
+                Não
+              </button>
+            </div>
+          </GuestConfirmedDrawer>
+        </WindowContainer>
+      )}
+      {!!wpUserQuestionDrawer && (
+        <WindowContainer
+          onHandleCloseWindow={() => setWpUserQuestionDrawer(false)}
+          containerStyle={{
+            zIndex: 10,
+            top: '5%',
+            left: '20%',
+            height: '90%',
+            width: '60%',
+          }}
+        >
+          <WeplanUserDrawer>
+            <h1>É usuário WePlan?</h1>
+            <div>
+              <button
+                type="button"
+                onClick={() => handleWeplanUserQuestion(true)}
+              >
+                Sim
+              </button>
+              <button
+                type="button"
+                onClick={() => handleWeplanUserQuestion(false)}
+              >
+                Não
+              </button>
+            </div>
+          </WeplanUserDrawer>
+        </WindowContainer>
+      )}
+      {!!isHiredDrawer && (
+        <WindowContainer
+          onHandleCloseWindow={() => setIsHiredDrawer(false)}
+          containerStyle={{
+            zIndex: 10,
+            top: '20%',
+            left: '20%',
+            height: '60%',
+            width: '60%',
+          }}
+        >
+          <IsHiredDrawer>
+            <h1>Fornecedor contratado?</h1>
+            <div>
+              <button type="button" onClick={() => handleIsHiredQuestion(true)}>
+                Sim
+              </button>
+              <button
+                type="button"
+                onClick={() => handleIsHiredQuestion(false)}
+              >
+                Não
+              </button>
+            </div>
+          </IsHiredDrawer>
+        </WindowContainer>
+      )}
+      {!!addPlannerDrawer && (
+        <WindowContainer
+          onHandleCloseWindow={() => setAddPlannerDrawer(false)}
+          containerStyle={{
+            zIndex: 10,
+            top: '20%',
+            left: '20%',
+            height: '60%',
+            width: '60%',
+          }}
+        >
+          <Form ref={formRef} onSubmit={handleAddPlanner}>
+            <AddPlannerDrawer>
+              <h1>Adicionar Cerimonialista</h1>
+
+              <Input
+                name="planner_id"
+                type="text"
+                placeholder="Qual o id do cerimonialista?"
+              />
+
+              <button type="submit">
+                <h3>Salvar</h3>
+              </button>
+            </AddPlannerDrawer>
+          </Form>
+        </WindowContainer>
+      )}
+      {!!addOwnerDrawer && (
+        <WindowContainer
+          onHandleCloseWindow={() => setAddOwnerDrawer(false)}
+          containerStyle={{
+            zIndex: 10,
+            top: '20%',
+            left: '20%',
+            height: '60%',
+            width: '60%',
+          }}
+        >
+          <Form ref={formRef} onSubmit={handleAddOwner}>
+            <AddOwnerDrawer>
+              <h1>Adicionar Anfitrião</h1>
+              {wpUserId === '' && (
+                <button type="button" onClick={() => setFriendsWindow(true)}>
+                  Escolher usuário
+                </button>
+              )}
+
+              <Input
+                name="description"
+                type="text"
+                placeholder="Título do Anfitrião (Noiva, Mãe da noiva, ...)"
+              />
+              <p>Número de convidados é opcional</p>
+              <Input name="number_of_guests" type="number" defaultValue={0} />
+              <button type="submit">
+                <h3>Salvar</h3>
+              </button>
+            </AddOwnerDrawer>
+          </Form>
+        </WindowContainer>
+      )}
+      {!!addMemberDrawer && (
+        <WindowContainer
+          onHandleCloseWindow={() => setAddMemberDrawer(false)}
+          containerStyle={{
+            zIndex: 10,
+            top: '20%',
+            left: '20%',
+            height: '60%',
+            width: '60%',
+          }}
+        >
+          <Form ref={formRef} onSubmit={handleAddMember}>
+            <AddMemberDrawer>
+              <h1>Adicionar Membro</h1>
+
+              {wpUserId === '' && (
+                <button type="button" onClick={() => setFriendsWindow(true)}>
+                  Escolher usuário
+                </button>
+              )}
+
+              <p>Número de convidados é opcional</p>
+              <Input name="number_of_guests" type="number" defaultValue={0} />
+
+              <button type="submit">
+                <h3>Salvar</h3>
+              </button>
+            </AddMemberDrawer>
+          </Form>
+        </WindowContainer>
+      )}
+
+      {!!membersWindow && (
+        <WindowContainer
+          onHandleCloseWindow={() => setMembersWindow(false)}
+          containerStyle={{
+            zIndex: 10,
+            top: '5%',
+            left: '5%',
+            height: '90%',
+            width: '90%',
+          }}
+        >
+          <MembersWindow>
+            <MembersContainer>
+              {members.map(eventMember => (
+                <button
+                  key={eventMember.id}
+                  type="button"
+                  onClick={() => handleMemberProfileWindow(eventMember)}
+                >
+                  <img
+                    src={
+                      eventMember.avatar === ''
+                        ? avatar_placeholder
+                        : eventMember.avatar
+                    }
+                    alt={eventMember.name}
+                  />
+
+                  <h1>{eventMember.name}</h1>
+                </button>
+              ))}
+            </MembersContainer>
+          </MembersWindow>
+        </WindowContainer>
+      )}
 
       <EventPageContent>
         <SideBar>
@@ -2069,35 +2330,6 @@ const EventHostDashboard: React.FC = () => {
             <MdPersonAdd size={24} />
           </button>
 
-          {!!addPlannerDrawer && (
-            <WindowContainer
-              onHandleCloseWindow={() => setAddPlannerDrawer(false)}
-              containerStyle={{
-                zIndex: 100,
-                top: '20%',
-                left: '20%',
-                height: '60%',
-                width: '60%',
-              }}
-            >
-              <Form ref={formRef} onSubmit={handleAddPlanner}>
-                <AddPlannerDrawer>
-                  <h1>Adicionar Cerimonialista</h1>
-
-                  <Input
-                    name="planner_id"
-                    type="text"
-                    placeholder="Qual o id do cerimonialista?"
-                  />
-
-                  <button type="submit">
-                    <h3>Salvar</h3>
-                  </button>
-                </AddPlannerDrawer>
-              </Form>
-            </WindowContainer>
-          )}
-
           {planners.map(planner => (
             <span key={planner.id}>
               <button type="button">
@@ -2110,48 +2342,6 @@ const EventHostDashboard: React.FC = () => {
             <h1>Anfitriões: {numberOfOwners}</h1>
             <MdPersonAdd size={24} />
           </button>
-
-          {!!addOwnerDrawer && (
-            <WindowContainer
-              onHandleCloseWindow={() => setAddOwnerDrawer(false)}
-              containerStyle={{
-                zIndex: 100,
-                top: '20%',
-                left: '20%',
-                height: '60%',
-                width: '60%',
-              }}
-            >
-              <Form ref={formRef} onSubmit={handleAddOwner}>
-                <AddOwnerDrawer>
-                  <h1>Adicionar Anfitrião</h1>
-                  {wpUserId === '' && (
-                    <button
-                      type="button"
-                      onClick={() => setFriendsWindow(true)}
-                    >
-                      Escolher usuário
-                    </button>
-                  )}
-
-                  <Input
-                    name="description"
-                    type="text"
-                    placeholder="Título do Anfitrião (Noiva, Mãe da noiva, ...)"
-                  />
-                  <p>Número de convidados é opcional</p>
-                  <Input
-                    name="number_of_guests"
-                    type="number"
-                    defaultValue={0}
-                  />
-                  <button type="submit">
-                    <h3>Salvar</h3>
-                  </button>
-                </AddOwnerDrawer>
-              </Form>
-            </WindowContainer>
-          )}
 
           {owners.map(eventOwner => (
             <span key={eventOwner.id}>
@@ -2169,86 +2359,11 @@ const EventHostDashboard: React.FC = () => {
             <MdPersonAdd size={24} />
           </button>
 
-          {!!addMemberDrawer && (
-            <WindowContainer
-              onHandleCloseWindow={() => setAddMemberDrawer(false)}
-              containerStyle={{
-                zIndex: 100,
-                top: '20%',
-                left: '20%',
-                height: '60%',
-                width: '60%',
-              }}
-            >
-              <Form ref={formRef} onSubmit={handleAddMember}>
-                <AddMemberDrawer>
-                  <h1>Adicionar Membro</h1>
-
-                  {wpUserId === '' && (
-                    <button
-                      type="button"
-                      onClick={() => setFriendsWindow(true)}
-                    >
-                      Escolher usuário
-                    </button>
-                  )}
-
-                  <p>Número de convidados é opcional</p>
-                  <Input
-                    name="number_of_guests"
-                    type="number"
-                    defaultValue={0}
-                  />
-
-                  <button type="submit">
-                    <h3>Salvar</h3>
-                  </button>
-                </AddMemberDrawer>
-              </Form>
-            </WindowContainer>
-          )}
-
           <span>
             <button type="button" onClick={handleMembersWindow}>
               <h2>Visualizar</h2>
             </button>
           </span>
-
-          {!!membersWindow && (
-            <WindowContainer
-              onHandleCloseWindow={() => setMembersWindow(false)}
-              containerStyle={{
-                zIndex: 100,
-                top: '5%',
-                left: '5%',
-                height: '90%',
-                width: '90%',
-              }}
-            >
-              <MembersWindow>
-                <MembersContainer>
-                  {members.map(eventMember => (
-                    <button
-                      key={eventMember.id}
-                      type="button"
-                      onClick={() => handleMemberProfileWindow(eventMember)}
-                    >
-                      <img
-                        src={
-                          eventMember.avatar === ''
-                            ? avatar_placeholder
-                            : eventMember.avatar
-                        }
-                        alt={eventMember.name}
-                      />
-
-                      <h1>{eventMember.name}</h1>
-                    </button>
-                  ))}
-                </MembersContainer>
-              </MembersWindow>
-            </WindowContainer>
-          )}
         </SideBar>
         <Main>
           <FirstRow>
@@ -2354,134 +2469,6 @@ const EventHostDashboard: React.FC = () => {
           )}
           {!!supplierSection && (
             <SupplierSection>
-              {/* <span>
-                <SupplierNavigationButton
-                  mySupplierActive={guestWindow}
-                  type="button"
-                  onClick={() => handleSupplierWindow(true)}
-                >
-                  Convidados da Festa
-                </SupplierNavigationButton>
-
-                <SupplierNavigationButton
-                  type="button"
-                  onClick={() => handleSupplierWindow(false)}
-                  mySupplierActive={!guestWindow}
-                >
-                  Meus Convidados
-                </SupplierNavigationButton>
-
-                <span>
-                  <button type="button" onClick={handleAddSupplierDrawer}>
-                    <MdPersonAdd size={30} />
-                  </button>
-                </span>
-              </span>
-
-
-              {!selectedSupplierWindow && <h3>{selectedSuppliers.length}</h3>}
-
-              {selectedSupplierWindow && <h3>{hiredSuppliers}}</h3>}
-
-              <div>
-                {selectedSupplierWindow &&
-                  selectedSuppliers.map(selectedSupplier => {
-                    supplierCount += 1;
-
-                    return (
-                      <Supplier key={selectedSupplier.id}>
-                        <span>
-                          <p>{supplierCount}</p>
-                          {selectedSupplier.host === user.name ? (
-                            <button
-                              type="button"
-                              onClick={() => handleEditSupplierDrawer(selectedSupplier)}
-                            >
-                              <strong>{selectedSupplier.first_name}</strong>{' '}
-                              {selectedSupplier.last_name}
-                              <FiEdit3 size={16} />
-                            </button>
-                          ) : (
-                            <NotHostSupplier title={notHostMessage}>
-                              <strong>{selectedSupplier.first_name}</strong>{' '}
-                              {selectedSupplier.last_name}
-                            </NotHostSupplier>
-                          )}
-                        </span>
-
-                        {selectedSupplier.weplanUser && (
-                          <button type="button">
-                            <FiUser size={24} />
-                          </button>
-                        )}
-
-                        {selectedSupplier.host === user.name ? (
-                          <div>
-                            <button
-                              type="button"
-                              onClick={() => handleEditConfirmedSupplier(selectedSupplier)}
-                            >
-                              {selectedSupplier.confirmed ? (
-                                <FiCheckSquare size={24} />
-                              ) : (
-                                <FiSquare size={24} />
-                              )}
-                            </button>
-                          </div>
-                        ) : (
-                          <div>
-                            <NotHostSupplier title={notHostMessage}>
-                              {selectedSupplier.confirmed ? (
-                                <FiCheckSquare size={24} />
-                              ) : (
-                                <FiSquare size={24} />
-                              )}
-                            </NotHostSupplier>
-                          </div>
-                        )}
-                      </Supplier>
-                    );
-                  })}
-
-                {!selectedSupplierWindow &&
-                  mySuppliers.map(mSupplier => {
-                    mySupplierCount += 1;
-                    return (
-                      <Supplier key={mSupplier.id}>
-                        <span>
-                          <p>{mySupplierCount}</p>
-                          <button
-                            type="button"
-                            onClick={() => handleEditSupplierDrawer(mSupplier)}
-                          >
-                            <strong>{mSupplier.first_name}</strong>{' '}
-                            {mSupplier.last_name}
-                            <FiEdit3 size={16} />
-                          </button>
-                        </span>
-                        {mSupplier.weplanUser && (
-                          <button type="button">
-                            <FiUser size={24} />
-                          </button>
-                        )}
-                        <div>
-                          <button
-                            key={mSupplier.id}
-                            type="button"
-                            onClick={() => handleEditConfirmedSupplier(mSupplier)}
-                          >
-                            {mSupplier.confirmed ? (
-                              <FiCheckSquare size={24} />
-                            ) : (
-                              <FiSquare size={24} />
-                            )}
-                          </button>
-                        </div>
-                      </Supplier>
-                    );
-                  })}
-              </div>
- */}
               <SelectedSuppliers>
                 <h1>Fornecedores Selecionados</h1>
                 <button type="button" onClick={handleAddSupplierDrawer}>
@@ -2636,7 +2623,6 @@ const EventHostDashboard: React.FC = () => {
               </ChatMessages>
             </MessagesSection>
           )}
-
           {!!guestsSection && (
             <GuestSection>
               <span>
@@ -2775,94 +2761,6 @@ const EventHostDashboard: React.FC = () => {
               </div>
             </GuestSection>
           )}
-          {editGuestDrawer && (
-            <WindowContainer
-              onHandleCloseWindow={() => setEditGuestDrawer(false)}
-              containerStyle={{
-                zIndex: 100,
-                top: '5%',
-                left: '20%',
-                height: '90%',
-                width: '60%',
-              }}
-            >
-              <Form ref={formRef} onSubmit={handleEditGuest}>
-                <AddGuestDrawer>
-                  <h1>Editar Convidado</h1>
-
-                  {!updated_guest.weplanUser && (
-                    <>
-                      <Input
-                        defaultValue={updated_guest.first_name}
-                        name="first_name"
-                        type="text"
-                        placeholder="Nome"
-                      />
-                      <Input
-                        defaultValue={updated_guest.last_name}
-                        name="last_name"
-                        type="text"
-                        placeholder="Sobrenome"
-                      />
-                    </>
-                  )}
-                  <Input
-                    defaultValue={updated_guest.description}
-                    name="description"
-                    type="text"
-                    placeholder="Alguma descrição necessária?"
-                  />
-
-                  <button type="submit">
-                    <h3>Salvar</h3>
-                  </button>
-
-                  <button type="button" onClick={handleDeleteGuest}>
-                    <h3>Deletar</h3>
-                  </button>
-                </AddGuestDrawer>
-              </Form>
-            </WindowContainer>
-          )}
-          {!!guestConfirmedDrawer && (
-            <GuestConfirmedDrawer>
-              <h1>Convidado confirmado?</h1>
-              <div>
-                <button
-                  type="button"
-                  onClick={() => handleGuestConfirmedQuestion(true)}
-                >
-                  Sim
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleGuestConfirmedQuestion(false)}
-                >
-                  Não
-                </button>
-              </div>
-            </GuestConfirmedDrawer>
-          )}
-          {!!wpUserQuestionDrawer && (
-            <WeplanUserDrawer>
-              <h1>É usuário WePlan?</h1>
-              <div>
-                <button
-                  type="button"
-                  onClick={() => handleWeplanUserQuestion(true)}
-                >
-                  Sim
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleWeplanUserQuestion(false)}
-                >
-                  Não
-                </button>
-              </div>
-            </WeplanUserDrawer>
-          )}
-
           {!!financeSection && (
             <Financial>
               <img src={chart} alt="chart" />
