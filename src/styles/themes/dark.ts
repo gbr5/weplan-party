@@ -5,16 +5,16 @@ export default {
     primary: 'rgba(255, 153, 0, 1)',
     secondary: '#DDDBF1',
 
-    background: 'rgba(1, 7, 34, 1)',
-    header: 'rgb(18, 20, 19)',
-    card: 'rgb(58, 62, 61)',
+    background: '#011627',
+    header: 'rgb(58, 62, 61)',
+    card: '#f9f9f9',
 
     title: 'rgb(255, 200, 55)',
-    text: '#333',
+    text: '#f9f9f9',
     letter1: '#FFF',
     letter2: 'rgb(149, 152, 158)',
     letter3: 'rgb(179, 182, 178)',
-    letter4: 'rgb(120, 122, 125)',
+    letter4: '#f9f9f9',
     letter5: 'rgb(20, 22, 25)',
 
     toastInfoColor: '#3172b7',
