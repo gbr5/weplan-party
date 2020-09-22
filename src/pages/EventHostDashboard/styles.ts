@@ -22,23 +22,6 @@ const appearFromTop = keyframes`
   }
 `;
 
-const appearFromNothing = keyframes`
-  0% {
-    opacity: 1;
-  }
-  /* 40% {
-    opacity: 0.5;
-    transform: translateY(-100px);
-  }
-  80% {
-    opacity: 0.9;
-    transform: translateY(-50px);
-  } */
-  100% {
-    opacity: 0;
-  }
-`;
-
 export const Container = styled.div`
   position: relative;
   margin: 0;
