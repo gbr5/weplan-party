@@ -28,7 +28,7 @@ const Routes: React.FC = () => (
     <Route path="/profile" exact component={Profile} isPrivate />
     <Route path="/events" exact component={EventsDashboard} isPrivate />
     <Route
-      path="/dashboard/my-event/:trimmed_name"
+      path="/dashboard/my-event/:name"
       exact
       component={EventHostDashboard}
       isPrivate
