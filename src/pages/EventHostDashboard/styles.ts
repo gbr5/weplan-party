@@ -62,7 +62,7 @@ export const EventPageContent = styled.main`
   animation: ${appearFromTop} 0.8s;
 
   > button {
-    z-index: 10000;
+    z-index: 8;
     background: transparent;
     border: none;
     border-radius: 8px;
@@ -80,7 +80,7 @@ export const EventPageContent = styled.main`
 
   > span {
     > button {
-      z-index: 10000;
+      z-index: 8;
       background: transparent;
       border: none;
       border-radius: 8px;

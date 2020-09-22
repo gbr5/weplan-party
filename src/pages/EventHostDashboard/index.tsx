@@ -1685,7 +1685,8 @@ const EventHostDashboard: React.FC = () => {
           friends={friends}
           onHandleFriendsListDrawer={() => setFriendsWindow(false)}
           handleSelectedFriend={(friend: IUserInfoDTO) =>
-            handleSelectedWeplanUser(friend)}
+            handleSelectedWeplanUser(friend)
+          }
         />
       )}
       {!!eventInfoDrawer && (
@@ -2540,7 +2541,7 @@ const EventHostDashboard: React.FC = () => {
                       <Guest key={sSupplier.id}>
                         <span>
                           <p>{supplierCount}</p>
-                          <button type="button" onClick={() => {}}>
+                          <button type="button">
                             <strong>{sSupplier.name}</strong>{' '}
                             <FiEdit3 size={16} />
                           </button>
@@ -2575,7 +2576,7 @@ const EventHostDashboard: React.FC = () => {
                       <Guest key={hSupplier.id}>
                         <span>
                           <p>{hiredSupplierCount}</p>
-                          <button type="button" onClick={() => {}}>
+                          <button type="button">
                             <strong>{hSupplier.name}</strong>{' '}
                             <FiEdit3 size={16} />
                           </button>
