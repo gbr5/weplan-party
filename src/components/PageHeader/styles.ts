@@ -5,7 +5,7 @@ import '../../styles/global';
 export const Header = styled.header`
   position: fixed;
   top: 0;
-  z-index: 5;
+  z-index: 8;
 
   width: 100%;
   padding: 16px 0;

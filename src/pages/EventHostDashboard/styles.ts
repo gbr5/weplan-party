@@ -8,19 +8,41 @@ const appearFromTop = keyframes`
     opacity: 0;
     transform: translateY(-150px);
   }
-  /* 40% {
-    opacity: 0.5;
-    transform: translateY(-100px);
-  }
-  80% {
-    opacity: 0.9;
-    transform: translateY(-50px);
-  } */
   100% {
     opacity: 1;
     transform: translateY(0px);
   }
 `;
+
+const appearFromLeft = keyframes`
+  0% {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+`;
+
+// const disappearFromBottom = keyframes`
+//   from {
+//     opacity: 1;
+//     transform: translateY(0px);
+//   }
+//   /* 40% {
+//     opacity: 0.5;
+//     transform: translateY(-100px);
+//   }
+//   80% {
+//     opacity: 0.9;
+//     transform: translateY(-50px);
+//   } */
+//   to {
+//     opacity: 0;
+//     transform: translateY(-100px);
+//   }
+// `;
 
 export const Container = styled.div`
   position: relative;
@@ -35,12 +57,54 @@ export const EventPageContent = styled.main`
   position: relative;
   width: 100%;
   display: flex;
-  padding-right: 80px;
+  padding: 0 80px;
   gap: 80px;
   animation: ${appearFromTop} 0.8s;
+
+  > button {
+    z-index: 10000;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    position: fixed;
+    top: 100px;
+    left: -8px;
+    transition: 0.8s;
+
+    color: var(--primary-color);
+
+    &:hover {
+      color: var(--letter-color-4);
+    }
+  }
+
+  > span {
+    > button {
+      z-index: 10000;
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      position: fixed;
+      top: 100px;
+      left: 22%;
+      transition: 0.8s;
+
+      color: var(--letter-color-4);
+      animation: ${appearFromLeft} 0.8s;
+
+      &:hover {
+        color: var(--primary-color);
+      }
+    }
+  }
 `;
 
 export const SideBar = styled.div`
+  z-index: 5;
+  position: fixed;
+  top: 0px;
+  left: 0;
+  border-radius: 0 8px 8px 0;
   margin: 32px 0 0 0;
   background: var(--header-background-color);
   width: 22%;
@@ -49,6 +113,8 @@ export const SideBar = styled.div`
   padding: 86px 16px 11px;
   display: flex;
   flex-direction: column;
+
+  animation: ${appearFromLeft} 0.8s;
 
   > button {
     width: 100%;
@@ -104,23 +170,6 @@ export const SideBar = styled.div`
       }
     }
   }
-  /*
-  span {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-right: auto;
-    font-size: 24px;
-    color: var(--letter-color-3);
-    margin-bottom: 16px;
-
-    > button {
-      background: transparent;
-      border: none;
-      margin-left: 32px;
-      color: var(--title-color);
-    }
-  } */
   span {
     display: flex;
     flex-direction: column;
@@ -385,17 +434,48 @@ export const Main = styled.div`
   display: flex;
   width: 100%;
   flex-direction: column;
-  margin-top: 32px;
+  margin-top: 150px;
   margin-bottom: 32px;
+  position: relative;
 
   > button {
+    z-index: 8;
+    position: fixed;
+    top: 90px;
+    left: 47.7%;
     background: transparent;
     border: none;
-    margin: 70px auto 16px;
+    transition: 0.4s;
 
     > svg {
       color: var(--primary-color);
       transition: 1s;
+
+      &:hover {
+        color: var(--letter-color-4);
+      }
+    }
+  }
+
+  > span {
+    > button {
+      z-index: 8;
+      position: absolute;
+      top: 105px;
+      left: 47.5%;
+      background: transparent;
+      border: none;
+      transition: 0.4s;
+      animation: ${appearFromTop} 0.8s;
+
+      > svg {
+        color: var(--letter-color-4);
+        transition: 1s;
+
+        &:hover {
+          color: var(--primary-color);
+        }
+      }
     }
   }
 `;
@@ -576,122 +656,6 @@ export const BudgetDrawer = styled.div`
   }
 `;
 
-export const SupplierSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  gap: 24px;
-  width: 100%;
-
-  animation: ${appearFromTop} 0.8s;
-
-  > span {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    width: 100%;
-    position: relative;
-    margin: 24px auto;
-
-    > button {
-      background: transparent;
-      border: none;
-
-      > h1 {
-        display: flex;
-        gap: 16px;
-        font-size: 24px;
-        color: var(--primary-color);
-        transition: 0.5s;
-
-        > &:hover {
-          opacity: 0.6;
-        }
-
-        > p {
-          color: var(--title-color);
-        }
-      }
-    }
-
-    > div {
-      position: absolute;
-      right: 16px;
-      top: 0;
-
-      > button {
-        background: transparent;
-        border: none;
-        color: var(--title-color);
-
-        svg {
-          color: var(--primary-color);
-          border-radius: 50%;
-          transition: 0.4s;
-
-          &:hover {
-            color: var(--title-color);
-            /* opacity: 0.8; */
-            background: rgba(255, 150, 10, 0.3);
-            box-shadow: 0px 0px 6px 6px rgba(255, 150, 10, 0.3);
-          }
-        }
-      }
-    }
-  }
-`;
-
-export const SelectedSuppliers = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
-  width: 100%;
-  position: relative;
-  background: var(--header-background-color);
-  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
-  border-radius: 8px;
-  padding: 16px;
-  height: 350px;
-  transition: 0.5s;
-
-  > div {
-    padding: 16px;
-    border-radius: 8px;
-    background-color: var(--header-background-color);
-    box-shadow: 2px 2px 3px 2px rgba(50, 50, 50, 0.1);
-    width: 100%;
-
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-  }
-`;
-
-export const Supplier = styled.button`
-  background: transparent;
-  border: none;
-  width: 100%;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--letter-color-4);
-
-  > h1 {
-    font-size: 18px;
-    color: var(--title-color);
-  }
-
-  > svg {
-    margin-left: auto;
-  }
-`;
-
 export const AddSupplierDrawer = styled.div`
   display: flex;
   flex-direction: column;
@@ -722,12 +686,17 @@ export const AddSupplierDrawer = styled.div`
   }
 `;
 
-export const GuestSection = styled.div`
+export const BooleanSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
   position: relative;
   animation: ${appearFromTop} 0.8s;
+
+  > h1 {
+    margin: 0 auto;
+    color: var(--primary-color);
+  }
 
   > h3 {
     font-size: 24px;
@@ -776,6 +745,8 @@ export const GuestSection = styled.div`
 
   > div {
     width: 100%;
+    height: 400px;
+
     max-height: 500px;
     padding: 16px;
     display: grid;
@@ -788,10 +759,10 @@ export const GuestSection = styled.div`
 `;
 
 interface ButtonProps {
-  myGuestActive: boolean;
+  booleanActiveButton: boolean;
 }
 
-export const GuestNavigationButton = styled.button<ButtonProps>`
+export const BooleanNavigationButton = styled.button<ButtonProps>`
   font-size: 32px;
   background: transparent;
   border: none;
@@ -810,9 +781,9 @@ export const GuestNavigationButton = styled.button<ButtonProps>`
   }
 
   ${props =>
-    props.myGuestActive &&
+    props.booleanActiveButton &&
     css`
-      color: var(--title-color);
+      color: var(--letter-color-4);
       opacity: 1;
       transition: 0.4s;
     `}
@@ -998,8 +969,8 @@ export const AddGuestDrawer = styled.div`
 `;
 
 export const CheckList = styled.section`
-  height: 400px;
-  background: var(--header-background-color);
+  height: 500px;
+  background: var(--card-color);
   padding: 24px;
   border-radius: 8px;
   margin-bottom: 24px;
@@ -1103,6 +1074,7 @@ export const Financial = styled.div`
 
 export const LatestNews = styled.div`
   background: var(--header-background-color);
+  margin-top: 32px;
   padding: 24px;
   border-radius: 8px;
   height: 300px;

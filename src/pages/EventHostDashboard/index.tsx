@@ -6,10 +6,10 @@ import {
   FiChevronDown,
   FiChevronUp,
   FiCheckSquare,
-  FiUserPlus,
   FiUser,
   FiSquare,
   FiEdit3,
+  FiChevronLeft,
 } from 'react-icons/fi';
 import { MdPersonAdd, MdAdd } from 'react-icons/md';
 import { differenceInCalendarDays } from 'date-fns/esm';
@@ -25,11 +25,8 @@ import {
   MyEvents,
   MyEventsDrawer,
   MyEventsDrawerButton,
-  SupplierSection,
-  SelectedSuppliers,
-  Supplier,
   AddSupplierDrawer,
-  GuestSection,
+  BooleanSection,
   AddGuestDrawer,
   Financial,
   SideBar,
@@ -53,7 +50,7 @@ import {
   AddMemberDrawer,
   MembersWindow,
   Guest,
-  GuestNavigationButton,
+  BooleanNavigationButton,
   NotHostGuest,
   NumberOfGuestWindow,
   MembersContainer,
@@ -198,7 +195,6 @@ const EventHostDashboard: React.FC = () => {
     IEventSupplierDTO[]
   >([]);
   const [hiredSuppliers, setHiredSuppliers] = useState<IEventSupplierDTO[]>([]);
-  const [supplierWindow, setSupplierWindow] = useState(false);
   const [eventInfo, setEventInfo] = useState<IEventInfo>({} as IEventInfo);
   const [guestWindow, setGuestWindow] = useState(true);
   const [eventInfoDrawer, setEventInfoDrawer] = useState(false);
@@ -243,7 +239,8 @@ const EventHostDashboard: React.FC = () => {
   const [hiredSuppliersSection, setHiredSuppliersSection] = useState(
     hiredSuppliers.length === 0,
   );
-  const [firstRow, setFirstRow] = useState(false);
+  const [firstRow, setFirstRow] = useState(true);
+  const [sidebar, setSidebar] = useState(false);
 
   const closeAllWindows = useCallback(() => {
     setMyEventsDrawer(false);
@@ -269,8 +266,13 @@ const EventHostDashboard: React.FC = () => {
 
   const handleFirstRow = useCallback(() => {
     setFirstRow(!firstRow);
+    setSidebar(false);
     closeAllWindows();
   }, [firstRow, closeAllWindows]);
+  const handleSideBar = useCallback(() => {
+    setSidebar(!sidebar);
+    setFirstRow(false);
+  }, [sidebar]);
   const closeAllSections = useCallback(() => {
     setLatestActionsSection(false);
     setGuestsSection(false);
@@ -279,6 +281,7 @@ const EventHostDashboard: React.FC = () => {
     setSupplierSection(false);
     setMessagesSection(false);
     setFirstRow(false);
+    setSidebar(false);
   }, []);
   const handleMyEventsDrawer = useCallback(() => {
     closeAllWindows();
@@ -323,11 +326,6 @@ const EventHostDashboard: React.FC = () => {
     closeAllWindows();
     setMembersWindow(!membersWindow);
   }, [membersWindow, closeAllWindows]);
-  const handleSupplierWindow = useCallback(() => {
-    closeAllWindows();
-    setSupplierWindow(!supplierWindow);
-  }, [supplierWindow, closeAllWindows]);
-
   const handleEditCheckListItemWindow = useCallback(props => {
     setCheckListItem(props);
     setEditCheckListItemWindow(true);
@@ -408,9 +406,9 @@ const EventHostDashboard: React.FC = () => {
     closeAllSections();
     setMessagesSection(true);
   }, [closeAllSections]);
-  const handleHiredSuppliersSection = useCallback(() => {
-    setHiredSuppliersSection(!hiredSuppliersSection);
-  }, [hiredSuppliersSection]);
+  const handleHiredSuppliersSection = useCallback(props => {
+    setHiredSuppliersSection(props);
+  }, []);
 
   const handleSelectedWeplanUser = useCallback((WPUser: IUserInfoDTO) => {
     setWpUserName(WPUser.name);
@@ -1503,8 +1501,8 @@ const EventHostDashboard: React.FC = () => {
 
   let guestCount = 0;
   let myGuestCount = 0;
-  // const supplierCount = 0;
-  // const hiredSupplierCount = 0;
+  let supplierCount = 0;
+  let hiredSupplierCount = 0;
 
   return (
     <Container>
@@ -1687,8 +1685,7 @@ const EventHostDashboard: React.FC = () => {
           friends={friends}
           onHandleFriendsListDrawer={() => setFriendsWindow(false)}
           handleSelectedFriend={(friend: IUserInfoDTO) =>
-            handleSelectedWeplanUser(friend)
-          }
+            handleSelectedWeplanUser(friend)}
         />
       )}
       {!!eventInfoDrawer && (
@@ -2291,90 +2288,115 @@ const EventHostDashboard: React.FC = () => {
       )}
 
       <EventPageContent>
-        <SideBar>
-          <MyEvents>
-            <MyEventsDrawerButton type="button" onClick={handleMyEventsDrawer}>
-              <h1>Meus Eventos</h1>
-              {myEventsDrawer ? (
-                <span>
-                  <FiChevronUp size={30} />
-                </span>
-              ) : (
-                <span>
-                  <FiChevronDown size={30} />
-                </span>
-              )}
-            </MyEventsDrawerButton>
-            {myEventsDrawer && (
-              <MyEventsDrawer>
-                {myEvents.map(myEvent => (
-                  <button
-                    type="button"
-                    onClick={() => handleMyEventDashboard(myEvent)}
-                    key={myEvent.id}
-                  >
-                    {myEvent.name}
-                    <span>
-                      <FiChevronRight size={24} />
-                    </span>
-                  </button>
-                ))}
-              </MyEventsDrawer>
-            )}
-          </MyEvents>
-          <button type="button" onClick={handleEventInfoDrawer}>
-            Informações do Evento
-          </button>
-          <button type="button" onClick={handleLatestActionsSection}>
-            Últimas Atualizações
-          </button>
-          <button type="button" onClick={handleMessagesSection}>
-            Mensagens
-          </button>
-          <button type="button" onClick={handleAddPlannerDrawer}>
-            <h1>Cerimonialistas</h1>
-            <MdPersonAdd size={24} />
-          </button>
-
-          {planners.map(planner => (
-            <span key={planner.id}>
-              <button type="button">
-                <h2>{planner.name}</h2>
-              </button>
-            </span>
-          ))}
-
-          <button type="button" onClick={handleAddOwnerDrawer}>
-            <h1>Anfitriões: {numberOfOwners}</h1>
-            <MdPersonAdd size={24} />
-          </button>
-
-          {owners.map(eventOwner => (
-            <span key={eventOwner.id}>
-              <button
-                type="button"
-                onClick={() => handleOwnerProfileWindow(eventOwner)}
-              >
-                <h2>{eventOwner.name}</h2>
-              </button>
-            </span>
-          ))}
-
-          <button type="button" onClick={handleAddMemberDrawer}>
-            <h1>Membros: {numberOfMembers}</h1>
-            <MdPersonAdd size={24} />
-          </button>
-
+        {sidebar ? (
           <span>
-            <button type="button" onClick={handleMembersWindow}>
-              <h2>Visualizar</h2>
+            <button type="button" onClick={handleSideBar}>
+              <FiChevronLeft size={60} />
             </button>
           </span>
-        </SideBar>
-        <Main>
-          <button type="button" onClick={handleFirstRow}>
-            {firstRow ? <FiChevronUp size={40} /> : <FiChevronDown size={40} />}
+        ) : (
+          <button type="button" onClick={handleSideBar}>
+            <FiChevronRight size={60} />
           </button>
+        )}
+
+        {sidebar && (
+          <SideBar>
+            <MyEvents>
+              <MyEventsDrawerButton
+                type="button"
+                onClick={handleMyEventsDrawer}
+              >
+                <h1>Meus Eventos</h1>
+                {myEventsDrawer ? (
+                  <span>
+                    <FiChevronUp size={30} />
+                  </span>
+                ) : (
+                  <span>
+                    <FiChevronDown size={30} />
+                  </span>
+                )}
+              </MyEventsDrawerButton>
+              {myEventsDrawer && (
+                <MyEventsDrawer>
+                  {myEvents.map(myEvent => (
+                    <button
+                      type="button"
+                      onClick={() => handleMyEventDashboard(myEvent)}
+                      key={myEvent.id}
+                    >
+                      {myEvent.name}
+                      <span>
+                        <FiChevronRight size={24} />
+                      </span>
+                    </button>
+                  ))}
+                </MyEventsDrawer>
+              )}
+            </MyEvents>
+            <button type="button" onClick={handleEventInfoDrawer}>
+              Informações do Evento
+            </button>
+            <button type="button" onClick={handleLatestActionsSection}>
+              Últimas Atualizações
+            </button>
+            <button type="button" onClick={handleMessagesSection}>
+              Mensagens
+            </button>
+            <button type="button" onClick={handleAddPlannerDrawer}>
+              <h1>Cerimonialistas</h1>
+              <MdPersonAdd size={24} />
+            </button>
+
+            {planners.map(planner => (
+              <span key={planner.id}>
+                <button type="button">
+                  <h2>{planner.name}</h2>
+                </button>
+              </span>
+            ))}
+
+            <button type="button" onClick={handleAddOwnerDrawer}>
+              <h1>Anfitriões: {numberOfOwners}</h1>
+              <MdPersonAdd size={24} />
+            </button>
+
+            {owners.map(eventOwner => (
+              <span key={eventOwner.id}>
+                <button
+                  type="button"
+                  onClick={() => handleOwnerProfileWindow(eventOwner)}
+                >
+                  <h2>{eventOwner.name}</h2>
+                </button>
+              </span>
+            ))}
+
+            <button type="button" onClick={handleAddMemberDrawer}>
+              <h1>Membros: {numberOfMembers}</h1>
+              <MdPersonAdd size={24} />
+            </button>
+
+            <span>
+              <button type="button" onClick={handleMembersWindow}>
+                <h2>Visualizar</h2>
+              </button>
+            </span>
+          </SideBar>
+        )}
+        <Main>
+          {firstRow ? (
+            <span>
+              <button type="button" onClick={handleFirstRow}>
+                <FiChevronUp size={60} />
+              </button>
+            </span>
+          ) : (
+            <button type="button" onClick={handleFirstRow}>
+              <FiChevronDown size={60} />
+            </button>
+          )}
           {!!firstRow && (
             <FirstRow>
               <div>
@@ -2479,67 +2501,108 @@ const EventHostDashboard: React.FC = () => {
             </LatestNews>
           )}
           {!!supplierSection && (
-            <SupplierSection>
+            <BooleanSection>
+              <h1>Fornecedores</h1>
               <span>
-                <button type="button" onClick={handleHiredSuppliersSection}>
-                  <h1>Fornecedores Selecionados</h1>
-                </button>
-                <button type="button" onClick={handleHiredSuppliersSection}>
-                  <h1>Fornecedores Contratados</h1>
-                </button>
-                <div>
+                <BooleanNavigationButton
+                  booleanActiveButton={hiredSuppliersSection}
+                  type="button"
+                  onClick={() => handleHiredSuppliersSection(true)}
+                >
+                  Selecionados
+                </BooleanNavigationButton>
+
+                <BooleanNavigationButton
+                  type="button"
+                  onClick={() => handleHiredSuppliersSection(false)}
+                  booleanActiveButton={!hiredSuppliersSection}
+                >
+                  Contratados
+                </BooleanNavigationButton>
+
+                <span>
                   <button type="button" onClick={handleAddSupplierDrawer}>
-                    <FiUserPlus size={26} />
+                    <MdPersonAdd size={30} />
                   </button>
-                </div>
+                </span>
               </span>
-              {!hiredSuppliersSection && (
-                <SelectedSuppliers>
-                  <div>
-                    {selectedSuppliers.map(selected => (
-                      <Supplier
-                        key={selected.id}
-                        type="button"
-                        onClick={handleSupplierWindow}
-                      >
-                        <h1>{selected.name}</h1>
-                        <button
-                          type="button"
-                          onClick={() => handleEditHiredSupplier(selected)}
-                        >
-                          {selected.isHired ? (
-                            <FiCheckSquare size={24} />
-                          ) : (
-                            <FiSquare size={24} />
-                          )}
-                        </button>
-                      </Supplier>
-                    ))}
-                  </div>
-                </SelectedSuppliers>
-              )}
-              {!!hiredSuppliersSection && (
-                <SelectedSuppliers>
-                  <div>
-                    {hiredSuppliers.map(hired => (
-                      <Supplier key={hired.id}>
-                        <h1>{hired.name}</h1>
-                        <button
-                          type="button"
-                          onClick={() => handleEditHiredSupplier(hired)}
-                        >
-                          {hired.isHired ? (
-                            <FiCheckSquare size={24} />
-                          ) : (
-                            <FiSquare size={24} />
-                          )}
-                        </button>
-                      </Supplier>
-                    ))}
-                  </div>
-                </SelectedSuppliers>
-              )}
-            </SupplierSection>
+
+              {!hiredSuppliersSection && <h3>{hiredSuppliers.length}</h3>}
+
+              {hiredSuppliersSection && <h3>{selectedSuppliers.length}</h3>}
+
+              <div>
+                {hiredSuppliersSection &&
+                  selectedSuppliers.map(sSupplier => {
+                    supplierCount += 1;
+
+                    return (
+                      <Guest key={sSupplier.id}>
+                        <span>
+                          <p>{supplierCount}</p>
+                          <button type="button" onClick={() => {}}>
+                            <strong>{sSupplier.name}</strong>{' '}
+                            <FiEdit3 size={16} />
+                          </button>
+                        </span>
+
+                        {/* {sSupplier.weplanUser && (
+                          <button type="button">
+                            <FiUser size={24} />
+                          </button>
+                        )} */}
+
+                        <div>
+                          <button
+                            type="button"
+                            onClick={() => handleEditHiredSupplier(sSupplier)}
+                          >
+                            {sSupplier.isHired ? (
+                              <FiCheckSquare size={24} />
+                            ) : (
+                              <FiSquare size={24} />
+                            )}
+                          </button>
+                        </div>
+                      </Guest>
+                    );
+                  })}
+
+                {!hiredSuppliersSection &&
+                  hiredSuppliers.map(hSupplier => {
+                    hiredSupplierCount += 1;
+                    return (
+                      <Guest key={hSupplier.id}>
+                        <span>
+                          <p>{hiredSupplierCount}</p>
+                          <button type="button" onClick={() => {}}>
+                            <strong>{hSupplier.name}</strong>{' '}
+                            <FiEdit3 size={16} />
+                          </button>
+                        </span>
+                        {/* {hSupplier.weplanUser && (
+                          <button type="button">
+                            <FiUser size={24} />
+                          </button>
+                        )} */}
+                        <div>
+                          <button
+                            key={hSupplier.id}
+                            type="button"
+                            onClick={() => handleEditHiredSupplier(hSupplier)}
+                          >
+                            {hSupplier.isHired ? (
+                              <FiCheckSquare size={24} />
+                            ) : (
+                              <FiSquare size={24} />
+                            )}
+                          </button>
+                        </div>
+                      </Guest>
+                    );
+                  })}
+              </div>
+            </BooleanSection>
           )}
           {!!messagesSection && (
             <MessagesSection>
@@ -2642,23 +2705,23 @@ const EventHostDashboard: React.FC = () => {
             </MessagesSection>
           )}
           {!!guestsSection && (
-            <GuestSection>
+            <BooleanSection>
               <span>
-                <GuestNavigationButton
-                  myGuestActive={guestWindow}
+                <BooleanNavigationButton
+                  booleanActiveButton={guestWindow}
                   type="button"
                   onClick={() => handleGuestWindow(true)}
                 >
                   Convidados da Festa
-                </GuestNavigationButton>
+                </BooleanNavigationButton>
 
-                <GuestNavigationButton
+                <BooleanNavigationButton
                   type="button"
                   onClick={() => handleGuestWindow(false)}
-                  myGuestActive={!guestWindow}
+                  booleanActiveButton={!guestWindow}
                 >
                   Meus Convidados
-                </GuestNavigationButton>
+                </BooleanNavigationButton>
 
                 <span>
                   <button type="button" onClick={handleAddGuestDrawer}>
@@ -2777,7 +2840,7 @@ const EventHostDashboard: React.FC = () => {
                     );
                   })}
               </div>
-            </GuestSection>
+            </BooleanSection>
           )}
           {!!financeSection && (
             <Financial>
