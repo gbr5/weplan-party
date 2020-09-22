@@ -1,5 +1,24 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import '../../styles/global';
+
+const appearFromTop = keyframes`
+  0% {
+    opacity: 0;
+    transform: translateY(-150px);
+  }
+  /* 40% {
+    opacity: 0.5;
+    transform: translateY(-100px);
+  }
+  80% {
+    opacity: 0.9;
+    transform: translateY(-50px);
+  } */
+  100% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+`;
 
 export const Container = styled.div`
   position: fixed;
@@ -17,6 +36,8 @@ export const Container = styled.div`
   gap: 16px;
   box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
   padding: 32px;
+
+  animation: ${appearFromTop} 1s;
 
   > button {
     position: absolute;

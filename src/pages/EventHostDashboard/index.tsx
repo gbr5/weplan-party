@@ -27,7 +27,6 @@ import {
   MyEventsDrawerButton,
   SupplierSection,
   SelectedSuppliers,
-  HiredSuppliers,
   Supplier,
   AddSupplierDrawer,
   GuestSection,
@@ -119,17 +118,6 @@ interface IEventSupplierDTO {
   name: string;
   supplier_sub_category: string;
   isHired: boolean;
-}
-interface IEditEventInfo {
-  date: Date;
-  number_of_guests: number;
-  duration: number;
-  budget: number;
-  description: boolean;
-  country: string;
-  local_state: string;
-  city: string;
-  address: string;
 }
 interface IEventParams {
   params: {
@@ -252,6 +240,10 @@ const EventHostDashboard: React.FC = () => {
   const [numberOfOwners, setNumberOfOwners] = useState(0);
   const [numberOfMembers, setNumberOfMembers] = useState(0);
   const [eventDate, setEventDate] = useState(new Date());
+  const [hiredSuppliersSection, setHiredSuppliersSection] = useState(
+    hiredSuppliers.length === 0,
+  );
+  const [firstRow, setFirstRow] = useState(false);
 
   const closeAllWindows = useCallback(() => {
     setMyEventsDrawer(false);
@@ -274,6 +266,11 @@ const EventHostDashboard: React.FC = () => {
     setDeleteMemberDrawer(false);
     setNumberOfGuestDrawer(false);
   }, []);
+
+  const handleFirstRow = useCallback(() => {
+    setFirstRow(!firstRow);
+    closeAllWindows();
+  }, [firstRow, closeAllWindows]);
   const closeAllSections = useCallback(() => {
     setLatestActionsSection(false);
     setGuestsSection(false);
@@ -281,8 +278,8 @@ const EventHostDashboard: React.FC = () => {
     setCheckListSection(false);
     setSupplierSection(false);
     setMessagesSection(false);
+    setFirstRow(false);
   }, []);
-
   const handleMyEventsDrawer = useCallback(() => {
     closeAllWindows();
     setMyEventsDrawer(!myEventsDrawer);
@@ -411,6 +408,9 @@ const EventHostDashboard: React.FC = () => {
     closeAllSections();
     setMessagesSection(true);
   }, [closeAllSections]);
+  const handleHiredSuppliersSection = useCallback(() => {
+    setHiredSuppliersSection(!hiredSuppliersSection);
+  }, [hiredSuppliersSection]);
 
   const handleSelectedWeplanUser = useCallback((WPUser: IUserInfoDTO) => {
     setWpUserName(WPUser.name);
@@ -1404,6 +1404,12 @@ const EventHostDashboard: React.FC = () => {
   }, [eventId, member, addToast, handleGetMembers]);
   const handleDeleteOwner = useCallback(async () => {
     try {
+      console.log(
+        'eventHostDashboard - eventId:',
+        eventId,
+        'owner.id:',
+        owner.id,
+      );
       await api.delete(`/events/${eventId}/event-owners/${owner.id}`);
 
       addToast({
@@ -2366,45 +2372,50 @@ const EventHostDashboard: React.FC = () => {
           </span>
         </SideBar>
         <Main>
-          <FirstRow>
-            <div>
-              <button type="button" onClick={handleGuestsSection}>
-                <h2>Convidados</h2>
-                <p>
-                  {confirmedGuests}/{eventGuests.length}
-                </p>
-              </button>
-            </div>
-            <div>
-              <button type="button" onClick={handleBudgetDrawer}>
-                <h2>Orçamento</h2>
-                <p>R$ {eventInfo.budget ? eventInfo.budget : ''}</p>
-              </button>
-            </div>
-            <div>
-              <button type="button" onClick={handleSupplierSection}>
-                <h2>Fornecedores</h2>
-                <p>
-                  {hiredSuppliers.length}/
-                  {selectedSuppliers.length + hiredSuppliers.length}
-                </p>
-              </button>
-            </div>
-            <div>
-              <button type="button" onClick={handleFinanceSection}>
-                <h2>Financeiro</h2>
-                <p>41%</p>
-              </button>
-            </div>
-            <div>
-              <button type="button" onClick={handleCheckListSection}>
-                <h2>Check-List</h2>
-                <p>
-                  {resolvedCheckListItems}/{checkListItems.length}
-                </p>
-              </button>
-            </div>
-          </FirstRow>
+          <button type="button" onClick={handleFirstRow}>
+            {firstRow ? <FiChevronUp size={40} /> : <FiChevronDown size={40} />}
+          </button>
+          {!!firstRow && (
+            <FirstRow>
+              <div>
+                <button type="button" onClick={handleGuestsSection}>
+                  <h2>Convidados</h2>
+                  <p>
+                    {confirmedGuests}/{eventGuests.length}
+                  </p>
+                </button>
+              </div>
+              <div>
+                <button type="button" onClick={handleBudgetDrawer}>
+                  <h2>Orçamento</h2>
+                  <p>R$ {eventInfo.budget ? eventInfo.budget : ''}</p>
+                </button>
+              </div>
+              <div>
+                <button type="button" onClick={handleSupplierSection}>
+                  <h2>Fornecedores</h2>
+                  <p>
+                    {hiredSuppliers.length}/
+                    {selectedSuppliers.length + hiredSuppliers.length}
+                  </p>
+                </button>
+              </div>
+              <div>
+                <button type="button" onClick={handleFinanceSection}>
+                  <h2>Financeiro</h2>
+                  <p>41%</p>
+                </button>
+              </div>
+              <div>
+                <button type="button" onClick={handleCheckListSection}>
+                  <h2>Check-List</h2>
+                  <p>
+                    {resolvedCheckListItems}/{checkListItems.length}
+                  </p>
+                </button>
+              </div>
+            </FirstRow>
+          )}
           {!!budgetDrawer && (
             <WindowContainer
               onHandleCloseWindow={() => setBudgetDrawer(false)}
@@ -2469,58 +2480,65 @@ const EventHostDashboard: React.FC = () => {
           )}
           {!!supplierSection && (
             <SupplierSection>
-              <SelectedSuppliers>
-                <h1>Fornecedores Selecionados</h1>
-                <button type="button" onClick={handleAddSupplierDrawer}>
-                  <FiUserPlus size={26} />
+              <span>
+                <button type="button" onClick={handleHiredSuppliersSection}>
+                  <h1>Fornecedores Selecionados</h1>
+                </button>
+                <button type="button" onClick={handleHiredSuppliersSection}>
+                  <h1>Fornecedores Contratados</h1>
                 </button>
                 <div>
-                  <h2>{selectedSuppliers.length}</h2>
-                  {selectedSuppliers.map(selected => (
-                    <Supplier
-                      key={selected.id}
-                      type="button"
-                      onClick={handleSupplierWindow}
-                    >
-                      <h1>{selected.name}</h1>
-                      <button
-                        type="button"
-                        onClick={() => handleEditHiredSupplier(selected)}
-                      >
-                        {selected.isHired ? (
-                          <FiCheckSquare size={24} />
-                        ) : (
-                          <FiSquare size={24} />
-                        )}
-                      </button>
-                    </Supplier>
-                  ))}
+                  <button type="button" onClick={handleAddSupplierDrawer}>
+                    <FiUserPlus size={26} />
+                  </button>
                 </div>
-              </SelectedSuppliers>
-              <HiredSuppliers>
-                <h1>Fornecedores Contratados</h1>
-                <button type="button" onClick={handleAddSupplierDrawer}>
-                  <FiUserPlus size={26} />
-                </button>
-                <div>
-                  <h2>{hiredSuppliers.length}</h2>
-                  {hiredSuppliers.map(hired => (
-                    <Supplier key={hired.id}>
-                      <h1>{hired.name}</h1>
-                      <button
+              </span>
+              {!hiredSuppliersSection && (
+                <SelectedSuppliers>
+                  <div>
+                    {selectedSuppliers.map(selected => (
+                      <Supplier
+                        key={selected.id}
                         type="button"
-                        onClick={() => handleEditHiredSupplier(hired)}
+                        onClick={handleSupplierWindow}
                       >
-                        {hired.isHired ? (
-                          <FiCheckSquare size={24} />
-                        ) : (
-                          <FiSquare size={24} />
-                        )}
-                      </button>
-                    </Supplier>
-                  ))}
-                </div>
-              </HiredSuppliers>
+                        <h1>{selected.name}</h1>
+                        <button
+                          type="button"
+                          onClick={() => handleEditHiredSupplier(selected)}
+                        >
+                          {selected.isHired ? (
+                            <FiCheckSquare size={24} />
+                          ) : (
+                            <FiSquare size={24} />
+                          )}
+                        </button>
+                      </Supplier>
+                    ))}
+                  </div>
+                </SelectedSuppliers>
+              )}
+              {!!hiredSuppliersSection && (
+                <SelectedSuppliers>
+                  <div>
+                    {hiredSuppliers.map(hired => (
+                      <Supplier key={hired.id}>
+                        <h1>{hired.name}</h1>
+                        <button
+                          type="button"
+                          onClick={() => handleEditHiredSupplier(hired)}
+                        >
+                          {hired.isHired ? (
+                            <FiCheckSquare size={24} />
+                          ) : (
+                            <FiSquare size={24} />
+                          )}
+                        </button>
+                      </Supplier>
+                    ))}
+                  </div>
+                </SelectedSuppliers>
+              )}
             </SupplierSection>
           )}
           {!!messagesSection && (

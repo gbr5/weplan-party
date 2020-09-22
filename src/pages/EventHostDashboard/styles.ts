@@ -1,7 +1,43 @@
-import styled, { css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import '../../styles/global';
 import { shade } from 'polished';
 import Tooltip from '../../components/Tooltip';
+
+const appearFromTop = keyframes`
+  0% {
+    opacity: 0;
+    transform: translateY(-150px);
+  }
+  /* 40% {
+    opacity: 0.5;
+    transform: translateY(-100px);
+  }
+  80% {
+    opacity: 0.9;
+    transform: translateY(-50px);
+  } */
+  100% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+`;
+
+const appearFromNothing = keyframes`
+  0% {
+    opacity: 1;
+  }
+  /* 40% {
+    opacity: 0.5;
+    transform: translateY(-100px);
+  }
+  80% {
+    opacity: 0.9;
+    transform: translateY(-50px);
+  } */
+  100% {
+    opacity: 0;
+  }
+`;
 
 export const Container = styled.div`
   position: relative;
@@ -9,6 +45,7 @@ export const Container = styled.div`
   padding: 0;
   height: 100%;
   display: flex;
+  animation: ${appearFromTop} 1s;
 `;
 
 export const EventPageContent = styled.main`
@@ -17,6 +54,7 @@ export const EventPageContent = styled.main`
   display: flex;
   padding-right: 80px;
   gap: 80px;
+  animation: ${appearFromTop} 1s;
 `;
 
 export const SideBar = styled.div`
@@ -362,10 +400,21 @@ export const EditEventInfoDrawer = styled.div`
 
 export const Main = styled.div`
   display: flex;
+  width: 100%;
   flex-direction: column;
   margin-top: 32px;
   margin-bottom: 32px;
-  gap: 32px;
+
+  > button {
+    background: transparent;
+    border: none;
+    margin: 70px auto 16px;
+
+    > svg {
+      color: var(--primary-color);
+      transition: 1s;
+    }
+  }
 `;
 
 export const EditEventNameDrawer = styled.div`
@@ -436,15 +485,19 @@ export const EditEventNameCloseButton = styled.button`
 `;
 
 export const FirstRow = styled.div`
+  position: absolute;
+  top: -100px;
   width: 100%;
-  height: 100px;
+  height: 90px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 10px;
   position: relative;
   gap: 80px;
-  margin: 112px auto 16px;
+  margin: 100px auto 0px;
+
+  animation: ${appearFromTop} 1s;
 
   div {
     display: flex;
@@ -541,11 +594,71 @@ export const BudgetDrawer = styled.div`
 `;
 
 export const SupplierSection = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   border: none;
-  gap: 16px;
+  gap: 24px;
   width: 100%;
+
+  animation: ${appearFromTop} 1s;
+
+  > span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    width: 100%;
+    position: relative;
+    margin: 24px auto;
+
+    > button {
+      background: transparent;
+      border: none;
+
+      > h1 {
+        display: flex;
+        gap: 16px;
+        font-size: 24px;
+        color: var(--primary-color);
+        transition: 0.5s;
+
+        > &:hover {
+          opacity: 0.6;
+        }
+
+        > p {
+          color: var(--title-color);
+        }
+      }
+    }
+
+    > div {
+      position: absolute;
+      right: 16px;
+      top: 0;
+
+      > button {
+        background: transparent;
+        border: none;
+        color: var(--title-color);
+
+        svg {
+          color: var(--primary-color);
+          border-radius: 50%;
+          transition: 0.4s;
+
+          &:hover {
+            color: var(--title-color);
+            /* opacity: 0.8; */
+            background: rgba(255, 150, 10, 0.3);
+            box-shadow: 0px 0px 6px 6px rgba(255, 150, 10, 0.3);
+          }
+        }
+      }
+    }
+  }
 `;
 
 export const SelectedSuppliers = styled.div`
@@ -560,11 +673,7 @@ export const SelectedSuppliers = styled.div`
   border-radius: 8px;
   padding: 16px;
   height: 350px;
-
-  > h1 {
-    font-size: 24px;
-    color: var(--primary-color);
-  }
+  transition: 0.5s;
 
   > div {
     padding: 16px;
@@ -577,79 +686,6 @@ export const SelectedSuppliers = styled.div`
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
-  }
-  > button {
-    background: transparent;
-    border: none;
-    position: absolute;
-    right: 16px;
-    top: 16px;
-    color: var(--title-color);
-
-    svg {
-      color: var(--primary-color);
-      border-radius: 50%;
-      transition: 0.4s;
-
-      &:hover {
-        color: var(--title-color);
-        /* opacity: 0.8; */
-        background: rgba(255, 150, 10, 0.3);
-        box-shadow: 0px 0px 6px 6px rgba(255, 150, 10, 0.3);
-      }
-    }
-  }
-`;
-
-export const HiredSuppliers = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
-  position: relative;
-  background: var(--header-background-color);
-  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
-  border-radius: 8px;
-  padding: 16px;
-
-  > h1 {
-    font-size: 24px;
-    color: var(--primary-color);
-  }
-
-  > div {
-    width: 100%;
-
-    padding: 16px;
-    border-radius: 8px;
-    background-color: var(--header-background-color);
-    box-shadow: 2px 2px 3px 2px rgba(50, 50, 50, 0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-  }
-  > button {
-    background: transparent;
-    border: none;
-    position: absolute;
-    right: 16px;
-    top: 16px;
-    color: var(--title-color);
-
-    svg {
-      color: var(--primary-color);
-      border-radius: 50%;
-      transition: 0.4s;
-
-      &:hover {
-        color: var(--title-color);
-        /* opacity: 0.8; */
-        background: rgba(255, 150, 10, 0.3);
-        box-shadow: 0px 0px 6px 6px rgba(255, 150, 10, 0.3);
-      }
-    }
   }
 `;
 
@@ -708,6 +744,7 @@ export const GuestSection = styled.div`
   flex-direction: column;
   gap: 16px;
   position: relative;
+  animation: ${appearFromTop} 1s;
 
   > h3 {
     font-size: 24px;
@@ -986,6 +1023,7 @@ export const CheckList = styled.section`
   box-shadow: 1px 1px 5px 4px rgba(90, 90, 90, 0.02);
   position: relative;
   overflow-y: scroll;
+  animation: ${appearFromTop} 1s;
 
   > button {
     right: 16px;
@@ -1072,6 +1110,7 @@ export const Financial = styled.div`
   justify-content: center;
   gap: 32px;
   box-sizing: border-box;
+  animation: ${appearFromTop} 1s;
 
   img {
     width: 100%;
@@ -1084,9 +1123,11 @@ export const LatestNews = styled.div`
   padding: 24px;
   border-radius: 8px;
   height: 300px;
+  width: 100%;
   box-shadow: 2px 2px 3px 2px rgba(50, 50, 50, 0.1);
   flex: 1;
   align-items: center;
+  animation: ${appearFromTop} 1s;
 
   > strong {
     color: var(--letter-color-2);
@@ -1169,6 +1210,7 @@ export const MessagesSection = styled.div`
   display: grid;
   grid-template-columns: 1fr 3fr;
   gap: 1px;
+  animation: ${appearFromTop} 1s;
 `;
 
 export const UsersChat = styled.div`
@@ -1364,6 +1406,7 @@ export const GuestConfirmedDrawer = styled.div`
 export const Calendar = styled.aside`
   width: 100%;
   height: 30%;
+  animation: ${appearFromTop} 1s;
 
   .DayPicker {
     background: var(--background-color);
