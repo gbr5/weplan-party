@@ -68,26 +68,12 @@ const SignUp: React.FC = () => {
   const handleCompanyInfo = useCallback(() => {
     setIsSupplier(true);
     setIsCompanyQuestion(true);
-    console.log(
-      'companyInfo',
-      'isSupplier',
-      isSupplier,
-      'isCompanyQuestion',
-      isCompanyQuestion,
-    );
-  }, [isSupplier, isCompanyQuestion]);
+  }, []);
 
   const handlePersonInfo = useCallback(() => {
     setIsSupplier(false);
     setIsCompanyQuestion(true);
-    console.log(
-      'companyInfo',
-      'isSupplier',
-      isSupplier,
-      'isCompanyQuestion',
-      isCompanyQuestion,
-    );
-  }, [isSupplier, isCompanyQuestion]);
+  }, []);
 
   const handleSubmitPersonInfo = useCallback(
     async (data: IPersonUser) => {
@@ -214,10 +200,8 @@ const SignUp: React.FC = () => {
         setIsCompanyQuestion(true);
 
         if (isCompany) {
-          console.log('isCompany', isCompany);
           handleCompanyInfo();
         } else {
-          console.log('isCompany', isCompany);
           handlePersonInfo();
         }
 

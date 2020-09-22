@@ -526,11 +526,8 @@ const EventHostDashboard: React.FC = () => {
     }
   }, [eventId]);
   const handleGetEventInfo = useCallback(() => {
-    console.log('Entrou aqui no get event info');
-    console.log('eventId:', eventId);
     try {
       api.get<IEventInfo>(`/events/${eventId}/event-info`).then(response => {
-        console.log('552', response.data);
         setEventInfo(response.data);
       });
     } catch (err) {
@@ -604,7 +601,6 @@ const EventHostDashboard: React.FC = () => {
 
   const handleAddSupplier = useCallback(
     async (data: ICreateSupplier) => {
-      console.log('supplierData:', data, 'isHired:', isHired);
       try {
         formRef.current?.setErrors([]);
 
@@ -615,7 +611,6 @@ const EventHostDashboard: React.FC = () => {
         await schema.validate(data, {
           abortEarly: false,
         });
-        console.log('passou pelo YUP:', data);
 
         await api.post(`events/${eventId}/event-suppliers`, {
           name: data.name,
@@ -1043,7 +1038,6 @@ const EventHostDashboard: React.FC = () => {
 
   const handleEditGuest = useCallback(
     async (data: IEventGuest) => {
-      console.log(data);
       try {
         formRef.current?.setErrors([]);
 
@@ -1054,12 +1048,6 @@ const EventHostDashboard: React.FC = () => {
 
           await schema.validate(data, {
             abortEarly: false,
-          });
-          console.log('guest', {
-            first_name: updated_guest.first_name,
-            last_name: updated_guest.last_name,
-            description: data.description,
-            confirmed: updated_guest.confirmed,
           });
 
           await api.put(`events/${eventId}/guests/${updated_guest.id}`, {
@@ -1402,12 +1390,6 @@ const EventHostDashboard: React.FC = () => {
   }, [eventId, member, addToast, handleGetMembers]);
   const handleDeleteOwner = useCallback(async () => {
     try {
-      console.log(
-        'eventHostDashboard - eventId:',
-        eventId,
-        'owner.id:',
-        owner.id,
-      );
       await api.delete(`/events/${eventId}/event-owners/${owner.id}`);
 
       addToast({
@@ -1685,8 +1667,7 @@ const EventHostDashboard: React.FC = () => {
           friends={friends}
           onHandleFriendsListDrawer={() => setFriendsWindow(false)}
           handleSelectedFriend={(friend: IUserInfoDTO) =>
-            handleSelectedWeplanUser(friend)
-          }
+            handleSelectedWeplanUser(friend)}
         />
       )}
       {!!eventInfoDrawer && (

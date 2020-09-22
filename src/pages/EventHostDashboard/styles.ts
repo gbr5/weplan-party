@@ -989,10 +989,10 @@ export const CheckList = styled.section`
   }
 
   > strong {
-    color: var(--letter-color-2);
+    color: var(--letter-color-5);
     font-size: 20px;
     line-height: 26px;
-    border-bottom: 1px solid var(--letter-color-4);
+    border-bottom: 1px solid var(--letter-color-5);
     display: block;
     margin-bottom: 16px;
     padding-bottom: 16px;
@@ -1004,8 +1004,8 @@ export const CheckList = styled.section`
     display: flex;
     grid-template-columns: 4fr 16fr 1fr;
     align-items: center;
-    border-bottom: 1px solid var(--letter-color-4);
-    color: var(--title-color);
+    border-bottom: 1px solid var(--letter-color-3);
+    color: var(--primary-color);
 
     > span {
       margin: 0 auto;
@@ -1014,7 +1014,7 @@ export const CheckList = styled.section`
     button {
       background: transparent;
       border: none;
-      color: var(--primary-color);
+      color: var(--letter-color-5);
 
       > span {
         margin-right: auto;
