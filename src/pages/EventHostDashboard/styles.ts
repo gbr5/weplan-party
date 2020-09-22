@@ -28,7 +28,7 @@ export const Container = styled.div`
   padding: 0;
   height: 100%;
   display: flex;
-  animation: ${appearFromTop} 1s;
+  animation: ${appearFromTop} 0.8s;
 `;
 
 export const EventPageContent = styled.main`
@@ -37,7 +37,7 @@ export const EventPageContent = styled.main`
   display: flex;
   padding-right: 80px;
   gap: 80px;
-  animation: ${appearFromTop} 1s;
+  animation: ${appearFromTop} 0.8s;
 `;
 
 export const SideBar = styled.div`
@@ -480,7 +480,7 @@ export const FirstRow = styled.div`
   gap: 80px;
   margin: 100px auto 0px;
 
-  animation: ${appearFromTop} 1s;
+  animation: ${appearFromTop} 0.8s;
 
   div {
     display: flex;
@@ -585,7 +585,7 @@ export const SupplierSection = styled.div`
   gap: 24px;
   width: 100%;
 
-  animation: ${appearFromTop} 1s;
+  animation: ${appearFromTop} 0.8s;
 
   > span {
     display: flex;
@@ -727,7 +727,7 @@ export const GuestSection = styled.div`
   flex-direction: column;
   gap: 16px;
   position: relative;
-  animation: ${appearFromTop} 1s;
+  animation: ${appearFromTop} 0.8s;
 
   > h3 {
     font-size: 24px;
@@ -1006,7 +1006,7 @@ export const CheckList = styled.section`
   box-shadow: 1px 1px 5px 4px rgba(90, 90, 90, 0.02);
   position: relative;
   overflow-y: scroll;
-  animation: ${appearFromTop} 1s;
+  animation: ${appearFromTop} 0.8s;
 
   > button {
     right: 16px;
@@ -1093,7 +1093,7 @@ export const Financial = styled.div`
   justify-content: center;
   gap: 32px;
   box-sizing: border-box;
-  animation: ${appearFromTop} 1s;
+  animation: ${appearFromTop} 0.8s;
 
   img {
     width: 100%;
@@ -1110,7 +1110,7 @@ export const LatestNews = styled.div`
   box-shadow: 2px 2px 3px 2px rgba(50, 50, 50, 0.1);
   flex: 1;
   align-items: center;
-  animation: ${appearFromTop} 1s;
+  animation: ${appearFromTop} 0.8s;
 
   > strong {
     color: var(--letter-color-2);
@@ -1193,7 +1193,7 @@ export const MessagesSection = styled.div`
   display: grid;
   grid-template-columns: 1fr 3fr;
   gap: 1px;
-  animation: ${appearFromTop} 1s;
+  animation: ${appearFromTop} 0.8s;
 `;
 
 export const UsersChat = styled.div`

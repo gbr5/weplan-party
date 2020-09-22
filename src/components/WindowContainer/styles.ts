@@ -37,7 +37,7 @@ export const Container = styled.div`
   box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
   padding: 32px;
 
-  animation: ${appearFromTop} 1s;
+  animation: ${appearFromTop} 0.8s;
 
   > button {
     position: absolute;
