@@ -2654,14 +2654,19 @@ const EventHostDashboard: React.FC = () => {
         >
           <Form ref={formRef} onSubmit={handleCreateTransactionAgreement}>
             <FormWindow>
-              <h1>Fornecedor Contratado</h1>
+              <h2>Fornecedor Contratado</h2>
+              <h1>{supplierInfo.name}</h1>
+
+              <p>Valor do contrato:</p>
 
               <Input
                 name="total_amount"
                 type="number"
-                placeholder="Valor contratado?"
+                placeholder="R$"
                 containerStyle={{ height: '40px' }}
               />
+
+              <p>Contrato quitado?</p>
 
               <div>
                 <button type="button" onClick={() => handleIsPaid(false)}>
@@ -2672,15 +2677,18 @@ const EventHostDashboard: React.FC = () => {
                 </button>
               </div>
               {!isPaid && (
-                <input
-                  defaultValue={1}
-                  name="number_of_installments"
-                  type="number"
-                  placeholder="Valor contratado?"
-                  style={{ height: '40px' }}
-                  onChange={e =>
-                    setNumberOfInstallments(Number(e.target.value))}
-                />
+                <>
+                  <p>Número de parcelas do contrato:</p>
+                  <input
+                    defaultValue={1}
+                    name="number_of_installments"
+                    type="number"
+                    placeholder="Valor contratado?"
+                    style={{ height: '40px' }}
+                    onChange={e =>
+                      setNumberOfInstallments(Number(e.target.value))}
+                  />
+                </>
               )}
               {!!submitButton && <button type="submit">Salvar</button>}
             </FormWindow>
@@ -2701,7 +2709,18 @@ const EventHostDashboard: React.FC = () => {
           <FormWindow>
             <h1>Forma de pagamento</h1>
 
-            <span>
+            <span
+              style={
+                numberOfInstallments > 3
+                  ? {
+                      paddingTop: `${numberOfInstallments * 20}px`,
+                      overflowY: 'scroll',
+                    }
+                  : {
+                      paddingTop: `${numberOfInstallments * 1}px`,
+                    }
+              }
+            >
               <p>Parcelas</p>
               {installmentsRows.map(row => {
                 i_count += 1;

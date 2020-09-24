@@ -1706,6 +1706,12 @@ export const FormWindow = styled.div`
     margin-bottom: 8px;
   }
 
+  > h2 {
+    font-size: 24px;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+  }
+
   > button {
     margin-top: 12px;
     background: var(--primary-color);
@@ -1721,7 +1727,7 @@ export const FormWindow = styled.div`
     gap: 24px;
 
     > button {
-      margin-top: 24px;
+      margin-top: 12px;
       background: var(--primary-color);
       border: none;
       height: 40px;
@@ -1738,9 +1744,7 @@ export const FormWindow = styled.div`
     gap: 16px;
     width: 100%;
     border-top: 1px solid var(--letter-color-4);
-    padding: 500px 16px 16px;
-    overflow-y: scroll;
-    position: relative;
+    padding: 16px;
 
     > p {
       font-size: 24px;
