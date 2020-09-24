@@ -170,8 +170,13 @@ interface ISupplierSubCategoryDTO {
   sub_category: string;
 }
 interface ITransactionAgreementDTO {
+  id: string;
   total_amount: number;
   number_of_installments: number;
+}
+interface ITransactionsDTO {
+  amount: number;
+  due_date: Date;
 }
 const EventHostDashboard: React.FC = () => {
   const history = useHistory();
@@ -271,12 +276,17 @@ const EventHostDashboard: React.FC = () => {
   const [transactionAgreementWindow, setTransactionAgreementWindow] = useState(
     false,
   );
+  const [transactionsWindow, setTransactionsWindow] = useState(false);
   const [isPaid, setIsPaid] = useState(true);
   const [submitButton, setSubmitButton] = useState(false);
   const [supplierInfo, setSupplierInfo] = useState<IEventSupplierDTO>(
     {} as IEventSupplierDTO,
   );
   const [numberOfInstallments, setNumberOfInstallments] = useState(1);
+  const [agreementInfo, setAgreementInfo] = useState(
+    {} as ITransactionAgreementDTO,
+  );
+  const [installmentsRows, setInstallmentsRows] = useState<number[]>([]);
 
   const closeAllWindows = useCallback(() => {
     setMyEventsDrawer(false);
@@ -1531,7 +1541,7 @@ const EventHostDashboard: React.FC = () => {
       throw new Error(err);
     }
   }, [addToast, eventId, checkListItem, handleGetCheckListItems]);
-  const handleCreateTransaction = useCallback(
+  const handleCreateTransactionAgreement = useCallback(
     async (data: ITransactionAgreementDTO) => {
       try {
         formRef.current?.setErrors([]);
@@ -1558,7 +1568,20 @@ const EventHostDashboard: React.FC = () => {
             isPaid,
           });
         }
+        console.log(numberOfInstallments);
+        // for (let i = 0; i === numberOfInstallments; i + 1) {
+        //   console.log(i);
+        //   setInstallmentsRows([...installmentsRows, i]);
+        // }
+        setInstallmentsRows([...Array(numberOfInstallments)]);
+        console.log(installmentsRows);
+
         handleEditHiredSupplier(supplierInfo);
+        setAgreementInfo(response.data);
+        setTransactionAgreementWindow(false);
+        setSupplierInfo({} as IEventSupplierDTO);
+        setSubmitButton(false);
+        setTransactionsWindow(true);
 
         addToast({
           type: 'success',
@@ -1585,6 +1608,7 @@ const EventHostDashboard: React.FC = () => {
       supplierInfo,
       handleEditHiredSupplier,
       numberOfInstallments,
+      installmentsRows,
     ],
   );
   const handleCreateTransactionWindow = useCallback(props => {
@@ -1592,7 +1616,65 @@ const EventHostDashboard: React.FC = () => {
     setTransactionAgreementWindow(true);
     // handleEditHiredSupplier(props);
   }, []);
+  const handleCreateTransactions = useCallback(
+    async (data: ITransactionsDTO) => {
+      console.log({
+        agreement_id: agreementInfo.id,
+        amount: data.amount,
+        due_date: data.due_date,
+        isPaid,
+      });
+      try {
+        formRef.current?.setErrors([]);
 
+        const schema = Yup.object().shape({
+          amount: Yup.number(),
+          due_date: Yup.date(),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+        console.log({
+          agreement_id: agreementInfo.id,
+          amount: data.amount,
+          due_date: data.due_date,
+          isPaid,
+        });
+        await api.post('/finances/agreements/transactions', {
+          agreement_id: agreementInfo.id,
+          amount: data.amount,
+          due_date: data.due_date,
+          isPaid,
+        });
+        setIsPaid(false);
+
+        addToast({
+          type: 'success',
+          title: 'Membro da festa adicionado com sucesso',
+          description: 'Ele já pode visualizar as informações do evento.',
+        });
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro ao adicionar membro da festa',
+          description: 'Erro ao adicionar membro da festa, tente novamente.',
+        });
+      }
+    },
+    [addToast, agreementInfo, isPaid],
+  );
+  const handleCloseTransactionWindow = useCallback(() => {
+    setAgreementInfo({} as ITransactionAgreementDTO);
+    setIsPaid(false);
+    setTransactionsWindow(false);
+  }, []);
   const handleMyEventDashboard = useCallback(
     (my_event: IEvent) => {
       closeAllWindows();
@@ -1644,6 +1726,7 @@ const EventHostDashboard: React.FC = () => {
   let myGuestCount = 0;
   let supplierCount = 0;
   let hiredSupplierCount = 0;
+  let i_count = 0;
 
   return (
     <Container>
@@ -1826,8 +1909,7 @@ const EventHostDashboard: React.FC = () => {
           friends={friends}
           onHandleFriendsListDrawer={() => setFriendsWindow(false)}
           handleSelectedFriend={(friend: IUserInfoDTO) =>
-            handleSelectedWeplanUser(friend)
-          }
+            handleSelectedWeplanUser(friend)}
         />
       )}
       {!!eventInfoDrawer && (
@@ -2512,8 +2594,7 @@ const EventHostDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={() =>
-                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')
-                }
+                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')}
               >
                 <MdBuild size={50} />
                 <h1>Estruturas, Cênica e Boate</h1>
@@ -2549,8 +2630,7 @@ const EventHostDashboard: React.FC = () => {
                   key={subCategory.id}
                   type="button"
                   onClick={() =>
-                    handleAddSupplierDrawer(subCategory.sub_category)
-                  }
+                    handleAddSupplierDrawer(subCategory.sub_category)}
                 >
                   {/* <MdFolderSpecial size={50} /> */}
                   <h1>{subCategory.sub_category}</h1>
@@ -2571,7 +2651,7 @@ const EventHostDashboard: React.FC = () => {
             width: '90%',
           }}
         >
-          <Form ref={formRef} onSubmit={handleCreateTransaction}>
+          <Form ref={formRef} onSubmit={handleCreateTransactionAgreement}>
             <FormWindow>
               <h1>Fornecedor Contratado</h1>
 
@@ -2598,13 +2678,66 @@ const EventHostDashboard: React.FC = () => {
                   placeholder="Valor contratado?"
                   style={{ height: '40px' }}
                   onChange={e =>
-                    setNumberOfInstallments(Number(e.target.value))
-                  }
+                    setNumberOfInstallments(Number(e.target.value))}
                 />
               )}
               {!!submitButton && <button type="submit">Salvar</button>}
             </FormWindow>
           </Form>
+        </WindowContainer>
+      )}
+      {!!transactionsWindow && (
+        <WindowContainer
+          onHandleCloseWindow={() => setTransactionsWindow(false)}
+          containerStyle={{
+            zIndex: 10,
+            top: '5%',
+            left: '5%',
+            height: '90%',
+            width: '90%',
+          }}
+        >
+          <FormWindow>
+            <h1>Forma de pagamento</h1>
+
+            {installmentsRows.map(row => {
+              i_count += 1;
+              console.log(row);
+
+              return (
+                <div key={i_count}>
+                  <p>{i_count}° parcela</p>
+                  <Form ref={formRef} onSubmit={handleCreateTransactions}>
+                    <Input
+                      name="amount"
+                      type="currency"
+                      placeholder="Valor da parcela"
+                      containerStyle={{ height: '40px' }}
+                    />
+                    <p>Vencimento</p>
+                    <Input
+                      name="due_date"
+                      type="date"
+                      containerStyle={{ height: '40px' }}
+                    />
+                    <p>Pago?</p>
+                    <span>
+                      <button type="button" onClick={() => setIsPaid(true)}>
+                        Sim
+                      </button>
+                      <button type="button" onClick={() => setIsPaid(false)}>
+                        Não
+                      </button>
+                    </span>
+                    <button type="submit">Salvar</button>
+                  </Form>
+                </div>
+              );
+            })}
+            <button type="button" onClick={handleCloseTransactionWindow}>
+              Salvar todas as alterações
+            </button>
+          </FormWindow>
         </WindowContainer>
       )}
       <EventPageContent>
@@ -2876,7 +3009,8 @@ const EventHostDashboard: React.FC = () => {
                           <button
                             type="button"
                             onClick={() =>
-                              handleCreateTransactionWindow(sSupplier)}
+                              handleCreateTransactionWindow(sSupplier)
+                            }
                           >
                             {sSupplier.isHired ? (
                               <FiCheckSquare size={24} />
