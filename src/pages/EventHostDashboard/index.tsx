@@ -68,6 +68,7 @@ import {
   MembersContainer,
   EditEventInfoDrawer,
   EventInfo,
+  FormWindow,
 } from './styles';
 import PageHeader from '../../components/PageHeader';
 import MenuButton from '../../components/MenuButton';
@@ -168,6 +169,10 @@ interface ISupplierSubCategoryDTO {
   id: string;
   sub_category: string;
 }
+interface ITransactionAgreementDTO {
+  total_amount: number;
+  number_of_installments: number;
+}
 const EventHostDashboard: React.FC = () => {
   const history = useHistory();
   const formRef = useRef<FormHandles>(null);
@@ -263,6 +268,15 @@ const EventHostDashboard: React.FC = () => {
     ISupplierSubCategoryDTO[]
   >([]);
   const [supplierCategoryWindow, setSupplierCategoryWindow] = useState(false);
+  const [transactionAgreementWindow, setTransactionAgreementWindow] = useState(
+    false,
+  );
+  const [isPaid, setIsPaid] = useState(true);
+  const [submitButton, setSubmitButton] = useState(false);
+  const [supplierInfo, setSupplierInfo] = useState<IEventSupplierDTO>(
+    {} as IEventSupplierDTO,
+  );
+  const [numberOfInstallments, setNumberOfInstallments] = useState(1);
 
   const closeAllWindows = useCallback(() => {
     setMyEventsDrawer(false);
@@ -509,6 +523,11 @@ const EventHostDashboard: React.FC = () => {
     },
     [handleWeplanGuestDrawer],
   );
+
+  const handleIsPaid = useCallback(props => {
+    setIsPaid(props);
+    setSubmitButton(true);
+  }, []);
 
   const handleGetSupplierSubCategory = useCallback(() => {
     try {
@@ -1382,6 +1401,7 @@ const EventHostDashboard: React.FC = () => {
   );
   const handleEditHiredSupplier = useCallback(
     async (data: IEventSupplierDTO) => {
+      console.log(data);
       try {
         await api.put(`events/${eventId}/event-suppliers/${data.id}`, {
           name: data.name,
@@ -1511,6 +1531,67 @@ const EventHostDashboard: React.FC = () => {
       throw new Error(err);
     }
   }, [addToast, eventId, checkListItem, handleGetCheckListItems]);
+  const handleCreateTransaction = useCallback(
+    async (data: ITransactionAgreementDTO) => {
+      try {
+        formRef.current?.setErrors([]);
+
+        const schema = Yup.object().shape({
+          total_amount: Yup.number(),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+
+        const response = await api.post(`finances/transaction-agreements`, {
+          supplier_id: supplierInfo.id,
+          amount: data.total_amount,
+          number_of_installments: numberOfInstallments,
+        });
+
+        if (response && isPaid) {
+          await api.post('/finances/agreements/transactions', {
+            agreement_id: response.data.id,
+            amount: Number(data.total_amount),
+            due_date: '2020-09-19 18:11:25',
+            isPaid,
+          });
+        }
+        handleEditHiredSupplier(supplierInfo);
+
+        addToast({
+          type: 'success',
+          title: 'Membro da festa adicionado com sucesso',
+          description: 'Ele já pode visualizar as informações do evento.',
+        });
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro ao adicionar membro da festa',
+          description: 'Erro ao adicionar membro da festa, tente novamente.',
+        });
+      }
+    },
+    [
+      addToast,
+      isPaid,
+      supplierInfo,
+      handleEditHiredSupplier,
+      numberOfInstallments,
+    ],
+  );
+  const handleCreateTransactionWindow = useCallback(props => {
+    setSupplierInfo(props);
+    setTransactionAgreementWindow(true);
+    // handleEditHiredSupplier(props);
+  }, []);
 
   const handleMyEventDashboard = useCallback(
     (my_event: IEvent) => {
@@ -1572,7 +1653,7 @@ const EventHostDashboard: React.FC = () => {
           <button type="button" onClick={handleEditEventNameDrawer}>
             <h5>
               {event.name}
-              <FiEdit3 size={20} />
+              <FiEdit3 size={16} />
             </h5>
           </button>
         </span>
@@ -1745,7 +1826,8 @@ const EventHostDashboard: React.FC = () => {
           friends={friends}
           onHandleFriendsListDrawer={() => setFriendsWindow(false)}
           handleSelectedFriend={(friend: IUserInfoDTO) =>
-            handleSelectedWeplanUser(friend)}
+            handleSelectedWeplanUser(friend)
+          }
         />
       )}
       {!!eventInfoDrawer && (
@@ -2006,11 +2088,17 @@ const EventHostDashboard: React.FC = () => {
                   </button>
                 </h1>
               )}
-              <Input name="name" type="text" placeholder="Nome do fornecedor" />
+              <Input
+                name="name"
+                type="text"
+                placeholder="Nome do fornecedor"
+                containerStyle={{ height: '40px' }}
+              />
               <Input
                 name="supplier_sub_category"
                 type="text"
                 placeholder="Qual o serviço contratado?"
+                containerStyle={{ height: '40px' }}
               />
               <button type="submit">
                 <h3>Salvar</h3>
@@ -2424,7 +2512,8 @@ const EventHostDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={() =>
-                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')}
+                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')
+                }
               >
                 <MdBuild size={50} />
                 <h1>Estruturas, Cênica e Boate</h1>
@@ -2460,7 +2549,8 @@ const EventHostDashboard: React.FC = () => {
                   key={subCategory.id}
                   type="button"
                   onClick={() =>
-                    handleAddSupplierDrawer(subCategory.sub_category)}
+                    handleAddSupplierDrawer(subCategory.sub_category)
+                  }
                 >
                   {/* <MdFolderSpecial size={50} /> */}
                   <h1>{subCategory.sub_category}</h1>
@@ -2470,7 +2560,53 @@ const EventHostDashboard: React.FC = () => {
           </MembersWindow>
         </WindowContainer>
       )}
+      {!!transactionAgreementWindow && (
+        <WindowContainer
+          onHandleCloseWindow={() => setTransactionAgreementWindow(false)}
+          containerStyle={{
+            zIndex: 10,
+            top: '5%',
+            left: '5%',
+            height: '90%',
+            width: '90%',
+          }}
+        >
+          <Form ref={formRef} onSubmit={handleCreateTransaction}>
+            <FormWindow>
+              <h1>Fornecedor Contratado</h1>
 
+              <Input
+                name="total_amount"
+                type="number"
+                placeholder="Valor contratado?"
+                containerStyle={{ height: '40px' }}
+              />
+
+              <span>
+                <button type="button" onClick={() => handleIsPaid(false)}>
+                  Não
+                </button>
+                <button type="button" onClick={() => handleIsPaid(true)}>
+                  Sim
+                </button>
+              </span>
+              {!isPaid && (
+                <input
+                  defaultValue={1}
+                  name="number_of_installments"
+                  type="number"
+                  placeholder="Valor contratado?"
+                  style={{ height: '40px' }}
+                  onChange={e =>
+                    setNumberOfInstallments(Number(e.target.value))
+                  }
+                />
+              )}
+              {!!submitButton && <button type="submit">Salvar</button>}
+            </FormWindow>
+          </Form>
+        </WindowContainer>
+      )}
       <EventPageContent>
         {sidebar ? (
           <span>
@@ -2739,7 +2875,8 @@ const EventHostDashboard: React.FC = () => {
                         <div>
                           <button
                             type="button"
-                            onClick={() => handleEditHiredSupplier(sSupplier)}
+                            onClick={() =>
+                              handleCreateTransactionWindow(sSupplier)}
                           >
                             {sSupplier.isHired ? (
                               <FiCheckSquare size={24} />

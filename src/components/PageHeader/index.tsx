@@ -344,7 +344,6 @@ const PageHeader: React.FC = ({ children }) => {
 
           <button type="button" onClick={handleNavigateToDashboard}>
             <img src={logo} alt="WePlan" />
-            {/* <Logo>WePlan</Logo> */}
           </button>
 
           <Profile>
@@ -355,7 +354,6 @@ const PageHeader: React.FC = ({ children }) => {
           {children}
           <Menu>
             <Swicth
-              // eslint-disable-next-line @typescript-eslint/no-empty-function
               onChange={toggleTheme}
               checked={themeBoolean}
               checkedIcon={false}

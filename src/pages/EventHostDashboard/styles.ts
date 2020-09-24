@@ -17,7 +17,7 @@ const appearFromTop = keyframes`
 const appearFromLeft = keyframes`
   0% {
     opacity: 0;
-    transform: translateX(-100px);
+    transform: translateX(-300px);
   }
   100% {
     opacity: 1;
@@ -1687,5 +1687,29 @@ export const NumberOfGuestWindow = styled.div`
       opacity: 0.8;
       box-shadow: 2px 2px 5px 3px rgba(255, 150, 10, 0.3);
     }
+  }
+`;
+
+export const FormWindow = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+
+  > h1 {
+    font-size: 24px;
+    color: var(--title-color);
+    margin-bottom: 32px;
+  }
+
+  button {
+    margin-top: 24px;
+    background: var(--primary-color);
+    border: none;
+    height: 40px;
+    width: 91.5%;
+    border-radius: 4px;
   }
 `;
