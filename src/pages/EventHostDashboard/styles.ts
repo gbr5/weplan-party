@@ -1697,15 +1697,17 @@ export const FormWindow = styled.div`
   justify-content: center;
   gap: 24px;
   width: 100%;
+  position: relative;
+  box-sizing: border-box;
 
   > h1 {
     font-size: 28px;
     color: var(--title-color);
-    margin-bottom: 32px;
+    margin-bottom: 8px;
   }
 
   > button {
-    margin-top: 24px;
+    margin-top: 12px;
     background: var(--primary-color);
     border: none;
     height: 40px;
@@ -1713,7 +1715,7 @@ export const FormWindow = styled.div`
     border-radius: 4px;
   }
 
-  > span {
+  > div {
     display: flex;
     width: 100%;
     gap: 24px;
@@ -1728,13 +1730,17 @@ export const FormWindow = styled.div`
     }
   }
 
-  > div {
+  > span {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 16px;
     width: 100%;
+    border-top: 1px solid var(--letter-color-4);
+    padding: 500px 16px 16px;
+    overflow-y: scroll;
+    position: relative;
 
     > p {
       font-size: 24px;
@@ -1743,7 +1749,7 @@ export const FormWindow = styled.div`
   }
 `;
 
-export const MiniForm = styled.span`
+export const MiniForm = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1753,17 +1759,17 @@ export const MiniForm = styled.span`
   > button {
     background: var(--green-icon);
     border: none;
+    height: 60px;
     width: 150px;
-    margin: 0 auto;
     border-radius: 4px;
   }
 
-  > div {
+  > span {
     display: flex;
     flex-direction: column;
     justify-content: center;
     /* align-items: center; */
-    width: 100%;
+    width: 90%;
     gap: 8px;
 
     > p {
@@ -1771,15 +1777,16 @@ export const MiniForm = styled.span`
       color: var(--title-color);
     }
 
-    > span {
+    > div {
       display: flex;
       gap: 8px;
+      width: 100%;
 
       > button {
         background: var(--primary-color);
         border: none;
         height: 40px;
-        width: 91.5%;
+        width: 100%;
         border-radius: 4px;
       }
     }

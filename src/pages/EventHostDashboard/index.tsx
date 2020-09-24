@@ -2663,14 +2663,14 @@ const EventHostDashboard: React.FC = () => {
                 containerStyle={{ height: '40px' }}
               />
 
-              <span>
+              <div>
                 <button type="button" onClick={() => handleIsPaid(false)}>
                   Não
                 </button>
                 <button type="button" onClick={() => handleIsPaid(true)}>
                   Sim
                 </button>
-              </span>
+              </div>
               {!isPaid && (
                 <input
                   defaultValue={1}
@@ -2701,20 +2701,22 @@ const EventHostDashboard: React.FC = () => {
           <FormWindow>
             <h1>Forma de pagamento</h1>
 
-            {installmentsRows.map(row => {
-              i_count += 1;
+            <span>
+              <p>Parcelas</p>
+              {installmentsRows.map(row => {
+                i_count += 1;
 
-              return (
-                <div key={i_count}>
-                  <p>{i_count}° parcela</p>
-                  {row && <p>{row}</p>}
+                return (
                   <Form
+                    key={i_count}
                     style={{ width: '100%' }}
                     ref={formRef}
                     onSubmit={handleCreateTransactions}
                   >
+                    <p>{i_count}° parcela</p>
+                    {row && <p>{row}</p>}
                     <MiniForm>
-                      <div>
+                      <span>
                         <p>Valor da parcela</p>
                         <Input
                           name="amount"
@@ -2722,35 +2724,50 @@ const EventHostDashboard: React.FC = () => {
                           placeholder="R$"
                           containerStyle={{ height: '40px' }}
                         />
-                      </div>
-                      <div>
+                      </span>
+                      <span>
                         <p>Vencimento</p>
                         <Input
                           name="due_date"
                           type="date"
                           containerStyle={{ height: '40px' }}
                         />
-                      </div>
-                      <div>
+                      </span>
+                      <span>
                         <p>Pago?</p>
-                        <span>
-                          <button type="button" onClick={() => setIsPaid(true)}>
+                        <div>
+                          <BooleanNavigationButton
+                            style={
+                              isPaid
+                                ? { background: 'green', width: '80px' }
+                                : { background: 'red', width: '80px' }
+                            }
+                            booleanActiveButton={isPaid}
+                            type="button"
+                            onClick={() => setIsPaid(true)}
+                          >
                             Sim
-                          </button>
-                          <button
+                          </BooleanNavigationButton>
+                          <BooleanNavigationButton
+                            style={
+                              isPaid
+                                ? { background: 'red', width: '80px' }
+                                : { background: 'green', width: '80px' }
+                            }
+                            booleanActiveButton={!isPaid}
                             type="button"
                             onClick={() => setIsPaid(false)}
                           >
                             Não
-                          </button>
-                        </span>
-                      </div>
+                          </BooleanNavigationButton>
+                        </div>
+                      </span>
                       <button type="submit">Salvar</button>
                     </MiniForm>
                   </Form>
-                </div>
-              );
-            })}
+                );
+              })}
+            </span>
             <button type="button" onClick={handleCloseTransactionWindow}>
               Salvar todas as alterações
             </button>
