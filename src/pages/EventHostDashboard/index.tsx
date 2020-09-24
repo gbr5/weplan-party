@@ -69,6 +69,7 @@ import {
   EditEventInfoDrawer,
   EventInfo,
   FormWindow,
+  MiniForm,
 } from './styles';
 import PageHeader from '../../components/PageHeader';
 import MenuButton from '../../components/MenuButton';
@@ -2702,34 +2703,50 @@ const EventHostDashboard: React.FC = () => {
 
             {installmentsRows.map(row => {
               i_count += 1;
-              console.log(row);
 
               return (
                 <div key={i_count}>
                   <p>{i_count}° parcela</p>
-                  <Form ref={formRef} onSubmit={handleCreateTransactions}>
-                    <Input
-                      name="amount"
-                      type="currency"
-                      placeholder="Valor da parcela"
-                      containerStyle={{ height: '40px' }}
-                    />
-                    <p>Vencimento</p>
-                    <Input
-                      name="due_date"
-                      type="date"
-                      containerStyle={{ height: '40px' }}
-                    />
-                    <p>Pago?</p>
-                    <span>
-                      <button type="button" onClick={() => setIsPaid(true)}>
-                        Sim
-                      </button>
-                      <button type="button" onClick={() => setIsPaid(false)}>
-                        Não
-                      </button>
-                    </span>
-                    <button type="submit">Salvar</button>
+                  {row && <p>{row}</p>}
+                  <Form
+                    style={{ width: '100%' }}
+                    ref={formRef}
+                    onSubmit={handleCreateTransactions}
+                  >
+                    <MiniForm>
+                      <div>
+                        <p>Valor da parcela</p>
+                        <Input
+                          name="amount"
+                          type="currency"
+                          placeholder="R$"
+                          containerStyle={{ height: '40px' }}
+                        />
+                      </div>
+                      <div>
+                        <p>Vencimento</p>
+                        <Input
+                          name="due_date"
+                          type="date"
+                          containerStyle={{ height: '40px' }}
+                        />
+                      </div>
+                      <div>
+                        <p>Pago?</p>
+                        <span>
+                          <button type="button" onClick={() => setIsPaid(true)}>
+                            Sim
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setIsPaid(false)}
+                          >
+                            Não
+                          </button>
+                        </span>
+                      </div>
+                      <button type="submit">Salvar</button>
+                    </MiniForm>
                   </Form>
                 </div>
               );

@@ -1695,21 +1695,93 @@ export const FormWindow = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 24px;
   width: 100%;
 
   > h1 {
-    font-size: 24px;
+    font-size: 28px;
     color: var(--title-color);
     margin-bottom: 32px;
   }
 
-  button {
+  > button {
     margin-top: 24px;
     background: var(--primary-color);
     border: none;
     height: 40px;
-    width: 91.5%;
+    width: 100%;
     border-radius: 4px;
+  }
+
+  > span {
+    display: flex;
+    width: 100%;
+    gap: 24px;
+
+    > button {
+      margin-top: 24px;
+      background: var(--primary-color);
+      border: none;
+      height: 40px;
+      width: 100%;
+      border-radius: 4px;
+    }
+  }
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+
+    > p {
+      font-size: 24px;
+      color: var(--title-color);
+    }
+  }
+`;
+
+export const MiniForm = styled.span`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+
+  > button {
+    background: var(--green-icon);
+    border: none;
+    width: 150px;
+    margin: 0 auto;
+    border-radius: 4px;
+  }
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* align-items: center; */
+    width: 100%;
+    gap: 8px;
+
+    > p {
+      font-size: 16px;
+      color: var(--title-color);
+    }
+
+    > span {
+      display: flex;
+      gap: 8px;
+
+      > button {
+        background: var(--primary-color);
+        border: none;
+        height: 40px;
+        width: 91.5%;
+        border-radius: 4px;
+      }
+    }
   }
 `;
