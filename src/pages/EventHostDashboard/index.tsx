@@ -84,6 +84,9 @@ import FriendsListDrawer from '../../components/FriendsListDrawer';
 import MemberProfileDrawer from '../../components/MemberProfileDrawer';
 import OwnerProfileDrawer from '../../components/OwnerProfileDrawer';
 import WindowContainer from '../../components/WindowContainer';
+import IEventSupplierHiredDTO from '../../dtos/IEventSupplierHiredDTO';
+import EventSupplierWindow from '../../components/EventSupplierWindow';
+import SelectedSupplierWindow from '../../components/SelectedSupplierWindow';
 
 interface IEvent {
   id: string;
@@ -221,7 +224,15 @@ const EventHostDashboard: React.FC = () => {
   const [selectedSuppliers, setSelectedSuppliers] = useState<
     IEventSupplierDTO[]
   >([]);
-  const [hiredSuppliers, setHiredSuppliers] = useState<IEventSupplierDTO[]>([]);
+  const [hiredSupplier, setHiredSupplier] = useState<IEventSupplierHiredDTO>(
+    {} as IEventSupplierHiredDTO,
+  );
+  const [selectedSupplier, setSelectedSupplier] = useState<IEventSupplierDTO>(
+    {} as IEventSupplierDTO,
+  );
+  const [hiredSuppliers, setHiredSuppliers] = useState<
+    IEventSupplierHiredDTO[]
+  >([]);
   const [eventInfo, setEventInfo] = useState<IEventInfo>({} as IEventInfo);
   const [guestWindow, setGuestWindow] = useState(true);
   const [eventInfoDrawer, setEventInfoDrawer] = useState(false);
@@ -260,6 +271,13 @@ const EventHostDashboard: React.FC = () => {
   const [editOwnerDrawer, setEditOwnerDrawer] = useState(false);
   const [deleteMemberDrawer, setDeleteMemberDrawer] = useState(false);
   const [deleteOwnerDrawer, setDeleteOwnerDrawer] = useState(false);
+  const [deleteHiredSupplierDrawer, setDeleteHiredSupplierDrawer] = useState(
+    false,
+  );
+  const [
+    deleteSelectedSupplierDrawer,
+    setDeleteSelectedSupplierDrawer,
+  ] = useState(false);
   const [numberOfOwners, setNumberOfOwners] = useState(0);
   const [numberOfMembers, setNumberOfMembers] = useState(0);
   const [eventDate, setEventDate] = useState(new Date());
@@ -288,6 +306,8 @@ const EventHostDashboard: React.FC = () => {
     {} as ITransactionAgreementDTO,
   );
   const [installmentsRows, setInstallmentsRows] = useState<number[]>([]);
+  const [hiredSupplierWindow, setHiredSupplierWindow] = useState(false);
+  const [selectedSupplierWindow, setSelectedSupplierWindow] = useState(false);
 
   const closeAllWindows = useCallback(() => {
     setMyEventsDrawer(false);
@@ -377,6 +397,22 @@ const EventHostDashboard: React.FC = () => {
       setSupplierCategoryWindow(true);
     }
   }, [supplierCategoryWindow]);
+  const handleHiredSupplierWindow = useCallback(
+    (props: IEventSupplierHiredDTO) => {
+      closeAllWindows();
+      setHiredSupplier(props);
+      setHiredSupplierWindow(true);
+    },
+    [closeAllWindows],
+  );
+  const handleSelectedSupplierWindow = useCallback(
+    (props: IEventSupplierDTO) => {
+      closeAllWindows();
+      setSelectedSupplier(props);
+      setSelectedSupplierWindow(true);
+    },
+    [closeAllWindows],
+  );
 
   const handleMembersWindow = useCallback(() => {
     closeAllWindows();
@@ -558,13 +594,10 @@ const EventHostDashboard: React.FC = () => {
   const handleGetSuppliers = useCallback(() => {
     try {
       api
-        .get<IEventSupplierDTO[]>(`events/${eventId}/event-suppliers`)
+        .get<IEventSupplierDTO[]>(`events/event-suppliers/${eventId}`)
         .then(response => {
           setSelectedSuppliers(
             response.data.filter(selected => selected.isHired === false),
-          );
-          setHiredSuppliers(
-            response.data.filter(selected => selected.isHired === true),
           );
         });
     } catch (err) {
@@ -693,6 +726,17 @@ const EventHostDashboard: React.FC = () => {
       throw Error(err);
     }
   }, [pageEvent]);
+  const handleGetHiredSuppliers = useCallback(() => {
+    try {
+      api
+        .get<IEventSupplierHiredDTO[]>(`events/hired-suppliers/${eventId}`)
+        .then(response => {
+          setHiredSuppliers(response.data);
+        });
+    } catch (err) {
+      throw new Error(err);
+    }
+  }, [eventId]);
 
   const handleAddSupplier = useCallback(
     async (data: ICreateSupplier) => {
@@ -1519,6 +1563,66 @@ const EventHostDashboard: React.FC = () => {
       });
     }
   }, [eventId, owner, addToast, handleGetOwners]);
+  const handleDeleteHiredSupplier = useCallback(async () => {
+    console.log('deletar fornecedor');
+    try {
+      await api.delete(
+        `/events/${eventId}/event-suppliers/${hiredSupplier.id}`,
+      );
+
+      addToast({
+        type: 'success',
+        title: 'Fornecedor excluído com sucesso',
+        description: 'As mudanças já foram atualizadas no seu evento.',
+      });
+
+      setHiredSupplierWindow(false);
+      setDeleteHiredSupplierDrawer(false);
+      handleGetHiredSuppliers();
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        const error = getValidationErrors(err);
+
+        formRef.current?.setErrors(error);
+      }
+
+      addToast({
+        type: 'error',
+        title: 'Erro ao excluir fornecedor',
+        description: 'Erro ao excluir o fornecedor, tente novamente.',
+      });
+    }
+  }, [eventId, hiredSupplier, addToast, handleGetHiredSuppliers]);
+  const handleDeleteSelectedSupplier = useCallback(async () => {
+    console.log('deletar fornecedor');
+    try {
+      await api.delete(
+        `/events/${eventId}/event-suppliers/${selectedSupplier.id}`,
+      );
+
+      addToast({
+        type: 'success',
+        title: 'Fornecedor excluído com sucesso',
+        description: 'As mudanças já foram atualizadas no seu evento.',
+      });
+
+      setSelectedSupplierWindow(false);
+      setDeleteSelectedSupplierDrawer(false);
+      handleGetSuppliers();
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        const error = getValidationErrors(err);
+
+        formRef.current?.setErrors(error);
+      }
+
+      addToast({
+        type: 'error',
+        title: 'Erro ao excluir fornecedor',
+        description: 'Erro ao excluir o fornecedor, tente novamente.',
+      });
+    }
+  }, [eventId, selectedSupplier, addToast, handleGetSuppliers]);
   const handleDeleteCheckListItem = useCallback(async () => {
     try {
       await api.delete(`events/${eventId}/check-list/${checkListItem.id}`);
@@ -1545,11 +1649,18 @@ const EventHostDashboard: React.FC = () => {
   const handleCreateTransactionAgreement = useCallback(
     async (data: ITransactionAgreementDTO) => {
       try {
+        console.log({
+          supplier_id: supplierInfo.id,
+          amount: data.total_amount,
+          number_of_installments: numberOfInstallments,
+          isPaid,
+        });
         formRef.current?.setErrors([]);
 
         const schema = Yup.object().shape({
           total_amount: Yup.number(),
         });
+        console.log('Yup');
 
         await schema.validate(data, {
           abortEarly: false,
@@ -1557,7 +1668,7 @@ const EventHostDashboard: React.FC = () => {
 
         const response = await api.post(`finances/transaction-agreements`, {
           supplier_id: supplierInfo.id,
-          amount: data.total_amount,
+          amount: Number(data.total_amount),
           number_of_installments: numberOfInstallments,
         });
 
@@ -1722,6 +1833,9 @@ const EventHostDashboard: React.FC = () => {
       handleGetSupplierSubCategory();
     }
   }, [supplierCategory, handleGetSupplierSubCategory]);
+  useEffect(() => {
+    handleGetHiredSuppliers();
+  }, [handleGetHiredSuppliers]);
 
   let guestCount = 0;
   let myGuestCount = 0;
@@ -1748,6 +1862,16 @@ const EventHostDashboard: React.FC = () => {
           onChildClick={() => setWpUserWindow(false)}
         />
       )} */}
+      {!!hiredSupplierWindow && (
+        <EventSupplierWindow
+          eventSupplier={hiredSupplier}
+          onHandleEventSupplierDrawer={() => setHiredSupplierWindow(false)}
+          onHandleEventSupplierUpdate={() => setHiredSupplierWindow(true)}
+          onHandleDeleteEventSupplierDrawer={() =>
+            setDeleteHiredSupplierDrawer(true)
+          }
+        />
+      )}
       {!!editEventNameDrawer && (
         <WindowContainer
           onHandleCloseWindow={handleEditEventNameDrawer}
@@ -1791,6 +1915,18 @@ const EventHostDashboard: React.FC = () => {
           onHandleMemberDrawer={() => setMemberProfileWindow(false)}
           onHandleNumberOfGuestDrawer={() => setNumberOfGuestDrawer(true)}
           onHandleDeleteMemberDrawer={() => setDeleteMemberDrawer(true)}
+        />
+      )}
+      {!!selectedSupplierWindow && (
+        <SelectedSupplierWindow
+          selectedSupplier={selectedSupplier}
+          onHandleSelectedSupplierDrawer={() =>
+            setSelectedSupplierWindow(false)
+          }
+          onUpdateSelectedSupplierDrawer={() => setSelectedSupplierWindow(true)}
+          onDeleteSelectedSupplierDrawer={() =>
+            setDeleteSelectedSupplierDrawer(true)
+          }
         />
       )}
       {!!numberOfGuestDrawer && (
@@ -1887,22 +2023,89 @@ const EventHostDashboard: React.FC = () => {
             width: '40%',
           }}
         >
-          <Form ref={formRef} onSubmit={handleDeleteOwner}>
-            <WeplanUserDrawer>
-              <h1>Deseja mesmo deletar o anfitrião?</h1>
-              <div>
-                <button type="button" onClick={handleDeleteOwner}>
-                  Sim
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setDeleteOwnerDrawer(false)}
-                >
-                  Não
-                </button>
-              </div>
-            </WeplanUserDrawer>
-          </Form>
+          <WeplanUserDrawer>
+            <h1>Deseja mesmo deletar o anfitrião?</h1>
+            <div>
+              <button type="button" onClick={handleDeleteOwner}>
+                Sim
+              </button>
+              <button type="button" onClick={() => setDeleteOwnerDrawer(false)}>
+                Não
+              </button>
+            </div>
+          </WeplanUserDrawer>
+        </WindowContainer>
+      )}
+      {!!deleteHiredSupplierDrawer && (
+        <WindowContainer
+          onHandleCloseWindow={() => setDeleteHiredSupplierDrawer(false)}
+          containerStyle={{
+            zIndex: 1000,
+            top: '15%',
+            left: '25%',
+            height: '70%',
+            width: '50%',
+          }}
+        >
+          <WeplanUserDrawer>
+            <h1>Deseja mesmo deletar o fornecedor?</h1>
+            <h2>
+              Você também deletará todas as informação relacionadas a este
+              fornecedor.
+            </h2>
+            <div>
+              <button
+                style={{ background: 'red' }}
+                type="button"
+                onClick={handleDeleteHiredSupplier}
+              >
+                Sim
+              </button>
+              <button
+                style={{ background: 'green' }}
+                type="button"
+                onClick={() => setDeleteHiredSupplierDrawer(false)}
+              >
+                Não
+              </button>
+            </div>
+          </WeplanUserDrawer>
+        </WindowContainer>
+      )}
+      {!!deleteSelectedSupplierDrawer && (
+        <WindowContainer
+          onHandleCloseWindow={() => setDeleteSelectedSupplierDrawer(false)}
+          containerStyle={{
+            zIndex: 1000,
+            top: '15%',
+            left: '25%',
+            height: '70%',
+            width: '50%',
+          }}
+        >
+          <WeplanUserDrawer>
+            <h1>Deseja mesmo deletar o fornecedor?</h1>
+            <h2>
+              Você também deletará todas as informação relacionadas a este
+              fornecedor.
+            </h2>
+            <div>
+              <button
+                style={{ background: 'red' }}
+                type="button"
+                onClick={handleDeleteSelectedSupplier}
+              >
+                Sim
+              </button>
+              <button
+                style={{ background: 'green' }}
+                type="button"
+                onClick={() => setDeleteSelectedSupplierDrawer(false)}
+              >
+                Não
+              </button>
+            </div>
+          </WeplanUserDrawer>
         </WindowContainer>
       )}
       {!!friendsWindow && (
@@ -1910,7 +2113,8 @@ const EventHostDashboard: React.FC = () => {
           friends={friends}
           onHandleFriendsListDrawer={() => setFriendsWindow(false)}
           handleSelectedFriend={(friend: IUserInfoDTO) =>
-            handleSelectedWeplanUser(friend)}
+            handleSelectedWeplanUser(friend)
+          }
         />
       )}
       {!!eventInfoDrawer && (
@@ -2595,7 +2799,8 @@ const EventHostDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={() =>
-                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')}
+                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')
+                }
               >
                 <MdBuild size={50} />
                 <h1>Estruturas, Cênica e Boate</h1>
@@ -2631,7 +2836,8 @@ const EventHostDashboard: React.FC = () => {
                   key={subCategory.id}
                   type="button"
                   onClick={() =>
-                    handleAddSupplierDrawer(subCategory.sub_category)}
+                    handleAddSupplierDrawer(subCategory.sub_category)
+                  }
                 >
                   {/* <MdFolderSpecial size={50} /> */}
                   <h1>{subCategory.sub_category}</h1>
@@ -2686,7 +2892,8 @@ const EventHostDashboard: React.FC = () => {
                     placeholder="Valor contratado?"
                     style={{ height: '40px' }}
                     onChange={e =>
-                      setNumberOfInstallments(Number(e.target.value))}
+                      setNumberOfInstallments(Number(e.target.value))
+                    }
                   />
                 </>
               )}
@@ -3046,7 +3253,11 @@ const EventHostDashboard: React.FC = () => {
                       <Guest key={sSupplier.id}>
                         <span>
                           <p>{supplierCount}</p>
-                          <button type="button">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              handleSelectedSupplierWindow(sSupplier)}
+                          >
                             <strong>{sSupplier.name}</strong>{' '}
                             <FiEdit3 size={16} />
                           </button>
@@ -3062,8 +3273,7 @@ const EventHostDashboard: React.FC = () => {
                           <button
                             type="button"
                             onClick={() =>
-                              handleCreateTransactionWindow(sSupplier)
-                            }
+                              handleCreateTransactionWindow(sSupplier)}
                           >
                             {sSupplier.isHired ? (
                               <FiCheckSquare size={24} />
@@ -3083,9 +3293,12 @@ const EventHostDashboard: React.FC = () => {
                       <Guest key={hSupplier.id}>
                         <span>
                           <p>{hiredSupplierCount}</p>
-                          <button type="button">
+                          <button
+                            type="button"
+                            onClick={() => handleHiredSupplierWindow(hSupplier)}
+                          >
                             <strong>{hSupplier.name}</strong>{' '}
-                            <FiEdit3 size={16} />
+                            <FiChevronRight size={16} />
                           </button>
                         </span>
                         {/* {hSupplier.weplanUser && (
@@ -3093,19 +3306,6 @@ const EventHostDashboard: React.FC = () => {
                             <FiUser size={24} />
                           </button>
                         )} */}
-                        <div>
-                          <button
-                            key={hSupplier.id}
-                            type="button"
-                            onClick={() => handleEditHiredSupplier(hSupplier)}
-                          >
-                            {hSupplier.isHired ? (
-                              <FiCheckSquare size={24} />
-                            ) : (
-                              <FiSquare size={24} />
-                            )}
-                          </button>
-                        </div>
                       </Guest>
                     );
                   })}

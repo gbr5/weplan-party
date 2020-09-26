@@ -819,6 +819,7 @@ export const Guest = styled.div`
     align-items: center;
     justify-content: center;
     gap: 8px;
+    width: 100%;
 
     > p {
       color: var(--primary-color);
@@ -831,8 +832,10 @@ export const Guest = styled.div`
       border: none;
       font-size: 16px;
       color: var(--title-color);
-      margin-right: auto;
+      margin: 0 24px;
       transition: 0.3s;
+      width: 100%;
+      display: flex;
 
       &:hover {
         opacity: 0.8;
@@ -846,13 +849,14 @@ export const Guest = styled.div`
 
       > strong {
         font-weight: 500;
+        margin-right: auto;
       }
 
       > svg {
         opacity: 0.3;
         color: var(--title-color);
         transition: 0.3s;
-        margin-left: 16px;
+        margin-left: auto;
       }
     }
   }
