@@ -12,7 +12,6 @@ import TransactionInputRow from '../TransactionInputRow';
 import ITransactionAgreementDTO from '../../dtos/ITransactionAgreementDTO';
 import api from '../../services/api';
 import ISelectedSupplierDTO from '../../dtos/ISelectedSupplierDTO';
-import ITransactionDTO from '../../dtos/ITransactionDTO';
 
 interface IPropsDTO {
   // eslint-disable-next-line react/require-default-props

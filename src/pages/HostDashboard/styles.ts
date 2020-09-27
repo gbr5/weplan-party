@@ -111,7 +111,7 @@ export const MyEventsDrawer = styled.div`
   position: absolute;
   height: 300px;
   width: 500px;
-  background-color: var(--card-color);
+  background-color: var(--header-background-color);
   border-radius: 0 0 8px 8px;
   display: flex;
   flex-direction: column;
@@ -336,7 +336,7 @@ export const Section = styled.div`
 `;
 
 export const Fields = styled.div`
-  background-color: var(--background-color);
+  background-color: var(--card-color);
   display: flex;
   align-items: center;
   justify-content: center;
