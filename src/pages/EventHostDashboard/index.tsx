@@ -68,8 +68,6 @@ import {
   MembersContainer,
   EditEventInfoDrawer,
   EventInfo,
-  FormWindow,
-  MiniForm,
 } from './styles';
 import PageHeader from '../../components/PageHeader';
 import MenuButton from '../../components/MenuButton';
@@ -87,6 +85,8 @@ import WindowContainer from '../../components/WindowContainer';
 import IEventSupplierHiredDTO from '../../dtos/IEventSupplierHiredDTO';
 import EventSupplierWindow from '../../components/EventSupplierWindow';
 import SelectedSupplierWindow from '../../components/SelectedSupplierWindow';
+import TransactionAgreementForm from '../../components/TransactionAgreementForm';
+import ISelectedSupplierDTO from '../../dtos/ISelectedSupplierDTO';
 
 interface IEvent {
   id: string;
@@ -126,12 +126,6 @@ interface ICreateCheckListItem {
 interface ICreateSupplier {
   name: string;
   supplier_sub_category: string;
-}
-interface IEventSupplierDTO {
-  id: string;
-  name: string;
-  supplier_sub_category: string;
-  isHired: boolean;
 }
 interface IEventParams {
   params: {
@@ -173,15 +167,6 @@ interface ISupplierSubCategoryDTO {
   id: string;
   sub_category: string;
 }
-interface ITransactionAgreementDTO {
-  id: string;
-  total_amount: number;
-  number_of_installments: number;
-}
-interface ITransactionsDTO {
-  amount: number;
-  due_date: Date;
-}
 const EventHostDashboard: React.FC = () => {
   const history = useHistory();
   const formRef = useRef<FormHandles>(null);
@@ -222,14 +207,14 @@ const EventHostDashboard: React.FC = () => {
   const [member, setMember] = useState<IEventMemberDTO>({} as IEventMemberDTO);
   const [membersWindow, setMembersWindow] = useState(false);
   const [selectedSuppliers, setSelectedSuppliers] = useState<
-    IEventSupplierDTO[]
+    ISelectedSupplierDTO[]
   >([]);
   const [hiredSupplier, setHiredSupplier] = useState<IEventSupplierHiredDTO>(
     {} as IEventSupplierHiredDTO,
   );
-  const [selectedSupplier, setSelectedSupplier] = useState<IEventSupplierDTO>(
-    {} as IEventSupplierDTO,
-  );
+  const [selectedSupplier, setSelectedSupplier] = useState<
+    ISelectedSupplierDTO
+  >({} as ISelectedSupplierDTO);
   const [hiredSuppliers, setHiredSuppliers] = useState<
     IEventSupplierHiredDTO[]
   >([]);
@@ -295,17 +280,9 @@ const EventHostDashboard: React.FC = () => {
   const [transactionAgreementWindow, setTransactionAgreementWindow] = useState(
     false,
   );
-  const [transactionsWindow, setTransactionsWindow] = useState(false);
-  const [isPaid, setIsPaid] = useState(true);
-  const [submitButton, setSubmitButton] = useState(false);
-  const [supplierInfo, setSupplierInfo] = useState<IEventSupplierDTO>(
-    {} as IEventSupplierDTO,
+  const [supplierInfo, setSupplierInfo] = useState<ISelectedSupplierDTO>(
+    {} as ISelectedSupplierDTO,
   );
-  const [numberOfInstallments, setNumberOfInstallments] = useState(1);
-  const [agreementInfo, setAgreementInfo] = useState(
-    {} as ITransactionAgreementDTO,
-  );
-  const [installmentsRows, setInstallmentsRows] = useState<number[]>([]);
   const [hiredSupplierWindow, setHiredSupplierWindow] = useState(false);
   const [selectedSupplierWindow, setSelectedSupplierWindow] = useState(false);
 
@@ -406,7 +383,7 @@ const EventHostDashboard: React.FC = () => {
     [closeAllWindows],
   );
   const handleSelectedSupplierWindow = useCallback(
-    (props: IEventSupplierDTO) => {
+    (props: ISelectedSupplierDTO) => {
       closeAllWindows();
       setSelectedSupplier(props);
       setSelectedSupplierWindow(true);
@@ -571,11 +548,6 @@ const EventHostDashboard: React.FC = () => {
     [handleWeplanGuestDrawer],
   );
 
-  const handleIsPaid = useCallback(props => {
-    setIsPaid(props);
-    setSubmitButton(true);
-  }, []);
-
   const handleGetSupplierSubCategory = useCallback(() => {
     try {
       console.log('Get SubCategory:', supplierCategory);
@@ -594,7 +566,7 @@ const EventHostDashboard: React.FC = () => {
   const handleGetSuppliers = useCallback(() => {
     try {
       api
-        .get<IEventSupplierDTO[]>(`events/event-suppliers/${eventId}`)
+        .get<ISelectedSupplierDTO[]>(`events/event-suppliers/${eventId}`)
         .then(response => {
           setSelectedSuppliers(
             response.data.filter(selected => selected.isHired === false),
@@ -757,16 +729,24 @@ const EventHostDashboard: React.FC = () => {
           weplanUser: false,
         });
 
-        await api.post(`events/event-suppliers/${eventId}`, {
-          name: data.name,
-          supplier_sub_category: supplierSubCategory,
-          isHired,
-          weplanUser: false,
-        });
+        const newSupplier = await api.post(
+          `events/event-suppliers/${eventId}`,
+          {
+            name: data.name,
+            supplier_sub_category: supplierSubCategory,
+            isHired,
+            weplanUser: false,
+          },
+        );
 
         setAddSupplierDrawer(false);
         setSupplierCategory('');
         setSupplierSubCategory('');
+        if (isHired) {
+          setTransactionAgreementWindow(true);
+          setSupplierInfo(newSupplier.data);
+        }
+        setIsHired(false);
         handleGetSuppliers();
         addToast({
           type: 'success',
@@ -1454,34 +1434,6 @@ const EventHostDashboard: React.FC = () => {
     },
     [addToast, eventId, handleGetCheckListItems],
   );
-  const handleEditHiredSupplier = useCallback(
-    async (data: IEventSupplierDTO) => {
-      console.log(data);
-      try {
-        await api.put(`events/${eventId}/event-suppliers/${data.id}`, {
-          name: data.name,
-          supplier_sub_category: 'French_Catering',
-          isHired: !data.isHired,
-        });
-
-        addToast({
-          type: 'success',
-          title: 'Fornecedor editado com sucesso',
-          description: 'As mudanças já foram atualizadas no seu evento.',
-        });
-
-        handleGetSuppliers();
-      } catch (err) {
-        addToast({
-          type: 'error',
-          title: 'Erro ao editar forncedor',
-          description: 'Erro ao editar o item do check-list, tente novamente.',
-        });
-        throw new Error(err);
-      }
-    },
-    [addToast, eventId, handleGetSuppliers],
-  );
 
   const handleDeleteGuest = useCallback(async () => {
     try {
@@ -1646,147 +1598,12 @@ const EventHostDashboard: React.FC = () => {
       throw new Error(err);
     }
   }, [addToast, eventId, checkListItem, handleGetCheckListItems]);
-  const handleCreateTransactionAgreement = useCallback(
-    async (data: ITransactionAgreementDTO) => {
-      try {
-        console.log({
-          supplier_id: supplierInfo.id,
-          amount: data.total_amount,
-          number_of_installments: numberOfInstallments,
-          isPaid,
-        });
-        formRef.current?.setErrors([]);
-
-        const schema = Yup.object().shape({
-          total_amount: Yup.number(),
-        });
-        console.log('Yup');
-
-        await schema.validate(data, {
-          abortEarly: false,
-        });
-
-        const response = await api.post(`finances/transaction-agreements`, {
-          supplier_id: supplierInfo.id,
-          amount: Number(data.total_amount),
-          number_of_installments: numberOfInstallments,
-        });
-
-        if (response && isPaid) {
-          await api.post('/finances/agreements/transactions', {
-            agreement_id: response.data.id,
-            amount: Number(data.total_amount),
-            due_date: '2020-09-19 18:11:25',
-            isPaid,
-          });
-        }
-        console.log(numberOfInstallments);
-        // for (let i = 0; i === numberOfInstallments; i + 1) {
-        //   console.log(i);
-        //   setInstallmentsRows([...installmentsRows, i]);
-        // }
-        setInstallmentsRows([...Array(numberOfInstallments)]);
-        console.log(installmentsRows);
-
-        handleEditHiredSupplier(supplierInfo);
-        setAgreementInfo(response.data);
-        setTransactionAgreementWindow(false);
-        setSupplierInfo({} as IEventSupplierDTO);
-        setSubmitButton(false);
-        setTransactionsWindow(true);
-
-        addToast({
-          type: 'success',
-          title: 'Membro da festa adicionado com sucesso',
-          description: 'Ele já pode visualizar as informações do evento.',
-        });
-      } catch (err) {
-        if (err instanceof Yup.ValidationError) {
-          const error = getValidationErrors(err);
-
-          formRef.current?.setErrors(error);
-        }
-
-        addToast({
-          type: 'error',
-          title: 'Erro ao adicionar membro da festa',
-          description: 'Erro ao adicionar membro da festa, tente novamente.',
-        });
-      }
-    },
-    [
-      addToast,
-      isPaid,
-      supplierInfo,
-      handleEditHiredSupplier,
-      numberOfInstallments,
-      installmentsRows,
-    ],
-  );
   const handleCreateTransactionWindow = useCallback(props => {
+    console.log('setando supplier que vai para agreement form:', props);
     setSupplierInfo(props);
     setTransactionAgreementWindow(true);
-    // handleEditHiredSupplier(props);
   }, []);
-  const handleCreateTransactions = useCallback(
-    async (data: ITransactionsDTO) => {
-      console.log({
-        agreement_id: agreementInfo.id,
-        amount: data.amount,
-        due_date: data.due_date,
-        isPaid,
-      });
-      try {
-        formRef.current?.setErrors([]);
 
-        const schema = Yup.object().shape({
-          amount: Yup.number(),
-          due_date: Yup.date(),
-        });
-
-        await schema.validate(data, {
-          abortEarly: false,
-        });
-        console.log({
-          agreement_id: agreementInfo.id,
-          amount: data.amount,
-          due_date: data.due_date,
-          isPaid,
-        });
-        await api.post('/finances/agreements/transactions', {
-          agreement_id: agreementInfo.id,
-          amount: data.amount,
-          due_date: data.due_date,
-          isPaid,
-        });
-        setIsPaid(false);
-
-        addToast({
-          type: 'success',
-          title: 'Membro da festa adicionado com sucesso',
-          description: 'Ele já pode visualizar as informações do evento.',
-        });
-      } catch (err) {
-        if (err instanceof Yup.ValidationError) {
-          const error = getValidationErrors(err);
-
-          formRef.current?.setErrors(error);
-        }
-
-        addToast({
-          type: 'error',
-          title: 'Erro ao adicionar membro da festa',
-          description: 'Erro ao adicionar membro da festa, tente novamente.',
-        });
-      }
-    },
-    [addToast, agreementInfo, isPaid],
-  );
-  const handleCloseTransactionWindow = useCallback(() => {
-    setAgreementInfo({} as ITransactionAgreementDTO);
-    setIsPaid(false);
-    setTransactionsWindow(false);
-  }, []);
   const handleMyEventDashboard = useCallback(
     (my_event: IEvent) => {
       closeAllWindows();
@@ -1841,7 +1658,7 @@ const EventHostDashboard: React.FC = () => {
   let myGuestCount = 0;
   let supplierCount = 0;
   let hiredSupplierCount = 0;
-  let i_count = 0;
+  // let i_count = 0;
 
   return (
     <Container>
@@ -2848,157 +2665,10 @@ const EventHostDashboard: React.FC = () => {
         </WindowContainer>
       )}
       {!!transactionAgreementWindow && (
-        <WindowContainer
+        <TransactionAgreementForm
+          hiredSupplier={supplierInfo}
           onHandleCloseWindow={() => setTransactionAgreementWindow(false)}
-          containerStyle={{
-            zIndex: 10,
-            top: '5%',
-            left: '5%',
-            height: '90%',
-            width: '90%',
-          }}
-        >
-          <Form ref={formRef} onSubmit={handleCreateTransactionAgreement}>
-            <FormWindow>
-              <h2>Fornecedor Contratado</h2>
-              <h1>{supplierInfo.name}</h1>
-
-              <p>Valor do contrato:</p>
-
-              <Input
-                name="total_amount"
-                type="number"
-                placeholder="R$"
-                containerStyle={{ height: '40px' }}
-              />
-
-              <p>Contrato quitado?</p>
-
-              <div>
-                <button type="button" onClick={() => handleIsPaid(false)}>
-                  Não
-                </button>
-                <button type="button" onClick={() => handleIsPaid(true)}>
-                  Sim
-                </button>
-              </div>
-              {!isPaid && (
-                <>
-                  <p>Número de parcelas do contrato:</p>
-                  <input
-                    defaultValue={1}
-                    name="number_of_installments"
-                    type="number"
-                    placeholder="Valor contratado?"
-                    style={{ height: '40px' }}
-                    onChange={e =>
-                      setNumberOfInstallments(Number(e.target.value))
-                    }
-                  />
-                </>
-              )}
-              {!!submitButton && <button type="submit">Salvar</button>}
-            </FormWindow>
-          </Form>
-        </WindowContainer>
-      )}
-      {!!transactionsWindow && (
-        <WindowContainer
-          onHandleCloseWindow={() => setTransactionsWindow(false)}
-          containerStyle={{
-            zIndex: 10,
-            top: '5%',
-            left: '5%',
-            height: '90%',
-            width: '90%',
-          }}
-        >
-          <FormWindow>
-            <h1>Forma de pagamento</h1>
-
-            <span
-              style={
-                numberOfInstallments > 3
-                  ? {
-                      paddingTop: `${numberOfInstallments * 20}px`,
-                      overflowY: 'scroll',
-                    }
-                  : {
-                      paddingTop: `${numberOfInstallments * 1}px`,
-                    }
-              }
-            >
-              <p>Parcelas</p>
-              {installmentsRows.map(row => {
-                i_count += 1;
-
-                return (
-                  <Form
-                    key={i_count}
-                    style={{ width: '100%' }}
-                    ref={formRef}
-                    onSubmit={handleCreateTransactions}
-                  >
-                    <p>{i_count}° parcela</p>
-                    {row && <p>{row}</p>}
-                    <MiniForm>
-                      <span>
-                        <p>Valor da parcela</p>
-                        <Input
-                          name="amount"
-                          type="currency"
-                          placeholder="R$"
-                          containerStyle={{ height: '40px' }}
-                        />
-                      </span>
-                      <span>
-                        <p>Vencimento</p>
-                        <Input
-                          name="due_date"
-                          type="date"
-                          containerStyle={{ height: '40px' }}
-                        />
-                      </span>
-                      <span>
-                        <p>Pago?</p>
-                        <div>
-                          <BooleanNavigationButton
-                            style={
-                              isPaid
-                                ? { background: 'green', width: '80px' }
-                                : { background: 'red', width: '80px' }
-                            }
-                            booleanActiveButton={isPaid}
-                            type="button"
-                            onClick={() => setIsPaid(true)}
-                          >
-                            Sim
-                          </BooleanNavigationButton>
-                          <BooleanNavigationButton
-                            style={
-                              isPaid
-                                ? { background: 'red', width: '80px' }
-                                : { background: 'green', width: '80px' }
-                            }
-                            booleanActiveButton={!isPaid}
-                            type="button"
-                            onClick={() => setIsPaid(false)}
-                          >
-                            Não
-                          </BooleanNavigationButton>
-                        </div>
-                      </span>
-                      <button type="submit">Salvar</button>
-                    </MiniForm>
-                  </Form>
-                );
-              })}
-            </span>
-            <button type="button" onClick={handleCloseTransactionWindow}>
-              Salvar todas as alterações
-            </button>
-          </FormWindow>
-        </WindowContainer>
+        />
       )}
       <EventPageContent>
         {sidebar ? (

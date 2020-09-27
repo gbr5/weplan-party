@@ -52,7 +52,7 @@ const EventSupplierWindow: React.FC<IPropsDTO> = ({
                   <h2>{iAgreement}.</h2>
                   <h1>
                     R$
-                    {agreement.value}/ parcelado em{' '}
+                    {agreement.amount}/ parcelado em{' '}
                     {agreement.number_of_installments}
                   </h1>
                   <p>24/09/20</p>
