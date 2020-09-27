@@ -16,11 +16,13 @@ import ISelectedSupplierDTO from '../../dtos/ISelectedSupplierDTO';
 interface IPropsDTO {
   hiredSupplier: ISelectedSupplierDTO;
   onHandleCloseWindow: MouseEventHandler;
+  getEventSuppliers: Function;
 }
 
 const TransactionAgreementForm: React.FC<IPropsDTO> = ({
   onHandleCloseWindow,
   hiredSupplier,
+  getEventSuppliers,
 }: IPropsDTO) => {
   const { addToast } = useToast();
   const formRef = useRef<FormHandles>(null);
@@ -83,6 +85,8 @@ const TransactionAgreementForm: React.FC<IPropsDTO> = ({
           title: 'Membro da festa adicionado com sucesso',
           description: 'Ele já pode visualizar as informações do evento.',
         });
+        getEventSuppliers();
+        setTransactionContainer(false);
       } catch (err) {
         console.log(err);
 
@@ -93,7 +97,7 @@ const TransactionAgreementForm: React.FC<IPropsDTO> = ({
         });
       }
     },
-    [addToast, isPaid, numberOfInstallments, hiredSupplier],
+    [addToast, isPaid, numberOfInstallments, hiredSupplier, getEventSuppliers],
   );
 
   return (
