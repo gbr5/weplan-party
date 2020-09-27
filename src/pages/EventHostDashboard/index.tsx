@@ -2664,6 +2664,7 @@ const EventHostDashboard: React.FC = () => {
           hiredSupplier={supplierInfo}
           onHandleCloseWindow={() => setTransactionAgreementWindow(false)}
           getEventSuppliers={handleGetSuppliers}
+          getHiredSuppliers={handleGetHiredSuppliers}
         />
       )}
       <EventPageContent>
