@@ -82,11 +82,10 @@ import FriendsListDrawer from '../../components/FriendsListDrawer';
 import MemberProfileDrawer from '../../components/MemberProfileDrawer';
 import OwnerProfileDrawer from '../../components/OwnerProfileDrawer';
 import WindowContainer from '../../components/WindowContainer';
-import IEventSupplierHiredDTO from '../../dtos/IEventSupplierHiredDTO';
+import ISelectedSupplierDTO from '../../dtos/ISelectedSupplierDTO';
 import EventSupplierWindow from '../../components/EventSupplierWindow';
 import SelectedSupplierWindow from '../../components/SelectedSupplierWindow';
 import TransactionAgreementForm from '../../components/TransactionAgreementForm';
-import ISelectedSupplierDTO from '../../dtos/ISelectedSupplierDTO';
 
 interface IEvent {
   id: string;
@@ -209,15 +208,15 @@ const EventHostDashboard: React.FC = () => {
   const [selectedSuppliers, setSelectedSuppliers] = useState<
     ISelectedSupplierDTO[]
   >([]);
-  const [hiredSupplier, setHiredSupplier] = useState<IEventSupplierHiredDTO>(
-    {} as IEventSupplierHiredDTO,
+  const [hiredSupplier, setHiredSupplier] = useState<ISelectedSupplierDTO>(
+    {} as ISelectedSupplierDTO,
   );
   const [selectedSupplier, setSelectedSupplier] = useState<
     ISelectedSupplierDTO
   >({} as ISelectedSupplierDTO);
-  const [hiredSuppliers, setHiredSuppliers] = useState<
-    IEventSupplierHiredDTO[]
-  >([]);
+  const [hiredSuppliers, setHiredSuppliers] = useState<ISelectedSupplierDTO[]>(
+    [],
+  );
   const [eventInfo, setEventInfo] = useState<IEventInfo>({} as IEventInfo);
   const [guestWindow, setGuestWindow] = useState(true);
   const [eventInfoDrawer, setEventInfoDrawer] = useState(false);
@@ -375,7 +374,7 @@ const EventHostDashboard: React.FC = () => {
     }
   }, [supplierCategoryWindow]);
   const handleHiredSupplierWindow = useCallback(
-    (props: IEventSupplierHiredDTO) => {
+    (props: ISelectedSupplierDTO) => {
       closeAllWindows();
       setHiredSupplier(props);
       setHiredSupplierWindow(true);
@@ -702,7 +701,7 @@ const EventHostDashboard: React.FC = () => {
   const handleGetHiredSuppliers = useCallback(() => {
     try {
       api
-        .get<IEventSupplierHiredDTO[]>(`events/hired-suppliers/${eventId}`)
+        .get<ISelectedSupplierDTO[]>(`events/hired-suppliers/${eventId}`)
         .then(response => {
           setHiredSuppliers(response.data);
         });
@@ -1682,6 +1681,8 @@ const EventHostDashboard: React.FC = () => {
       )} */}
       {!!hiredSupplierWindow && (
         <EventSupplierWindow
+          getEventSuppliers={handleGetSuppliers}
+          getHiredSuppliers={handleGetHiredSuppliers}
           eventSupplier={hiredSupplier}
           onHandleEventSupplierDrawer={() => setHiredSupplierWindow(false)}
           onHandleEventSupplierUpdate={() => setHiredSupplierWindow(true)}

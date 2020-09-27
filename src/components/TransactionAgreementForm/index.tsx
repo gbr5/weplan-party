@@ -12,8 +12,11 @@ import TransactionInputRow from '../TransactionInputRow';
 import ITransactionAgreementDTO from '../../dtos/ITransactionAgreementDTO';
 import api from '../../services/api';
 import ISelectedSupplierDTO from '../../dtos/ISelectedSupplierDTO';
+import ITransactionDTO from '../../dtos/ITransactionDTO';
 
 interface IPropsDTO {
+  // eslint-disable-next-line react/require-default-props
+  agreement?: ITransactionAgreementDTO;
   hiredSupplier: ISelectedSupplierDTO;
   onHandleCloseWindow: MouseEventHandler;
   getEventSuppliers: Function;
@@ -25,10 +28,12 @@ const TransactionAgreementForm: React.FC<IPropsDTO> = ({
   hiredSupplier,
   getEventSuppliers,
   getHiredSuppliers,
+  agreement,
 }: IPropsDTO) => {
   const { addToast } = useToast();
   const formRef = useRef<FormHandles>(null);
 
+  // const [transactions, setTransactions] = useState<ITransactionDTO[]>([]);
   const [totalAmount, setTotalAmount] = useState(0);
   const [numberOfInstallments, setNumberOfInstallments] = useState(1);
   const [transactionContainer, setTransactionContainer] = useState(false);
@@ -61,26 +66,28 @@ const TransactionAgreementForm: React.FC<IPropsDTO> = ({
             isPaid: ispaid,
           };
         });
-        console.log(transactionArray);
+        console.log(agreement);
 
-        await api.post(`finances/transaction-agreements`, {
-          supplier_id: hiredSupplier.id,
-          amount: Number(data.amount),
-          number_of_installments: Number(data.number_of_installments),
-          transactions: transactionArray,
-        });
+        if (agreement) {
+          await api.put(`finances/transaction-agreements/${agreement.id}`, {
+            amount: Number(data.amount),
+            number_of_installments: Number(data.number_of_installments),
+            transactions: transactionArray,
+          });
+        } else {
+          await api.post(`finances/transaction-agreements`, {
+            supplier_id: hiredSupplier.id,
+            amount: Number(data.amount),
+            number_of_installments: Number(data.number_of_installments),
+            transactions: transactionArray,
+          });
 
-        console.log('verificar se event-suppliers atualizou!', {
-          name: hiredSupplier.name,
-          supplier_sub_category: hiredSupplier.supplier_sub_category,
-          isHired: !hiredSupplier.isHired,
-        });
-
-        await api.put(`events/event-suppliers/edit/${hiredSupplier.id}`, {
-          name: hiredSupplier.name,
-          supplier_sub_category: hiredSupplier.supplier_sub_category,
-          isHired: !hiredSupplier.isHired,
-        });
+          await api.put(`events/event-suppliers/edit/${hiredSupplier.id}`, {
+            name: hiredSupplier.name,
+            supplier_sub_category: hiredSupplier.supplier_sub_category,
+            isHired: !hiredSupplier.isHired,
+          });
+        }
 
         addToast({
           type: 'success',
@@ -107,14 +114,20 @@ const TransactionAgreementForm: React.FC<IPropsDTO> = ({
       hiredSupplier,
       getEventSuppliers,
       getHiredSuppliers,
+      agreement,
     ],
   );
+
+  // if (agreement) {
+  //   setTotalAmount(agreement.amount);
+  //   setNumberOfInstallments(agreement.number_of_installments);
+  // }
 
   return (
     <WindowContainer
       onHandleCloseWindow={onHandleCloseWindow}
       containerStyle={{
-        zIndex: 10,
+        zIndex: 100,
         top: '5%',
         left: '5%',
         height: '90%',
@@ -128,6 +141,7 @@ const TransactionAgreementForm: React.FC<IPropsDTO> = ({
 
           <p>Valor do contrato</p>
           <Input
+            defaultValue={totalAmount}
             name="amount"
             type="number"
             containerStyle={inputHeight}
@@ -149,16 +163,18 @@ const TransactionAgreementForm: React.FC<IPropsDTO> = ({
 
           <p>Número de parcelas do contrato</p>
           <Input
-            defaultValue={1}
+            defaultValue={numberOfInstallments}
             name="number_of_installments"
             type="number"
             containerStyle={inputHeight}
             onChange={e => setNumberOfInstallments(Number(e.target.value))}
           />
 
-          <button type="button" onClick={handleTransactionContainer}>
-            Definir Parcelas
-          </button>
+          {!transactionContainer && (
+            <button type="button" onClick={handleTransactionContainer}>
+              Definir Parcelas
+            </button>
+          )}
         </div>
         {!!transactionContainer && (
           <div>
