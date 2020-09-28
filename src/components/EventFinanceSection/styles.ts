@@ -39,7 +39,10 @@ export const Container = styled.div`
   }
 `;
 
-export const Transaction = styled.div``;
+export const Transaction = styled.div`
+  display: flex;
+  gap: 8px;
+`;
 
 export const Suppliers = styled.div`
   display: flex;
@@ -78,4 +81,10 @@ export const Suppliers = styled.div`
       }
     }
   }
+`;
+
+export const AllTransactionsWindow = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 `;

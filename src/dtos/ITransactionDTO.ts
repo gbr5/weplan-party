@@ -4,4 +4,6 @@ export default interface ITransactionDTO {
   amount: number;
   due_date: Date;
   isPaid: boolean;
+  formattedDate?: string;
+  difference_in_days?: number;
 }
