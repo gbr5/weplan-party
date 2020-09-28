@@ -33,14 +33,12 @@ import {
   EventPageContent,
   FirstRow,
   LatestNews,
-  Payments,
   MyEvents,
   MyEventsDrawer,
   MyEventsDrawerButton,
   AddSupplierDrawer,
   BooleanSection,
   AddGuestDrawer,
-  Financial,
   SideBar,
   Main,
   CheckList,
@@ -71,7 +69,6 @@ import {
 } from './styles';
 import PageHeader from '../../components/PageHeader';
 import MenuButton from '../../components/MenuButton';
-import chart from '../../assets/charts.png';
 import avatar_placeholder from '../../assets/avatar_placeholder_cat2.jpeg';
 import api from '../../services/api';
 import Input from '../../components/Input';
@@ -86,6 +83,7 @@ import ISelectedSupplierDTO from '../../dtos/ISelectedSupplierDTO';
 import EventSupplierWindow from '../../components/EventSupplierWindow';
 import SelectedSupplierWindow from '../../components/SelectedSupplierWindow';
 import TransactionAgreementForm from '../../components/TransactionAgreementForm';
+import EventFinanceSection from '../../components/EventFinanceSection';
 
 interface IEvent {
   id: string;
@@ -3236,26 +3234,7 @@ const EventHostDashboard: React.FC = () => {
             </BooleanSection>
           )}
           {!!financeSection && (
-            <Financial>
-              <img src={chart} alt="chart" />
-              <Payments>
-                <strong>Transações</strong>
-                <ul>
-                  <li>
-                    <span>Malu - 7 anos</span>
-                    <FiCheckSquare size={24} />
-                  </li>
-                  <li>
-                    <span>Pedrinho - 5 anos</span>
-                    <FiCheckSquare size={24} />
-                  </li>
-                  <li>
-                    <span>Malu - 6 anos</span>
-                    <FiCheckSquare size={24} />
-                  </li>
-                </ul>
-              </Payments>
-            </Financial>
+            <EventFinanceSection hiredSuppliers={hiredSuppliers} />
           )}
           {!!checkListSection && (
             <CheckList>
