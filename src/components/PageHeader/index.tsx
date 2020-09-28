@@ -13,7 +13,7 @@ import DayPicker from 'react-day-picker';
 import * as Yup from 'yup';
 
 import { useHistory, Link } from 'react-router-dom';
-import { MdAdd, MdHelp, MdMenu, MdSchedule } from 'react-icons/md';
+import { MdAdd, MdHelp, MdSchedule } from 'react-icons/md';
 import { FiSettings, FiPower } from 'react-icons/fi';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
@@ -27,6 +27,7 @@ import {
   AddAppointmentDrawer,
   MyAppointments,
   Appointment,
+  ToggleButton,
 } from './styles';
 import { useToggleTheme } from '../../hooks/theme';
 
@@ -40,6 +41,7 @@ import api from '../../services/api';
 import getValidationErrors from '../../utils/getValidationErros';
 
 import WindowContainer from '../WindowContainer';
+import MenuButton from '../MenuButton';
 
 interface ICreateAppointment {
   subject: string;
@@ -79,7 +81,8 @@ const PageHeader: React.FC = ({ children }) => {
   const [appointmentTypeDrawer, setAppointmentTypeDrawer] = useState(false);
   const [appointmentType, setAppointmentType] = useState('');
   const [addAppointmentDrawer, setAddAppointmentDrawer] = useState(false);
-  const [windowContainer, setWindowContainer] = useState(false);
+  const [helpWindow, setHelpWindow] = useState(false);
+  const [settingsWindow, setSettingsWindow] = useState(false);
 
   const { signOut } = useAuth();
   const { toggleTheme, themeBoolean } = useToggleTheme();
@@ -87,6 +90,8 @@ const PageHeader: React.FC = ({ children }) => {
 
   const closeAllWindows = useCallback(() => {
     setAppointmentsWindow(false);
+    setHelpWindow(false);
+    setSettingsWindow(false);
   }, []);
 
   const handleAppointmentTypeQuestion = useCallback(
@@ -112,6 +117,16 @@ const PageHeader: React.FC = ({ children }) => {
     closeAllWindows();
     setAppointmentsWindow(true);
   }, [closeAllWindows]);
+
+  const handleHelpWindow = useCallback(() => {
+    closeAllWindows();
+    setHelpWindow(!helpWindow);
+  }, [closeAllWindows, helpWindow]);
+
+  const handleSettingsWindow = useCallback(() => {
+    closeAllWindows();
+    setSettingsWindow(!settingsWindow);
+  }, [closeAllWindows, settingsWindow]);
 
   const handleAppointmentTypeDrawer = useCallback(() => {
     setAppointmentTypeDrawer(!appointmentTypeDrawer);
@@ -337,9 +352,7 @@ const PageHeader: React.FC = ({ children }) => {
       <Header>
         <HeaderContent>
           <h1>
-            <button type="button">
-              <MdMenu size={40} />
-            </button>
+            <MenuButton />
           </h1>
 
           <button type="button" onClick={handleNavigateToDashboard}>
@@ -353,24 +366,13 @@ const PageHeader: React.FC = ({ children }) => {
           </Profile>
           {children}
           <Menu>
-            <Swicth
-              onChange={toggleTheme}
-              checked={themeBoolean}
-              checkedIcon={false}
-              uncheckedIcon={false}
-              height={10}
-              width={40}
-              handleDiameter={20}
-              offColor={colors.secondary}
-              onColor={colors.primary}
-            />
             <button type="button" onClick={handleAppointmentsWindow}>
               <MdSchedule size={30} />
             </button>
-            <button type="button" onClick={() => setWindowContainer(true)}>
+            <button type="button" onClick={handleHelpWindow}>
               <MdHelp size={30} />
             </button>
-            <button type="button" onClick={signOut}>
+            <button type="button" onClick={handleSettingsWindow}>
               <FiSettings size={30} />
             </button>
             <button type="button" onClick={signOut}>
@@ -409,7 +411,6 @@ const PageHeader: React.FC = ({ children }) => {
           </AppointmentTypeDrawer>
         </WindowContainer>
       )}
-
       {!!addAppointmentDrawer && (
         <WindowContainer
           onHandleCloseWindow={() => setAddAppointmentDrawer(false)}
@@ -653,9 +654,9 @@ const PageHeader: React.FC = ({ children }) => {
           </MyAppointments>
         </WindowContainer>
       )}
-      {!!windowContainer && (
+      {!!helpWindow && (
         <WindowContainer
-          onHandleCloseWindow={() => setWindowContainer(false)}
+          onHandleCloseWindow={() => setHelpWindow(false)}
           containerStyle={{
             top: '2%',
             left: '5%',
@@ -664,6 +665,32 @@ const PageHeader: React.FC = ({ children }) => {
           }}
         >
           <h1>Opções de ajuda</h1>
+        </WindowContainer>
+      )}
+      {!!settingsWindow && (
+        <WindowContainer
+          onHandleCloseWindow={() => setSettingsWindow(false)}
+          containerStyle={{
+            top: '100px',
+            right: '8px',
+            height: '200px',
+            width: '250px',
+          }}
+        >
+          <ToggleButton>
+            <h3>Tema {themeBoolean ? 'Claro' : 'Escuro'}</h3>
+            <Swicth
+              onChange={toggleTheme}
+              checked={themeBoolean}
+              checkedIcon={false}
+              uncheckedIcon={false}
+              height={10}
+              width={40}
+              handleDiameter={20}
+              offColor={colors.secondary}
+              onColor={colors.primary}
+            />
+          </ToggleButton>
         </WindowContainer>
       )}
     </>

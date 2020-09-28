@@ -2683,6 +2683,33 @@ const EventHostDashboard: React.FC = () => {
           getHiredSuppliers={handleGetHiredSuppliers}
         />
       )}
+      {!!myEventsDrawer && (
+        <WindowContainer
+          onHandleCloseWindow={() => setMyEventsDrawer(false)}
+          containerStyle={{
+            zIndex: 10,
+            top: '160px',
+            left: '0',
+            height: '300px',
+            width: '500px',
+          }}
+        >
+          <MyEventsDrawer>
+            {myEvents.map(myEvent => (
+              <button
+                type="button"
+                onClick={() => handleMyEventDashboard(myEvent)}
+                key={myEvent.id}
+              >
+                {myEvent.name}
+                <span>
+                  <FiChevronRight size={24} />
+                </span>
+              </button>
+            ))}
+          </MyEventsDrawer>
+        </WindowContainer>
+      )}
       <EventPageContent>
         {sidebar ? (
           <span>
@@ -2714,22 +2741,6 @@ const EventHostDashboard: React.FC = () => {
                   </span>
                 )}
               </MyEventsDrawerButton>
-              {myEventsDrawer && (
-                <MyEventsDrawer>
-                  {myEvents.map(myEvent => (
-                    <button
-                      type="button"
-                      onClick={() => handleMyEventDashboard(myEvent)}
-                      key={myEvent.id}
-                    >
-                      {myEvent.name}
-                      <span>
-                        <FiChevronRight size={24} />
-                      </span>
-                    </button>
-                  ))}
-                </MyEventsDrawer>
-              )}
             </MyEvents>
             <button type="button" onClick={handleEventInfoDrawer}>
               Informações do Evento

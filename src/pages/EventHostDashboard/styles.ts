@@ -235,7 +235,7 @@ export const MyEventsDrawer = styled.div`
   position: absolute;
   height: 300px;
   width: 500px;
-  background-color: var(--card-color);
+  background-color: var(--header-background-color);
   border-radius: 0 0 8px 8px;
   display: flex;
   flex-direction: column;
@@ -260,10 +260,6 @@ export const MyEventsDrawer = styled.div`
         margin: auto;
       }
     }
-
-    &:hover {
-      background-color: rgba(255, 144, 0, 0.15);
-    }
     svg {
       margin-left: auto;
     }
@@ -283,10 +279,6 @@ export const MyEventsDrawerButton = styled.button`
   > h1 {
     font-size: 24px;
     color: var(--primary-color);
-
-    &:hover {
-      opacity: 0.6;
-    }
   }
 
   > span {

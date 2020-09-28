@@ -3,10 +3,6 @@ import '../../styles/global';
 import { shade } from 'polished';
 
 export const Button = styled.button`
-  position: fixed;
-  bottom: 40px;
-  right: 30px;
-  z-index: 5;
   width: 60px;
   height: 60px;
   border-radius: 50%;
@@ -22,15 +18,6 @@ export const Button = styled.button`
 `;
 
 export const ButtonContent = styled.div`
-  position: fixed;
-  bottom: 90px;
-  right: 80px;
-  z-index: 50000;
-  width: 248px;
-  height: 350px;
-  background: var(--card-color);
-  border-radius: 20px 20px 4px 20px;
-
   margin: 0 auto;
   display: flex;
   justify-content: center;

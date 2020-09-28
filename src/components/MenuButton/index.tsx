@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useRef } from 'react';
 
-import { MdClose } from 'react-icons/md';
+import { MdClose, MdMenu } from 'react-icons/md';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 import DayPicker from 'react-day-picker';
@@ -17,12 +17,12 @@ import {
   Button,
   ButtonContent,
   Menu,
-  Logo,
   CreateEventForm,
   Calendar,
   EventTypeDrawer,
   EventInfoDrawer,
 } from './styles';
+import WindowContainer from '../WindowContainer';
 
 interface ICreateEvent {
   name: string;
@@ -246,28 +246,38 @@ const MenuButton: React.FC = () => {
   return (
     <>
       <Button type="button" onClick={handleButtonDrawer}>
-        <Logo>WP</Logo>
+        <MdMenu size={40} />
       </Button>
       {!!buttonDrawer && (
-        <ButtonContent>
-          <Menu>
-            <button type="button" onClick={handleCreateEventDrawer}>
-              Criar Evento
-            </button>
-            <button type="button" onClick={handleNavigateToFriends}>
-              Fotos
-            </button>
-            <button type="button" onClick={handleNavigateToFriends}>
-              Amigos
-            </button>
-            <button type="button" onClick={handleNavigateToEvents}>
-              Eventos
-            </button>
-            <button type="button" onClick={handleNavigateToEvents}>
-              Fornecedores
-            </button>
-          </Menu>
-        </ButtonContent>
+        <WindowContainer
+          onHandleCloseWindow={() => setButtonDrawer(false)}
+          containerStyle={{
+            top: '100px',
+            left: '8px',
+            height: '350px',
+            width: '248px',
+          }}
+        >
+          <ButtonContent>
+            <Menu>
+              <button type="button" onClick={handleCreateEventDrawer}>
+                Criar Evento
+              </button>
+              <button type="button" onClick={handleNavigateToFriends}>
+                Fotos
+              </button>
+              <button type="button" onClick={handleNavigateToFriends}>
+                Amigos
+              </button>
+              <button type="button" onClick={handleNavigateToEvents}>
+                Eventos
+              </button>
+              <button type="button" onClick={handleNavigateToEvents}>
+                Fornecedores
+              </button>
+            </Menu>
+          </ButtonContent>
+        </WindowContainer>
       )}
       {!!createEventDrawer && (
         <Form ref={formRef} onSubmit={handleCreateEvent}>

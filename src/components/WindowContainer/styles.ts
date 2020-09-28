@@ -23,10 +23,6 @@ const appearFromTop = keyframes`
 export const Container = styled.div`
   position: fixed;
   z-index: 10;
-  top: 20%;
-  left: 25%;
-  width: 50%;
-  height: 450px;
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -28,10 +28,6 @@ export const HeaderContent = styled.div`
       border: none;
       color: var(--letter-color-1);
     }
-
-    &:hover {
-      opacity: 0.8;
-    }
   }
 
   > button {
@@ -466,4 +462,11 @@ export const Calendar = styled.aside`
     border-radius: 10px;
     color: #232129 !important;
   }
+`;
+
+export const ToggleButton = styled.div`
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
 `;
