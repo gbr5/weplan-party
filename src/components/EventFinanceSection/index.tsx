@@ -93,8 +93,11 @@ IPropsDTO) => {
               formattedDate: transactionDate,
               difference_in_days: daysTillDueDate,
             });
+            return transaction;
           });
+        return agreement;
       });
+    return supplier;
   });
 
   const handleGetTotalEventCost = useCallback(() => {
