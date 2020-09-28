@@ -709,7 +709,11 @@ const EventHostDashboard: React.FC = () => {
       throw new Error(err);
     }
   }, [eventId]);
-
+  const handleCreateTransactionWindow = useCallback(props => {
+    console.log('setando supplier que vai para agreement form:', props);
+    setSupplierInfo(props);
+    setTransactionAgreementWindow(true);
+  }, []);
   const handleAddSupplier = useCallback(
     async (data: ICreateSupplier) => {
       try {
@@ -742,18 +746,21 @@ const EventHostDashboard: React.FC = () => {
         setAddSupplierDrawer(false);
         setSupplierCategory('');
         setSupplierSubCategory('');
-        if (isHired) {
-          setTransactionAgreementWindow(true);
-          setSupplierInfo(newSupplier.data);
-        }
-        setIsHired(false);
+
         handleGetSuppliers();
+        handleGetHiredSuppliers();
         addToast({
           type: 'success',
           title: `${data.name} adicionado com Sucesso`,
           description:
             'Você já pode visualizar as alterações na página do seu evento.',
         });
+        console.log('isHired de fora:', isHired);
+        if (isHired) {
+          console.log('isHired de dentro:', isHired);
+          handleCreateTransactionWindow(newSupplier.data);
+        }
+        setIsHired(false);
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const error = getValidationErrors(err);
@@ -766,7 +773,15 @@ const EventHostDashboard: React.FC = () => {
         });
       }
     },
-    [addToast, eventId, handleGetSuppliers, isHired, supplierSubCategory],
+    [
+      addToast,
+      eventId,
+      handleGetSuppliers,
+      isHired,
+      supplierSubCategory,
+      handleGetHiredSuppliers,
+      handleCreateTransactionWindow,
+    ],
   );
   const handleAddCheckListItem = useCallback(
     async (data: ICreateCheckListItem) => {
@@ -1598,11 +1613,6 @@ const EventHostDashboard: React.FC = () => {
       throw new Error(err);
     }
   }, [addToast, eventId, checkListItem, handleGetCheckListItems]);
-  const handleCreateTransactionWindow = useCallback(props => {
-    console.log('setando supplier que vai para agreement form:', props);
-    setSupplierInfo(props);
-    setTransactionAgreementWindow(true);
-  }, []);
 
   const handleMyEventDashboard = useCallback(
     (my_event: IEvent) => {
@@ -1687,7 +1697,8 @@ const EventHostDashboard: React.FC = () => {
           onHandleEventSupplierDrawer={() => setHiredSupplierWindow(false)}
           onHandleEventSupplierUpdate={() => setHiredSupplierWindow(true)}
           onHandleDeleteEventSupplierDrawer={() =>
-            setDeleteHiredSupplierDrawer(true)}
+            setDeleteHiredSupplierDrawer(true)
+          }
         />
       )}
       {!!editEventNameDrawer && (
@@ -1739,10 +1750,12 @@ const EventHostDashboard: React.FC = () => {
         <SelectedSupplierWindow
           selectedSupplier={selectedSupplier}
           onHandleSelectedSupplierDrawer={() =>
-            setSelectedSupplierWindow(false)}
+            setSelectedSupplierWindow(false)
+          }
           onUpdateSelectedSupplierDrawer={() => setSelectedSupplierWindow(true)}
           onDeleteSelectedSupplierDrawer={() =>
-            setDeleteSelectedSupplierDrawer(true)}
+            setDeleteSelectedSupplierDrawer(true)
+          }
         />
       )}
       {!!numberOfGuestDrawer && (
@@ -1929,7 +1942,8 @@ const EventHostDashboard: React.FC = () => {
           friends={friends}
           onHandleFriendsListDrawer={() => setFriendsWindow(false)}
           handleSelectedFriend={(friend: IUserInfoDTO) =>
-            handleSelectedWeplanUser(friend)}
+            handleSelectedWeplanUser(friend)
+          }
         />
       )}
       {!!eventInfoDrawer && (
@@ -2614,7 +2628,8 @@ const EventHostDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={() =>
-                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')}
+                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')
+                }
               >
                 <MdBuild size={50} />
                 <h1>Estruturas, Cênica e Boate</h1>
@@ -2650,7 +2665,8 @@ const EventHostDashboard: React.FC = () => {
                   key={subCategory.id}
                   type="button"
                   onClick={() =>
-                    handleAddSupplierDrawer(subCategory.sub_category)}
+                    handleAddSupplierDrawer(subCategory.sub_category)
+                  }
                 >
                   {/* <MdFolderSpecial size={50} /> */}
                   <h1>{subCategory.sub_category}</h1>
@@ -2924,8 +2940,7 @@ const EventHostDashboard: React.FC = () => {
                           <button
                             type="button"
                             onClick={() =>
-                              handleSelectedSupplierWindow(sSupplier)
-                            }
+                              handleSelectedSupplierWindow(sSupplier)}
                           >
                             <strong>{sSupplier.name}</strong>{' '}
                             <FiEdit3 size={16} />
@@ -2942,8 +2957,7 @@ const EventHostDashboard: React.FC = () => {
                           <button
                             type="button"
                             onClick={() =>
-                              handleCreateTransactionWindow(sSupplier)
-                            }
+                              handleCreateTransactionWindow(sSupplier)}
                           >
                             {sSupplier.isHired ? (
                               <FiCheckSquare size={24} />

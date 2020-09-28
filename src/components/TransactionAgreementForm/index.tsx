@@ -43,6 +43,7 @@ const TransactionAgreementForm: React.FC<IPropsDTO> = ({
     setInstallmentsRows([...Array(numberOfInstallments)]);
     setTransactionContainer(!transactionContainer);
   }, [numberOfInstallments, transactionContainer]);
+  console.log('me chamaram aqui, transactionAgreementForm');
 
   const inputHeight = { height: '40px' };
   let iCount = 0;
