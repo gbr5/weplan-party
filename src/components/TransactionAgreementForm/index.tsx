@@ -7,7 +7,6 @@ import { useToast } from '../../hooks/toast';
 import Input from '../Input';
 import WindowContainer from '../WindowContainer';
 
-import { BooleanButtons } from './styles';
 import TransactionInputRow from '../TransactionInputRow';
 import ITransactionAgreementDTO from '../../dtos/ITransactionAgreementDTO';
 import api from '../../services/api';
@@ -36,7 +35,6 @@ const TransactionAgreementForm: React.FC<IPropsDTO> = ({
   const [totalAmount, setTotalAmount] = useState(0);
   const [numberOfInstallments, setNumberOfInstallments] = useState(1);
   const [transactionContainer, setTransactionContainer] = useState(false);
-  const [isPaid, setIsPaid] = useState(false);
   const [installmentsRows, setInstallmentsRows] = useState<number[]>([]);
 
   const handleTransactionContainer = useCallback(() => {
@@ -48,9 +46,24 @@ const TransactionAgreementForm: React.FC<IPropsDTO> = ({
   const inputHeight = { height: '40px' };
   let iCount = 0;
 
+  const handleDeleteTransactionAgreement = useCallback(async () => {
+    try {
+      if (agreement) {
+        await api.delete(`finances/transaction-agreements/${agreement.id}`);
+        getHiredSuppliers();
+        addToast({
+          type: 'success',
+          title: 'Contrato deletado com sucesso',
+          description: 'As informações do evento já foram atualizadas.',
+        });
+      }
+    } catch (err) {
+      throw new Error(err);
+    }
+  }, [agreement, addToast, getHiredSuppliers]);
+
   const handleSubmit = useCallback(
     async (data: ITransactionAgreementDTO) => {
-      console.log(numberOfInstallments, isPaid);
       try {
         const transactionArray = data.transactions.map(transaction => {
           let ispaid = false;
@@ -95,6 +108,12 @@ const TransactionAgreementForm: React.FC<IPropsDTO> = ({
           description: 'Ele já pode visualizar as informações do evento.',
         });
         getEventSuppliers();
+        addToast({
+          type: 'success',
+          title: 'Membro da festa adicionado com sucesso',
+          description: 'Ele já pode visualizar as informações do evento.',
+        });
+        getEventSuppliers();
         getHiredSuppliers();
         setTransactionContainer(false);
       } catch (err) {
@@ -107,21 +126,8 @@ const TransactionAgreementForm: React.FC<IPropsDTO> = ({
         });
       }
     },
-    [
-      addToast,
-      isPaid,
-      numberOfInstallments,
-      hiredSupplier,
-      getEventSuppliers,
-      getHiredSuppliers,
-      agreement,
-    ],
+    [addToast, hiredSupplier, getEventSuppliers, getHiredSuppliers, agreement],
   );
-
-  // if (agreement) {
-  //   setTotalAmount(agreement.amount);
-  //   setNumberOfInstallments(agreement.number_of_installments);
-  // }
 
   return (
     <WindowContainer
@@ -139,6 +145,12 @@ const TransactionAgreementForm: React.FC<IPropsDTO> = ({
           <h2>Informações do Contrato</h2>
           <h1>{hiredSupplier.name}</h1>
 
+          {!!agreement && (
+            <button type="button" onClick={handleDeleteTransactionAgreement}>
+              Deletar Contrato
+            </button>
+          )}
+
           <p>Valor do contrato</p>
           <Input
             defaultValue={totalAmount}
@@ -147,19 +159,6 @@ const TransactionAgreementForm: React.FC<IPropsDTO> = ({
             containerStyle={inputHeight}
             onChange={e => setTotalAmount(Number(e.target.value))}
           />
-
-          <BooleanButtons>
-            <p>Contrato Quitado?</p>
-
-            <div>
-              <button type="button" onClick={() => setIsPaid(true)}>
-                Tudo pago
-              </button>
-              <button type="button" onClick={() => setIsPaid(false)}>
-                Ainda não
-              </button>
-            </div>
-          </BooleanButtons>
 
           <p>Número de parcelas do contrato</p>
           <Input

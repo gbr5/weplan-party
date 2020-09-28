@@ -700,6 +700,8 @@ const EventHostDashboard: React.FC = () => {
   }, [pageEvent]);
   const handleGetHiredSuppliers = useCallback(() => {
     try {
+      setTransactionAgreementWindow(false);
+      setHiredSupplierWindow(false);
       api
         .get<ISelectedSupplierDTO[]>(`events/hired-suppliers/${eventId}`)
         .then(response => {
