@@ -85,7 +85,7 @@ const TransactionAgreementForm: React.FC<IPropsDTO> = ({
           await api.put(`events/event-suppliers/edit/${hiredSupplier.id}`, {
             name: hiredSupplier.name,
             supplier_sub_category: hiredSupplier.supplier_sub_category,
-            isHired: !hiredSupplier.isHired,
+            isHired: true,
           });
         }
 

@@ -760,7 +760,6 @@ const EventHostDashboard: React.FC = () => {
           console.log('isHired de dentro:', isHired);
           handleCreateTransactionWindow(newSupplier.data);
         }
-        setIsHired(false);
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const error = getValidationErrors(err);
@@ -774,10 +773,10 @@ const EventHostDashboard: React.FC = () => {
       }
     },
     [
-      addToast,
-      eventId,
-      handleGetSuppliers,
       isHired,
+      eventId,
+      addToast,
+      handleGetSuppliers,
       supplierSubCategory,
       handleGetHiredSuppliers,
       handleCreateTransactionWindow,
