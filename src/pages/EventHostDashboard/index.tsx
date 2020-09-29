@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useMemo,
+} from 'react';
 import * as Yup from 'yup';
 import {
   FiChevronRight,
@@ -1625,6 +1631,30 @@ const EventHostDashboard: React.FC = () => {
     [closeAllWindows, history],
   );
 
+  const totalEventCost = useMemo(() => {
+    const totalCost: number = hiredSuppliers
+      .map(supplier => {
+        let cost = 0;
+        if (supplier.transactionAgreement) {
+          if (supplier.transactionAgreement) {
+            cost = supplier.transactionAgreement
+              .map(agreement => Number(agreement.amount))
+              .reduce((a, b) => a + b, 0);
+          }
+          return cost;
+        }
+        return cost;
+      })
+      .reduce((a, b) => a + b, 0);
+    return totalCost;
+  }, [hiredSuppliers]);
+
+  console.log(
+    totalEventCost,
+    eventInfo.budget,
+    (totalEventCost / eventInfo.budget) * 100,
+  );
+
   useEffect(() => {
     handleGetSuppliers();
   }, [handleGetSuppliers]);
@@ -1697,7 +1727,8 @@ const EventHostDashboard: React.FC = () => {
           onHandleEventSupplierDrawer={() => setHiredSupplierWindow(false)}
           onHandleEventSupplierUpdate={() => setHiredSupplierWindow(true)}
           onHandleDeleteEventSupplierDrawer={() =>
-            setDeleteHiredSupplierDrawer(true)}
+            setDeleteHiredSupplierDrawer(true)
+          }
         />
       )}
       {!!editEventNameDrawer && (
@@ -1749,10 +1780,12 @@ const EventHostDashboard: React.FC = () => {
         <SelectedSupplierWindow
           selectedSupplier={selectedSupplier}
           onHandleSelectedSupplierDrawer={() =>
-            setSelectedSupplierWindow(false)}
+            setSelectedSupplierWindow(false)
+          }
           onUpdateSelectedSupplierDrawer={() => setSelectedSupplierWindow(true)}
           onDeleteSelectedSupplierDrawer={() =>
-            setDeleteSelectedSupplierDrawer(true)}
+            setDeleteSelectedSupplierDrawer(true)
+          }
         />
       )}
       {!!numberOfGuestDrawer && (
@@ -1939,7 +1972,8 @@ const EventHostDashboard: React.FC = () => {
           friends={friends}
           onHandleFriendsListDrawer={() => setFriendsWindow(false)}
           handleSelectedFriend={(friend: IUserInfoDTO) =>
-            handleSelectedWeplanUser(friend)}
+            handleSelectedWeplanUser(friend)
+          }
         />
       )}
       {!!eventInfoDrawer && (
@@ -2624,7 +2658,8 @@ const EventHostDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={() =>
-                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')}
+                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')
+                }
               >
                 <MdBuild size={50} />
                 <h1>Estruturas, Cênica e Boate</h1>
@@ -2660,7 +2695,8 @@ const EventHostDashboard: React.FC = () => {
                   key={subCategory.id}
                   type="button"
                   onClick={() =>
-                    handleAddSupplierDrawer(subCategory.sub_category)}
+                    handleAddSupplierDrawer(subCategory.sub_category)
+                  }
                 >
                   {/* <MdFolderSpecial size={50} /> */}
                   <h1>{subCategory.sub_category}</h1>
@@ -2829,7 +2865,9 @@ const EventHostDashboard: React.FC = () => {
               <div>
                 <button type="button" onClick={handleFinanceSection}>
                   <h2>Financeiro</h2>
-                  <p>41%</p>
+                  <p>
+                    {Math.round((totalEventCost / eventInfo.budget) * 100)}%
+                  </p>
                 </button>
               </div>
               <div>
@@ -2947,8 +2985,7 @@ const EventHostDashboard: React.FC = () => {
                           <button
                             type="button"
                             onClick={() =>
-                              handleSelectedSupplierWindow(sSupplier)
-                            }
+                              handleSelectedSupplierWindow(sSupplier)}
                           >
                             <strong>{sSupplier.name}</strong>{' '}
                             <FiEdit3 size={16} />
@@ -2965,8 +3002,7 @@ const EventHostDashboard: React.FC = () => {
                           <button
                             type="button"
                             onClick={() =>
-                              handleCreateTransactionWindow(sSupplier)
-                            }
+                              handleCreateTransactionWindow(sSupplier)}
                           >
                             {sSupplier.isHired ? (
                               <FiCheckSquare size={24} />
