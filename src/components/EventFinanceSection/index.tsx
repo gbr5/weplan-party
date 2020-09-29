@@ -5,7 +5,7 @@ import PageContainer from '../PageContainer';
 
 import ITransactionDTO from '../../dtos/ITransactionDTO';
 
-import { Container, Suppliers, AllTransactionsWindow } from './styles';
+import { Container, Suppliers, TransactionsWindow, MenuButton } from './styles';
 import ITransactionAgreementDTO from '../../dtos/ITransactionAgreementDTO';
 import formatStringToDate from '../../utils/formatStringToDate';
 import { numberFormat } from '../../utils/numberFormat';
@@ -14,14 +14,14 @@ import TransactionAgreement from '../TransactionAgreement';
 
 interface IPropsDTO {
   hiredSuppliers: ISelectedSupplierDTO[];
-  // updateHiredSuppliers: Function;
+  refreshHiredSuppliers: Function;
 }
 
 const EventFinanceSection: React.FC<IPropsDTO> = ({
   hiredSuppliers,
-}: // updateHiredSuppliers,
-IPropsDTO) => {
-  const [transactionList, setTransactionList] = useState(true);
+  refreshHiredSuppliers,
+}: IPropsDTO) => {
+  const [transactionList, setTransactionList] = useState(false);
   const [selectedSupplier, setSelectedSupplier] = useState<
     ISelectedSupplierDTO
   >({} as ISelectedSupplierDTO);
@@ -29,7 +29,14 @@ IPropsDTO) => {
   const [totalPaid, setTotalPaid] = useState(0);
   const [totalToPay, setTotalToPay] = useState(0);
   const [totalOverdue, setTotalOverdue] = useState(0);
-  const [allTransactionsWindow, setAllTransactionsWindow] = useState(false);
+  const [allTransactionsWindow, setAllTransactionsWindow] = useState(true);
+  const [paidTransactionsWindow, setPaidTransactionsWindow] = useState(false);
+  const [notPaidTransactionsWindow, setNotPaidTransactionsWindow] = useState(
+    false,
+  );
+  const [overdueTransactionsWindow, setOverdueTransactionsWindow] = useState(
+    false,
+  );
 
   const transactions = [] as ITransactionDTO[];
   const paidTransactions = [] as ITransactionDTO[];
@@ -42,12 +49,30 @@ IPropsDTO) => {
   const closeAllWindow = useCallback(() => {
     setTransactionList(false);
     setAllTransactionsWindow(false);
+    setPaidTransactionsWindow(false);
+    setNotPaidTransactionsWindow(false);
+    setOverdueTransactionsWindow(false);
   }, []);
 
   const handleAllTransactionsWindow = useCallback(() => {
     closeAllWindow();
     setAllTransactionsWindow(!allTransactionsWindow);
   }, [closeAllWindow, allTransactionsWindow]);
+
+  const handlePaidTransactionsWindow = useCallback(() => {
+    closeAllWindow();
+    setPaidTransactionsWindow(!paidTransactionsWindow);
+  }, [closeAllWindow, paidTransactionsWindow]);
+
+  const handleNotPaidTransactionsWindow = useCallback(() => {
+    closeAllWindow();
+    setNotPaidTransactionsWindow(!notPaidTransactionsWindow);
+  }, [closeAllWindow, notPaidTransactionsWindow]);
+
+  const handleOverdueTransactionsWindow = useCallback(() => {
+    closeAllWindow();
+    setOverdueTransactionsWindow(!overdueTransactionsWindow);
+  }, [closeAllWindow, overdueTransactionsWindow]);
 
   const compareTransactionDate = useCallback(
     (a: ITransactionDTO, b: ITransactionDTO) => {
@@ -62,6 +87,10 @@ IPropsDTO) => {
     [],
   );
 
+  let supplierIndex = 0;
+  let agreementIndex = 0;
+  let allTransactionsIndex = 0;
+
   hiredSuppliers.map(supplier => {
     supplier.transactionAgreement &&
       supplier.transactionAgreement.map(agreement => {
@@ -73,52 +102,22 @@ IPropsDTO) => {
             ) as string;
             const newDate = new Date(transactionDate);
             const daysTillDueDate = differenceInDays(newDate, today) as number;
-            daysTillDueDate < 0 &&
-              overdueTransactions.push({
-                id: transaction.id,
-                agreement_id: transaction.agreement_id,
-                amount: Number(transaction.amount),
-                due_date: newDate,
-                isPaid: transaction.isPaid,
-                formattedDate: transactionDate,
-                difference_in_days: daysTillDueDate,
-              });
-
-            transaction.isPaid &&
-              paidTransactions.push({
-                id: transaction.id,
-                agreement_id: transaction.agreement_id,
-                amount: Number(transaction.amount),
-                due_date: newDate,
-                isPaid: transaction.isPaid,
-                formattedDate: transactionDate,
-                difference_in_days: daysTillDueDate,
-              });
-            transaction.isPaid === false &&
-              notPaidTransactions.push({
-                id: transaction.id,
-                agreement_id: transaction.agreement_id,
-                amount: Number(transaction.amount),
-                due_date: newDate,
-                isPaid: transaction.isPaid,
-                formattedDate: transactionDate,
-                difference_in_days: daysTillDueDate,
-              });
             transactions.push({
               id: transaction.id,
               agreement_id: transaction.agreement_id,
               amount: Number(transaction.amount),
-              due_date: newDate,
+              due_date: transaction.due_date,
               isPaid: transaction.isPaid,
               formattedDate: transactionDate,
               difference_in_days: daysTillDueDate,
+              supplier_name: supplier.name,
+              index: allTransactionsIndex,
             });
             return transaction;
           });
 
         return agreement;
       });
-
     return supplier;
   });
 
@@ -160,49 +159,106 @@ IPropsDTO) => {
     const sortedByDate = transactions.sort(compareTransactionDate);
     return sortedByDate;
   }, [transactions, compareTransactionDate]);
+  sortedTransactions.map(transaction => {
+    const transactionDate = formatStringToDate(
+      String(transaction.due_date),
+    ) as string;
+    const newDate = new Date(transactionDate);
+    const daysTillDueDate = differenceInDays(newDate, today) as number;
 
-  let supplierIndex = 0;
-  let agreementIndex = 0;
-  let allTransactionsIndex = 0;
-
+    transaction.isPaid !== true &&
+      daysTillDueDate < 0 &&
+      overdueTransactions.push({
+        id: transaction.id,
+        agreement_id: transaction.agreement_id,
+        amount: Number(transaction.amount),
+        due_date: transaction.due_date,
+        isPaid: transaction.isPaid,
+        formattedDate: transactionDate,
+        difference_in_days: daysTillDueDate,
+        supplier_name: transaction.supplier_name,
+      });
+    transaction.isPaid &&
+      paidTransactions.push({
+        id: transaction.id,
+        agreement_id: transaction.agreement_id,
+        amount: Number(transaction.amount),
+        due_date: transaction.due_date,
+        isPaid: transaction.isPaid,
+        formattedDate: transactionDate,
+        difference_in_days: daysTillDueDate,
+        supplier_name: transaction.supplier_name,
+      });
+    transaction.isPaid === false &&
+      notPaidTransactions.push({
+        id: transaction.id,
+        agreement_id: transaction.agreement_id,
+        amount: Number(transaction.amount),
+        due_date: transaction.due_date,
+        isPaid: transaction.isPaid,
+        formattedDate: transactionDate,
+        difference_in_days: daysTillDueDate,
+        supplier_name: transaction.supplier_name,
+      });
+    return transaction;
+  });
   return (
     <Container>
       <h1>Financeiro</h1>
       <span>
         <div>
-          <h3>Custo Total:</h3>
-          <p>{numberFormat(totalEventCost)}</p>
+          <MenuButton
+            booleanActiveButton={allTransactionsWindow}
+            type="button"
+            onClick={handleAllTransactionsWindow}
+          >
+            Transações
+          </MenuButton>
+          <div>
+            <h3>Total:</h3>
+            <p>{numberFormat(totalEventCost)}</p>
+          </div>
         </div>
         <div>
-          <h3>Total Pago:</h3>
-          <p>{numberFormat(totalPaid)}</p>
+          <MenuButton
+            booleanActiveButton={paidTransactionsWindow}
+            type="button"
+            onClick={handlePaidTransactionsWindow}
+          >
+            Trasações Efetuadas
+          </MenuButton>
+          <div>
+            <p>{numberFormat(totalPaid)}</p>
+          </div>
         </div>
         <div>
-          <h3>Total a Pagar:</h3>
-          <p>{numberFormat(totalToPay)}</p>
+          <MenuButton
+            booleanActiveButton={notPaidTransactionsWindow}
+            type="button"
+            onClick={handleNotPaidTransactionsWindow}
+          >
+            Transações a Pagar
+          </MenuButton>
+          <div>
+            <p>{numberFormat(totalToPay)}</p>
+          </div>
         </div>
         <div>
-          <h3>Total Atrasado:</h3>
-          <p>{numberFormat(totalOverdue)}</p>
+          <MenuButton
+            booleanActiveButton={overdueTransactionsWindow}
+            type="button"
+            onClick={handleOverdueTransactionsWindow}
+          >
+            Transações Vencidas
+          </MenuButton>
+          <div>
+            <p>{numberFormat(totalOverdue)}</p>
+          </div>
         </div>
-      </span>
-      <span>
-        <button type="button" onClick={handleAllTransactionsWindow}>
-          <h3>Todas as transações</h3>
-        </button>
-        <button type="button">
-          <h3>Custo Total do Evento</h3>
-        </button>
-        <button type="button">
-          <h3>Total pago</h3>
-        </button>
-        <button type="button">
-          <h3>Total há pagar</h3>
-        </button>
       </span>
       <div>
         <Suppliers>
-          <h2>Suppliers</h2>
+          <h2>Fornecedores</h2>
           <div>
             {hiredSuppliers.map(supplier => {
               supplierIndex += 1;
@@ -227,9 +283,10 @@ IPropsDTO) => {
               <div>
                 {selectedSupplier.transactionAgreement?.map(agreement => {
                   agreementIndex += 1;
+                  const key = String(agreementIndex);
                   return (
                     <TransactionAgreement
-                      key={agreementIndex}
+                      key={key}
                       transactionAgreement={agreement}
                     />
                   );
@@ -238,17 +295,72 @@ IPropsDTO) => {
             </>
           )}
           {!!allTransactionsWindow && (
-            <AllTransactionsWindow>
+            <TransactionsWindow>
+              <h3>Transações</h3>
               {sortedTransactions.map(transaction => {
                 allTransactionsIndex += 1;
+                const key = String(allTransactionsIndex);
                 return (
                   <Transaction
-                    key={allTransactionsIndex}
+                    refreshHiredSuppliers={refreshHiredSuppliers}
+                    key={key}
+                    allTransactions
                     transaction={transaction}
                   />
                 );
               })}
-            </AllTransactionsWindow>
+            </TransactionsWindow>
+          )}
+          {!!paidTransactionsWindow && (
+            <TransactionsWindow>
+              <h3>Transações Efetuadas</h3>
+              {paidTransactions.map(transaction => {
+                allTransactionsIndex += 1;
+                const key = String(allTransactionsIndex);
+                return (
+                  <Transaction
+                    allTransactions={false}
+                    refreshHiredSuppliers={refreshHiredSuppliers}
+                    key={key}
+                    transaction={transaction}
+                  />
+                );
+              })}
+            </TransactionsWindow>
+          )}
+          {!!notPaidTransactionsWindow && (
+            <TransactionsWindow>
+              <h3>Transações a Pagar</h3>
+              {notPaidTransactions.map(transaction => {
+                allTransactionsIndex += 1;
+                const key = String(allTransactionsIndex);
+                return (
+                  <Transaction
+                    allTransactions={false}
+                    refreshHiredSuppliers={refreshHiredSuppliers}
+                    key={key}
+                    transaction={transaction}
+                  />
+                );
+              })}
+            </TransactionsWindow>
+          )}
+          {!!overdueTransactionsWindow && (
+            <TransactionsWindow>
+              <h3>Transações Atrasadas</h3>
+              {overdueTransactions.map(transaction => {
+                allTransactionsIndex += 1;
+                const key = String(allTransactionsIndex);
+                return (
+                  <Transaction
+                    allTransactions={false}
+                    refreshHiredSuppliers={refreshHiredSuppliers}
+                    key={key}
+                    transaction={transaction}
+                  />
+                );
+              })}
+            </TransactionsWindow>
           )}
         </PageContainer>
       </div>

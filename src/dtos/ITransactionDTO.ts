@@ -6,4 +6,6 @@ export default interface ITransactionDTO {
   isPaid: boolean;
   formattedDate?: string;
   difference_in_days?: number;
+  supplier_name?: string;
+  index?: number;
 }

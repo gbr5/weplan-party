@@ -1,27 +1,86 @@
-import React, { memo } from 'react';
+import React, { memo, useCallback } from 'react';
+import { FiCheckSquare, FiSquare } from 'react-icons/fi';
 import { numberFormat } from '../../utils/numberFormat';
 
 import ITransactionDTO from '../../dtos/ITransactionDTO';
 
-import { Container } from './styles';
+import { Container, TransactionDate } from './styles';
+import api from '../../services/api';
+import { useToast } from '../../hooks/toast';
 
 interface IPropsDTO {
   transaction: ITransactionDTO;
-  key: number;
+  key: string;
+  refreshHiredSuppliers: Function;
+  allTransactions: boolean;
 }
 
-const Transaction: React.FC<IPropsDTO> = ({ key, transaction }: IPropsDTO) => {
+const Transaction: React.FC<IPropsDTO> = ({
+  key,
+  transaction,
+  refreshHiredSuppliers,
+  allTransactions,
+}: IPropsDTO) => {
+  const { addToast } = useToast();
+  let transactionMessage = '';
+  if (transaction.difference_in_days) {
+    if (transaction.isPaid) {
+      transactionMessage = 'Pago';
+    } else {
+      transactionMessage =
+        transaction.difference_in_days > 0
+          ? `${transaction.difference_in_days} dias para o vencimento`
+          : `Atrasado a ${transaction.difference_in_days * -1} dias`;
+    }
+  }
+
+  const handleUpdateTransactionTransactionIsPaid = useCallback(async () => {
+    try {
+      await api.put(`finances/agreements/transactions/${transaction.id}`, {
+        amount: transaction.amount,
+        due_date: transaction.due_date,
+        isPaid: !transaction.isPaid,
+      });
+
+      addToast({
+        type: 'success',
+        title: `Parcela atualizada com Sucesso`,
+        description:
+          'Você já pode visualizar as alterações na página do seu evento.',
+      });
+      refreshHiredSuppliers();
+    } catch (err) {
+      throw new Error(err);
+
+      addToast({
+        type: 'error',
+        title: `Erro ao atualizar a parcela`,
+        description: 'Erro ao atualizar a parcela, tente novamente.',
+      });
+    }
+  }, [addToast, refreshHiredSuppliers, transaction]);
   return (
-    <Container>
-      <p>{key}</p>
-      <h3>{numberFormat(transaction.amount)}</h3>
-      <h3>
-        {transaction.difference_in_days &&
-          (transaction.difference_in_days > 0
-            ? `Faltam ${transaction.difference_in_days}`
-            : `Está atrasado ${transaction.difference_in_days}`)}
-      </h3>
-      <h3>{transaction.formattedDate}</h3>
+    <Container key={key}>
+      <h2>{numberFormat(transaction.amount)}</h2>
+      <TransactionDate title={transactionMessage}>
+        <h3>{transaction.supplier_name}</h3>
+
+        <p>{transaction.formattedDate}</p>
+
+        {!allTransactions && (
+          <button
+            type="button"
+            onClick={handleUpdateTransactionTransactionIsPaid}
+          >
+            Pago:
+            {transaction.isPaid ? (
+              <FiCheckSquare size={24} />
+            ) : (
+              <FiSquare size={24} />
+            )}
+          </button>
+        )}
+      </TransactionDate>
     </Container>
   );
 };

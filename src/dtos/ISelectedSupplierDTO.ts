@@ -6,4 +6,6 @@ export default interface ISelectedSupplierDTO {
   supplier_sub_category: string;
   isHired: boolean;
   transactionAgreement?: ITransactionAgreementDTO[];
+  status?: string;
+  index?: number;
 }

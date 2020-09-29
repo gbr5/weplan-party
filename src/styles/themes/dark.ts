@@ -24,7 +24,7 @@ export default {
     toastErrorColor: '#c53030',
     toastErrorBackgroundColor: '#fddede',
 
-    windowBoxShadow: 'rgba(255, 150, 10, 0.3)',
+    windowBoxShadow: '2px 2px 5px 3px rgba(255, 150, 10, 0.3)',
 
     green: '#47c101',
     red: '#cf4444',

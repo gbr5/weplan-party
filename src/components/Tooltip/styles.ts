@@ -3,6 +3,7 @@ import '../../styles/global';
 
 export const Container = styled.div`
   position: relative;
+  z-index: 10;
 
   span {
     width: 160px;

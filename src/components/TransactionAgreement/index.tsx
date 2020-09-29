@@ -7,16 +7,14 @@ import { Container } from './styles';
 
 interface IPropsDTO {
   transactionAgreement: ITransactionAgreementDTO;
-  key: number;
 }
 
 const TransactionAgreement: React.FC<IPropsDTO> = ({
-  key,
   transactionAgreement,
 }: IPropsDTO) => {
   return (
-    <Container>
-      <p>{key}</p>
+    <Container key={transactionAgreement.index}>
+      <p>{transactionAgreement.index}</p>
       <h3>{numberFormat(transactionAgreement.amount)}</h3>
       {transactionAgreement.number_of_installments > 1 && (
         <span>

@@ -1697,8 +1697,7 @@ const EventHostDashboard: React.FC = () => {
           onHandleEventSupplierDrawer={() => setHiredSupplierWindow(false)}
           onHandleEventSupplierUpdate={() => setHiredSupplierWindow(true)}
           onHandleDeleteEventSupplierDrawer={() =>
-            setDeleteHiredSupplierDrawer(true)
-          }
+            setDeleteHiredSupplierDrawer(true)}
         />
       )}
       {!!editEventNameDrawer && (
@@ -1750,12 +1749,10 @@ const EventHostDashboard: React.FC = () => {
         <SelectedSupplierWindow
           selectedSupplier={selectedSupplier}
           onHandleSelectedSupplierDrawer={() =>
-            setSelectedSupplierWindow(false)
-          }
+            setSelectedSupplierWindow(false)}
           onUpdateSelectedSupplierDrawer={() => setSelectedSupplierWindow(true)}
           onDeleteSelectedSupplierDrawer={() =>
-            setDeleteSelectedSupplierDrawer(true)
-          }
+            setDeleteSelectedSupplierDrawer(true)}
         />
       )}
       {!!numberOfGuestDrawer && (
@@ -1942,8 +1939,7 @@ const EventHostDashboard: React.FC = () => {
           friends={friends}
           onHandleFriendsListDrawer={() => setFriendsWindow(false)}
           handleSelectedFriend={(friend: IUserInfoDTO) =>
-            handleSelectedWeplanUser(friend)
-          }
+            handleSelectedWeplanUser(friend)}
         />
       )}
       {!!eventInfoDrawer && (
@@ -2628,8 +2624,7 @@ const EventHostDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={() =>
-                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')
-                }
+                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')}
               >
                 <MdBuild size={50} />
                 <h1>Estruturas, Cênica e Boate</h1>
@@ -2665,8 +2660,7 @@ const EventHostDashboard: React.FC = () => {
                   key={subCategory.id}
                   type="button"
                   onClick={() =>
-                    handleAddSupplierDrawer(subCategory.sub_category)
-                  }
+                    handleAddSupplierDrawer(subCategory.sub_category)}
                 >
                   {/* <MdFolderSpecial size={50} /> */}
                   <h1>{subCategory.sub_category}</h1>
@@ -2953,7 +2947,8 @@ const EventHostDashboard: React.FC = () => {
                           <button
                             type="button"
                             onClick={() =>
-                              handleSelectedSupplierWindow(sSupplier)}
+                              handleSelectedSupplierWindow(sSupplier)
+                            }
                           >
                             <strong>{sSupplier.name}</strong>{' '}
                             <FiEdit3 size={16} />
@@ -2970,7 +2965,8 @@ const EventHostDashboard: React.FC = () => {
                           <button
                             type="button"
                             onClick={() =>
-                              handleCreateTransactionWindow(sSupplier)}
+                              handleCreateTransactionWindow(sSupplier)
+                            }
                           >
                             {sSupplier.isHired ? (
                               <FiCheckSquare size={24} />
@@ -3248,7 +3244,10 @@ const EventHostDashboard: React.FC = () => {
             </BooleanSection>
           )}
           {!!financeSection && (
-            <EventFinanceSection hiredSuppliers={hiredSuppliers} />
+            <EventFinanceSection
+              refreshHiredSuppliers={handleGetHiredSuppliers}
+              hiredSuppliers={hiredSuppliers}
+            />
           )}
           {!!checkListSection && (
             <CheckList>

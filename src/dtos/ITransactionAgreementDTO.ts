@@ -6,4 +6,6 @@ export default interface ITransactionAgreementDTO {
   amount: number;
   number_of_installments: number;
   transactions: ITransactionDTO[];
+  status?: string;
+  index?: number;
 }
