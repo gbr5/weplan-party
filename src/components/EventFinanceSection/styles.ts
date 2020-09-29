@@ -58,6 +58,7 @@ export const Container = styled.div`
     display: flex;
     gap: 16px;
     width: 100%;
+    height: 100%;
   }
 `;
 
@@ -70,6 +71,7 @@ export const Suppliers = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
+  height: 100%;
 
   > h2 {
     font-size: 20px;
@@ -81,7 +83,8 @@ export const Suppliers = styled.div`
     flex-direction: column;
     gap: 16px;
     width: 250px;
-    height: 300px;
+    height: 100%;
+
     overflow-y: scroll;
     padding: 16px;
 
