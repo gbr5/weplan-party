@@ -1,19 +1,16 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { differenceInDays } from 'date-fns';
 import ISelectedSupplierDTO from '../../dtos/ISelectedSupplierDTO';
 import PageContainer from '../PageContainer';
 
 import ITransactionDTO from '../../dtos/ITransactionDTO';
 
-import {
-  Container,
-  Suppliers,
-  Transaction,
-  AllTransactionsWindow,
-} from './styles';
+import { Container, Suppliers, AllTransactionsWindow } from './styles';
 import ITransactionAgreementDTO from '../../dtos/ITransactionAgreementDTO';
 import formatStringToDate from '../../utils/formatStringToDate';
-import WindowContainer from '../WindowContainer';
+import { numberFormat } from '../../utils/numberFormat';
+import Transaction from '../Transaction';
+import TransactionAgreement from '../TransactionAgreement';
 
 interface IPropsDTO {
   hiredSuppliers: ISelectedSupplierDTO[];
@@ -41,6 +38,29 @@ IPropsDTO) => {
   const agreements = [] as ITransactionAgreementDTO[];
 
   const today = new Date();
+
+  const closeAllWindow = useCallback(() => {
+    setTransactionList(false);
+    setAllTransactionsWindow(false);
+  }, []);
+
+  const handleAllTransactionsWindow = useCallback(() => {
+    closeAllWindow();
+    setAllTransactionsWindow(!allTransactionsWindow);
+  }, [closeAllWindow, allTransactionsWindow]);
+
+  const compareTransactionDate = useCallback(
+    (a: ITransactionDTO, b: ITransactionDTO) => {
+      if (differenceInDays(a.due_date, b.due_date) < 0) {
+        return -1;
+      }
+      if (differenceInDays(a.due_date, b.due_date) > 0) {
+        return 1;
+      }
+      return 0;
+    },
+    [],
+  );
 
   hiredSuppliers.map(supplier => {
     supplier.transactionAgreement &&
@@ -95,8 +115,10 @@ IPropsDTO) => {
             });
             return transaction;
           });
+
         return agreement;
       });
+
     return supplier;
   });
 
@@ -125,111 +147,112 @@ IPropsDTO) => {
     handleGetTotalEventCost();
   }, [handleGetTotalEventCost]);
 
-  const handleSelectedSupplier = useCallback(props => {
-    setSelectedSupplier(props);
-    setTransactionList(true);
-  }, []);
+  const handleSelectedSupplier = useCallback(
+    props => {
+      closeAllWindow();
+      setSelectedSupplier(props);
+      setTransactionList(true);
+    },
+    [closeAllWindow],
+  );
+
+  const sortedTransactions = useMemo(() => {
+    const sortedByDate = transactions.sort(compareTransactionDate);
+    return sortedByDate;
+  }, [transactions, compareTransactionDate]);
+
   let supplierIndex = 0;
   let agreementIndex = 0;
   let allTransactionsIndex = 0;
 
   return (
-    <>
-      {/* {!!} */}
-      {!!allTransactionsWindow && (
-        <WindowContainer
-          containerStyle={{
-            zIndex: 10,
-            width: '90%',
-            height: '90%',
-            top: '5%',
-            left: '5%',
-          }}
-          onHandleCloseWindow={() => setAllTransactionsWindow(false)}
-        >
-          <AllTransactionsWindow>
-            {transactions.map(transaction => {
-              allTransactionsIndex += 1;
+    <Container>
+      <h1>Financeiro</h1>
+      <span>
+        <div>
+          <h3>Custo Total:</h3>
+          <p>{numberFormat(totalEventCost)}</p>
+        </div>
+        <div>
+          <h3>Total Pago:</h3>
+          <p>{numberFormat(totalPaid)}</p>
+        </div>
+        <div>
+          <h3>Total a Pagar:</h3>
+          <p>{numberFormat(totalToPay)}</p>
+        </div>
+        <div>
+          <h3>Total Atrasado:</h3>
+          <p>{numberFormat(totalOverdue)}</p>
+        </div>
+      </span>
+      <span>
+        <button type="button" onClick={handleAllTransactionsWindow}>
+          <h3>Todas as transações</h3>
+        </button>
+        <button type="button">
+          <h3>Custo Total do Evento</h3>
+        </button>
+        <button type="button">
+          <h3>Total pago</h3>
+        </button>
+        <button type="button">
+          <h3>Total há pagar</h3>
+        </button>
+      </span>
+      <div>
+        <Suppliers>
+          <h2>Suppliers</h2>
+          <div>
+            {hiredSuppliers.map(supplier => {
+              supplierIndex += 1;
               return (
-                <Transaction key={allTransactionsIndex}>
-                  <p>{allTransactionsIndex}</p>
-                  <h3>{transaction.amount}</h3>
-                  <h3>
-                    {transaction.difference_in_days &&
-                      (transaction.difference_in_days > 0
-                        ? `Faltam ${transaction.difference_in_days}`
-                        : `Está atrasado ${transaction.difference_in_days}`)}
-                  </h3>
-                  <h3>{transaction.formattedDate}</h3>
-                </Transaction>
+                <button
+                  type="button"
+                  onClick={() => handleSelectedSupplier(supplier)}
+                  key={supplier.id}
+                >
+                  <p>{supplierIndex}</p>
+                  <h3>{supplier.name}</h3>
+                </button>
               );
             })}
-          </AllTransactionsWindow>
-        </WindowContainer>
-      )}
-      <Container>
-        <h1>Financeiro</h1>
-        <span>
-          <h3>Custo Total {totalEventCost}</h3>
-          <h3>Total Pago {totalPaid}</h3>
-          <h3>Total a Pagar {totalToPay}</h3>
-          <h3>Total Atrasado {totalOverdue}</h3>
-        </span>
-        <span>
-          <button type="button" onClick={() => setAllTransactionsWindow(true)}>
-            <h3>Todas as transações</h3>
-          </button>
-          <button type="button">
-            <h3>Custo Total do Evento</h3>
-          </button>
-          <button type="button">
-            <h3>Total pago</h3>
-          </button>
-          <button type="button">
-            <h3>Total há pagar</h3>
-          </button>
-        </span>
-        <div>
-          <Suppliers>
-            <h2>Suppliers</h2>
-            <div>
-              {hiredSuppliers.map(supplier => {
-                supplierIndex += 1;
+          </div>
+        </Suppliers>
+
+        <PageContainer>
+          {!!transactionList && (
+            <>
+              <h1>{selectedSupplier.name}</h1>
+              <div>
+                {selectedSupplier.transactionAgreement?.map(agreement => {
+                  agreementIndex += 1;
+                  return (
+                    <TransactionAgreement
+                      key={agreementIndex}
+                      transactionAgreement={agreement}
+                    />
+                  );
+                })}
+              </div>
+            </>
+          )}
+          {!!allTransactionsWindow && (
+            <AllTransactionsWindow>
+              {sortedTransactions.map(transaction => {
+                allTransactionsIndex += 1;
                 return (
-                  <button
-                    type="button"
-                    onClick={() => handleSelectedSupplier(supplier)}
-                    key={supplier.id}
-                  >
-                    <p>{supplierIndex}</p>
-                    <h3>{supplier.name}</h3>
-                  </button>
+                  <Transaction
+                    key={allTransactionsIndex}
+                    transaction={transaction}
+                  />
                 );
               })}
-            </div>
-          </Suppliers>
-
-          <PageContainer>
-            {!!transactionList && (
-              <>
-                <h1>{selectedSupplier.name}</h1>
-                <div>
-                  {selectedSupplier.transactionAgreement?.map(agreement => {
-                    agreementIndex += 1;
-                    return (
-                      <>
-                        <p>{agreementIndex}</p>
-                        <h2 key={agreement.id}>{agreement.amount}</h2>
-                      </>
-                    );
-                  })}
-                </div>
-              </>
-            )}
-          </PageContainer>
-        </div>
-      </Container>
-    </>
+            </AllTransactionsWindow>
+          )}
+        </PageContainer>
+      </div>
+    </Container>
   );
 };
 

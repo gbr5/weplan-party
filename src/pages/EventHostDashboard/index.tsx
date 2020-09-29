@@ -84,6 +84,7 @@ import EventSupplierWindow from '../../components/EventSupplierWindow';
 import SelectedSupplierWindow from '../../components/SelectedSupplierWindow';
 import TransactionAgreementForm from '../../components/TransactionAgreementForm';
 import EventFinanceSection from '../../components/EventFinanceSection';
+import { numberFormat } from '../../utils/numberFormat';
 
 interface IEvent {
   id: string;
@@ -2817,7 +2818,9 @@ const EventHostDashboard: React.FC = () => {
               <div>
                 <button type="button" onClick={handleBudgetDrawer}>
                   <h2>Orçamento</h2>
-                  <p>R$ {eventInfo.budget ? eventInfo.budget : ''}</p>
+                  <p>
+                    {eventInfo.budget ? numberFormat(eventInfo.budget) : ''}
+                  </p>
                 </button>
               </div>
               <div>
