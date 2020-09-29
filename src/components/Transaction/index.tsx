@@ -50,13 +50,12 @@ const Transaction: React.FC<IPropsDTO> = ({
       });
       refreshHiredSuppliers();
     } catch (err) {
-      throw new Error(err);
-
       addToast({
         type: 'error',
         title: `Erro ao atualizar a parcela`,
         description: 'Erro ao atualizar a parcela, tente novamente.',
       });
+      throw new Error(err);
     }
   }, [addToast, refreshHiredSuppliers, transaction]);
   return (
