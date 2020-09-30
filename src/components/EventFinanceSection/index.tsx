@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { differenceInDays } from 'date-fns';
+import { differenceInDays, setDate } from 'date-fns';
 import ISelectedSupplierDTO from '../../dtos/ISelectedSupplierDTO';
 import PageContainer from '../PageContainer';
 
@@ -7,7 +7,7 @@ import ITransactionDTO from '../../dtos/ITransactionDTO';
 
 import { Container, Suppliers, TransactionsWindow, MenuButton } from './styles';
 import ITransactionAgreementDTO from '../../dtos/ITransactionAgreementDTO';
-import formatStringToDate from '../../utils/formatStringToDate';
+import formatDateToString from '../../utils/formatDateToString';
 import { numberFormat } from '../../utils/numberFormat';
 import Transaction from '../Transaction';
 import TransactionAgreement from '../TransactionAgreement';
@@ -74,13 +74,40 @@ const EventFinanceSection: React.FC<IPropsDTO> = ({
     setOverdueTransactionsWindow(!overdueTransactionsWindow);
   }, [closeAllWindow, overdueTransactionsWindow]);
 
-  const compareTransactionDate = useCallback(
+  const sortByTransactionsDifferenceInDays = useCallback(
     (a: ITransactionDTO, b: ITransactionDTO) => {
-      if (differenceInDays(a.due_date, b.due_date) < 0) {
-        return -1;
+      if (a.difference_in_days === b.difference_in_days) {
+        return 0;
       }
-      if (differenceInDays(a.due_date, b.due_date) > 0) {
+      if (a.difference_in_days && b.difference_in_days) {
+        if (
+          a.difference_in_days > 0 &&
+          a.difference_in_days > b.difference_in_days
+        ) {
+          return -1;
+        }
+
         return 1;
+      }
+      return 0;
+    },
+    [],
+  );
+
+  const sortByOverdueTransactionsDifferenceInDays = useCallback(
+    (a: ITransactionDTO, b: ITransactionDTO) => {
+      if (a.difference_in_days === b.difference_in_days) {
+        return 0;
+      }
+      if (a.difference_in_days && b.difference_in_days) {
+        if (
+          a.difference_in_days > 0 &&
+          a.difference_in_days > b.difference_in_days
+        ) {
+          return 1;
+        }
+
+        return -1;
       }
       return 0;
     },
@@ -97,16 +124,17 @@ const EventFinanceSection: React.FC<IPropsDTO> = ({
         agreements.push(agreement);
         agreement.transactions &&
           agreement.transactions.map(transaction => {
-            const transactionDate = formatStringToDate(
+            const transactionDate = formatDateToString(
               String(transaction.due_date),
             ) as string;
-            const newDate = new Date(transactionDate);
+            const newDate = new Date(String(transaction.due_date));
             const daysTillDueDate = differenceInDays(newDate, today) as number;
+
             transactions.push({
               id: transaction.id,
               agreement_id: transaction.agreement_id,
               amount: Number(transaction.amount),
-              due_date: transaction.due_date,
+              due_date: new Date(transaction.due_date),
               isPaid: transaction.isPaid,
               formattedDate: transactionDate,
               difference_in_days: daysTillDueDate,
@@ -156,52 +184,61 @@ const EventFinanceSection: React.FC<IPropsDTO> = ({
   );
 
   const sortedTransactions = useMemo(() => {
-    const sortedByDate = transactions.sort(compareTransactionDate);
-    return sortedByDate;
-  }, [transactions, compareTransactionDate]);
-  sortedTransactions.map(transaction => {
-    const transactionDate = formatStringToDate(
-      String(transaction.due_date),
-    ) as string;
-    const newDate = new Date(transactionDate);
-    const daysTillDueDate = differenceInDays(newDate, today) as number;
+    const sortedByDifferenceInDays = transactions.sort(
+      sortByTransactionsDifferenceInDays,
+    );
+    return sortedByDifferenceInDays;
+  }, [transactions, sortByTransactionsDifferenceInDays]);
 
-    transaction.isPaid !== true &&
-      daysTillDueDate < 0 &&
-      overdueTransactions.push({
-        id: transaction.id,
-        agreement_id: transaction.agreement_id,
-        amount: Number(transaction.amount),
-        due_date: transaction.due_date,
-        isPaid: transaction.isPaid,
-        formattedDate: transactionDate,
-        difference_in_days: daysTillDueDate,
-        supplier_name: transaction.supplier_name,
-      });
-    transaction.isPaid &&
-      paidTransactions.push({
-        id: transaction.id,
-        agreement_id: transaction.agreement_id,
-        amount: Number(transaction.amount),
-        due_date: transaction.due_date,
-        isPaid: transaction.isPaid,
-        formattedDate: transactionDate,
-        difference_in_days: daysTillDueDate,
-        supplier_name: transaction.supplier_name,
-      });
-    transaction.isPaid === false &&
-      notPaidTransactions.push({
-        id: transaction.id,
-        agreement_id: transaction.agreement_id,
-        amount: Number(transaction.amount),
-        due_date: transaction.due_date,
-        isPaid: transaction.isPaid,
-        formattedDate: transactionDate,
-        difference_in_days: daysTillDueDate,
-        supplier_name: transaction.supplier_name,
-      });
-    return transaction;
-  });
+  const paidSortedTransactions = useMemo(() => {
+    sortedTransactions.map(
+      transaction =>
+        transaction.isPaid === true && paidTransactions.push(transaction),
+    );
+    const sortedByDifferenceInDays = paidTransactions.sort(
+      sortByTransactionsDifferenceInDays,
+    );
+    return sortedByDifferenceInDays;
+  }, [
+    paidTransactions,
+    sortByTransactionsDifferenceInDays,
+    sortedTransactions,
+  ]);
+
+  const notPaidSortedTransactions = useMemo(() => {
+    transactions.map(
+      transaction =>
+        transaction.isPaid === false && notPaidTransactions.push(transaction),
+    );
+
+    const sortedByDifferenceInDays = notPaidTransactions.sort(
+      sortByOverdueTransactionsDifferenceInDays,
+    );
+    return sortedByDifferenceInDays;
+  }, [
+    notPaidTransactions,
+    sortByOverdueTransactionsDifferenceInDays,
+    transactions,
+  ]);
+
+  const overdueSortedTransactions = useMemo(() => {
+    transactions.map(transaction => {
+      transaction.difference_in_days &&
+        transaction.isPaid !== true &&
+        transaction.difference_in_days < 0 &&
+        overdueTransactions.push(transaction);
+      return transaction;
+    });
+    const sortedByDifferenceInDays = overdueTransactions.sort(
+      sortByOverdueTransactionsDifferenceInDays,
+    );
+    return sortedByDifferenceInDays;
+  }, [
+    overdueTransactions,
+    transactions,
+    sortByOverdueTransactionsDifferenceInDays,
+  ]);
+
   return (
     <Container>
       <h1>Financeiro</h1>
@@ -314,7 +351,7 @@ const EventFinanceSection: React.FC<IPropsDTO> = ({
           {!!paidTransactionsWindow && (
             <TransactionsWindow>
               <h3>Transações Efetuadas</h3>
-              {paidTransactions.map(transaction => {
+              {paidSortedTransactions.map(transaction => {
                 allTransactionsIndex += 1;
                 const key = String(allTransactionsIndex);
                 return (
@@ -331,7 +368,7 @@ const EventFinanceSection: React.FC<IPropsDTO> = ({
           {!!notPaidTransactionsWindow && (
             <TransactionsWindow>
               <h3>Transações a Pagar</h3>
-              {notPaidTransactions.map(transaction => {
+              {notPaidSortedTransactions.map(transaction => {
                 allTransactionsIndex += 1;
                 const key = String(allTransactionsIndex);
                 return (
@@ -348,7 +385,7 @@ const EventFinanceSection: React.FC<IPropsDTO> = ({
           {!!overdueTransactionsWindow && (
             <TransactionsWindow>
               <h3>Transações Atrasadas</h3>
-              {overdueTransactions.map(transaction => {
+              {overdueSortedTransactions.map(transaction => {
                 allTransactionsIndex += 1;
                 const key = String(allTransactionsIndex);
                 return (

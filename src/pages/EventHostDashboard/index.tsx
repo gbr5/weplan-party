@@ -423,17 +423,9 @@ const EventHostDashboard: React.FC = () => {
   const handleAddSupplierDrawer = useCallback(
     props => {
       if (props === '') {
-        console.log(
-          "handleAddSupplierDrawer Function => supplierSubCategory(props) === '':",
-          props,
-        );
         handleSupplierCategory();
         closeAllWindows();
       } else {
-        console.log(
-          "handleAddSupplierDrawer Function => supplierSubCategory(props) !== '':",
-          props,
-        );
         setSupplierCategory('');
         handleSupplierCategory();
         setSupplierSubCategory(props);
@@ -554,13 +546,11 @@ const EventHostDashboard: React.FC = () => {
 
   const handleGetSupplierSubCategory = useCallback(() => {
     try {
-      console.log('Get SubCategory:', supplierCategory);
       api
         .get<ISupplierSubCategoryDTO[]>(
           `/suppliers/categories/sub-categories/${supplierCategory}`,
         )
         .then(response => {
-          console.log(response.data);
           setSupplierSubCategories(response.data);
         });
     } catch (err) {
@@ -717,7 +707,6 @@ const EventHostDashboard: React.FC = () => {
     }
   }, [eventId]);
   const handleCreateTransactionWindow = useCallback(props => {
-    console.log('setando supplier que vai para agreement form:', props);
     setSupplierInfo(props);
     setTransactionAgreementWindow(true);
   }, []);
@@ -731,13 +720,6 @@ const EventHostDashboard: React.FC = () => {
         });
         await schema.validate(data, {
           abortEarly: false,
-        });
-
-        console.log('handleAddSupplier function:', {
-          name: data.name,
-          supplier_sub_category: supplierSubCategory,
-          isHired,
-          weplanUser: false,
         });
 
         const newSupplier = await api.post(
@@ -762,9 +744,7 @@ const EventHostDashboard: React.FC = () => {
           description:
             'Você já pode visualizar as alterações na página do seu evento.',
         });
-        console.log('isHired de fora:', isHired);
         if (isHired) {
-          console.log('isHired de dentro:', isHired);
           handleCreateTransactionWindow(newSupplier.data);
         }
       } catch (err) {
@@ -1537,7 +1517,6 @@ const EventHostDashboard: React.FC = () => {
     }
   }, [eventId, owner, addToast, handleGetOwners]);
   const handleDeleteHiredSupplier = useCallback(async () => {
-    console.log('deletar fornecedor');
     try {
       await api.delete(
         `/events/${eventId}/event-suppliers/${hiredSupplier.id}`,
@@ -1567,7 +1546,6 @@ const EventHostDashboard: React.FC = () => {
     }
   }, [eventId, hiredSupplier, addToast, handleGetHiredSuppliers]);
   const handleDeleteSelectedSupplier = useCallback(async () => {
-    console.log('deletar fornecedor');
     try {
       await api.delete(
         `/events/${eventId}/event-suppliers/${selectedSupplier.id}`,
@@ -1649,12 +1627,6 @@ const EventHostDashboard: React.FC = () => {
     return totalCost;
   }, [hiredSuppliers]);
 
-  console.log(
-    totalEventCost,
-    eventInfo.budget,
-    (totalEventCost / eventInfo.budget) * 100,
-  );
-
   useEffect(() => {
     handleGetSuppliers();
   }, [handleGetSuppliers]);
@@ -1727,8 +1699,7 @@ const EventHostDashboard: React.FC = () => {
           onHandleEventSupplierDrawer={() => setHiredSupplierWindow(false)}
           onHandleEventSupplierUpdate={() => setHiredSupplierWindow(true)}
           onHandleDeleteEventSupplierDrawer={() =>
-            setDeleteHiredSupplierDrawer(true)
-          }
+            setDeleteHiredSupplierDrawer(true)}
         />
       )}
       {!!editEventNameDrawer && (
@@ -1780,12 +1751,10 @@ const EventHostDashboard: React.FC = () => {
         <SelectedSupplierWindow
           selectedSupplier={selectedSupplier}
           onHandleSelectedSupplierDrawer={() =>
-            setSelectedSupplierWindow(false)
-          }
+            setSelectedSupplierWindow(false)}
           onUpdateSelectedSupplierDrawer={() => setSelectedSupplierWindow(true)}
           onDeleteSelectedSupplierDrawer={() =>
-            setDeleteSelectedSupplierDrawer(true)
-          }
+            setDeleteSelectedSupplierDrawer(true)}
         />
       )}
       {!!numberOfGuestDrawer && (
@@ -1972,8 +1941,7 @@ const EventHostDashboard: React.FC = () => {
           friends={friends}
           onHandleFriendsListDrawer={() => setFriendsWindow(false)}
           handleSelectedFriend={(friend: IUserInfoDTO) =>
-            handleSelectedWeplanUser(friend)
-          }
+            handleSelectedWeplanUser(friend)}
         />
       )}
       {!!eventInfoDrawer && (
@@ -2658,8 +2626,7 @@ const EventHostDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={() =>
-                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')
-                }
+                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')}
               >
                 <MdBuild size={50} />
                 <h1>Estruturas, Cênica e Boate</h1>
@@ -2695,8 +2662,7 @@ const EventHostDashboard: React.FC = () => {
                   key={subCategory.id}
                   type="button"
                   onClick={() =>
-                    handleAddSupplierDrawer(subCategory.sub_category)
-                  }
+                    handleAddSupplierDrawer(subCategory.sub_category)}
                 >
                   {/* <MdFolderSpecial size={50} /> */}
                   <h1>{subCategory.sub_category}</h1>
@@ -2985,7 +2951,8 @@ const EventHostDashboard: React.FC = () => {
                           <button
                             type="button"
                             onClick={() =>
-                              handleSelectedSupplierWindow(sSupplier)}
+                              handleSelectedSupplierWindow(sSupplier)
+                            }
                           >
                             <strong>{sSupplier.name}</strong>{' '}
                             <FiEdit3 size={16} />
@@ -3002,7 +2969,8 @@ const EventHostDashboard: React.FC = () => {
                           <button
                             type="button"
                             onClick={() =>
-                              handleCreateTransactionWindow(sSupplier)}
+                              handleCreateTransactionWindow(sSupplier)
+                            }
                           >
                             {sSupplier.isHired ? (
                               <FiCheckSquare size={24} />

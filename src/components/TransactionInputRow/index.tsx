@@ -1,7 +1,7 @@
 import React, { HTMLAttributes } from 'react';
 import { Scope } from '@unform/core';
 
-// import { MouseEventHandler } from 'react-select';
+import InputMask from 'react-input-mask';
 import Input from '../Input';
 import PageContainer from '../PageContainer';
 import CheckboxInput from '../CheckboxInput';

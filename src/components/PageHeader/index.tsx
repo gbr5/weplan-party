@@ -163,7 +163,9 @@ const PageHeader: React.FC = ({ children }) => {
                   : date.getHours();
               const year = date.getFullYear();
               const month =
-                date.getMonth() < 10 ? `0${date.getMonth()}` : date.getMonth();
+                date.getMonth() < 9
+                  ? `0${date.getMonth() + 1}`
+                  : date.getMonth() + 1;
               const day =
                 date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
               const hour =
@@ -386,10 +388,10 @@ const PageHeader: React.FC = ({ children }) => {
           onHandleCloseWindow={() => setAppointmentTypeDrawer(false)}
           containerStyle={{
             zIndex: 1000,
-            top: '2%',
-            left: '5%',
-            height: '96%',
-            width: '90%',
+            top: '35%',
+            left: '40%',
+            height: '30%',
+            width: '20%',
           }}
         >
           <AppointmentTypeDrawer>
@@ -678,7 +680,7 @@ const PageHeader: React.FC = ({ children }) => {
           }}
         >
           <ToggleButton>
-            <h3>Tema {themeBoolean ? 'Claro' : 'Escuro'}</h3>
+            <h3>Tema {themeBoolean ? 'Escuro' : 'Claro'}</h3>
             <Swicth
               onChange={toggleTheme}
               checked={themeBoolean}

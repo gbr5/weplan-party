@@ -8,6 +8,7 @@ export const Container = styled.div`
   background: var(--header-background-color);
   border-radius: 8px;
   height: 600px;
+  box-sizing: border-box;
 
   > h1 {
     color: var(--primary-color);

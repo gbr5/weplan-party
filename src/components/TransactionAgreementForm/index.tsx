@@ -41,7 +41,6 @@ const TransactionAgreementForm: React.FC<IPropsDTO> = ({
     setInstallmentsRows([...Array(numberOfInstallments)]);
     setTransactionContainer(!transactionContainer);
   }, [numberOfInstallments, transactionContainer]);
-  console.log('me chamaram aqui, transactionAgreementForm');
 
   const inputHeight = { height: '40px' };
   let iCount = 0;
@@ -79,7 +78,6 @@ const TransactionAgreementForm: React.FC<IPropsDTO> = ({
             isPaid: ispaid,
           };
         });
-        console.log(agreement);
 
         if (agreement) {
           await api.put(`finances/transaction-agreements/${agreement.id}`, {
@@ -117,13 +115,12 @@ const TransactionAgreementForm: React.FC<IPropsDTO> = ({
         getHiredSuppliers();
         setTransactionContainer(false);
       } catch (err) {
-        console.log(err);
-
         addToast({
           type: 'error',
           title: 'Erro ao adicionar membro da festa',
           description: 'Erro ao adicionar membro da festa, tente novamente.',
         });
+        throw new Error(err);
       }
     },
     [addToast, hiredSupplier, getEventSuppliers, getHiredSuppliers, agreement],
