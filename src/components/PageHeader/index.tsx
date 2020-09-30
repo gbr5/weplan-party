@@ -293,6 +293,7 @@ const PageHeader: React.FC = ({ children }) => {
         setEditAppointmentDrawer(false);
         setAppointmentType('');
         handleGetAppointments();
+        return date;
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const error = getValidationErrors(err);
@@ -305,6 +306,7 @@ const PageHeader: React.FC = ({ children }) => {
           title: 'Erro ao criar agendamento',
           description: 'Erro  ao criar o agendamento, tente novamente.',
         });
+        throw new Error(err);
       }
     },
     [
