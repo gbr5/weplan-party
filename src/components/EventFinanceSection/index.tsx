@@ -5,7 +5,13 @@ import PageContainer from '../PageContainer';
 
 import ITransactionDTO from '../../dtos/ITransactionDTO';
 
-import { Container, Suppliers, TransactionsWindow, MenuButton } from './styles';
+import {
+  Container,
+  Suppliers,
+  SupplierButton,
+  TransactionsWindow,
+  MenuButton,
+} from './styles';
 import ITransactionAgreementDTO from '../../dtos/ITransactionAgreementDTO';
 import formatDateToString from '../../utils/formatDateToString';
 import { numberFormat } from '../../utils/numberFormat';
@@ -289,7 +295,7 @@ const EventFinanceSection: React.FC<IPropsDTO> = ({
             Transações Vencidas
           </MenuButton>
           <div>
-            <p>{numberFormat(totalOverdue)}</p>
+            <p style={{ color: 'red' }}>{numberFormat(totalOverdue)}</p>
           </div>
         </div>
       </span>
@@ -300,20 +306,23 @@ const EventFinanceSection: React.FC<IPropsDTO> = ({
             {hiredSuppliers.map(supplier => {
               supplierIndex += 1;
               return (
-                <button
+                <SupplierButton
+                  booleanActiveButton={selectedSupplier === supplier}
                   type="button"
                   onClick={() => handleSelectedSupplier(supplier)}
                   key={supplier.id}
                 >
                   <p>{supplierIndex}</p>
                   <h3>{supplier.name}</h3>
-                </button>
+                </SupplierButton>
               );
             })}
           </div>
         </Suppliers>
 
-        <PageContainer>
+        <PageContainer
+          containerStyle={{ height: '368px', boxSizing: 'border-box' }}
+        >
           {!!transactionList && (
             <>
               <h1>{selectedSupplier.name}</h1>

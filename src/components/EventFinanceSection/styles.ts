@@ -51,6 +51,9 @@ export const Container = styled.div`
           font-size: 20px;
           color: var(--letter-color-5);
         }
+        > div:last-child() {
+          color: var(--red-color);
+        }
       }
     }
   }
@@ -59,7 +62,9 @@ export const Container = styled.div`
     display: flex;
     gap: 16px;
     width: 100%;
-    height: 100%;
+    height: 400px;
+    box-sizing: border-box;
+    padding-bottom: 32px;
   }
 `;
 
@@ -87,26 +92,48 @@ export const Suppliers = styled.div`
     height: 100%;
 
     overflow-y: scroll;
-    padding: 16px;
+    padding: 16px 16px 16px 0;
+  }
+`;
 
-    > button {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 16px;
-      padding: 4px 8px;
+interface SupplierButtonProps {
+  booleanActiveButton: boolean;
+}
 
-      > p {
-        font-size: 16px;
-        font-weight: 500;
-        color: var(--primary-color);
-      }
+export const SupplierButton = styled.button<SupplierButtonProps>`
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+  padding: 4px 8px;
+  color: var(--letter-color-4);
+  transition: 0.8s;
 
-      > h3 {
-        font-size: 16px;
-        color: var(--letter-color-5);
-      }
-    }
+  &:hover {
+    border-bottom: 1px solid var(--primary-color);
+    color: var(--primary-color);
+  }
+
+  ${props =>
+    props.booleanActiveButton &&
+    css`
+      color: var(--primary-color);
+      opacity: 1;
+      transition: 0.4s;
+      border-bottom: 1px solid var(--title-color);
+    `}
+
+  > p {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--primary-color);
+  }
+
+  > h3 {
+    font-size: 16px;
+    font-weight: 500;
   }
 `;
 
@@ -114,7 +141,8 @@ export const TransactionsWindow = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
-  height: 100%;
+  height: 600px;
+  box-sizing: border-box;
   overflow-y: scroll;
 
   > h3 {

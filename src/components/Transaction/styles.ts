@@ -10,23 +10,32 @@ export const Container = styled.div`
   align-items: center;
   gap: 8px;
 
-  > h2 {
-    font-size: 16px;
-    color: var(--letter-color-4);
+  > div {
+    display: flex;
+    gap: 16px;
     margin-right: auto;
+
+    > h2 {
+      text-align: left;
+      width: 200px;
+      font-size: 16px;
+      color: var(--letter-color-4);
+    }
   }
 `;
 
 export const TransactionDate = styled(Tooltip)`
   display: flex;
   gap: 16px;
-  align-items: center;
-  justify-content: center;
-  margin-right: 16px;
+  align-items: right;
+  justify-content: right;
+  margin-left: auto;
+  width: 100%;
 
   > h3 {
     color: var(--primary-color);
     margin-right: 16px;
+    margin-left: auto;
   }
   > p {
     font-size: 16px;
