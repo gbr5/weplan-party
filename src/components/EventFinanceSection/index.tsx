@@ -11,7 +11,6 @@ import {
   SupplierButton,
   TransactionsWindow,
   MenuButton,
-  SupplierTransactionsWindow,
   SupplierTransactionAgreementsWindow,
 } from './styles';
 import ITransactionAgreementDTO from '../../dtos/ITransactionAgreementDTO';
