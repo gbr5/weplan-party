@@ -11,6 +11,8 @@ import {
   SupplierButton,
   TransactionsWindow,
   MenuButton,
+  SupplierTransactionsWindow,
+  SupplierTransactionAgreementsWindow,
 } from './styles';
 import ITransactionAgreementDTO from '../../dtos/ITransactionAgreementDTO';
 import formatDateToString from '../../utils/formatDateToString';
@@ -27,7 +29,7 @@ const EventFinanceSection: React.FC<IPropsDTO> = ({
   hiredSuppliers,
   refreshHiredSuppliers,
 }: IPropsDTO) => {
-  const [transactionList, setTransactionList] = useState(false);
+  const [supplierTransactions, setSupplierTransactions] = useState(false);
   const [selectedSupplier, setSelectedSupplier] = useState<
     ISelectedSupplierDTO
   >({} as ISelectedSupplierDTO);
@@ -53,11 +55,12 @@ const EventFinanceSection: React.FC<IPropsDTO> = ({
   const today = new Date();
 
   const closeAllWindow = useCallback(() => {
-    setTransactionList(false);
+    setSupplierTransactions(false);
     setAllTransactionsWindow(false);
     setPaidTransactionsWindow(false);
     setNotPaidTransactionsWindow(false);
     setOverdueTransactionsWindow(false);
+    setSelectedSupplier({} as ISelectedSupplierDTO);
   }, []);
 
   const handleAllTransactionsWindow = useCallback(() => {
@@ -184,7 +187,7 @@ const EventFinanceSection: React.FC<IPropsDTO> = ({
     props => {
       closeAllWindow();
       setSelectedSupplier(props);
-      setTransactionList(true);
+      setSupplierTransactions(true);
     },
     [closeAllWindow],
   );
@@ -323,22 +326,40 @@ const EventFinanceSection: React.FC<IPropsDTO> = ({
         <PageContainer
           containerStyle={{ height: '368px', boxSizing: 'border-box' }}
         >
-          {!!transactionList && (
-            <>
+          {!!supplierTransactions && (
+            <SupplierTransactionAgreementsWindow>
               <h1>{selectedSupplier.name}</h1>
               <div>
                 {selectedSupplier.transactionAgreement?.map(agreement => {
                   agreementIndex += 1;
                   const key = String(agreementIndex);
                   return (
-                    <TransactionAgreement
-                      key={key}
-                      transactionAgreement={agreement}
-                    />
+                    <>
+                      <TransactionAgreement
+                        key={key}
+                        transactionAgreement={agreement}
+                      />
+                      <SupplierTransactionAgreementsWindow>
+                        {agreement.transactions.map(transaction => {
+                          allTransactionsIndex += 1;
+                          const supplierTransactionKey = String(
+                            allTransactionsIndex,
+                          );
+                          return (
+                            <Transaction
+                              refreshHiredSuppliers={refreshHiredSuppliers}
+                              key={supplierTransactionKey}
+                              allTransactions={false}
+                              transaction={transaction}
+                            />
+                          );
+                        })}
+                      </SupplierTransactionAgreementsWindow>
+                    </>
                   );
                 })}
               </div>
-            </>
+            </SupplierTransactionAgreementsWindow>
           )}
           {!!allTransactionsWindow && (
             <TransactionsWindow>

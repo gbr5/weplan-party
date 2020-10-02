@@ -109,10 +109,9 @@ export const SupplierButton = styled.button<SupplierButtonProps>`
   gap: 16px;
   padding: 4px 8px;
   color: var(--letter-color-4);
-  transition: 0.8s;
+  transition: 0.6s;
 
   &:hover {
-    border-bottom: 1px solid var(--primary-color);
     color: var(--primary-color);
   }
 
@@ -183,4 +182,32 @@ export const MenuButton = styled.button<ButtonProps>`
       transition: 0.4s;
       border-bottom: 1px solid var(--title-color);
     `}
+`;
+
+export const SupplierTransactionAgreementsWindow = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 300px;
+`;
+
+export const SupplierTransactionsWindow = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 250px;
+  box-sizing: border-box;
+  overflow-y: scroll;
+
+  > h3 {
+    margin: 8px auto 24px;
+    font-size: 18px;
+    color: var(--title-color);
+    border-bottom: 1px solid var(--primary-color);
+  }
+
+  > div {
+    border-bottom: 1px solid var(--letter-color-4);
+    padding-bottom: 8px;
+  }
 `;
