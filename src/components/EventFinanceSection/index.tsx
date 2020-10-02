@@ -114,7 +114,12 @@ const EventFinanceSection: React.FC<IPropsDTO> = ({
         ) {
           return 1;
         }
-
+        if (
+          a.difference_in_days < 0 &&
+          a.difference_in_days > b.difference_in_days
+        ) {
+          return 1;
+        }
         return -1;
       }
       return 0;

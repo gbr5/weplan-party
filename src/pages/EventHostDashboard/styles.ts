@@ -653,12 +653,20 @@ export const AddSupplierDrawer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 32px;
   width: 100%;
 
   > h1 {
     font-size: 24px;
     color: var(--title-color);
+
+    button {
+      background: var(--primary-color);
+      border: none;
+      height: 40px;
+      width: 100%;
+      border-radius: 4px;
+    }
   }
 
   > input {
@@ -673,7 +681,7 @@ export const AddSupplierDrawer = styled.div`
     background: var(--primary-color);
     border: none;
     height: 40px;
-    width: 90%;
+    width: 100%;
     border-radius: 4px;
   }
 `;

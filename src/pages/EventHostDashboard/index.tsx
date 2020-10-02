@@ -2208,12 +2208,6 @@ const EventHostDashboard: React.FC = () => {
                 placeholder="Nome do fornecedor"
                 containerStyle={{ height: '40px' }}
               />
-              <Input
-                name="supplier_sub_category"
-                type="text"
-                placeholder="Qual o serviço contratado?"
-                containerStyle={{ height: '40px' }}
-              />
               <button type="submit">
                 <h3>Salvar</h3>
               </button>

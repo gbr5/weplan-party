@@ -166,14 +166,22 @@ const TransactionAgreementForm: React.FC<IPropsDTO> = ({
             onChange={e => setNumberOfInstallments(Number(e.target.value))}
           />
 
-          {!transactionContainer && (
-            <button type="button" onClick={handleTransactionContainer}>
-              Definir Parcelas
-            </button>
-          )}
+          <button type="button" onClick={handleTransactionContainer}>
+            Definir Parcelas
+          </button>
         </div>
         {!!transactionContainer && (
-          <div>
+          <WindowContainer
+            onHandleCloseWindow={onHandleCloseWindow}
+            containerStyle={{
+              zIndex: 100,
+              top: '5%',
+              left: '5%',
+              height: '90%',
+              width: '90%',
+              overflow: 'scroll',
+            }}
+          >
             {installmentsRows.map(row => {
               iCount += 1;
               row && console.log(row);
@@ -189,9 +197,11 @@ const TransactionAgreementForm: React.FC<IPropsDTO> = ({
                 </>
               );
             })}
-          </div>
+            <div>
+              <button type="submit">Salvar</button>
+            </div>
+          </WindowContainer>
         )}
-        {!!transactionContainer && <button type="submit">Salvar</button>}
       </Form>
     </WindowContainer>
   );

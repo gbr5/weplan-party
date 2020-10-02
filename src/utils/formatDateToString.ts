@@ -1,6 +1,6 @@
 export default function formatStringToDate(date: string): string {
   const newDate = new Date(date);
-  const year = newDate.getFullYear();
+  let year = newDate.getFullYear();
   let month;
   month =
     newDate.getMonth() < 9
@@ -10,6 +10,7 @@ export default function formatStringToDate(date: string): string {
   let day;
   if (newDate.getDate() === 31) {
     day = '01';
+    month === 12 && (year = newDate.getFullYear() + 1);
     month === 12 ? (month = '01') : (month = newDate.getMonth() + 2);
   } else {
     day =
