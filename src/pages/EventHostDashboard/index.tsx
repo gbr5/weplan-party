@@ -31,7 +31,7 @@ import {
   MdBuild,
 } from 'react-icons/md';
 import { differenceInCalendarDays } from 'date-fns/esm';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
 import {
@@ -39,9 +39,6 @@ import {
   EventPageContent,
   FirstRow,
   LatestNews,
-  MyEvents,
-  MyEventsDrawer,
-  MyEventsDrawerButton,
   AddSupplierDrawer,
   BooleanSection,
   AddGuestDrawer,
@@ -74,7 +71,6 @@ import {
   EventInfo,
 } from './styles';
 import PageHeader from '../../components/PageHeader';
-import MenuButton from '../../components/MenuButton';
 import avatar_placeholder from '../../assets/avatar_placeholder_cat2.jpeg';
 import api from '../../services/api';
 import Input from '../../components/Input';
@@ -91,6 +87,7 @@ import SelectedSupplierWindow from '../../components/SelectedSupplierWindow';
 import TransactionAgreementForm from '../../components/TransactionAgreementForm';
 import EventFinanceSection from '../../components/EventFinanceSection';
 import { numberFormat } from '../../utils/numberFormat';
+import IListEventDTO from '../../dtos/IListEventDTO';
 
 interface IEvent {
   id: string;
@@ -135,7 +132,12 @@ interface IEventParams {
   params: {
     id: string;
     name: string;
-    date: string;
+    trimmed_name: string;
+    isOwner: boolean;
+    owner_master: string;
+    isGuest: boolean;
+    event_type: string;
+    date: Date | string;
     daysTillDate: number;
   };
 }
@@ -172,7 +174,6 @@ interface ISupplierSubCategoryDTO {
   sub_category: string;
 }
 const EventHostDashboard: React.FC = () => {
-  const history = useHistory();
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
   const location = useLocation<IEventParams>();
@@ -180,13 +181,11 @@ const EventHostDashboard: React.FC = () => {
 
   const pageEvent = location.state.params;
 
-  const [eventId, setEventId] = useState(pageEvent.id);
+  const eventId = pageEvent.id;
 
   const notHostMessage = 'Você não é o anfitrião deste convidado!';
 
-  const [myEvents, setMyEvents] = useState<IEvent[]>([]);
-  const [myEventsDrawer, setMyEventsDrawer] = useState(false);
-  const [event, setEvent] = useState<IEvent>({} as IEvent);
+  const [event, setEvent] = useState<IListEventDTO>({} as IListEventDTO);
   const [friends, setFriends] = useState<IUserInfoDTO[]>([]);
   const [friendsWindow, setFriendsWindow] = useState(false);
   const [checkListItems, setCheckListItems] = useState<IEventCheckList[]>([]);
@@ -291,7 +290,6 @@ const EventHostDashboard: React.FC = () => {
   const [selectedSupplierWindow, setSelectedSupplierWindow] = useState(false);
 
   const closeAllWindows = useCallback(() => {
-    setMyEventsDrawer(false);
     setCheckedListItemDrawer(false);
     setAddCheckListDrawer(false);
     setIsHiredDrawer(false);
@@ -331,10 +329,6 @@ const EventHostDashboard: React.FC = () => {
     setFirstRow(false);
     setSidebar(false);
   }, []);
-  const handleMyEventsDrawer = useCallback(() => {
-    closeAllWindows();
-    setMyEventsDrawer(!myEventsDrawer);
-  }, [myEventsDrawer, closeAllWindows]);
   const handleEventInfoDrawer = useCallback(() => {
     closeAllWindows();
     setEventInfoDrawer(!eventInfoDrawer);
@@ -639,16 +633,6 @@ const EventHostDashboard: React.FC = () => {
       throw new Error(err);
     }
   }, [eventId]);
-  const handleGetEvents = useCallback(() => {
-    try {
-      eventId &&
-        api.get<IEvent[]>('/events').then(response => {
-          setMyEvents(response.data);
-        });
-    } catch (err) {
-      throw Error(err);
-    }
-  }, [eventId]);
   const handleGetGuests = useCallback(() => {
     try {
       api.get<IEventGuest[]>(`/events/${eventId}/guests`).then(response => {
@@ -669,7 +653,7 @@ const EventHostDashboard: React.FC = () => {
   }, [eventId, user]);
   const handleGetEvent = useCallback(() => {
     try {
-      api.get<IEvent>(`/events/${pageEvent.id}`).then(response => {
+      api.get<IListEventDTO>(`/events/${pageEvent.id}`).then(response => {
         const date = new Date(response.data.date);
         const year = date.getFullYear();
         const month =
@@ -686,6 +670,9 @@ const EventHostDashboard: React.FC = () => {
           date: `${hour}:${minute} - ${day}/${month}/${year}`,
           event_type: response.data.event_type,
           daysTillDate: differenceInCalendarDays(date, new Date()),
+          isGuest: false,
+          isOwner: pageEvent.isOwner,
+          owner_master: pageEvent.owner_master,
         });
         setEventDate(date);
       });
@@ -1124,7 +1111,7 @@ const EventHostDashboard: React.FC = () => {
     [addToast, eventId, eventInfo, handleGetEventInfo],
   );
   const handleEditEventName = useCallback(
-    async (data: IEvent) => {
+    async (data: IListEventDTO) => {
       try {
         formRef.current?.setErrors([]);
 
@@ -1598,17 +1585,6 @@ const EventHostDashboard: React.FC = () => {
     }
   }, [addToast, eventId, checkListItem, handleGetCheckListItems]);
 
-  const handleMyEventDashboard = useCallback(
-    (my_event: IEvent) => {
-      closeAllWindows();
-      setEventId(my_event.id);
-      return history.push(`/dashboard/my-event/${my_event.trimmed_name}`, {
-        params: my_event,
-      });
-    },
-    [closeAllWindows, history],
-  );
-
   const totalEventCost = useMemo(() => {
     const totalCost: number = hiredSuppliers
       .map(supplier => {
@@ -1633,9 +1609,6 @@ const EventHostDashboard: React.FC = () => {
   useEffect(() => {
     handleGetCheckListItems();
   }, [handleGetCheckListItems]);
-  useEffect(() => {
-    handleGetEvents();
-  }, [handleGetEvents]);
   useEffect(() => {
     handleGetEvent();
   }, [handleGetEvent]);
@@ -1674,7 +1647,6 @@ const EventHostDashboard: React.FC = () => {
 
   return (
     <Container>
-      <MenuButton />
       <PageHeader>
         <span>
           <button type="button" onClick={handleEditEventNameDrawer}>
@@ -1699,7 +1671,8 @@ const EventHostDashboard: React.FC = () => {
           onHandleEventSupplierDrawer={() => setHiredSupplierWindow(false)}
           onHandleEventSupplierUpdate={() => setHiredSupplierWindow(true)}
           onHandleDeleteEventSupplierDrawer={() =>
-            setDeleteHiredSupplierDrawer(true)}
+            setDeleteHiredSupplierDrawer(true)
+          }
         />
       )}
       {!!editEventNameDrawer && (
@@ -1751,10 +1724,12 @@ const EventHostDashboard: React.FC = () => {
         <SelectedSupplierWindow
           selectedSupplier={selectedSupplier}
           onHandleSelectedSupplierDrawer={() =>
-            setSelectedSupplierWindow(false)}
+            setSelectedSupplierWindow(false)
+          }
           onUpdateSelectedSupplierDrawer={() => setSelectedSupplierWindow(true)}
           onDeleteSelectedSupplierDrawer={() =>
-            setDeleteSelectedSupplierDrawer(true)}
+            setDeleteSelectedSupplierDrawer(true)
+          }
         />
       )}
       {!!numberOfGuestDrawer && (
@@ -1941,7 +1916,8 @@ const EventHostDashboard: React.FC = () => {
           friends={friends}
           onHandleFriendsListDrawer={() => setFriendsWindow(false)}
           handleSelectedFriend={(friend: IUserInfoDTO) =>
-            handleSelectedWeplanUser(friend)}
+            handleSelectedWeplanUser(friend)
+          }
         />
       )}
       {!!eventInfoDrawer && (
@@ -2620,7 +2596,8 @@ const EventHostDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={() =>
-                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')}
+                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')
+                }
               >
                 <MdBuild size={50} />
                 <h1>Estruturas, Cênica e Boate</h1>
@@ -2656,7 +2633,8 @@ const EventHostDashboard: React.FC = () => {
                   key={subCategory.id}
                   type="button"
                   onClick={() =>
-                    handleAddSupplierDrawer(subCategory.sub_category)}
+                    handleAddSupplierDrawer(subCategory.sub_category)
+                  }
                 >
                   {/* <MdFolderSpecial size={50} /> */}
                   <h1>{subCategory.sub_category}</h1>
@@ -2674,33 +2652,6 @@ const EventHostDashboard: React.FC = () => {
           getHiredSuppliers={handleGetHiredSuppliers}
         />
       )}
-      {!!myEventsDrawer && (
-        <WindowContainer
-          onHandleCloseWindow={() => setMyEventsDrawer(false)}
-          containerStyle={{
-            zIndex: 10,
-            top: '160px',
-            left: '0',
-            height: '300px',
-            width: '500px',
-          }}
-        >
-          <MyEventsDrawer>
-            {myEvents.map(myEvent => (
-              <button
-                type="button"
-                onClick={() => handleMyEventDashboard(myEvent)}
-                key={myEvent.id}
-              >
-                {myEvent.name}
-                <span>
-                  <FiChevronRight size={24} />
-                </span>
-              </button>
-            ))}
-          </MyEventsDrawer>
-        </WindowContainer>
-      )}
       <EventPageContent>
         {sidebar ? (
           <span>
@@ -2716,37 +2667,6 @@ const EventHostDashboard: React.FC = () => {
 
         {sidebar && (
           <SideBar>
-            <MyEvents>
-              <MyEventsDrawerButton
-                type="button"
-                onClick={handleMyEventsDrawer}
-              >
-                <h1>Meus Eventos</h1>
-                {myEventsDrawer ? (
-                  <span>
-                    <FiChevronUp size={30} />
-                  </span>
-                ) : (
-                  <span>
-                    <FiChevronDown size={30} />
-                  </span>
-                )}
-              </MyEventsDrawerButton>
-            </MyEvents>
-            <button type="button" onClick={handleEventInfoDrawer}>
-              Informações do Evento
-            </button>
-            <button type="button" onClick={handleLatestActionsSection}>
-              Últimas Atualizações
-            </button>
-            <button type="button" onClick={handleMessagesSection}>
-              Mensagens
-            </button>
-            <button type="button" onClick={handleAddPlannerDrawer}>
-              <h1>Cerimonialistas</h1>
-              <MdPersonAdd size={24} />
-            </button>
-
             {planners.map(planner => (
               <span key={planner.id}>
                 <button type="button">
@@ -2781,6 +2701,19 @@ const EventHostDashboard: React.FC = () => {
                 <h2>Visualizar</h2>
               </button>
             </span>
+            <button type="button" onClick={handleAddPlannerDrawer}>
+              <h1>Cerimonialistas</h1>
+              <MdPersonAdd size={24} />
+            </button>
+            <button type="button" onClick={handleEventInfoDrawer}>
+              Informações do Evento
+            </button>
+            <button type="button" onClick={handleLatestActionsSection}>
+              Últimas Atualizações
+            </button>
+            <button type="button" onClick={handleMessagesSection}>
+              Mensagens
+            </button>
           </SideBar>
         )}
         <Main>
@@ -2945,8 +2878,7 @@ const EventHostDashboard: React.FC = () => {
                           <button
                             type="button"
                             onClick={() =>
-                              handleSelectedSupplierWindow(sSupplier)
-                            }
+                              handleSelectedSupplierWindow(sSupplier)}
                           >
                             <strong>{sSupplier.name}</strong>{' '}
                             <FiEdit3 size={16} />
@@ -2963,8 +2895,7 @@ const EventHostDashboard: React.FC = () => {
                           <button
                             type="button"
                             onClick={() =>
-                              handleCreateTransactionWindow(sSupplier)
-                            }
+                              handleCreateTransactionWindow(sSupplier)}
                           >
                             {sSupplier.isHired ? (
                               <FiCheckSquare size={24} />

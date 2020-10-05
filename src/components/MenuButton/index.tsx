@@ -83,9 +83,9 @@ const MenuButton: React.FC = () => {
     history.push('/friends');
   }, [history]);
 
-  const handleNavigateToEvents = useCallback(() => {
-    history.push('/events');
-  }, [history]);
+  // const handleNavigateToEvents = useCallback(() => {
+  //   history.push('/events');
+  // }, [history]);
 
   const handleMyEventDashboard = useCallback(
     (event_id: string) => {
@@ -263,18 +263,18 @@ const MenuButton: React.FC = () => {
               <button type="button" onClick={handleCreateEventDrawer}>
                 Criar Evento
               </button>
-              <button type="button" onClick={handleNavigateToFriends}>
+              {/* <button type="button" onClick={handleNavigateToFriends}>
                 Fotos
-              </button>
+              </button> */}
               <button type="button" onClick={handleNavigateToFriends}>
                 Amigos
               </button>
-              <button type="button" onClick={handleNavigateToEvents}>
+              {/* <button type="button" onClick={handleNavigateToEvents}>
                 Eventos
-              </button>
-              <button type="button" onClick={handleNavigateToEvents}>
+              </button> */}
+              {/* <button type="button" onClick={handleNavigateToEvents}>
                 Fornecedores
-              </button>
+              </button> */}
             </Menu>
           </ButtonContent>
         </WindowContainer>
