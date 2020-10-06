@@ -16,7 +16,10 @@ export default createGlobalStyle`
     --letter-color-3: ${props => props.theme.colors.letter3};
     --letter-color-4: ${props => props.theme.colors.letter4};
     --letter-color-5: ${props => props.theme.colors.letter5};
-    --box-shadow: 1px 2px 2px 3px rgba(0, 0, 0, 0.1);
+    --box-shadow: 2px 2px 3px 2px rgba(0, 0, 0, 0.2);
+    --box-shadow-hover: -1px -1px 5px 2px rgba(0, 0, 0, 0.2);
+    --box-shadow-active: 1px 1px 20px 4px rgba(150, 150, 150, 0.08);
+    --window-box-shadow: 2px 2px 10px 4px rgba(255, 150, 10, 0.3);
     --red-color: #c53030;
     --input-container-color: rgb(179, 182, 178);
     --toast-info-color: ${props => props.theme.colors.toastInfoColor};

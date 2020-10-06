@@ -66,7 +66,7 @@ export const Error = styled(Tooltip)`
   font-size: 16px;
   color: var(--title-color);
   margin-right: auto;
-  transition: 0.3s;
+  transition: 0.25s;
 
   &:hover {
     opacity: 0.8;

@@ -25,7 +25,7 @@ export const FriendsList = styled.form`
       position: relative;
       box-shadow: 2px 2px 5px 3px rgba(0, 0, 0, 0.2);
       width: 100%;
-      transition: 0.2s;
+      transition: 0.25s;
 
       > span {
         > svg {
@@ -57,7 +57,7 @@ export const FriendButton = styled.button<IPropsButton>`
   padding: 16px;
   position: relative;
   box-shadow: 2px 2px 5px 3px rgba(0, 0, 0, 0.2);
-  transition: 0.2s;
+  transition: 0.25s;
 
   > span {
     > svg {
@@ -80,6 +80,6 @@ export const FriendButton = styled.button<IPropsButton>`
       color: var(--red-color);
       background-color: var(--title-color);
       opacity: 1;
-      transition: 0.4s;
+      transition: 0.25s;
     `}
 `;

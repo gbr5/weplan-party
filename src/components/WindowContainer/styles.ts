@@ -30,10 +30,10 @@ export const Container = styled.div`
   background: var(--header-background-color);
   border-radius: 8px;
   gap: 16px;
-  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
+  box-shadow: var(--window-box-shadow);
   padding: 32px;
 
-  animation: ${appearFromTop} 0.8s;
+  animation: ${appearFromTop} 0.5s;
 
   > form {
     display: flex;
@@ -81,14 +81,14 @@ export const Container = styled.div`
       border-radius: 8px;
       height: 40px;
       width: 100%;
-      box-shadow: 1px 1px 3px 2px var(--letter-color-4);
+      box-shadow: var(--box-shadow);
     }
 
-    &:hover {
+    /* &:hover {
       color: var(--primary-color);
       box-shadow: 2px 2px 5px 1px var(--title-color);
       border-radius: 8px;
       opacity: 0.8;
-    }
+    } */
   }
 `;

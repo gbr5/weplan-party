@@ -109,7 +109,7 @@ export const SupplierButton = styled.button<SupplierButtonProps>`
   gap: 16px;
   padding: 4px 8px;
   color: var(--letter-color-4);
-  transition: 0.6s;
+  transition: 0.25s;
 
   &:hover {
     color: var(--primary-color);
@@ -120,7 +120,7 @@ export const SupplierButton = styled.button<SupplierButtonProps>`
     css`
       color: var(--primary-color);
       opacity: 1;
-      transition: 0.4s;
+      transition: 0.25s;
       border-bottom: 1px solid var(--title-color);
     `}
 
@@ -167,7 +167,7 @@ export const MenuButton = styled.button<ButtonProps>`
   color: var(--title-color);
 
   font-size: 24px;
-  transition: 1s;
+  transition: 0.25s;
 
   &:hover {
     border-bottom: 1px solid var(--primary-color);
@@ -179,7 +179,7 @@ export const MenuButton = styled.button<ButtonProps>`
     css`
       color: var(--primary-color);
       opacity: 1;
-      transition: 0.4s;
+      transition: 0.25s;
       border-bottom: 1px solid var(--title-color);
     `}
 `;

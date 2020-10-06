@@ -42,7 +42,7 @@ export const Container = styled.div`
         gap: 20px;
         padding-left: 32px;
         position: relative;
-        transition: 0.5s;
+        transition: 0.25s;
         margin: auto;
 
         &:hover {
@@ -58,7 +58,7 @@ export const Container = styled.div`
           top: 0;
           right: 32px;
           color: var(--title-color);
-          transition: 0.5s;
+          transition: 0.25s;
         }
 
         > h1 {
@@ -160,11 +160,11 @@ export const DeleteButton = styled.button`
   width: 100%;
   border-radius: 4px;
   box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.2);
-  transition: 0.3s;
+  transition: 0.25s;
   color: var(--letter-color-4);
   font-weight: 500;
   padding: 16px;
-  transition: 0.5s;
+  transition: 0.25s;
 
   &:hover {
     opacity: 0.8;
@@ -178,6 +178,6 @@ export const DeleteButton = styled.button`
   }
   > svg {
     color: var(--red-icon);
-    transition: 0.3s;
+    transition: 0.25s;
   }
 `;

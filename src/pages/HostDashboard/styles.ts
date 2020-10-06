@@ -155,7 +155,7 @@ export const BottomSection = styled.div`
     gap: 24px;
     align-items: center;
     border-bottom: 1px solid var(--letter-color-4);
-    transition: 0.3s;
+    transition: 0.25s;
 
     &:hover {
       opacity: 0.8;
@@ -193,7 +193,7 @@ export const BottomSection = styled.div`
         width: 56px;
         background: transparent;
         border: none;
-        transition: 0.3s;
+        transition: 0.25s;
 
         &:hover {
           opacity: 1.5;
@@ -228,7 +228,7 @@ export const BooleanNavigationButton = styled.button<ButtonProps>`
   justify-content: center;
   color: var(--primary-color);
   opacity: 0.65;
-  transition: 0.4s;
+  transition: 0.25s;
 
   &:hover {
     opacity: 1;
@@ -242,6 +242,6 @@ export const BooleanNavigationButton = styled.button<ButtonProps>`
     css`
       color: var(--letter-color-4);
       opacity: 1;
-      transition: 0.4s;
+      transition: 0.25s;
     `}
 `;

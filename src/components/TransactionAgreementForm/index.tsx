@@ -99,13 +99,6 @@ const TransactionAgreementForm: React.FC<IPropsDTO> = ({
             isHired: true,
           });
         }
-
-        addToast({
-          type: 'success',
-          title: 'Membro da festa adicionado com sucesso',
-          description: 'Ele já pode visualizar as informações do evento.',
-        });
-        getEventSuppliers();
         addToast({
           type: 'success',
           title: 'Membro da festa adicionado com sucesso',

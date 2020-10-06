@@ -4,7 +4,7 @@ import '../../styles/global';
 const appearFromTop = keyframes`
   0% {
     opacity: 0;
-    transform: translateY(-100px);
+    transform: translateY(-150px);
   }
   /* 40% {
     opacity: 0.5;
@@ -21,7 +21,15 @@ const appearFromTop = keyframes`
 `;
 
 export const Container = styled.div`
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const FriendGroupWindow = styled.div`
+  position: fixed;
+  z-index: 100000;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -29,26 +37,8 @@ export const Container = styled.div`
   background: var(--header-background-color);
   border-radius: 8px;
   gap: 16px;
-  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
+  box-shadow: var(--window-box-shadow);
   padding: 32px;
 
   animation: ${appearFromTop} 0.5s;
-
-  > button {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    background: transparent;
-    border: none;
-
-    svg {
-      color: red;
-    }
-  }
-
-  > div {
-    display: flex;
-    width: 100%;
-    height: 100%;
-  }
 `;

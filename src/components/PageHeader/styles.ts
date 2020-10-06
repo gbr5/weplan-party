@@ -92,7 +92,7 @@ export const Profile = styled.div`
   a {
     text-decoration: none;
     color: var(--primary-color);
-    transition: 0.2s;
+    transition: 0.25s;
 
     > img {
       width: 48px;

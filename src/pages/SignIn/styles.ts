@@ -40,7 +40,7 @@ export const AnimationContainer = styled.div`
 
   place-content: center;
 
-  animation: ${appearFromLeft} 1s;
+  animation: ${appearFromLeft} 0.5s;
 
   h1 {
     color: var(--primary-color);

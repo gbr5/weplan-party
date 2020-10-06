@@ -29,7 +29,7 @@ export const Content = styled.main`
     color: var(--letter-color-1);
     font-weight: 500;
     font-size: 20px;
-    transition: 0.5s;
+    transition: 0.25s;
 
     &:hover {
       box-shadow: 1px 1px 220px 1px var(--title-color);

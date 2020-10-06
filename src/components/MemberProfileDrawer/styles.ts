@@ -35,7 +35,7 @@ export const EditMemberButton = styled.button`
   width: 100%;
   border-radius: 4px;
   box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.2);
-  transition: 0.3s;
+  transition: 0.25s;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -60,7 +60,7 @@ export const EditMemberButton = styled.button`
   > svg {
     opacity: 0.8;
     color: var(--letter-color-5);
-    transition: 0.3s;
+    transition: 0.25s;
   }
 `;
 
@@ -71,7 +71,7 @@ export const DeleteMemberButton = styled.button`
   width: 100%;
   border-radius: 4px;
   box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.2);
-  transition: 0.3s;
+  transition: 0.25s;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -92,6 +92,6 @@ export const DeleteMemberButton = styled.button`
   > svg {
     opacity: 0.8;
     color: var(--red-icon);
-    transition: 0.3s;
+    transition: 0.25s;
   }
 `;

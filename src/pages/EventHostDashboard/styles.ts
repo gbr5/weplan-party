@@ -50,7 +50,7 @@ export const Container = styled.div`
   padding: 0;
   height: 100%;
   display: flex;
-  animation: ${appearFromTop} 0.8s;
+  animation: ${appearFromTop} 0.5s;
 `;
 
 export const EventPageContent = styled.main`
@@ -59,17 +59,17 @@ export const EventPageContent = styled.main`
   display: flex;
   padding: 0 80px;
   gap: 80px;
-  animation: ${appearFromTop} 0.8s;
+  animation: ${appearFromTop} 0.5s;
 
   > button {
-    z-index: 8;
+    z-index: 5;
     background: transparent;
     border: none;
     border-radius: 8px;
     position: fixed;
     top: 100px;
     left: -8px;
-    transition: 0.8s;
+    transition: 0.25s;
 
     color: var(--primary-color);
 
@@ -80,17 +80,17 @@ export const EventPageContent = styled.main`
 
   > span {
     > button {
-      z-index: 8;
+      z-index: 5;
       background: transparent;
       border: none;
       border-radius: 8px;
       position: fixed;
       top: 100px;
       left: 22%;
-      transition: 0.8s;
+      transition: 0.25s;
 
       color: var(--letter-color-4);
-      animation: ${appearFromLeft} 0.8s;
+      animation: ${appearFromLeft} 0.5s;
 
       &:hover {
         color: var(--primary-color);
@@ -114,7 +114,7 @@ export const SideBar = styled.div`
   display: flex;
   flex-direction: column;
 
-  animation: ${appearFromLeft} 0.8s;
+  animation: ${appearFromLeft} 0.5s;
 
   > button {
     width: 100%;
@@ -431,17 +431,17 @@ export const Main = styled.div`
   position: relative;
 
   > button {
-    z-index: 8;
+    z-index: 5;
     position: fixed;
     top: 90px;
     left: 47.7%;
     background: transparent;
     border: none;
-    transition: 0.4s;
+    transition: 0.25s;
 
     > svg {
       color: var(--primary-color);
-      transition: 1s;
+      transition: 0.25s;
 
       &:hover {
         color: var(--letter-color-4);
@@ -451,18 +451,18 @@ export const Main = styled.div`
 
   > span {
     > button {
-      z-index: 8;
+      z-index: 5;
       position: absolute;
       top: 105px;
       left: 47.5%;
       background: transparent;
       border: none;
-      transition: 0.4s;
-      animation: ${appearFromTop} 0.8s;
+      transition: 0.25s;
+      animation: ${appearFromTop} 0.5s;
 
       > svg {
         color: var(--letter-color-4);
-        transition: 1s;
+        transition: 0.25s;
 
         &:hover {
           color: var(--primary-color);
@@ -552,7 +552,7 @@ export const FirstRow = styled.div`
   gap: 80px;
   margin: 100px auto 0px;
 
-  animation: ${appearFromTop} 0.8s;
+  animation: ${appearFromTop} 0.5s;
 
   div {
     display: flex;
@@ -691,7 +691,7 @@ export const BooleanSection = styled.div`
   flex-direction: column;
   gap: 16px;
   position: relative;
-  animation: ${appearFromTop} 0.8s;
+  animation: ${appearFromTop} 0.5s;
 
   > h1 {
     margin: 0 auto;
@@ -730,7 +730,7 @@ export const BooleanSection = styled.div`
         > svg {
           color: var(--primary-color);
           border-radius: 50%;
-          transition: 0.4s;
+          transition: 0.25s;
 
           &:hover {
             color: var(--title-color);
@@ -771,7 +771,7 @@ export const BooleanNavigationButton = styled.button<ButtonProps>`
   justify-content: center;
   color: var(--primary-color);
   opacity: 0.65;
-  transition: 0.4s;
+  transition: 0.25s;
 
   &:hover {
     opacity: 1;
@@ -785,7 +785,7 @@ export const BooleanNavigationButton = styled.button<ButtonProps>`
     css`
       color: var(--letter-color-4);
       opacity: 1;
-      transition: 0.4s;
+      transition: 0.25s;
     `}
 `;
 
@@ -800,7 +800,7 @@ export const Guest = styled.div`
   justify-content: center;
   background: var(--header-background-color);
   border-radius: 4px;
-  transition: 0.3s;
+  transition: 0.25s;
 
   &:last-child {
     margin-bottom: 16px;
@@ -833,7 +833,7 @@ export const Guest = styled.div`
       font-size: 16px;
       color: var(--title-color);
       margin: 0 24px;
-      transition: 0.3s;
+      transition: 0.25s;
       width: 100%;
       display: flex;
 
@@ -855,7 +855,7 @@ export const Guest = styled.div`
       > svg {
         opacity: 0.3;
         color: var(--title-color);
-        transition: 0.3s;
+        transition: 0.25s;
         margin-left: auto;
       }
     }
@@ -869,7 +869,7 @@ export const Guest = styled.div`
     justify-content: center;
     color: var(--primary-color);
     margin: 0 auto;
-    transition: 0.3s;
+    transition: 0.25s;
     border-radius: 4px;
 
     &:hover {
@@ -883,7 +883,7 @@ export const Guest = styled.div`
     align-items: center;
     justify-content: center;
     margin-left: auto;
-    transition: 0.3s;
+    transition: 0.25s;
     border-radius: 4px;
 
     button {
@@ -893,7 +893,7 @@ export const Guest = styled.div`
       background: transparent;
       border: none;
       color: var(--title-color);
-      transition: 0.4s;
+      transition: 0.25s;
 
       &:hover {
         opacity: 0.8;
@@ -909,7 +909,7 @@ export const AddGuestDrawer = styled.div`
   align-items: center;
   justify-content: center;
   gap: 16px;
-  transition: 0.4s;
+  transition: 0.25s;
   width: 100%;
 
   > h1 {
@@ -931,7 +931,7 @@ export const AddGuestDrawer = styled.div`
       border-radius: 4px;
       padding: 0 16px;
       border: none;
-      transition: 0.3s;
+      transition: 0.25s;
 
       &:hover {
         opacity: 0.8;
@@ -946,7 +946,7 @@ export const AddGuestDrawer = styled.div`
         color: var(--primary-color);
         font-size: 24px;
         font-weight: 500;
-        transition: 0.3s;
+        transition: 0.25s;
 
         &:hover {
           opacity: 0.8;
@@ -963,7 +963,7 @@ export const AddGuestDrawer = styled.div`
     width: 90%;
     border-radius: 4px;
     margin-bottom: 16px;
-    transition: 0.3s;
+    transition: 0.25s;
 
     &:hover {
       opacity: 0.8;
@@ -981,7 +981,7 @@ export const CheckList = styled.section`
   box-shadow: 1px 1px 5px 4px rgba(90, 90, 90, 0.02);
   position: relative;
   overflow-y: scroll;
-  animation: ${appearFromTop} 0.8s;
+  animation: ${appearFromTop} 0.5s;
 
   > button {
     right: 16px;
@@ -1068,7 +1068,7 @@ export const Financial = styled.div`
   justify-content: center;
   gap: 32px;
   box-sizing: border-box;
-  animation: ${appearFromTop} 0.8s;
+  animation: ${appearFromTop} 0.5s;
 
   img {
     width: 100%;
@@ -1086,7 +1086,7 @@ export const LatestNews = styled.div`
   box-shadow: 2px 2px 3px 2px rgba(50, 50, 50, 0.1);
   flex: 1;
   align-items: center;
-  animation: ${appearFromTop} 0.8s;
+  animation: ${appearFromTop} 0.5s;
 
   > strong {
     color: var(--letter-color-2);
@@ -1169,7 +1169,7 @@ export const MessagesSection = styled.div`
   display: grid;
   grid-template-columns: 1fr 3fr;
   gap: 1px;
-  animation: ${appearFromTop} 0.8s;
+  animation: ${appearFromTop} 0.5s;
 `;
 
 export const UsersChat = styled.div`
@@ -1609,7 +1609,7 @@ export const MembersContainer = styled.div`
     padding: 32px auto;
     gap: 16px;
     box-shadow: 2px 2px 6px 2px rgba(0, 0, 0, 0.2);
-    transition: 0.6s;
+    transition: 0.25s;
 
     > img {
       margin-left: 14px;
@@ -1617,7 +1617,7 @@ export const MembersContainer = styled.div`
       width: 80px;
       border-radius: 50%;
       box-shadow: 2px 2px 6px 2px rgba(0, 0, 0, 0.2);
-      transition: 0.6s;
+      transition: 0.25s;
 
       &:hover {
         box-shadow: 5px 5px 6px 2px rgba(255, 150, 10, 0.4);
@@ -1640,7 +1640,7 @@ export const NotHostGuest = styled(Tooltip)`
   font-size: 16px;
   color: var(--title-color);
   margin: auto auto auto 0;
-  transition: 0.3s;
+  transition: 0.25s;
 
   &:hover {
     opacity: 0.8;

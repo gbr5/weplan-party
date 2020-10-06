@@ -9,7 +9,7 @@ export const Button = styled.button`
 
   background: var(--primary-color);
   box-shadow: var(--box-shadow);
-  transition: 0.5s;
+  transition: 0.25s;
 
   &:hover {
     opacity: 0.8;

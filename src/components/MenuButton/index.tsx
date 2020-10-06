@@ -23,6 +23,7 @@ import {
   EventInfoDrawer,
 } from './styles';
 import WindowContainer from '../WindowContainer';
+import MainFriendsWindow from '../MainFriendsWindow';
 
 interface ICreateEvent {
   name: string;
@@ -51,6 +52,7 @@ interface IEvent {
 
 const MenuButton: React.FC = () => {
   const [buttonDrawer, setButtonDrawer] = useState(false);
+  const [friendsWindow, setFriendsWindow] = useState(false);
   const [createEventDrawer, setCreateEventDrawer] = useState(false);
   const [eventTypeDrawer, setEventTypeDrawer] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -80,8 +82,11 @@ const MenuButton: React.FC = () => {
   }, [eventTypeDrawer]);
 
   const handleNavigateToFriends = useCallback(() => {
-    history.push('/friends');
-  }, [history]);
+    //   history.push('/friends');
+    // }, [history]);
+    setButtonDrawer(false);
+    setFriendsWindow(true);
+  }, []);
 
   // const handleNavigateToEvents = useCallback(() => {
   //   history.push('/events');
@@ -278,6 +283,11 @@ const MenuButton: React.FC = () => {
             </Menu>
           </ButtonContent>
         </WindowContainer>
+      )}
+      {!!friendsWindow && (
+        <MainFriendsWindow
+          onHandleCloseWindow={() => setFriendsWindow(false)}
+        />
       )}
       {!!createEventDrawer && (
         <Form ref={formRef} onSubmit={handleCreateEvent}>

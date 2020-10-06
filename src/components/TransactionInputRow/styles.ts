@@ -29,7 +29,7 @@ export const TransactionRow = styled.div`
   gap: 32px;
   padding: 32px;
 
-  animation: ${appearFromLeft} 0.8s;
+  animation: ${appearFromLeft} 0.5s;
 
   > p {
     font-size: 18px;

@@ -78,7 +78,7 @@ export const AnimationContainer = styled.div`
 
   place-content: center;
 
-  animation: ${appearFromDown} 1.2s;
+  animation: ${appearFromDown} 0.5s;
 
   h1 {
     color: var(--primary-color);
