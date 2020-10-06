@@ -25,6 +25,7 @@ export const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  overflow-y: scroll;
 `;
 
 export const FriendGroupWindow = styled.div`
@@ -39,6 +40,7 @@ export const FriendGroupWindow = styled.div`
   gap: 16px;
   box-shadow: var(--window-box-shadow);
   padding: 32px;
+  overflow-y: scroll;
 
   animation: ${appearFromTop} 0.5s;
 `;
