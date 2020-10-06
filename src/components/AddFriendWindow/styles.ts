@@ -25,7 +25,29 @@ export const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  overflow-y: scroll;
+
+  > input {
+    height: 40px;
+    min-height: 40px;
+    width: 150px;
+    border-radius: 8px;
+    border: none;
+    background: var(--background-color);
+    color: var(--letter-color-4);
+  }
+
+  > ul {
+    overflow-y: scroll;
+  }
+
+  > li {
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  > li:first-child {
+    margin-top: 200px;
+  }
 `;
 
 export const FriendGroupWindow = styled.div`

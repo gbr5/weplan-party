@@ -105,12 +105,12 @@ const AddFriendWindow: React.FC<IPropsDTO> = ({
                 </button>
               </li>
             ))}
-            {friendGroupId !== '' && (
-              <button type="button" onClick={handleAddFriend}>
-                Adicionar
-              </button>
-            )}
           </ul>
+          {friendGroupId !== '' && (
+            <button type="button" onClick={handleAddFriend}>
+              Adicionar
+            </button>
+          )}
         </Container>
       </WindowContainer>
     </>
