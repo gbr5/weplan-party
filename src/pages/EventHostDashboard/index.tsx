@@ -19,6 +19,7 @@ import {
   FiHome,
   FiMusic,
   FiHelpCircle,
+  FiEdit,
 } from 'react-icons/fi';
 import {
   MdPersonAdd,
@@ -268,6 +269,7 @@ const EventHostDashboard: React.FC = () => {
   ] = useState(false);
   const [numberOfOwners, setNumberOfOwners] = useState(0);
   const [numberOfMembers, setNumberOfMembers] = useState(0);
+  const [numberOfPlanners, setNumberOfPlanners] = useState(0);
   const [eventDate, setEventDate] = useState(new Date());
   const [hiredSuppliersSection, setHiredSuppliersSection] = useState(
     hiredSuppliers.length === 0,
@@ -571,6 +573,7 @@ const EventHostDashboard: React.FC = () => {
         .get<IUserInfoDTO[]>(`events/${eventId}/event-planner`)
         .then(response => {
           setPlanners(response.data);
+          setNumberOfPlanners(response.data.length);
         });
     } catch (err) {
       throw new Error(err);
@@ -693,6 +696,7 @@ const EventHostDashboard: React.FC = () => {
       throw new Error(err);
     }
   }, [eventId]);
+
   const handleCreateTransactionWindow = useCallback(props => {
     setSupplierInfo(props);
     setTransactionAgreementWindow(true);
@@ -1648,14 +1652,22 @@ const EventHostDashboard: React.FC = () => {
   return (
     <Container>
       <PageHeader>
-        <span>
-          <button type="button" onClick={handleEditEventNameDrawer}>
-            <h5>
-              {event.name}
-              <FiEdit3 size={16} />
-            </h5>
-          </button>
-        </span>
+        {pageEvent.isOwner ? (
+          <span>
+            <button type="button" onClick={handleEditEventNameDrawer}>
+              <h5>
+                {event.name}
+                <FiEdit3 size={16} />
+              </h5>
+            </button>
+          </span>
+        ) : (
+          <span>
+            <button type="button">
+              <h5>{event.name}</h5>
+            </button>
+          </span>
+        )}
       </PageHeader>
       {/* {!!wpUserWindow && (
         <UserProfile
@@ -1665,13 +1677,15 @@ const EventHostDashboard: React.FC = () => {
       )} */}
       {!!hiredSupplierWindow && (
         <EventSupplierWindow
+          isOwner={pageEvent.isOwner}
           getEventSuppliers={handleGetSuppliers}
           getHiredSuppliers={handleGetHiredSuppliers}
           eventSupplier={hiredSupplier}
           onHandleEventSupplierDrawer={() => setHiredSupplierWindow(false)}
           onHandleEventSupplierUpdate={() => setHiredSupplierWindow(true)}
           onHandleDeleteEventSupplierDrawer={() =>
-            setDeleteHiredSupplierDrawer(true)}
+            setDeleteHiredSupplierDrawer(true)
+          }
         />
       )}
       {!!editEventNameDrawer && (
@@ -1705,6 +1719,7 @@ const EventHostDashboard: React.FC = () => {
       )}
       {!!ownerProfileWindow && (
         <OwnerProfileDrawer
+          isOwner={pageEvent.isOwner}
           owner={owner}
           onHandleOwnerDrawer={() => setOwnerProfileWindow(false)}
           onHandleNumberOfGuestDrawer={() => setEditOwnerDrawer(true)}
@@ -1713,6 +1728,8 @@ const EventHostDashboard: React.FC = () => {
       )}
       {!!memberProfileWindow && (
         <MemberProfileDrawer
+          isGuest={pageEvent.isGuest}
+          isOwner={pageEvent.isOwner}
           member={member}
           onHandleMemberDrawer={() => setMemberProfileWindow(false)}
           onHandleNumberOfGuestDrawer={() => setNumberOfGuestDrawer(true)}
@@ -1721,12 +1738,15 @@ const EventHostDashboard: React.FC = () => {
       )}
       {!!selectedSupplierWindow && (
         <SelectedSupplierWindow
+          isOwner={pageEvent.isOwner}
           selectedSupplier={selectedSupplier}
           onHandleSelectedSupplierDrawer={() =>
-            setSelectedSupplierWindow(false)}
+            setSelectedSupplierWindow(false)
+          }
           onUpdateSelectedSupplierDrawer={() => setSelectedSupplierWindow(true)}
           onDeleteSelectedSupplierDrawer={() =>
-            setDeleteSelectedSupplierDrawer(true)}
+            setDeleteSelectedSupplierDrawer(true)
+          }
         />
       )}
       {!!numberOfGuestDrawer && (
@@ -1913,7 +1933,8 @@ const EventHostDashboard: React.FC = () => {
           friends={friends}
           onHandleFriendsListDrawer={() => setFriendsWindow(false)}
           handleSelectedFriend={(friend: IUserInfoDTO) =>
-            handleSelectedWeplanUser(friend)}
+            handleSelectedWeplanUser(friend)
+          }
         />
       )}
       {!!eventInfoDrawer && (
@@ -1966,11 +1987,16 @@ const EventHostDashboard: React.FC = () => {
                 <h3>{eventInfo.address}</h3>
               </div>
             </EventInfo>
-            <button type="button" onClick={() => setEditEventInfoDrawer(true)}>
-              <h3>
-                Editar <FiEdit3 size={24} />
-              </h3>
-            </button>
+            {pageEvent.isOwner && (
+              <button
+                type="button"
+                onClick={() => setEditEventInfoDrawer(true)}
+              >
+                <h3>
+                  Editar <FiEdit3 size={24} />
+                </h3>
+              </button>
+            )}
           </EventInfoDrawer>
         </WindowContainer>
       )}
@@ -2592,7 +2618,8 @@ const EventHostDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={() =>
-                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')}
+                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')
+                }
               >
                 <MdBuild size={50} />
                 <h1>Estruturas, Cênica e Boate</h1>
@@ -2628,7 +2655,8 @@ const EventHostDashboard: React.FC = () => {
                   key={subCategory.id}
                   type="button"
                   onClick={() =>
-                    handleAddSupplierDrawer(subCategory.sub_category)}
+                    handleAddSupplierDrawer(subCategory.sub_category)
+                  }
                 >
                   {/* <MdFolderSpecial size={50} /> */}
                   <h1>{subCategory.sub_category}</h1>
@@ -2661,18 +2689,16 @@ const EventHostDashboard: React.FC = () => {
 
         {sidebar && (
           <SideBar>
-            {planners.map(planner => (
-              <span key={planner.id}>
-                <button type="button">
-                  <h2>{planner.name}</h2>
-                </button>
-              </span>
-            ))}
-
-            <button type="button" onClick={handleAddOwnerDrawer}>
-              <h1>Anfitriões: {numberOfOwners}</h1>
-              <MdPersonAdd size={24} />
-            </button>
+            {pageEvent.owner_master === user.id ? (
+              <button type="button" onClick={handleAddOwnerDrawer}>
+                <h1>Anfitriões: {numberOfOwners}</h1>
+                <MdPersonAdd size={24} />
+              </button>
+            ) : (
+              <button type="button">
+                <h1>Anfitriões: {numberOfOwners}</h1>
+              </button>
+            )}
 
             {owners.map(eventOwner => (
               <span key={eventOwner.id}>
@@ -2685,20 +2711,46 @@ const EventHostDashboard: React.FC = () => {
               </span>
             ))}
 
-            <button type="button" onClick={handleAddMemberDrawer}>
-              <h1>Membros: {numberOfMembers}</h1>
-              <MdPersonAdd size={24} />
-            </button>
+            {pageEvent.isOwner ? (
+              <button type="button" onClick={handleAddMemberDrawer}>
+                <h1>Membros: {numberOfMembers}</h1>
+                <MdPersonAdd size={24} />
+              </button>
+            ) : (
+              <button type="button">
+                <h1>Membros: {numberOfMembers}</h1>
+              </button>
+            )}
 
             <span>
               <button type="button" onClick={handleMembersWindow}>
                 <h2>Visualizar</h2>
               </button>
             </span>
-            <button type="button" onClick={handleAddPlannerDrawer}>
-              <h1>Cerimonialistas</h1>
-              <MdPersonAdd size={24} />
-            </button>
+            {pageEvent.isOwner ? (
+              <button type="button" onClick={handleAddPlannerDrawer}>
+                <h1>Cerimonialistas: {numberOfPlanners}</h1>
+                <MdPersonAdd size={24} />
+              </button>
+            ) : (
+              <button type="button">
+                <h1>Cerimonialistas: {numberOfPlanners}</h1>
+              </button>
+            )}
+            {planners.map(planner => (
+              <span key={planner.id}>
+                {pageEvent.isOwner ? (
+                  <button type="button">
+                    <h2>{planner.name}</h2>
+                    <FiEdit size={24} />
+                  </button>
+                ) : (
+                  <button type="button">
+                    <h2>{planner.name}</h2>
+                  </button>
+                )}
+              </span>
+            ))}
             <button type="button" onClick={handleEventInfoDrawer}>
               Informações do Evento
             </button>
@@ -2733,12 +2785,21 @@ const EventHostDashboard: React.FC = () => {
                 </button>
               </div>
               <div>
-                <button type="button" onClick={handleBudgetDrawer}>
-                  <h2>Orçamento</h2>
-                  <p>
-                    {eventInfo.budget ? numberFormat(eventInfo.budget) : ''}
-                  </p>
-                </button>
+                {pageEvent.owner_master === user.id ? (
+                  <button type="button" onClick={handleBudgetDrawer}>
+                    <h2>Orçamento</h2>
+                    <p>
+                      {eventInfo.budget ? numberFormat(eventInfo.budget) : ''}
+                    </p>
+                  </button>
+                ) : (
+                  <button type="button">
+                    <h2>Orçamento</h2>
+                    <p>
+                      {eventInfo.budget ? numberFormat(eventInfo.budget) : ''}
+                    </p>
+                  </button>
+                )}
               </div>
               <div>
                 <button type="button" onClick={handleSupplierSection}>
@@ -2849,11 +2910,13 @@ const EventHostDashboard: React.FC = () => {
                   Contratados
                 </BooleanNavigationButton>
 
-                <span>
-                  <button type="button" onClick={handleSupplierCategory}>
-                    <MdPersonAdd size={30} />
-                  </button>
-                </span>
+                {pageEvent.isOwner && (
+                  <span>
+                    <button type="button" onClick={handleSupplierCategory}>
+                      <MdPersonAdd size={30} />
+                    </button>
+                  </span>
+                )}
               </span>
 
               {!hiredSuppliersSection && <h3>{hiredSuppliers.length}</h3>}
@@ -2872,8 +2935,7 @@ const EventHostDashboard: React.FC = () => {
                           <button
                             type="button"
                             onClick={() =>
-                              handleSelectedSupplierWindow(sSupplier)
-                            }
+                              handleSelectedSupplierWindow(sSupplier)}
                           >
                             <strong>{sSupplier.name}</strong>{' '}
                             <FiEdit3 size={16} />
@@ -2887,18 +2949,19 @@ const EventHostDashboard: React.FC = () => {
                         )} */}
 
                         <div>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handleCreateTransactionWindow(sSupplier)
-                            }
-                          >
-                            {sSupplier.isHired ? (
-                              <FiCheckSquare size={24} />
-                            ) : (
-                              <FiSquare size={24} />
-                            )}
-                          </button>
+                          {pageEvent.isOwner && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleCreateTransactionWindow(sSupplier)}
+                            >
+                              {sSupplier.isHired ? (
+                                <FiCheckSquare size={24} />
+                              ) : (
+                                <FiSquare size={24} />
+                              )}
+                            </button>
+                          )}
                         </div>
                       </Guest>
                     );
@@ -2911,13 +2974,20 @@ const EventHostDashboard: React.FC = () => {
                       <Guest key={hSupplier.id}>
                         <span>
                           <p>{hiredSupplierCount}</p>
-                          <button
-                            type="button"
-                            onClick={() => handleHiredSupplierWindow(hSupplier)}
-                          >
-                            <strong>{hSupplier.name}</strong>{' '}
-                            <FiChevronRight size={16} />
-                          </button>
+                          {pageEvent.isOwner ? (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleHiredSupplierWindow(hSupplier)}
+                            >
+                              <strong>{hSupplier.name}</strong>{' '}
+                              <FiChevronRight size={16} />
+                            </button>
+                          ) : (
+                            <button type="button">
+                              <strong>{hSupplier.name}</strong>{' '}
+                            </button>
+                          )}
                         </span>
                         {/* {hSupplier.weplanUser && (
                           <button type="button">
@@ -3170,6 +3240,7 @@ const EventHostDashboard: React.FC = () => {
           )}
           {!!financeSection && (
             <EventFinanceSection
+              isOwner={pageEvent.isOwner}
               refreshHiredSuppliers={handleGetHiredSuppliers}
               hiredSuppliers={hiredSuppliers}
             />
@@ -3177,29 +3248,49 @@ const EventHostDashboard: React.FC = () => {
           {!!checkListSection && (
             <CheckList>
               <strong>Check List</strong>
-              <button type="button" onClick={handleAddCheckListDrawer}>
-                <MdAdd size={30} />
-              </button>
+              {pageEvent.isOwner && (
+                <button type="button" onClick={handleAddCheckListDrawer}>
+                  <MdAdd size={30} />
+                </button>
+              )}
               <ul>
                 {checkListItems.map(item => (
                   <li key={item.id}>
-                    <button
-                      type="button"
-                      onClick={() => handleEditCheckListItemWindow(item)}
-                    >
-                      <span>{item.name}</span>
-                    </button>
-                    <span>prioridade: {item.priority_level}</span>
-                    <button
-                      type="button"
-                      onClick={() => handleEditCheckedCheckListItem(item)}
-                    >
-                      {item.checked ? (
-                        <FiCheckSquare size={24} />
-                      ) : (
-                        <FiSquare size={24} />
-                      )}
-                    </button>
+                    {pageEvent.isOwner ? (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => handleEditCheckListItemWindow(item)}
+                        >
+                          <span>{item.name}</span>
+                        </button>
+                        <span>prioridade: {item.priority_level}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleEditCheckedCheckListItem(item)}
+                        >
+                          {item.checked ? (
+                            <FiCheckSquare size={24} />
+                          ) : (
+                            <FiSquare size={24} />
+                          )}
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button type="button">
+                          <span>{item.name}</span>
+                        </button>
+                        <span>prioridade: {item.priority_level}</span>
+                        <button type="button">
+                          {item.checked ? (
+                            <FiCheckSquare size={24} />
+                          ) : (
+                            <FiSquare size={24} />
+                          )}
+                        </button>
+                      </>
+                    )}
                   </li>
                 ))}
               </ul>

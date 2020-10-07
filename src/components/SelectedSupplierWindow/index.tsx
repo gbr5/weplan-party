@@ -17,6 +17,7 @@ interface ISelectedSupplierDTO {
 }
 
 interface IPropsDTO {
+  isOwner: boolean;
   selectedSupplier: ISelectedSupplierDTO;
   onHandleSelectedSupplierDrawer: MouseEventHandler;
   onUpdateSelectedSupplierDrawer: MouseEventHandler;
@@ -24,6 +25,7 @@ interface IPropsDTO {
 }
 
 const SelectedSupplierWindow: React.FC<IPropsDTO> = ({
+  isOwner,
   selectedSupplier,
   onHandleSelectedSupplierDrawer,
   onUpdateSelectedSupplierDrawer,
@@ -45,19 +47,24 @@ const SelectedSupplierWindow: React.FC<IPropsDTO> = ({
 
         <h1>{selectedSupplier.name}</h1>
 
-        <div>
-          <EditSelectedSupplierButton
-            type="button"
-            onClick={onUpdateSelectedSupplierDrawer}
-          >
-            Editar:
-            <FiEdit size={24} />
-          </EditSelectedSupplierButton>
-          <DeleteButton type="button" onClick={onDeleteSelectedSupplierDrawer}>
-            Deletar
-            <MdDelete size={24} />
-          </DeleteButton>
-        </div>
+        {isOwner && (
+          <div>
+            <EditSelectedSupplierButton
+              type="button"
+              onClick={onUpdateSelectedSupplierDrawer}
+            >
+              Editar:
+              <FiEdit size={24} />
+            </EditSelectedSupplierButton>
+            <DeleteButton
+              type="button"
+              onClick={onDeleteSelectedSupplierDrawer}
+            >
+              > Deletar
+              <MdDelete size={24} />
+            </DeleteButton>
+          </div>
+        )}
       </SelectedSupplierDrawer>
     </WindowContainer>
   );

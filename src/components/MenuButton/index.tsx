@@ -5,7 +5,6 @@ import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 import { Form } from '@unform/web';
 
-import { useHistory } from 'react-router-dom';
 import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
 import getValidationErrors from '../../utils/getValidationErros';
@@ -59,12 +58,10 @@ const MenuButton: React.FC = () => {
   const [myEvents, setMyEvents] = useState<IEvent[]>([]);
   const [eventName, setEventName] = useState('');
   const [eventStartTime, setEventStartTime] = useState('');
-  const [trimmed_name, setTrimmed_name] = useState('');
 
   const formRef = useRef<FormHandles>(null);
 
   const { addToast } = useToast();
-  const history = useHistory();
 
   const handleButtonDrawer = useCallback(() => {
     setButtonDrawer(!buttonDrawer);
@@ -80,22 +77,9 @@ const MenuButton: React.FC = () => {
   }, [eventTypeDrawer]);
 
   const handleNavigateToFriends = useCallback(() => {
-    //   history.push('/friends');
-    // }, [history]);
     setButtonDrawer(false);
     setFriendsWindow(true);
   }, []);
-
-  // const handleNavigateToEvents = useCallback(() => {
-  //   history.push('/events');
-  // }, [history]);
-
-  const handleMyEventDashboard = useCallback(
-    (event_id: string) => {
-      history.push(`/dashboard/my-event/${trimmed_name}`, { params: event_id });
-    },
-    [history, trimmed_name],
-  );
 
   const handleEventTypeChange = useCallback(
     (option: string) => {
@@ -146,9 +130,6 @@ const MenuButton: React.FC = () => {
           title: 'Item criado com Sucesso',
           description: 'O item foi adicionado à sua check-list.',
         });
-        // if (new_event) {
-        //   handleMyEventDashboard(new_event?.id);
-        // }
         handleEventInfoDrawer();
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
@@ -176,20 +157,10 @@ const MenuButton: React.FC = () => {
   const handleCreateEvent = useCallback(async () => {
     try {
       const date = new Date(selectedDate);
-      console.log('eventStartTime', eventStartTime, typeof eventStartTime);
       const eventHour = eventStartTime.split(':');
-      console.log(
-        'eventHour',
-        eventHour,
-        'hour',
-        eventHour[0],
-        'minutes',
-        eventHour[1],
-      );
 
       date.setHours(Number(eventHour[0]));
       date.setMinutes(Number(eventHour[1]));
-      console.log(date);
 
       const event = await api.post<IEvent>('/events', {
         name: eventName,
@@ -197,7 +168,6 @@ const MenuButton: React.FC = () => {
         event_type: eventType,
       });
       setEventName(event.data.name);
-      setTrimmed_name(event.data.trimmed_name);
       addToast({
         type: 'success',
         title: 'Evento Criado com Sucesso',

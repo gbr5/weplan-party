@@ -15,6 +15,8 @@ interface IEventMemberDTO {
 }
 
 interface IPropsDTO {
+  isOwner: boolean;
+  isGuest: boolean;
   member: IEventMemberDTO;
   onHandleMemberDrawer: MouseEventHandler;
   onHandleNumberOfGuestDrawer: MouseEventHandler;
@@ -22,6 +24,8 @@ interface IPropsDTO {
 }
 
 const MemberProfileDrawer: React.FC<IPropsDTO> = ({
+  isOwner,
+  isGuest,
   member,
   onHandleMemberDrawer,
   onHandleNumberOfGuestDrawer,
@@ -46,18 +50,32 @@ const MemberProfileDrawer: React.FC<IPropsDTO> = ({
         <h1>{member.name}</h1>
 
         <div>
-          <EditMemberButton type="button" onClick={onHandleNumberOfGuestDrawer}>
-            Número de convidados:
-            <strong>{member.number_of_guests}</strong>
-            <FiEdit size={24} />
-          </EditMemberButton>
-          <DeleteMemberButton
-            type="button"
-            onClick={onHandleDeleteMemberDrawer}
-          >
-            Deletar
-            <MdDelete size={24} />
-          </DeleteMemberButton>
+          {isOwner && !isGuest ? (
+            <>
+              <EditMemberButton
+                type="button"
+                onClick={onHandleNumberOfGuestDrawer}
+              >
+                Número de convidados:
+                <strong>{member.number_of_guests}</strong>
+                <FiEdit size={24} />
+              </EditMemberButton>
+              <DeleteMemberButton
+                type="button"
+                onClick={onHandleDeleteMemberDrawer}
+              >
+                Deletar
+                <MdDelete size={24} />
+              </DeleteMemberButton>
+            </>
+          ) : (
+            <>
+              <EditMemberButton type="button">
+                Número de convidados:
+                <strong>{member.number_of_guests}</strong>
+              </EditMemberButton>
+            </>
+          )}
         </div>
       </MemberDrawer>
     </WindowContainer>

@@ -14,6 +14,7 @@ import api from '../../services/api';
 import { useToast } from '../../hooks/toast';
 
 interface IPropsDTO {
+  isOwner: boolean;
   transaction: ITransactionDTO;
   key: string;
   refreshHiredSuppliers: Function;
@@ -21,6 +22,7 @@ interface IPropsDTO {
 }
 
 const Transaction: React.FC<IPropsDTO> = ({
+  isOwner,
   key,
   transaction,
   refreshHiredSuppliers,
@@ -78,7 +80,7 @@ const Transaction: React.FC<IPropsDTO> = ({
 
         <p>{transaction.formattedDate}</p>
 
-        {!allTransactions && (
+        {!allTransactions && isOwner && (
           <button
             type="button"
             onClick={handleUpdateTransactionTransactionIsPaid}

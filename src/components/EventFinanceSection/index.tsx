@@ -20,11 +20,13 @@ import Transaction from '../Transaction';
 import TransactionAgreement from '../TransactionAgreement';
 
 interface IPropsDTO {
+  isOwner: boolean;
   hiredSuppliers: ISelectedSupplierDTO[];
   refreshHiredSuppliers: Function;
 }
 
 const EventFinanceSection: React.FC<IPropsDTO> = ({
+  isOwner,
   hiredSuppliers,
   refreshHiredSuppliers,
 }: IPropsDTO) => {
@@ -351,6 +353,7 @@ const EventFinanceSection: React.FC<IPropsDTO> = ({
                           );
                           return (
                             <Transaction
+                              isOwner={isOwner}
                               refreshHiredSuppliers={refreshHiredSuppliers}
                               key={supplierTransactionKey}
                               allTransactions={false}
@@ -373,6 +376,7 @@ const EventFinanceSection: React.FC<IPropsDTO> = ({
                 const key = String(allTransactionsIndex);
                 return (
                   <Transaction
+                    isOwner={isOwner}
                     refreshHiredSuppliers={refreshHiredSuppliers}
                     key={key}
                     allTransactions
@@ -390,6 +394,7 @@ const EventFinanceSection: React.FC<IPropsDTO> = ({
                 const key = String(allTransactionsIndex);
                 return (
                   <Transaction
+                    isOwner={isOwner}
                     allTransactions={false}
                     refreshHiredSuppliers={refreshHiredSuppliers}
                     key={key}
@@ -407,6 +412,7 @@ const EventFinanceSection: React.FC<IPropsDTO> = ({
                 const key = String(allTransactionsIndex);
                 return (
                   <Transaction
+                    isOwner={isOwner}
                     allTransactions={false}
                     refreshHiredSuppliers={refreshHiredSuppliers}
                     key={key}
@@ -424,6 +430,7 @@ const EventFinanceSection: React.FC<IPropsDTO> = ({
                 const key = String(allTransactionsIndex);
                 return (
                   <Transaction
+                    isOwner={isOwner}
                     allTransactions={false}
                     refreshHiredSuppliers={refreshHiredSuppliers}
                     key={key}

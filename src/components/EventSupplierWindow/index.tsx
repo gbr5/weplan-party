@@ -12,6 +12,7 @@ import TransactionAgreementForm from '../TransactionAgreementForm';
 import ITransactionAgreementDTO from '../../dtos/ITransactionAgreementDTO';
 
 interface IPropsDTO {
+  isOwner: boolean;
   eventSupplier: ISelectedSupplierDTO;
   onHandleEventSupplierDrawer: MouseEventHandler;
   onHandleEventSupplierUpdate: MouseEventHandler;
@@ -21,6 +22,7 @@ interface IPropsDTO {
 }
 
 const EventSupplierWindow: React.FC<IPropsDTO> = ({
+  isOwner,
   eventSupplier,
   onHandleEventSupplierDrawer,
   onHandleEventSupplierUpdate,
@@ -62,11 +64,17 @@ const EventSupplierWindow: React.FC<IPropsDTO> = ({
             <div>
               <img src={avatar_placeholder} alt={eventSupplier.name} />
 
-              <button type="button" onClick={onHandleEventSupplierUpdate}>
-                <FiEdit3 size={24} />
+              {isOwner ? (
+                <button type="button" onClick={onHandleEventSupplierUpdate}>
+                  <FiEdit3 size={24} />
 
-                <h1>{eventSupplier.name}</h1>
-              </button>
+                  <h1>{eventSupplier.name}</h1>
+                </button>
+              ) : (
+                <button type="button">
+                  <h1>{eventSupplier.name}</h1>
+                </button>
+              )}
             </div>
 
             {eventSupplier.transactionAgreement &&
