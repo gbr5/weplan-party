@@ -25,9 +25,12 @@ const MainFriendsWindow: React.FC<IProps> = ({
   onHandleCloseWindow,
 }: IProps) => {
   const [addFriendWindow, setAddFriendWindow] = useState(false);
+  const [allFriends, setAllFriends] = useState<IFriendGroupDTO[]>([]);
+  const [allFriendsWindow, setAllFriendsWindow] = useState(true);
   // const [addFriendGroupWindow, setAddFriendGroupWindow] = useState(false);
   const [friendGroups, setFriendGroups] = useState<IFriendGroupDTO[]>([]);
   const [friends, setFriends] = useState<IFriendDTO[]>([]);
+  const [friendsByGroup, setFriendsByGroup] = useState<IFriendDTO[]>([]);
 
   const handleAddFriendWindow = useCallback(props => {
     setAddFriendWindow(props);
@@ -47,10 +50,29 @@ const MainFriendsWindow: React.FC<IProps> = ({
     }
   }, []);
 
+  const handleAllFriends = useCallback(() => {
+    setFriendsByGroup([]);
+    setAllFriendsWindow(true);
+  }, []);
+
+  const handleFriendLists = useCallback(
+    props => {
+      setFriendsByGroup(
+        friends.filter(thisFriend => thisFriend.friend_group === props),
+      );
+      setAllFriendsWindow(false);
+    },
+    [friends],
+  );
+
   const getFriends = useCallback(() => {
     try {
       api.get<IFriendDTO[]>('/users/friends/list').then(response => {
+        console.log(response.data);
         setFriends(response.data);
+        setAllFriends(
+          response.data.filter(friend => friend.friend_group === 'All'),
+        );
       });
     } catch (err) {
       throw new Error(err);
@@ -94,7 +116,9 @@ const MainFriendsWindow: React.FC<IProps> = ({
           <div>
             <GroupMenu>
               <span>
-                <button type="button">Todos</button>
+                <button type="button" onClick={handleAllFriends}>
+                  Todos
+                </button>
               </span>
               <button type="button">
                 Grupos
@@ -102,7 +126,11 @@ const MainFriendsWindow: React.FC<IProps> = ({
               </button>
               <span>
                 {friendGroups.map(group => (
-                  <button key={group.id} type="button">
+                  <button
+                    key={group.id}
+                    type="button"
+                    onClick={() => handleFriendLists(group.name)}
+                  >
                     <strong>{group.name}</strong>
                     <FiChevronRight />
                   </button>
@@ -111,11 +139,36 @@ const MainFriendsWindow: React.FC<IProps> = ({
             </GroupMenu>
             <ListSection>
               <ul>
-                {friends.map(friend => (
-                  <li key={friend.id}>
-                    <strong>{friend.name}</strong>
-                  </li>
-                ))}
+                {allFriendsWindow
+                  ? allFriends.map(friend => {
+                      return (
+                        <li key={friend.id}>
+                          <strong>{friend.name}</strong>
+                        </li>
+                      );
+                    })
+                  : friendsByGroup.map(friend => {
+                      return (
+                        <li key={friend.id}>
+                          <strong>{friend.name}</strong>
+                        </li>
+                      );
+                    })}
+                {!allFriendsWindow
+                  ? friendsByGroup.map(friend => {
+                      return (
+                        <li key={friend.id}>
+                          <strong>{friend.name}</strong>
+                        </li>
+                      );
+                    })
+                  : friendsByGroup.map(friend => {
+                      return (
+                        <li key={friend.id}>
+                          <strong>{friend.name}</strong>
+                        </li>
+                      );
+                    })}
               </ul>
             </ListSection>
           </div>
