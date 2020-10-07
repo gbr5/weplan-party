@@ -325,15 +325,15 @@ const Dashboard: React.FC = () => {
                         <li key={event.id}>
                           <h3>{event.name}</h3>
                           {event.owner_master === user.id && (
-                            <FiStar size={16} />
-                          )}
-                          {event.owner_master === user.id && (
-                            <button
-                              type="button"
-                              onClick={() => handleDeleteEvent(event.id)}
-                            >
-                              Deletar
-                            </button>
+                            <span>
+                              <FiStar size={16} />
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteEvent(event.id)}
+                              >
+                                Deletar
+                              </button>
+                            </span>
                           )}
                           <div>
                             <span>

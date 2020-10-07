@@ -224,7 +224,7 @@ const MenuButton: React.FC = () => {
                 Fotos
               </button> */}
               <button type="button" onClick={handleNavigateToFriends}>
-                Amigos
+                Contatos
               </button>
               {/* <button type="button" onClick={handleNavigateToEvents}>
                 Eventos

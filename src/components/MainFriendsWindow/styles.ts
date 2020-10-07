@@ -25,6 +25,22 @@ export const Container = styled.div`
     margin: 0;
     width: 100%;
 
+    > h1 {
+      color: var(--primary-color);
+      font-size: 40px;
+      border-bottom: 1px solid var(--title-color);
+    }
+
+    > button {
+      width: 50px;
+      height: 40px;
+      border-radius: 8px;
+
+      &:hover {
+        opacity: 0.6;
+      }
+    }
+
     > span {
       display: flex;
       align-items: center;
@@ -62,6 +78,7 @@ export const Container = styled.div`
     display: grid;
     grid-template-columns: 2fr 4fr;
     gap: 40px;
+    height: 100%;
     width: 100%;
     padding-bottom: 32px;
   }
@@ -88,6 +105,25 @@ export const ListSection = styled.div`
     border-bottom: 1px solid var(--letter-color-4);
     padding-bottom: 8px;
   }
+
+  > ul {
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    gap: 8px;
+    /* background: var(--card-color); */
+    box-shadow: var(--window-box-shadow);
+
+    > li {
+      font-size: 16px;
+
+      > strong {
+        color: var(--letter-color-4);
+      }
+    }
+  }
 `;
 
 export const GroupMenu = styled.div`
@@ -97,6 +133,34 @@ export const GroupMenu = styled.div`
   height: 100%;
   width: 100%;
 
+  > button {
+    text-align: left;
+    font-size: 20px;
+    box-shadow: none;
+    background: transparent;
+    border: none;
+    color: var(--title-color);
+    transition: 0.25s;
+    box-shadow: var(--window-box-shadow);
+    padding: 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    > svg {
+      margin-left: auto;
+    }
+
+    &:hover {
+      box-shadow: var(--box-shadow-hover);
+      opacity: 0.6;
+    }
+
+    &:active {
+      box-shadow: var(--box-shadow-active);
+    }
+  }
   > span {
     display: flex;
     flex-direction: column;

@@ -7,8 +7,9 @@ import React, {
 
 import 'react-day-picker/lib/style.css';
 import { FiChevronRight } from 'react-icons/fi';
-
 import { MdGroupAdd, MdPersonAdd } from 'react-icons/md';
+import { useToast } from '../../hooks/toast';
+
 import { Container, ListSection, GroupMenu } from './styles';
 
 import WindowContainer from '../WindowContainer';
@@ -24,10 +25,13 @@ interface IProps {
 const MainFriendsWindow: React.FC<IProps> = ({
   onHandleCloseWindow,
 }: IProps) => {
+  const { addToast } = useToast();
+
   const [addFriendWindow, setAddFriendWindow] = useState(false);
+  const [groupName, setGroupName] = useState('');
   const [allFriends, setAllFriends] = useState<IFriendGroupDTO[]>([]);
   const [allFriendsWindow, setAllFriendsWindow] = useState(true);
-  // const [addFriendGroupWindow, setAddFriendGroupWindow] = useState(false);
+  const [addFriendGroupWindow, setAddFriendGroupWindow] = useState(false);
   const [friendGroups, setFriendGroups] = useState<IFriendGroupDTO[]>([]);
   const [friends, setFriends] = useState<IFriendDTO[]>([]);
   const [friendsByGroup, setFriendsByGroup] = useState<IFriendDTO[]>([]);
@@ -36,9 +40,9 @@ const MainFriendsWindow: React.FC<IProps> = ({
     setAddFriendWindow(props);
   }, []);
 
-  // const handleAddFriendGroupWindow = useCallback(props => {
-  //   setAddFriendGroupWindow(props);
-  // }, []);
+  const handleAddFriendGroupWindow = useCallback(props => {
+    setAddFriendGroupWindow(props);
+  }, []);
 
   const getFriendGroups = useCallback(() => {
     try {
@@ -79,6 +83,29 @@ const MainFriendsWindow: React.FC<IProps> = ({
     }
   }, []);
 
+  const handleCreateFriendGroup = useCallback(async () => {
+    try {
+      await api.post('users/friend-groups', {
+        name: groupName,
+      });
+      getFriendGroups();
+      setGroupName('');
+      setAddFriendGroupWindow(false);
+      addToast({
+        type: 'success',
+        title: 'Grupo criado com sucesso',
+        description: 'Você já pode visualizar adicionar os seus amigos.',
+      });
+    } catch (err) {
+      addToast({
+        type: 'error',
+        title: 'Não foi possível criar o seu grupo de amigos',
+        description: 'Tente novamente.',
+      });
+      throw new Error(err);
+    }
+  }, [addToast, groupName, getFriendGroups]);
+
   useEffect(() => {
     getFriendGroups();
   }, [getFriendGroups]);
@@ -96,6 +123,31 @@ const MainFriendsWindow: React.FC<IProps> = ({
           getFriends={getFriends}
         />
       )}
+      {!!addFriendGroupWindow && (
+        <WindowContainer
+          onHandleCloseWindow={() => handleAddFriendGroupWindow(false)}
+          containerStyle={{
+            top: '25%',
+            left: '30%',
+            height: '50%',
+            width: '40%',
+            zIndex: '1000',
+          }}
+        >
+          <h1>Criar grupo de contatos</h1>
+          <input
+            type="text"
+            style={{ height: '40px' }}
+            placeholder="Nome"
+            onChange={e => setGroupName(e.target.value)}
+          />
+          <div>
+            <button type="button" onClick={handleCreateFriendGroup}>
+              Criar
+            </button>
+          </div>
+        </WindowContainer>
+      )}
       <WindowContainer
         onHandleCloseWindow={onHandleCloseWindow}
         containerStyle={{
@@ -108,7 +160,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
       >
         <Container>
           <span>
-            <h1>Amigos</h1>
+            <h1>Contatos</h1>
             <button type="button" onClick={() => handleAddFriendWindow(true)}>
               <MdPersonAdd size={40} />
             </button>
@@ -120,7 +172,10 @@ const MainFriendsWindow: React.FC<IProps> = ({
                   Todos
                 </button>
               </span>
-              <button type="button">
+              <button
+                type="button"
+                onClick={() => handleAddFriendGroupWindow(true)}
+              >
                 Grupos
                 <MdGroupAdd size={40} />
               </button>

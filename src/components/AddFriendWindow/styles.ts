@@ -25,18 +25,24 @@ export const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  padding-left: 32px;
 
   > input {
+    position: absolute;
+    top: 32px;
     height: 40px;
     min-height: 40px;
-    width: 150px;
+    width: 100%;
     border-radius: 8px;
     border: none;
-    background: var(--background-color);
-    color: var(--letter-color-4);
+    background: var(--card-color);
+    color: var(--letter-color-5);
+    padding-left: 16px;
   }
 
   > ul {
+    width: 100%;
     overflow-y: scroll;
   }
 
@@ -52,8 +58,13 @@ export const Container = styled.div`
 
 export const FriendGroupWindow = styled.div`
   position: fixed;
-  z-index: 100000;
+  margin: auto;
+  z-index: 10000;
   display: flex;
+  width: 40%;
+  height: 80%;
+  left: 30%;
+  top: 10%;
   flex-direction: column;
   align-items: center;
   justify-content: center;

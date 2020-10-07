@@ -95,6 +95,7 @@ const AddFriendWindow: React.FC<IPropsDTO> = ({
         }}
       >
         <Container>
+          <h1>Adicionar contato</h1>
           <input onChange={e => handleGetUsers(e.target.value)} />
           <ul>
             {users.map(user => (

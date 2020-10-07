@@ -176,30 +176,33 @@ export const BottomSection = styled.div`
     }
 
     span {
-      margin-left: 4px;
-      color: var(--primary-color);
-    }
-    > svg {
-      margin: auto;
-      color: var(--title-color);
-    }
-
-    > button {
-      color: var(--red-color);
       display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100px;
-      background: rgba(0, 0, 0, 0.5);
-      border-radius: 8%;
-      border: none;
-      transition: 0.25s;
+      margin-left: auto;
+      color: var(--primary-color);
+      gap: 16px;
 
-      &:hover {
-        opacity: 1.5;
+      > svg {
+        margin: auto;
         color: var(--title-color);
+      }
+
+      > button {
+        color: var(--red-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100px;
+        background: rgba(0, 0, 0, 0.5);
         border-radius: 8%;
-        background: rgba(250, 0, 0, 0.5);
+        border: none;
+        transition: 0.25s;
+
+        &:hover {
+          opacity: 1.5;
+          color: var(--title-color);
+          border-radius: 8%;
+          background: rgba(250, 0, 0, 0.5);
+        }
       }
     }
 
@@ -208,7 +211,7 @@ export const BottomSection = styled.div`
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 32px;
+      gap: 8px;
 
       > button {
         display: flex;
