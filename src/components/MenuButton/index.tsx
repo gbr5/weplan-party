@@ -3,7 +3,6 @@ import React, { useCallback, useState, useRef } from 'react';
 import { MdClose, MdMenu } from 'react-icons/md';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
-import DayPicker from 'react-day-picker';
 import { Form } from '@unform/web';
 
 import { useHistory } from 'react-router-dom';
@@ -18,19 +17,17 @@ import {
   ButtonContent,
   Menu,
   CreateEventForm,
-  Calendar,
   EventTypeDrawer,
   EventInfoDrawer,
 } from './styles';
 import WindowContainer from '../WindowContainer';
 import MainFriendsWindow from '../MainFriendsWindow';
 
-interface ICreateEvent {
+interface ICreateEventDTO {
   name: string;
-  date: Date;
+  date: string;
   event_type: string;
-  start_hour: number;
-  start_minute: number;
+  start_time: string;
 }
 
 interface ICreateEventInfo {
@@ -55,12 +52,13 @@ const MenuButton: React.FC = () => {
   const [friendsWindow, setFriendsWindow] = useState(false);
   const [createEventDrawer, setCreateEventDrawer] = useState(false);
   const [eventTypeDrawer, setEventTypeDrawer] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const newDate = new Date();
+  const [selectedDate, setSelectedDate] = useState(`${newDate}`);
   const [eventType, setEventType] = useState<string>();
   const [eventInfoDrawer, setEventInfoDrawer] = useState(false);
   const [myEvents, setMyEvents] = useState<IEvent[]>([]);
   const [eventName, setEventName] = useState('');
+  const [eventStartTime, setEventStartTime] = useState('');
   const [trimmed_name, setTrimmed_name] = useState('');
 
   const formRef = useRef<FormHandles>(null);
@@ -99,14 +97,6 @@ const MenuButton: React.FC = () => {
     [history, trimmed_name],
   );
 
-  const handleDateChange = useCallback((day: Date) => {
-    setSelectedDate(day);
-  }, []);
-
-  const handleMonthChange = useCallback((month: Date) => {
-    setCurrentMonth(month);
-  }, []);
-
   const handleEventTypeChange = useCallback(
     (option: string) => {
       setEventType(option);
@@ -123,7 +113,6 @@ const MenuButton: React.FC = () => {
     async (data: ICreateEventInfo) => {
       try {
         const new_event = myEvents.find(event => event.name === eventName);
-        console.log(currentMonth);
         formRef.current?.setErrors([]);
 
         const schema = Yup.object().shape({
@@ -157,9 +146,9 @@ const MenuButton: React.FC = () => {
           title: 'Item criado com Sucesso',
           description: 'O item foi adicionado à sua check-list.',
         });
-        if (new_event) {
-          handleMyEventDashboard(new_event?.id);
-        }
+        // if (new_event) {
+        //   handleMyEventDashboard(new_event?.id);
+        // }
         handleEventInfoDrawer();
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
@@ -175,14 +164,7 @@ const MenuButton: React.FC = () => {
         });
       }
     },
-    [
-      addToast,
-      handleEventInfoDrawer,
-      myEvents,
-      eventName,
-      handleMyEventDashboard,
-      currentMonth,
-    ],
+    [addToast, handleEventInfoDrawer, myEvents, eventName],
   );
 
   const handleGetMyEvents = useCallback(async () => {
@@ -191,62 +173,62 @@ const MenuButton: React.FC = () => {
     handleEventInfoDrawer();
   }, [handleEventInfoDrawer]);
 
-  const handleCreateEvent = useCallback(
-    async (data: ICreateEvent) => {
-      try {
-        const date = new Date(selectedDate);
+  const handleCreateEvent = useCallback(async () => {
+    try {
+      const date = new Date(selectedDate);
+      console.log('eventStartTime', eventStartTime, typeof eventStartTime);
+      const eventHour = eventStartTime.split(':');
+      console.log(
+        'eventHour',
+        eventHour,
+        'hour',
+        eventHour[0],
+        'minutes',
+        eventHour[1],
+      );
 
-        date.setHours(Number(data.start_hour));
-        date.setMinutes(Number(data.start_minute));
+      date.setHours(Number(eventHour[0]));
+      date.setMinutes(Number(eventHour[1]));
+      console.log(date);
 
-        formRef.current?.setErrors([]);
+      const event = await api.post<IEvent>('/events', {
+        name: eventName,
+        date,
+        event_type: eventType,
+      });
+      setEventName(event.data.name);
+      setTrimmed_name(event.data.trimmed_name);
+      addToast({
+        type: 'success',
+        title: 'Evento Criado com Sucesso',
+        description: 'Você já pode começar a planejar o seu evento.',
+      });
+      handleGetMyEvents();
+      handleCreateEventDrawer();
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        const error = getValidationErrors(err);
 
-        const schema = Yup.object().shape({
-          name: Yup.string().required('Nome do evento é obrigatório'),
-          start_hour: Yup.number().required(),
-          start_minute: Yup.number().required(),
-        });
-
-        await schema.validate(data, {
-          abortEarly: false,
-        });
-
-        const event = await api.post<IEvent>('/events', {
-          name: data.name,
-          date,
-          event_type: eventType,
-        });
-        setEventName(event.data.name);
-        setTrimmed_name(event.data.trimmed_name);
-        addToast({
-          type: 'success',
-          title: 'Evento Criado com Sucesso',
-          description: 'Você já pode começar a planejar o seu evento.',
-        });
-        handleGetMyEvents();
-        handleCreateEventDrawer();
-      } catch (err) {
-        if (err instanceof Yup.ValidationError) {
-          const error = getValidationErrors(err);
-
-          formRef.current?.setErrors(error);
-        }
-
-        addToast({
-          type: 'error',
-          title: 'Erro ao criar evento',
-          description: 'Erro  ao criar o evento, tente novamente.',
-        });
+        formRef.current?.setErrors(error);
       }
-    },
-    [
-      addToast,
-      selectedDate,
-      handleCreateEventDrawer,
-      eventType,
-      handleGetMyEvents,
-    ],
-  );
+
+      addToast({
+        type: 'error',
+        title: 'Erro ao criar evento',
+        description: 'Erro  ao criar o evento, tente novamente.',
+      });
+    }
+  }, [
+    addToast,
+    selectedDate,
+    handleCreateEventDrawer,
+    eventType,
+    eventStartTime,
+    eventName,
+    handleGetMyEvents,
+  ]);
+
+  const inputHeight = { height: '40px' };
 
   return (
     <>
@@ -295,46 +277,39 @@ const MenuButton: React.FC = () => {
             <h1>Crie seu evento</h1>
 
             <div>
-              <div>
-                <span>
-                  <button type="button" onClick={handleCreateEventDrawer}>
-                    <MdClose size={30} />
-                  </button>
-                </span>
-
-                <button type="button" onClick={handleEventTypeDrawer}>
-                  {eventType || 'Tipo de Evento'}
+              <span>
+                <button type="button" onClick={handleCreateEventDrawer}>
+                  <MdClose size={30} />
                 </button>
+              </span>
 
-                <Input type="text" placeholder="Nome do evento" name="name" />
+              <button type="button" onClick={handleEventTypeDrawer}>
+                {eventType || 'Tipo de Evento'}
+              </button>
 
-                <Input type="text" placeholder="Hora" name="start_hour" />
-                <Input type="text" placeholder="Minuto" name="start_minute" />
-              </div>
-              <Calendar>
-                <DayPicker
-                  weekdaysShort={['D', 'S', 'T', 'Q', 'Q', 'S', 'S']}
-                  fromMonth={new Date()}
-                  onMonthChange={handleMonthChange}
-                  selectedDays={selectedDate}
-                  onDayClick={handleDateChange}
-                  months={[
-                    'Janeiro',
-                    'Fevereiro',
-                    'Março',
-                    'Abril',
-                    'Maio',
-                    'Junho',
-                    'Julho',
-                    'Agosto',
-                    'Setembro',
-                    'Outubro',
-                    'Novembro',
-                    'Dezembro',
-                  ]}
-                />
-              </Calendar>
+              <Input
+                containerStyle={inputHeight}
+                type="text"
+                placeholder="Nome do evento"
+                name="name"
+                onChange={e => setEventName(e.target.value)}
+              />
+
+              <Input
+                containerStyle={inputHeight}
+                type="time"
+                name="event_time"
+                onChange={e => setEventStartTime(e.target.value)}
+              />
+
+              <Input
+                containerStyle={inputHeight}
+                type="date"
+                name="date"
+                onChange={e => setSelectedDate(e.target.value)}
+              />
             </div>
+
             <button type="submit">
               <h3>Criar</h3>
             </button>

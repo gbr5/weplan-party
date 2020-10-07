@@ -92,47 +92,61 @@ export const CreateEventForm = styled.div`
   }
 
   > div {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    margin: auto 0;
+    display: flex;
+    flex-direction: column;
     width: 100%;
-    gap: 32px;
+    gap: 16px;
 
-    > div {
-      margin: auto 0;
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      gap: 16px;
+    > h1 {
+      font-size: 24px;
+      color: var(--title-color);
+      margin-bottom: 40px;
+    }
 
-      > h1 {
-        font-size: 24px;
-        color: var(--title-color);
-        margin-bottom: 40px;
-      }
+    > button {
+      height: 40px;
+      width: 90%;
+      border-radius: 4px;
+      padding: 0 16px;
+      border: none;
+      margin: 16px;
+    }
 
+    span {
+      position: absolute;
+      top: 4px;
+      right: 4px;
       > button {
-        height: 40px;
-        width: 90%;
-        border-radius: 4px;
-        padding: 0 16px;
+        background: transparent;
         border: none;
-        margin: 16px;
-      }
 
-      span {
-        position: absolute;
-        top: 4px;
-        right: 4px;
-        > button {
-          background: transparent;
-          border: none;
-
-          svg {
-            color: red;
-          }
+        svg {
+          color: red;
         }
       }
-      /*
+    }
+    /*
+    > input {
+      height: 40px;
+      width: 90%;
+      border-radius: 4px;
+      padding: 0 16px;
+      border: none;
+      margin: 16px;
+    } */
+
+    > p {
+      margin-top: 32px;
+      font-size: 20px;
+      color: var(--primary-color);
+    }
+
+    div {
+      display: flex;
+      gap: 16px;
+      margin-right: 16px;
+
       > input {
         height: 40px;
         width: 90%;
@@ -140,27 +154,6 @@ export const CreateEventForm = styled.div`
         padding: 0 16px;
         border: none;
         margin: 16px;
-      } */
-
-      > p {
-        margin-top: 32px;
-        font-size: 20px;
-        color: var(--primary-color);
-      }
-
-      div {
-        display: flex;
-        gap: 16px;
-        margin-right: 16px;
-
-        > input {
-          height: 40px;
-          width: 90%;
-          border-radius: 4px;
-          padding: 0 16px;
-          border: none;
-          margin: 16px;
-        }
       }
     }
   }
@@ -284,8 +277,7 @@ export const CreateAppointmentForm = styled.div`
 `;
 
 export const Calendar = styled.aside`
-  width: 100%;
-  height: 30%;
+  width: 90%;
 
   .DayPicker {
     background: var(--background-color);

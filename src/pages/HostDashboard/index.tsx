@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import 'react-day-picker/lib/style.css';
 
-import { FiChevronRight } from 'react-icons/fi';
+import { FiChevronRight, FiStar } from 'react-icons/fi';
 import { useHistory } from 'react-router-dom';
 import { isAfter } from 'date-fns';
 import { differenceInCalendarDays } from 'date-fns/esm';
@@ -23,6 +23,8 @@ import PageHeader from '../../components/PageHeader';
 import api from '../../services/api';
 import IListEventDTO from '../../dtos/IListEventDTO';
 import formatStringToDate from '../../utils/formatDateToString';
+import { useAuth } from '../../hooks/auth';
+import { useToast } from '../../hooks/toast';
 
 interface IFriendsEvents {
   guest_id: string;
@@ -52,6 +54,10 @@ interface IEventGuest {
 }
 
 const Dashboard: React.FC = () => {
+  const { user } = useAuth();
+  const { addToast } = useToast();
+  const history = useHistory();
+
   const [eventsAsOwner, setEventsAsOwner] = useState<IListEventDTO[]>([]);
   const [eventsAsMember, setEventsAsMember] = useState<IListEventDTO[]>([]);
   const [eventsAsGuest, setEventsAsGuest] = useState<IListEventDTO[]>([]);
@@ -65,8 +71,6 @@ const Dashboard: React.FC = () => {
   const [myNextEventGuests, setMyNextEventGuests] = useState(0);
   const [confirmedGuests, setConfirmedGuests] = useState(0);
   const [eventOwner, setEventOwner] = useState(true);
-
-  const history = useHistory();
 
   const handleMyEventDashboard = useCallback(
     (event: IListEventDTO) => {
@@ -192,6 +196,29 @@ const Dashboard: React.FC = () => {
   //   }
   // }, [myFriendsEvents]);
 
+  const handleDeleteEvent = useCallback(
+    async props => {
+      try {
+        await api.delete(`/events/${props}`);
+        getMyEvents();
+        addToast({
+          type: 'success',
+          title: 'Evento Deletado com sucesso',
+          description:
+            'Você já pode visualizar as alterações no seu dashboard.',
+        });
+      } catch (err) {
+        addToast({
+          type: 'error',
+          title: 'Não foi possível deletar seu evento',
+          description: 'Tente novamente.',
+        });
+        throw new Error(err);
+      }
+    },
+    [addToast, getMyEvents],
+  );
+
   const handleEventOwnerOrMember = useCallback(props => {
     setEventOwner(props);
   }, []);
@@ -297,6 +324,17 @@ const Dashboard: React.FC = () => {
                       return (
                         <li key={event.id}>
                           <h3>{event.name}</h3>
+                          {event.owner_master === user.id && (
+                            <FiStar size={16} />
+                          )}
+                          {event.owner_master === user.id && (
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteEvent(event.id)}
+                            >
+                              Deletar
+                            </button>
+                          )}
                           <div>
                             <span>
                               {formatStringToDate(String(event.date))}

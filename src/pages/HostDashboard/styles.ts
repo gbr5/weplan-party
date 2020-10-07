@@ -165,20 +165,44 @@ export const BottomSection = styled.div`
           color: var(--primary-color);
         }
       }
+
+      svg {
+        color: var(--primary-color);
+      }
     }
 
     h3 {
-      color: var(--title-color);
+      color: var(--letter-color-4);
     }
 
     span {
       margin-left: 4px;
       color: var(--primary-color);
     }
-    p {
-      margin-right: auto;
-      margin-left: 16px;
+    > svg {
+      margin: auto;
+      color: var(--title-color);
     }
+
+    > button {
+      color: var(--red-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 8%;
+      border: none;
+      transition: 0.25s;
+
+      &:hover {
+        opacity: 1.5;
+        color: var(--title-color);
+        border-radius: 8%;
+        background: rgba(250, 0, 0, 0.5);
+      }
+    }
+
     > div {
       margin-left: auto;
       display: flex;
