@@ -118,9 +118,11 @@ const MainFriendsWindow: React.FC<IProps> = ({
     <>
       {!!addFriendWindow && (
         <AddFriendWindow
+          handleCloseWindow={() => handleAddFriendWindow(false)}
           onHandleCloseWindow={() => handleAddFriendWindow(false)}
           friendGroups={friendGroups}
           getFriends={getFriends}
+          getFriendGroups={getFriends}
         />
       )}
       {!!addFriendGroupWindow && (

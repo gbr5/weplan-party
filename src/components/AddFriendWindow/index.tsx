@@ -1,6 +1,7 @@
 import React, { MouseEventHandler, useCallback, useState } from 'react';
 import IFriendGroupDTO from '../../dtos/IFriendGroupDTO';
 import IUserDTO from '../../dtos/IUserDTO';
+import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
 import WindowContainer from '../WindowContainer';
@@ -8,37 +9,55 @@ import WindowContainer from '../WindowContainer';
 import { Container, FriendGroupWindow } from './styles';
 
 interface IPropsDTO {
+  handleCloseWindow: Function;
   onHandleCloseWindow: MouseEventHandler;
   getFriends: Function;
   friendGroups: IFriendGroupDTO[];
+  getFriendGroups: Function;
 }
 
 const AddFriendWindow: React.FC<IPropsDTO> = ({
+  handleCloseWindow,
   onHandleCloseWindow,
   getFriends,
   friendGroups,
+  getFriendGroups,
 }: IPropsDTO) => {
   const { addToast } = useToast();
+  const { user } = useAuth();
 
   const [users, setUsers] = useState<IUserDTO[]>([]);
   const [friendId, setFriendId] = useState('');
   const [friendGroupId, setFriendGroupId] = useState('');
   const [friendGroupWindow, setFriendGroupWindow] = useState(false);
 
-  const handleGetUsers = useCallback((props: string) => {
-    try {
-      api.get<IUserDTO[]>(`/users?name=${props}`).then(response => {
-        setUsers(response.data);
-      });
-    } catch (err) {
-      throw new Error(err);
-    }
-  }, []);
+  const handleGetUsers = useCallback(
+    (props: string) => {
+      try {
+        api.get<IUserDTO[]>(`/users?name=${props}`).then(response => {
+          const allUsers = response.data.filter(
+            thisUser => thisUser.id !== user.id,
+          );
+          setUsers(allUsers);
+        });
+      } catch (err) {
+        throw new Error(err);
+      }
+    },
+    [user],
+  );
 
-  const handleSelectUser = useCallback((props: string) => {
-    setFriendId(props);
-    setFriendGroupWindow(true);
-  }, []);
+  const handleSelectUser = useCallback(
+    (props: string) => {
+      if (friendId === props) {
+        setFriendId('');
+      } else {
+        setFriendId(props);
+        setFriendGroupWindow(true);
+      }
+    },
+    [friendId],
+  );
 
   const handleSelectGroup = useCallback((props: string) => {
     setFriendGroupId(props);
@@ -52,13 +71,16 @@ const AddFriendWindow: React.FC<IPropsDTO> = ({
         friend_group: friendGroupId,
       });
 
+      getFriends();
+      getFriendGroups();
+      setFriendGroupWindow(false);
+      handleCloseWindow();
+
       addToast({
         type: 'success',
         title: 'Amigo adicionado com sucesso',
         description: 'As informações do evento já foram atualizadas.',
       });
-
-      getFriends();
     } catch (err) {
       addToast({
         type: 'error',
@@ -67,7 +89,14 @@ const AddFriendWindow: React.FC<IPropsDTO> = ({
       });
       throw new Error(err);
     }
-  }, [friendGroupId, friendId, addToast, getFriends]);
+  }, [
+    friendGroupId,
+    friendId,
+    addToast,
+    getFriends,
+    getFriendGroups,
+    handleCloseWindow,
+  ]);
 
   return (
     <>
@@ -98,12 +127,26 @@ const AddFriendWindow: React.FC<IPropsDTO> = ({
           <h1>Adicionar contato</h1>
           <input onChange={e => handleGetUsers(e.target.value)} />
           <ul>
-            {users.map(user => (
-              <li key={user.id}>
-                <h2>{user.name}</h2>
-                <button type="button" onClick={() => handleSelectUser(user.id)}>
-                  Selecionar
-                </button>
+            {users.map(thisUser => (
+              <li key={thisUser.id}>
+                <h2>{thisUser.name}</h2>
+                {friendId !== thisUser.id ? (
+                  <button
+                    type="button"
+                    onClick={() => handleSelectUser(thisUser.id)}
+                  >
+                    Selecionar
+                  </button>
+                ) : (
+                  <span>
+                    <button
+                      type="button"
+                      onClick={() => handleSelectUser(thisUser.id)}
+                    >
+                      Selecionado
+                    </button>
+                  </span>
+                )}
               </li>
             ))}
           </ul>
