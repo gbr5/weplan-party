@@ -29,9 +29,13 @@ const MainFriendsWindow: React.FC<IProps> = ({
 
   const [addFriendWindow, setAddFriendWindow] = useState(false);
   const [groupName, setGroupName] = useState('');
-  const [allFriendGroupId, setAllFriendGroupId] = useState('');
+  const [allFriendGroupId, setAllFriendGroupId] = useState<IFriendGroupDTO>(
+    {} as IFriendGroupDTO,
+  );
   const [friendId, setFriendId] = useState('');
-  const [selectedGroupId, setSelectedGroupId] = useState('');
+  const [selectedGroupId, setSelectedGroupId] = useState<IFriendGroupDTO>(
+    {} as IFriendGroupDTO,
+  );
   const [allFriends, setAllFriends] = useState<IFriendDTO[]>([]);
   const [allFriendsWindow, setAllFriendsWindow] = useState(true);
   const [addFriendGroupWindow, setAddFriendGroupWindow] = useState(false);
@@ -53,7 +57,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
       api.get<IFriendGroupDTO[]>('/users/friend-groups/list').then(response => {
         setFriendGroups(response.data.filter(group => group.name !== 'All'));
         const allGroupId = response.data.filter(group => group.name === 'All');
-        setAllFriendGroupId(allGroupId[0].id);
+        setAllFriendGroupId(allGroupId[0]);
       });
     } catch (err) {
       throw new Error(err);
@@ -70,6 +74,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
       setFriendsByGroup(
         friends.filter(thisFriend => thisFriend.friend_group === props.name),
       );
+      setSelectedGroupId(props);
       setAllFriendsWindow(false);
     },
     [friends],
@@ -87,7 +92,6 @@ const MainFriendsWindow: React.FC<IProps> = ({
         setAllFriends(
           response.data.filter(friend => friend.friend_group === 'All'),
         );
-        console.log(response.data, allFriends);
       });
     } catch (err) {
       throw new Error(err);
@@ -121,6 +125,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
     async (props: string) => {
       try {
         await api.delete(`users/friends/${props}`);
+        handleFriendLists(selectedGroupId);
 
         addToast({
           type: 'success',
@@ -135,7 +140,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
         });
       }
     },
-    [addToast],
+    [addToast, handleFriendLists, selectedGroupId],
   );
 
   const handleDeleteFriendFromAllGroups = useCallback(
@@ -149,6 +154,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
             await api.delete(`users/friends/${group.id}`);
           }),
         ]);
+        handleFriendLists(selectedGroupId);
         addToast({
           type: 'success',
           title: 'Contato deletado do grupo com sucesso',
@@ -162,7 +168,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
         });
       }
     },
-    [addToast, friends],
+    [addToast, friends, handleFriendLists, selectedGroupId],
   );
 
   const handleAddFriendToGroup = useCallback(
@@ -172,18 +178,20 @@ const MainFriendsWindow: React.FC<IProps> = ({
           'handleAddFriendToGroup function: ',
           '1° friendId: ',
           friendId,
+          typeof friendId,
           '2° selectedGroupId: ',
           props,
+          typeof props,
         );
         await api.post('/users/friends', {
           friend_id: friendId,
-          friend_group: selectedGroupId,
+          friend_group: props,
         });
 
         getFriends();
         getFriendGroups();
         setFriendGroupWindow(false);
-
+        handleFriendLists(selectedGroupId);
         addToast({
           type: 'success',
           title: 'Amigo adicionado com sucesso',
@@ -198,7 +206,14 @@ const MainFriendsWindow: React.FC<IProps> = ({
         throw new Error(err);
       }
     },
-    [addToast, getFriends, getFriendGroups, selectedGroupId, friendId],
+    [
+      addToast,
+      getFriends,
+      getFriendGroups,
+      selectedGroupId,
+      friendId,
+      handleFriendLists,
+    ],
   );
 
   const handleSelectGroup = useCallback(
@@ -233,6 +248,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
       )}
       {!!addFriendWindow && (
         <AddFriendWindow
+          handleFriendLists={handleFriendLists}
           allFriendGroupId={allFriendGroupId}
           handleCloseWindow={() => handleAddFriendWindow(false)}
           onHandleCloseWindow={() => handleAddFriendWindow(false)}
@@ -321,8 +337,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleAddFriendToGroupWindow(friend.friend_id)
-                                }
+                                  handleAddFriendToGroupWindow(friend.friend_id)}
                               >
                                 <MdGroupAdd size={32} />
                               </button>
@@ -330,8 +345,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
                             <button
                               type="button"
                               onClick={() =>
-                                handleDeleteFriendFromAllGroups(friend.name)
-                              }
+                                handleDeleteFriendFromAllGroups(friend.name)}
                             >
                               <FiTrash size={32} />
                             </button>
@@ -346,8 +360,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
                           <button
                             type="button"
                             onClick={() =>
-                              handleDeleteFriendFromGroup(friend.id)
-                            }
+                              handleDeleteFriendFromGroup(friend.id)}
                           >
                             Deletar
                           </button>

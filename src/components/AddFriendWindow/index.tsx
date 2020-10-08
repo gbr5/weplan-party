@@ -1,4 +1,5 @@
 import React, { MouseEventHandler, useCallback, useState } from 'react';
+import IFriendGroupDTO from '../../dtos/IFriendGroupDTO';
 import IUserDTO from '../../dtos/IUserDTO';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
@@ -8,11 +9,12 @@ import WindowContainer from '../WindowContainer';
 import { Container } from './styles';
 
 interface IPropsDTO {
-  allFriendGroupId: string;
+  allFriendGroupId: IFriendGroupDTO;
   handleCloseWindow: Function;
   onHandleCloseWindow: MouseEventHandler;
   getFriends: Function;
   getFriendGroups: Function;
+  handleFriendLists: Function;
 }
 
 const AddFriendWindow: React.FC<IPropsDTO> = ({
@@ -21,6 +23,7 @@ const AddFriendWindow: React.FC<IPropsDTO> = ({
   onHandleCloseWindow,
   getFriends,
   getFriendGroups,
+  handleFriendLists,
 }: IPropsDTO) => {
   const { addToast } = useToast();
   const { user } = useAuth();
@@ -55,16 +58,18 @@ const AddFriendWindow: React.FC<IPropsDTO> = ({
     [friendId],
   );
 
-  const handleAddFriend = useCallback(() => {
+  const handleAddFriend = useCallback(async () => {
     try {
-      api.post('/users/friends', {
+      console.log('add friend window, component', friendId, allFriendGroupId);
+      await api.post('/users/friends', {
         friend_id: friendId,
-        friend_group: allFriendGroupId,
+        friend_group: allFriendGroupId.id,
       });
 
       getFriends();
       getFriendGroups();
       handleCloseWindow();
+      handleFriendLists(allFriendGroupId);
 
       addToast({
         type: 'success',
@@ -86,6 +91,7 @@ const AddFriendWindow: React.FC<IPropsDTO> = ({
     getFriendGroups,
     handleCloseWindow,
     allFriendGroupId,
+    handleFriendLists,
   ]);
 
   return (
