@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import 'react-day-picker/lib/style.css';
 
-import { FiChevronRight, FiStar } from 'react-icons/fi';
+import {
+  FiCheckSquare,
+  FiChevronRight,
+  FiSquare,
+  FiStar,
+} from 'react-icons/fi';
 import { useHistory } from 'react-router-dom';
 import { isAfter } from 'date-fns';
 import { differenceInCalendarDays } from 'date-fns/esm';
@@ -61,7 +66,8 @@ const Dashboard: React.FC = () => {
   const [eventsAsOwner, setEventsAsOwner] = useState<IListEventDTO[]>([]);
   const [eventsAsMember, setEventsAsMember] = useState<IListEventDTO[]>([]);
   const [eventsAsGuest, setEventsAsGuest] = useState<IListEventDTO[]>([]);
-  // const [myFriendsEvents, setMyFriendsEvents] = useState<IFriendsEvents[]>([]);
+  eventsAsGuest === [] && console.log(eventsAsGuest);
+  const [myFriendsEvents, setMyFriendsEvents] = useState<IFriendsEvents[]>([]);
 
   const [myNextEvent, setMyNextEvent] = useState<IListEventDTO>(
     {} as IListEventDTO,
@@ -161,40 +167,15 @@ const Dashboard: React.FC = () => {
     }
   }, []);
 
-  // const handleGetMyFriendsEvents = useCallback(() => {
-  //   try {
-  //     api.get<IFriendsEvents[]>('/friends-events').then(response => {
-  //       setMyFriendsEvents(response.data);
-  //     });
-
-  //     const nextFriendsEvent = myFriendsEvents.find(myEvent => {
-  //       return isAfter(new Date(myEvent.date), new Date());
-  //     });
-
-  //     if (nextFriendsEvent) {
-  //       const date = new Date(nextFriendsEvent.date);
-  //       const year = date.getFullYear();
-  //       const month =
-  //         date.getMonth() < 10 ? `0${date.getMonth()}` : date.getMonth();
-  //       const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
-  //       const hour =
-  //         date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
-  //       const minute =
-  //         date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
-
-  //       setMyNextFriendsEvent({
-  //         guest_id: nextFriendsEvent.guest_id,
-  //         event_name: nextFriendsEvent.event_name,
-  //         host: nextFriendsEvent.host,
-  //         date: `${hour}:${minute} - ${day}/${month}/${year}`,
-  //         daysTillDate: differenceInCalendarDays(date, new Date()),
-  //         confirmed: nextFriendsEvent.confirmed,
-  //       });
-  //     }
-  //   } catch (err) {
-  //     throw Error(err);
-  //   }
-  // }, [myFriendsEvents]);
+  const handleGetMyFriendsEvents = useCallback(() => {
+    try {
+      api.get<IFriendsEvents[]>('/friends-events').then(response => {
+        setMyFriendsEvents(response.data);
+      });
+    } catch (err) {
+      throw Error(err);
+    }
+  }, []);
 
   const handleDeleteEvent = useCallback(
     async props => {
@@ -222,6 +203,33 @@ const Dashboard: React.FC = () => {
   const handleEventOwnerOrMember = useCallback(props => {
     setEventOwner(props);
   }, []);
+
+  const handleEditConfirmedGuest = useCallback(
+    async (props: IEventGuest) => {
+      console.log(props);
+      try {
+        await api.put(`events/weplan-user-guest/${props.id}`, {
+          confirmed: !props.confirmed,
+        });
+
+        addToast({
+          type: 'success',
+          title: 'Convidado editado com sucesso',
+          description: 'As mudanças já foram atualizadas no seu evento.',
+        });
+        handleGetMyFriendsEvents();
+      } catch (err) {
+        addToast({
+          type: 'error',
+          title: 'Erro ao editar convidado',
+          description: 'Erro ao editar o convidado, tente novamente.',
+        });
+        throw new Error(err);
+      }
+    },
+    [addToast, handleGetMyFriendsEvents],
+  );
+
   useEffect(() => {
     getMyEvents();
   }, [getMyEvents]);
@@ -234,9 +242,9 @@ const Dashboard: React.FC = () => {
     getMyNextEventCheckList();
   }, [getMyNextEventCheckList]);
 
-  // useEffect(() => {
-  //   handleGetMyFriendsEvents();
-  // }, [handleGetMyFriendsEvents]);
+  useEffect(() => {
+    handleGetMyFriendsEvents();
+  }, [handleGetMyFriendsEvents]);
 
   return (
     <Container>
@@ -375,11 +383,27 @@ const Dashboard: React.FC = () => {
                 <strong>Festas de Amigos</strong>
               </div>
               <ul>
-                {eventsAsGuest.map(event => (
-                  <li key={event.id}>
-                    <h3>{event.name}</h3>
+                {myFriendsEvents.map(event => (
+                  <li key={event.event_name}>
+                    <h3>{event.event_name}</h3>
                     <span>{event.date}</span>
-                    <FiChevronRight size={24} />
+                    <div>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleEditConfirmedGuest({
+                            id: event.guest_id,
+                            confirmed: event.confirmed,
+                          })
+                        }
+                      >
+                        {event.confirmed ? (
+                          <FiCheckSquare size={24} />
+                        ) : (
+                          <FiSquare size={24} />
+                        )}
+                      </button>
+                    </div>
                   </li>
                 ))}
               </ul>

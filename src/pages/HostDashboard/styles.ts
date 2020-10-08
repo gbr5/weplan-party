@@ -146,99 +146,104 @@ export const BottomSection = styled.div`
   ul {
     overflow-y: scroll;
     height: 150px;
-  }
 
-  li {
-    list-style: none;
-    padding: 0 8px 12px;
-    display: flex;
-    gap: 24px;
-    align-items: center;
-    border-bottom: 1px solid var(--letter-color-4);
-    transition: 0.25s;
+    li {
+      list-style: none;
+      padding: 0 8px 12px;
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      border-bottom: 1px solid var(--letter-color-4);
+      transition: 0.25s;
 
-    &:hover {
-      opacity: 0.8;
+      > button {
+        background: transparent;
+        border: none;
+      }
 
-      div {
-        button {
+      &:hover {
+        opacity: 0.8;
+
+        div {
+          button {
+            color: var(--primary-color);
+          }
+        }
+
+        svg {
           color: var(--primary-color);
         }
       }
 
-      svg {
-        color: var(--primary-color);
-      }
-    }
-
-    h3 {
-      color: var(--letter-color-4);
-    }
-
-    span {
-      display: flex;
-      margin-left: auto;
-      color: var(--primary-color);
-      gap: 16px;
-
-      > svg {
-        margin: auto;
-        color: var(--title-color);
-      }
-
-      > button {
-        color: var(--red-color);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100px;
-        background: rgba(0, 0, 0, 0.5);
-        border-radius: 8%;
-        border: none;
-        transition: 0.25s;
-
-        &:hover {
-          opacity: 1.5;
-          color: var(--title-color);
-          border-radius: 8%;
-          background: rgba(250, 0, 0, 0.5);
-        }
-      }
-    }
-
-    > div {
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-
-      > button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 56px;
-        background: transparent;
-        border: none;
-        transition: 0.25s;
-
-        &:hover {
-          opacity: 1.5;
-          color: var(--title-color);
-          border-radius: 8%;
-          background: rgba(0, 0, 0, 0.5);
-        }
+      h3 {
+        color: var(--letter-color-4);
       }
 
       span {
-        margin-left: 4px;
+        display: flex;
+        margin-left: auto;
         color: var(--primary-color);
+        gap: 16px;
+
+        > svg {
+          margin: auto;
+          color: var(--title-color);
+        }
+
+        > button {
+          color: var(--red-color);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100px;
+          background: rgba(0, 0, 0, 0.5);
+          border-radius: 8%;
+          border: none;
+          transition: 0.25s;
+
+          &:hover {
+            opacity: 1.5;
+            color: var(--title-color);
+            border-radius: 8%;
+            background: rgba(250, 0, 0, 0.5);
+          }
+        }
+      }
+
+      > div {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+
+        > button {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 56px;
+          background: transparent;
+          border: none;
+          transition: 0.25s;
+
+          &:hover {
+            opacity: 1.5;
+            color: var(--title-color);
+            border-radius: 8%;
+            background: rgba(0, 0, 0, 0.5);
+          }
+        }
+
+        span {
+          margin-left: 4px;
+          color: var(--primary-color);
+        }
       }
     }
-  }
 
-  li + li {
-    margin-top: 16px;
+    li + li {
+      margin-top: 16px;
+    }
   }
 `;
 
