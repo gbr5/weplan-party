@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 
 import 'react-day-picker/lib/style.css';
 
@@ -61,14 +61,11 @@ const EventsDashboard: React.FC = () => {
   const getAllEvents = useCallback(() => {
     try {
       api.get<IListEventDTO[]>('/events').then(response => {
-        console.log(response.data);
         const events = response.data.filter(event => event.id !== undefined);
-        console.log(events);
         events.map(aEvent => {
           aEvent.isOwner && eventsAsOwner.push(aEvent);
           !aEvent.isOwner && !aEvent.isGuest && eventsAsMember.push(aEvent);
           aEvent.isGuest && eventsAsGuest.push(aEvent);
-          console.log(aEvent);
           allEvents.push({
             id: aEvent.id,
             name: aEvent.name,
@@ -96,27 +93,17 @@ const EventsDashboard: React.FC = () => {
     getAllEvents();
   }, [getAllEvents]);
 
-  const eventsAsOwners = useMemo(() => {
-    console.log(allEvents);
-    const ventsAsOwner = allEvents.filter(event => event.isOwner === true);
-    console.log(ventsAsOwner);
-    allEvents.map(event => {
-      console.log(event);
-      if (event.isOwner === true) {
-        console.log(event);
-        eventsAsOwner.push(event);
-        return event;
-      }
-      return event;
-    });
-    return ventsAsOwner;
-  }, [allEvents, eventsAsOwner]);
-
-  console.log(allEvents);
-  console.log('eventsAsOwners "S"', eventsAsOwners);
-  console.log('eventsAsOwner', eventsAsOwner);
-  console.log('eventsAsMember', eventsAsMember);
-  console.log('eventsAsGuest', eventsAsGuest);
+  // const eventsAsOwners = useMemo(() => {
+  //   const ventsAsOwner = allEvents.filter(event => event.isOwner === true);
+  //   allEvents.map(event => {
+  //     if (event.isOwner === true) {
+  //       eventsAsOwner.push(event);
+  //       return event;
+  //     }
+  //     return event;
+  //   });
+  //   return ventsAsOwner;
+  // }, [allEvents, eventsAsOwner]);
 
   return (
     <Container>

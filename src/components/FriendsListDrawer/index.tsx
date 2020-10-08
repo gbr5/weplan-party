@@ -4,17 +4,12 @@ import React, { useState } from 'react';
 import { MouseEventHandler } from 'react-select';
 import { FriendsList, FriendButton } from './styles';
 import WindowContainer from '../WindowContainer';
-
-interface IFriendsDTO {
-  id: string;
-  name: string;
-  avatar: string;
-}
+import IFriendDTO from '../../dtos/IFriendDTO';
 
 interface IPropsDTO {
-  friends: IFriendsDTO[];
+  friends: IFriendDTO[];
   onHandleFriendsListDrawer: MouseEventHandler;
-  handleSelectedFriend(arg: IFriendsDTO): void;
+  handleSelectedFriend(arg: IFriendDTO): void;
 }
 
 const FriendsListDrawer: React.FC<IPropsDTO> = ({
@@ -22,7 +17,7 @@ const FriendsListDrawer: React.FC<IPropsDTO> = ({
   onHandleFriendsListDrawer,
   handleSelectedFriend,
 }: IPropsDTO) => {
-  const [weplanUser, setWeplanUser] = useState<IFriendsDTO>({} as IFriendsDTO);
+  const [weplanUser, setWeplanUser] = useState<IFriendDTO>({} as IFriendDTO);
 
   return (
     <WindowContainer

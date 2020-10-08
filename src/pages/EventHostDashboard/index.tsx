@@ -89,6 +89,7 @@ import TransactionAgreementForm from '../../components/TransactionAgreementForm'
 import EventFinanceSection from '../../components/EventFinanceSection';
 import { numberFormat } from '../../utils/numberFormat';
 import IListEventDTO from '../../dtos/IListEventDTO';
+import IFriendDTO from '../../dtos/IFriendDTO';
 
 interface IEvent {
   id: string;
@@ -187,7 +188,7 @@ const EventHostDashboard: React.FC = () => {
   const notHostMessage = 'Você não é o anfitrião deste convidado!';
 
   const [event, setEvent] = useState<IListEventDTO>({} as IListEventDTO);
-  const [friends, setFriends] = useState<IUserInfoDTO[]>([]);
+  const [friends, setFriends] = useState<IFriendDTO[]>([]);
   const [friendsWindow, setFriendsWindow] = useState(false);
   const [checkListItems, setCheckListItems] = useState<IEventCheckList[]>([]);
   const [resolvedCheckListItems, setResolvedCheckListItems] = useState(0);
@@ -490,9 +491,9 @@ const EventHostDashboard: React.FC = () => {
     setHiredSuppliersSection(props);
   }, []);
 
-  const handleSelectedWeplanUser = useCallback((WPUser: IUserInfoDTO) => {
+  const handleSelectedWeplanUser = useCallback((WPUser: IFriendDTO) => {
     setWpUserName(WPUser.name);
-    setWpUserId(WPUser.id);
+    setWpUserId(WPUser.friend_id);
     setFriendsWindow(false);
   }, []);
   const handleGuestConfirmedQuestion = useCallback(
@@ -629,7 +630,7 @@ const EventHostDashboard: React.FC = () => {
   const handleGetFriends = useCallback(() => {
     try {
       eventId &&
-        api.get<IUserInfoDTO[]>(`/users/friends/list`).then(response => {
+        api.get<IFriendDTO[]>(`/users/friends/list`).then(response => {
           setFriends(response.data);
         });
     } catch (err) {
@@ -1684,8 +1685,7 @@ const EventHostDashboard: React.FC = () => {
           onHandleEventSupplierDrawer={() => setHiredSupplierWindow(false)}
           onHandleEventSupplierUpdate={() => setHiredSupplierWindow(true)}
           onHandleDeleteEventSupplierDrawer={() =>
-            setDeleteHiredSupplierDrawer(true)
-          }
+            setDeleteHiredSupplierDrawer(true)}
         />
       )}
       {!!editEventNameDrawer && (
@@ -1741,12 +1741,10 @@ const EventHostDashboard: React.FC = () => {
           isOwner={pageEvent.isOwner}
           selectedSupplier={selectedSupplier}
           onHandleSelectedSupplierDrawer={() =>
-            setSelectedSupplierWindow(false)
-          }
+            setSelectedSupplierWindow(false)}
           onUpdateSelectedSupplierDrawer={() => setSelectedSupplierWindow(true)}
           onDeleteSelectedSupplierDrawer={() =>
-            setDeleteSelectedSupplierDrawer(true)
-          }
+            setDeleteSelectedSupplierDrawer(true)}
         />
       )}
       {!!numberOfGuestDrawer && (
@@ -1932,9 +1930,8 @@ const EventHostDashboard: React.FC = () => {
         <FriendsListDrawer
           friends={friends}
           onHandleFriendsListDrawer={() => setFriendsWindow(false)}
-          handleSelectedFriend={(friend: IUserInfoDTO) =>
-            handleSelectedWeplanUser(friend)
-          }
+          handleSelectedFriend={(friend: IFriendDTO) =>
+            handleSelectedWeplanUser(friend)}
         />
       )}
       {!!eventInfoDrawer && (
@@ -2618,8 +2615,7 @@ const EventHostDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={() =>
-                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')
-                }
+                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')}
               >
                 <MdBuild size={50} />
                 <h1>Estruturas, Cênica e Boate</h1>
@@ -2655,8 +2651,7 @@ const EventHostDashboard: React.FC = () => {
                   key={subCategory.id}
                   type="button"
                   onClick={() =>
-                    handleAddSupplierDrawer(subCategory.sub_category)
-                  }
+                    handleAddSupplierDrawer(subCategory.sub_category)}
                 >
                   {/* <MdFolderSpecial size={50} /> */}
                   <h1>{subCategory.sub_category}</h1>
@@ -2935,7 +2930,8 @@ const EventHostDashboard: React.FC = () => {
                           <button
                             type="button"
                             onClick={() =>
-                              handleSelectedSupplierWindow(sSupplier)}
+                              handleSelectedSupplierWindow(sSupplier)
+                            }
                           >
                             <strong>{sSupplier.name}</strong>{' '}
                             <FiEdit3 size={16} />
@@ -2953,7 +2949,8 @@ const EventHostDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() =>
-                                handleCreateTransactionWindow(sSupplier)}
+                                handleCreateTransactionWindow(sSupplier)
+                              }
                             >
                               {sSupplier.isHired ? (
                                 <FiCheckSquare size={24} />
@@ -2978,7 +2975,8 @@ const EventHostDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() =>
-                                handleHiredSupplierWindow(hSupplier)}
+                                handleHiredSupplierWindow(hSupplier)
+                              }
                             >
                               <strong>{hSupplier.name}</strong>{' '}
                               <FiChevronRight size={16} />

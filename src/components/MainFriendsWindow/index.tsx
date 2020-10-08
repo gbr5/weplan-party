@@ -174,15 +174,6 @@ const MainFriendsWindow: React.FC<IProps> = ({
   const handleAddFriendToGroup = useCallback(
     async props => {
       try {
-        console.log(
-          'handleAddFriendToGroup function: ',
-          '1° friendId: ',
-          friendId,
-          typeof friendId,
-          '2° selectedGroupId: ',
-          props,
-          typeof props,
-        );
         await api.post('/users/friends', {
           friend_id: friendId,
           friend_group: props,
@@ -337,7 +328,8 @@ const MainFriendsWindow: React.FC<IProps> = ({
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleAddFriendToGroupWindow(friend.friend_id)}
+                                  handleAddFriendToGroupWindow(friend.friend_id)
+                                }
                               >
                                 <MdGroupAdd size={32} />
                               </button>
@@ -345,7 +337,8 @@ const MainFriendsWindow: React.FC<IProps> = ({
                             <button
                               type="button"
                               onClick={() =>
-                                handleDeleteFriendFromAllGroups(friend.name)}
+                                handleDeleteFriendFromAllGroups(friend.name)
+                              }
                             >
                               <FiTrash size={32} />
                             </button>
@@ -360,7 +353,8 @@ const MainFriendsWindow: React.FC<IProps> = ({
                           <button
                             type="button"
                             onClick={() =>
-                              handleDeleteFriendFromGroup(friend.id)}
+                              handleDeleteFriendFromGroup(friend.id)
+                            }
                           >
                             Deletar
                           </button>

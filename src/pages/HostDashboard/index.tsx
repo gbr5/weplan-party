@@ -206,7 +206,6 @@ const Dashboard: React.FC = () => {
 
   const handleEditConfirmedGuest = useCallback(
     async (props: IEventGuest) => {
-      console.log(props);
       try {
         await api.put(`events/weplan-user-guest/${props.id}`, {
           confirmed: !props.confirmed,
@@ -394,8 +393,7 @@ const Dashboard: React.FC = () => {
                           handleEditConfirmedGuest({
                             id: event.guest_id,
                             confirmed: event.confirmed,
-                          })
-                        }
+                          })}
                       >
                         {event.confirmed ? (
                           <FiCheckSquare size={24} />

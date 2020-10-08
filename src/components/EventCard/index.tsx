@@ -16,7 +16,6 @@ const EventCard: React.FC<IPropsDTO> = ({
 }: // refreshEvents,
 IPropsDTO) => {
   // const { addToast } = useToast();
-  console.log(event, '!!EventCard!!');
 
   let eventMessage = '';
   if (event.daysTillDate) {
