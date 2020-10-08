@@ -1,5 +1,24 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import '../../styles/global';
+
+const appearFromTop = keyframes`
+  0% {
+    opacity: 0;
+    transform: translateY(-150px);
+  }
+  /* 40% {
+    opacity: 0.5;
+    transform: translateY(-100px);
+  }
+  80% {
+    opacity: 0.9;
+    transform: translateY(-50px);
+  } */
+  100% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+`;
 
 export const Container = styled.div`
   display: flex;
@@ -117,10 +136,28 @@ export const ListSection = styled.div`
     box-shadow: var(--window-box-shadow);
 
     > li {
+      display: flex;
       font-size: 16px;
 
       > strong {
         color: var(--letter-color-4);
+      }
+
+      > span {
+        display: flex;
+        gap: 16px;
+        margin-left: auto;
+
+        > button {
+          width: 40px;
+          height: 40px;
+        }
+        div {
+          > button {
+            width: 40px;
+            height: 40px;
+          }
+        }
       }
     }
   }
@@ -213,5 +250,42 @@ export const GroupMenu = styled.div`
 
     overflow-y: scroll;
     padding: 16px 16px 16px 0;
+  }
+`;
+
+export const FriendGroupWindow = styled.div`
+  position: fixed;
+  margin: auto;
+  z-index: 10000;
+  display: flex;
+  width: 40%;
+  height: 80%;
+  left: 30%;
+  top: 10%;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  background: var(--header-background-color);
+  border-radius: 8px;
+  gap: 16px;
+  box-shadow: var(--window-box-shadow);
+  padding: 32px;
+  overflow-y: scroll;
+
+  animation: ${appearFromTop} 0.5s;
+
+  > button {
+    font-size: 24px;
+    background: var(--primary-color);
+    border: none;
+    width: 100%;
+    height: 40px;
+    color: var(--letter-color-5);
+
+    &:hover {
+      background: var(--background-color);
+      color: var(--primary-color);
+      box-shadow: var(--window-box-shadow);
+    }
   }
 `;

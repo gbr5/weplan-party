@@ -6,11 +6,11 @@ import React, {
 } from 'react';
 
 import 'react-day-picker/lib/style.css';
-import { FiChevronRight } from 'react-icons/fi';
+import { FiChevronRight, FiTrash } from 'react-icons/fi';
 import { MdGroupAdd, MdPersonAdd } from 'react-icons/md';
 import { useToast } from '../../hooks/toast';
 
-import { Container, ListSection, GroupMenu } from './styles';
+import { Container, ListSection, GroupMenu, FriendGroupWindow } from './styles';
 
 import WindowContainer from '../WindowContainer';
 import api from '../../services/api';
@@ -29,12 +29,16 @@ const MainFriendsWindow: React.FC<IProps> = ({
 
   const [addFriendWindow, setAddFriendWindow] = useState(false);
   const [groupName, setGroupName] = useState('');
-  const [allFriends, setAllFriends] = useState<IFriendGroupDTO[]>([]);
+  const [allFriendGroupId, setAllFriendGroupId] = useState('');
+  const [friendId, setFriendId] = useState('');
+  const [selectedGroupId, setSelectedGroupId] = useState('');
+  const [allFriends, setAllFriends] = useState<IFriendDTO[]>([]);
   const [allFriendsWindow, setAllFriendsWindow] = useState(true);
   const [addFriendGroupWindow, setAddFriendGroupWindow] = useState(false);
   const [friendGroups, setFriendGroups] = useState<IFriendGroupDTO[]>([]);
   const [friends, setFriends] = useState<IFriendDTO[]>([]);
   const [friendsByGroup, setFriendsByGroup] = useState<IFriendDTO[]>([]);
+  const [friendGroupWindow, setFriendGroupWindow] = useState(false);
 
   const handleAddFriendWindow = useCallback(props => {
     setAddFriendWindow(props);
@@ -48,6 +52,8 @@ const MainFriendsWindow: React.FC<IProps> = ({
     try {
       api.get<IFriendGroupDTO[]>('/users/friend-groups/list').then(response => {
         setFriendGroups(response.data.filter(group => group.name !== 'All'));
+        const allGroupId = response.data.filter(group => group.name === 'All');
+        setAllFriendGroupId(allGroupId[0].id);
       });
     } catch (err) {
       throw new Error(err);
@@ -60,23 +66,28 @@ const MainFriendsWindow: React.FC<IProps> = ({
   }, []);
 
   const handleFriendLists = useCallback(
-    props => {
+    (props: IFriendGroupDTO) => {
       setFriendsByGroup(
-        friends.filter(thisFriend => thisFriend.friend_group === props),
+        friends.filter(thisFriend => thisFriend.friend_group === props.name),
       );
       setAllFriendsWindow(false);
     },
     [friends],
   );
 
+  const handleAddFriendToGroupWindow = useCallback((props: string) => {
+    setFriendId(props);
+    setFriendGroupWindow(true);
+  }, []);
+
   const getFriends = useCallback(() => {
     try {
       api.get<IFriendDTO[]>('/users/friends/list').then(response => {
-        console.log(response.data);
         setFriends(response.data);
         setAllFriends(
           response.data.filter(friend => friend.friend_group === 'All'),
         );
+        console.log(response.data, allFriends);
       });
     } catch (err) {
       throw new Error(err);
@@ -106,6 +117,97 @@ const MainFriendsWindow: React.FC<IProps> = ({
     }
   }, [addToast, groupName, getFriendGroups]);
 
+  const handleDeleteFriendFromGroup = useCallback(
+    async (props: string) => {
+      try {
+        await api.delete(`users/friends/${props}`);
+
+        addToast({
+          type: 'success',
+          title: 'Contato deletado do grupo com sucesso',
+          description: 'Você já pode visualizar as alterações.',
+        });
+      } catch (err) {
+        addToast({
+          type: 'error',
+          title: 'Não foi possível deletar o contato do seu grupo de amigos',
+          description: 'Tente novamente.',
+        });
+      }
+    },
+    [addToast],
+  );
+
+  const handleDeleteFriendFromAllGroups = useCallback(
+    async (props: string) => {
+      try {
+        const allGroups: IFriendDTO[] = friends.filter(
+          thisFriend => thisFriend.name === props,
+        );
+        await Promise.all([
+          allGroups.map(async group => {
+            await api.delete(`users/friends/${group.id}`);
+          }),
+        ]);
+        addToast({
+          type: 'success',
+          title: 'Contato deletado do grupo com sucesso',
+          description: 'Você já pode visualizar as alterações.',
+        });
+      } catch (err) {
+        addToast({
+          type: 'error',
+          title: 'Não foi possível deletar o contato do seu grupo de amigos',
+          description: 'Tente novamente.',
+        });
+      }
+    },
+    [addToast, friends],
+  );
+
+  const handleAddFriendToGroup = useCallback(
+    async props => {
+      try {
+        console.log(
+          'handleAddFriendToGroup function: ',
+          '1° friendId: ',
+          friendId,
+          '2° selectedGroupId: ',
+          props,
+        );
+        await api.post('/users/friends', {
+          friend_id: friendId,
+          friend_group: selectedGroupId,
+        });
+
+        getFriends();
+        getFriendGroups();
+        setFriendGroupWindow(false);
+
+        addToast({
+          type: 'success',
+          title: 'Amigo adicionado com sucesso',
+          description: 'As informações do evento já foram atualizadas.',
+        });
+      } catch (err) {
+        addToast({
+          type: 'error',
+          title: 'Erro ao adicionar amigo',
+          description: 'Erro ao adicionar amigo, tente novamente.',
+        });
+        throw new Error(err);
+      }
+    },
+    [addToast, getFriends, getFriendGroups, selectedGroupId, friendId],
+  );
+
+  const handleSelectGroup = useCallback(
+    props => {
+      handleAddFriendToGroup(props);
+    },
+    [handleAddFriendToGroup],
+  );
+
   useEffect(() => {
     getFriendGroups();
   }, [getFriendGroups]);
@@ -116,11 +218,24 @@ const MainFriendsWindow: React.FC<IProps> = ({
 
   return (
     <>
+      {!!friendGroupWindow && (
+        <FriendGroupWindow>
+          {friendGroups.map((group: IFriendGroupDTO) => (
+            <button
+              key={group.id}
+              type="button"
+              onClick={() => handleSelectGroup(group.id)}
+            >
+              {group.name}
+            </button>
+          ))}
+        </FriendGroupWindow>
+      )}
       {!!addFriendWindow && (
         <AddFriendWindow
+          allFriendGroupId={allFriendGroupId}
           handleCloseWindow={() => handleAddFriendWindow(false)}
           onHandleCloseWindow={() => handleAddFriendWindow(false)}
-          friendGroups={friendGroups}
           getFriends={getFriends}
           getFriendGroups={getFriends}
         />
@@ -186,7 +301,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
                   <button
                     key={group.id}
                     type="button"
-                    onClick={() => handleFriendLists(group.name)}
+                    onClick={() => handleFriendLists(group)}
                   >
                     <strong>{group.name}</strong>
                     <FiChevronRight />
@@ -201,6 +316,26 @@ const MainFriendsWindow: React.FC<IProps> = ({
                       return (
                         <li key={friend.id}>
                           <strong>{friend.name}</strong>
+                          <span>
+                            <div>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleAddFriendToGroupWindow(friend.friend_id)
+                                }
+                              >
+                                <MdGroupAdd size={32} />
+                              </button>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleDeleteFriendFromAllGroups(friend.name)
+                              }
+                            >
+                              <FiTrash size={32} />
+                            </button>
+                          </span>
                         </li>
                       );
                     })
@@ -208,21 +343,14 @@ const MainFriendsWindow: React.FC<IProps> = ({
                       return (
                         <li key={friend.id}>
                           <strong>{friend.name}</strong>
-                        </li>
-                      );
-                    })}
-                {!allFriendsWindow
-                  ? friendsByGroup.map(friend => {
-                      return (
-                        <li key={friend.id}>
-                          <strong>{friend.name}</strong>
-                        </li>
-                      );
-                    })
-                  : friendsByGroup.map(friend => {
-                      return (
-                        <li key={friend.id}>
-                          <strong>{friend.name}</strong>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              handleDeleteFriendFromGroup(friend.id)
+                            }
+                          >
+                            Deletar
+                          </button>
                         </li>
                       );
                     })}

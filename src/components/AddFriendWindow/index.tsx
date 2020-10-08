@@ -1,26 +1,25 @@
 import React, { MouseEventHandler, useCallback, useState } from 'react';
-import IFriendGroupDTO from '../../dtos/IFriendGroupDTO';
 import IUserDTO from '../../dtos/IUserDTO';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
 import WindowContainer from '../WindowContainer';
 
-import { Container, FriendGroupWindow } from './styles';
+import { Container } from './styles';
 
 interface IPropsDTO {
+  allFriendGroupId: string;
   handleCloseWindow: Function;
   onHandleCloseWindow: MouseEventHandler;
   getFriends: Function;
-  friendGroups: IFriendGroupDTO[];
   getFriendGroups: Function;
 }
 
 const AddFriendWindow: React.FC<IPropsDTO> = ({
+  allFriendGroupId,
   handleCloseWindow,
   onHandleCloseWindow,
   getFriends,
-  friendGroups,
   getFriendGroups,
 }: IPropsDTO) => {
   const { addToast } = useToast();
@@ -28,8 +27,6 @@ const AddFriendWindow: React.FC<IPropsDTO> = ({
 
   const [users, setUsers] = useState<IUserDTO[]>([]);
   const [friendId, setFriendId] = useState('');
-  const [friendGroupId, setFriendGroupId] = useState('');
-  const [friendGroupWindow, setFriendGroupWindow] = useState(false);
 
   const handleGetUsers = useCallback(
     (props: string) => {
@@ -53,27 +50,20 @@ const AddFriendWindow: React.FC<IPropsDTO> = ({
         setFriendId('');
       } else {
         setFriendId(props);
-        setFriendGroupWindow(true);
       }
     },
     [friendId],
   );
 
-  const handleSelectGroup = useCallback((props: string) => {
-    setFriendGroupId(props);
-    setFriendGroupWindow(false);
-  }, []);
-
   const handleAddFriend = useCallback(() => {
     try {
       api.post('/users/friends', {
         friend_id: friendId,
-        friend_group: friendGroupId,
+        friend_group: allFriendGroupId,
       });
 
       getFriends();
       getFriendGroups();
-      setFriendGroupWindow(false);
       handleCloseWindow();
 
       addToast({
@@ -90,29 +80,16 @@ const AddFriendWindow: React.FC<IPropsDTO> = ({
       throw new Error(err);
     }
   }, [
-    friendGroupId,
     friendId,
     addToast,
     getFriends,
     getFriendGroups,
     handleCloseWindow,
+    allFriendGroupId,
   ]);
 
   return (
     <>
-      {!!friendGroupWindow && (
-        <FriendGroupWindow>
-          {friendGroups.map(group => (
-            <button
-              key={group.id}
-              type="button"
-              onClick={() => handleSelectGroup(group.id)}
-            >
-              {group.name}
-            </button>
-          ))}
-        </FriendGroupWindow>
-      )}
       <WindowContainer
         onHandleCloseWindow={onHandleCloseWindow}
         containerStyle={{
@@ -150,7 +127,7 @@ const AddFriendWindow: React.FC<IPropsDTO> = ({
               </li>
             ))}
           </ul>
-          {friendGroupId !== '' && (
+          {friendId !== '' && (
             <button type="button" onClick={handleAddFriend}>
               Adicionar
             </button>
