@@ -31,8 +31,10 @@ import IListEventDTO from '../../dtos/IListEventDTO';
 import formatStringToDate from '../../utils/formatDateToString';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
+import WindowContainer from '../../components/WindowContainer';
 
 interface IFriendsEvents {
+  id: string;
   guest_id: string;
   event_name: string;
   host: string;
@@ -69,15 +71,42 @@ const Dashboard: React.FC = () => {
   const [eventsAsGuest, setEventsAsGuest] = useState<IListEventDTO[]>([]);
   eventsAsGuest === [] && console.log(eventsAsGuest);
   const [myFriendsEvents, setMyFriendsEvents] = useState<IFriendsEvents[]>([]);
+  const [myFriendEvent, setMyFriendEvent] = useState<IFriendsEvents>(
+    {} as IFriendsEvents,
+  );
 
   const [myNextEvent, setMyNextEvent] = useState<IListEventDTO>(
     {} as IListEventDTO,
   );
+  const [eventToDelete, setEventToDelete] = useState('');
+  const [thisEvent, setThisEvent] = useState('');
   const [myNextEventCheckList, setMyNextEventCheckList] = useState(0);
   const [resolvedCheckList, setResolvedCheckList] = useState(0);
   const [myNextEventGuests, setMyNextEventGuests] = useState(0);
   const [confirmedGuests, setConfirmedGuests] = useState(0);
   const [eventOwner, setEventOwner] = useState(true);
+  const [deleteEventWindow, setDeleteEventWindow] = useState(false);
+
+  const handleDeleteMasterEventWindow = useCallback((props: string) => {
+    setDeleteEventWindow(true);
+    setEventToDelete(props);
+    setThisEvent('master');
+  }, []);
+  const handleDeleteOwnerEventWindow = useCallback((props: IListEventDTO) => {
+    setDeleteEventWindow(true);
+    setEventToDelete(props.id);
+    setThisEvent('owner');
+  }, []);
+  const handleDeleteMemberEventWindow = useCallback((props: IListEventDTO) => {
+    setDeleteEventWindow(true);
+    setEventToDelete(props.id);
+    setThisEvent('member');
+  }, []);
+  const handleDeleteGuestEventWindow = useCallback((props: string) => {
+    setDeleteEventWindow(true);
+    setEventToDelete(props);
+    setThisEvent('guest');
+  }, []);
 
   const handleMyEventDashboard = useCallback(
     (event: IListEventDTO) => {
@@ -181,7 +210,16 @@ const Dashboard: React.FC = () => {
   const handleDeleteEvent = useCallback(
     async props => {
       try {
-        await api.delete(`/events/${props}`);
+        if (thisEvent === 'master') {
+          await api.delete(`/events/${props}`);
+        }
+        if (thisEvent === 'owner') {
+          await api.delete(`/events/event-owners/${props.id}`);
+        }
+        if (thisEvent === 'member') {
+          await api.delete(`/events/event-member/${props.id}`);
+        }
+
         getMyEvents();
         addToast({
           type: 'success',
@@ -198,7 +236,7 @@ const Dashboard: React.FC = () => {
         throw new Error(err);
       }
     },
-    [addToast, getMyEvents],
+    [addToast, getMyEvents, thisEvent],
   );
 
   const handleEventOwnerOrMember = useCallback(props => {
@@ -249,6 +287,31 @@ const Dashboard: React.FC = () => {
   return (
     <Container>
       <PageHeader />
+      {!!deleteEventWindow && (
+        <WindowContainer
+          containerStyle={{
+            top: '25%',
+            left: '35%',
+            height: '25%',
+            width: '30%',
+            zIndex: 1000000,
+          }}
+          onHandleCloseWindow={() => setDeleteEventWindow(false)}
+        >
+          <h1>Tem certeza de que deseja deletar o evento?</h1>
+          <div>
+            <button type="button" onClick={() => setDeleteEventWindow(false)}>
+              Não
+            </button>
+            <button
+              type="button"
+              onClick={() => handleDeleteEvent(eventToDelete)}
+            >
+              Sim
+            </button>
+          </div>
+        </WindowContainer>
+      )}
       <Content>
         <MiddlePage>
           <MyNextEvent>
@@ -333,7 +396,7 @@ const Dashboard: React.FC = () => {
                         <li key={event.id}>
                           <button
                             type="button"
-                            onClick={() => handleDeleteEvent(event.id)}
+                            onClick={() => handleMyEventDashboard(event)}
                           >
                             <h3>{event.name}</h3>
                           </button>
@@ -346,9 +409,25 @@ const Dashboard: React.FC = () => {
                               {formatStringToDate(String(event.date))}
                             </span>
                             <span>
-                              <button type="button">
-                                <FiSettings size={20} />
-                              </button>
+                              {event.owner_master === user.id ? (
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    handleDeleteMasterEventWindow(event.id)
+                                  }
+                                >
+                                  <FiSettings size={20} />
+                                </button>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    handleDeleteOwnerEventWindow(event)
+                                  }
+                                >
+                                  <FiSettings size={20} />
+                                </button>
+                              )}
                             </span>
                             <button
                               type="button"
@@ -363,10 +442,24 @@ const Dashboard: React.FC = () => {
                   : eventsAsMember.map(event => {
                       return (
                         <li key={event.id}>
-                          <h3>{event.name}</h3>
+                          <button
+                            type="button"
+                            onClick={() => handleMyEventDashboard(event)}
+                          >
+                            <h3>{event.name}</h3>
+                          </button>
                           <div>
                             <span>
                               {formatStringToDate(String(event.date))}
+                            </span>
+                            <span>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleDeleteMemberEventWindow(event)}
+                              >
+                                <FiSettings size={20} />
+                              </button>
                             </span>
                             <button
                               type="button"
@@ -388,9 +481,19 @@ const Dashboard: React.FC = () => {
               <ul>
                 {myFriendsEvents.map(event => (
                   <li key={event.event_name}>
-                    <h3>{event.event_name}</h3>
-                    <span>{event.date}</span>
+                    <button type="button">
+                      <h3>{event.event_name}</h3>
+                    </button>
                     <div>
+                      <span>{formatStringToDate(String(event.date))}</span>
+                      <span>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteGuestEventWindow(event.id)}
+                        >
+                          <FiSettings size={20} />
+                        </button>
+                      </span>
                       <button
                         type="button"
                         onClick={() =>
