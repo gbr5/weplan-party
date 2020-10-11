@@ -71,14 +71,15 @@ const Dashboard: React.FC = () => {
   const [eventsAsGuest, setEventsAsGuest] = useState<IListEventDTO[]>([]);
   eventsAsGuest === [] && console.log(eventsAsGuest);
   const [myFriendsEvents, setMyFriendsEvents] = useState<IFriendsEvents[]>([]);
-  const [myFriendEvent, setMyFriendEvent] = useState<IFriendsEvents>(
-    {} as IFriendsEvents,
-  );
+  // const [myFriendEvent, setMyFriendEvent] = useState<IFriendsEvents>(
+  //   {} as IFriendsEvents,
+  // );
 
   const [myNextEvent, setMyNextEvent] = useState<IListEventDTO>(
     {} as IListEventDTO,
   );
   const [eventToDelete, setEventToDelete] = useState('');
+  const [userEventToDelete, setUserEventToDelete] = useState('');
   const [thisEvent, setThisEvent] = useState('');
   const [myNextEventCheckList, setMyNextEventCheckList] = useState(0);
   const [resolvedCheckList, setResolvedCheckList] = useState(0);
@@ -88,24 +89,26 @@ const Dashboard: React.FC = () => {
   const [deleteEventWindow, setDeleteEventWindow] = useState(false);
 
   const handleDeleteMasterEventWindow = useCallback((props: string) => {
-    setDeleteEventWindow(true);
     setEventToDelete(props);
     setThisEvent('master');
+    setDeleteEventWindow(true);
   }, []);
   const handleDeleteOwnerEventWindow = useCallback((props: IListEventDTO) => {
-    setDeleteEventWindow(true);
     setEventToDelete(props.id);
+    setUserEventToDelete(props.userEvent_id ? props.userEvent_id : '');
     setThisEvent('owner');
+    setDeleteEventWindow(true);
   }, []);
   const handleDeleteMemberEventWindow = useCallback((props: IListEventDTO) => {
-    setDeleteEventWindow(true);
     setEventToDelete(props.id);
+    setUserEventToDelete(props.userEvent_id ? props.userEvent_id : '');
     setThisEvent('member');
+    setDeleteEventWindow(true);
   }, []);
   const handleDeleteGuestEventWindow = useCallback((props: string) => {
-    setDeleteEventWindow(true);
     setEventToDelete(props);
     setThisEvent('guest');
+    setDeleteEventWindow(true);
   }, []);
 
   const handleMyEventDashboard = useCallback(
@@ -214,13 +217,21 @@ const Dashboard: React.FC = () => {
           await api.delete(`/events/${props}`);
         }
         if (thisEvent === 'owner') {
-          await api.delete(`/events/event-owners/${props.id}`);
+          await api.delete(
+            `/events/${props}/event-owners/${userEventToDelete}`,
+          );
         }
         if (thisEvent === 'member') {
-          await api.delete(`/events/event-member/${props.id}`);
+          await api.delete(
+            `/events/${props}/event-members/${userEventToDelete}`,
+          );
+        }
+        if (thisEvent === 'guest') {
+          await api.delete(`/events/guests/${props}`);
         }
 
         getMyEvents();
+        handleGetMyFriendsEvents();
         addToast({
           type: 'success',
           title: 'Evento Deletado com sucesso',
@@ -236,7 +247,7 @@ const Dashboard: React.FC = () => {
         throw new Error(err);
       }
     },
-    [addToast, getMyEvents, thisEvent],
+    [addToast, getMyEvents, thisEvent, userEventToDelete],
   );
 
   const handleEventOwnerOrMember = useCallback(props => {
@@ -413,8 +424,7 @@ const Dashboard: React.FC = () => {
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    handleDeleteMasterEventWindow(event.id)
-                                  }
+                                    handleDeleteMasterEventWindow(event.id)}
                                 >
                                   <FiSettings size={20} />
                                 </button>
@@ -422,8 +432,7 @@ const Dashboard: React.FC = () => {
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    handleDeleteOwnerEventWindow(event)
-                                  }
+                                    handleDeleteOwnerEventWindow(event)}
                                 >
                                   <FiSettings size={20} />
                                 </button>
@@ -456,7 +465,8 @@ const Dashboard: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleDeleteMemberEventWindow(event)}
+                                  handleDeleteMemberEventWindow(event)
+                                }
                               >
                                 <FiSettings size={20} />
                               </button>
@@ -489,7 +499,8 @@ const Dashboard: React.FC = () => {
                       <span>
                         <button
                           type="button"
-                          onClick={() => handleDeleteGuestEventWindow(event.id)}
+                          onClick={() =>
+                            handleDeleteGuestEventWindow(event.guest_id)}
                         >
                           <FiSettings size={20} />
                         </button>
@@ -500,8 +511,7 @@ const Dashboard: React.FC = () => {
                           handleEditConfirmedGuest({
                             id: event.guest_id,
                             confirmed: event.confirmed,
-                          })
-                        }
+                          })}
                       >
                         {event.confirmed ? (
                           <FiCheckSquare size={24} />

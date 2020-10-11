@@ -1,5 +1,6 @@
 export default interface IListEventDTO {
   id: string;
+  userEvent_id?: string;
   name: string;
   trimmed_name: string;
   isOwner: boolean;
