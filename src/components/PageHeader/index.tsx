@@ -32,7 +32,7 @@ import {
 import { useToggleTheme } from '../../hooks/theme';
 
 import profileImg from '../../assets/avatar_placeholder.jpg';
-import logo from '../../assets/weplan_logo.svg';
+import logo from '../../assets/weplan.svg';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 
