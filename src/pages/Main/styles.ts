@@ -26,7 +26,7 @@ const appearFromTop = keyframes`
   }
 `;
 
-const appearFromDown = keyframes`
+const appearFromBottom = keyframes`
   from {
     opacity: 0;
     transform: translateY(200px);
@@ -145,6 +145,8 @@ export const AnimationContainer = styled.div`
 
         display: flex;
         align-items: center;
+
+        animation: ${appearFromBottom} 0.5s;
 
         svg {
           margin-right: 16px;
