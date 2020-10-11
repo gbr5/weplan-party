@@ -2700,16 +2700,31 @@ const EventHostDashboard: React.FC = () => {
               </button>
             )}
 
-            {owners.map(eventOwner => (
-              <span key={eventOwner.id}>
-                <button
-                  type="button"
-                  onClick={() => handleOwnerProfileWindow(eventOwner)}
-                >
-                  <h2>{eventOwner.name}</h2>
-                </button>
+            {owners.length > 4 ? (
+              <span style={{ overflowY: 'scroll', height: '200px' }}>
+                {owners.map(eventOwner => (
+                  <button
+                    key={eventOwner.id}
+                    type="button"
+                    onClick={() => handleOwnerProfileWindow(eventOwner)}
+                  >
+                    <h2>{eventOwner.name}</h2>
+                  </button>
+                ))}
               </span>
-            ))}
+            ) : (
+              <span>
+                {owners.map(eventOwner => (
+                  <button
+                    key={eventOwner.id}
+                    type="button"
+                    onClick={() => handleOwnerProfileWindow(eventOwner)}
+                  >
+                    <h2>{eventOwner.name}</h2>
+                  </button>
+                ))}
+              </span>
+            )}
 
             {pageEvent.isOwner ? (
               <button type="button" onClick={handleAddMemberDrawer}>
