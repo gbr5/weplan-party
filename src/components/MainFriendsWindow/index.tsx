@@ -72,7 +72,9 @@ const MainFriendsWindow: React.FC<IProps> = ({
   const handleFriendLists = useCallback(
     (props: IFriendGroupDTO) => {
       setFriendsByGroup(
-        friends.filter(thisFriend => thisFriend.friend_group === props.name),
+        friends.filter(
+          thisFriend => thisFriend.friendGroup.name === props.name,
+        ),
       );
       setSelectedGroupId(props);
       setAllFriendsWindow(false);
@@ -90,7 +92,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
       api.get<IFriendDTO[]>('/users/friends/list').then(response => {
         setFriends(response.data);
         setAllFriends(
-          response.data.filter(friend => friend.friend_group === 'All'),
+          response.data.filter(friend => friend.friendGroup.name === 'All'),
         );
       });
     } catch (err) {
@@ -147,7 +149,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
     async (props: string) => {
       try {
         const allGroups: IFriendDTO[] = friends.filter(
-          thisFriend => thisFriend.name === props,
+          thisFriend => thisFriend.friend.name === props,
         );
         await Promise.all([
           allGroups.map(async group => {
@@ -322,13 +324,13 @@ const MainFriendsWindow: React.FC<IProps> = ({
                   ? allFriends.map(friend => {
                       return (
                         <li key={friend.id}>
-                          <strong>{friend.name}</strong>
+                          <strong>{friend.friend.name}</strong>
                           <span>
                             <div>
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleAddFriendToGroupWindow(friend.friend_id)
+                                  handleAddFriendToGroupWindow(friend.friend.id)
                                 }
                               >
                                 <MdGroupAdd size={32} />
@@ -337,7 +339,9 @@ const MainFriendsWindow: React.FC<IProps> = ({
                             <button
                               type="button"
                               onClick={() =>
-                                handleDeleteFriendFromAllGroups(friend.name)
+                                handleDeleteFriendFromAllGroups(
+                                  friend.friend.name,
+                                )
                               }
                             >
                               <FiTrash size={32} />
@@ -349,7 +353,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
                   : friendsByGroup.map(friend => {
                       return (
                         <li key={friend.id}>
-                          <strong>{friend.name}</strong>
+                          <strong>{friend.friend.name}</strong>
                           <button
                             type="button"
                             onClick={() =>

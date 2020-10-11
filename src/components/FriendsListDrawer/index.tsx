@@ -38,7 +38,7 @@ const FriendsListDrawer: React.FC<IPropsDTO> = ({
             onClick={() => setWeplanUser(friend)}
             key={friend.id}
           >
-            {friend.name}
+            {friend.friend.name}
           </FriendButton>
         ))}
         <div>{weplanUser && <button type="submit">Salvar</button>}</div>
