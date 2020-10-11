@@ -29,8 +29,6 @@ declare module 'styled-components' {
       toastErrorBackgroundColor: string;
 
       windowBoxShadow: string;
-      boxShadow: string;
-      boxShadowHover: string;
 
       green: string;
       red: string;
