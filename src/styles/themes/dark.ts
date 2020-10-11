@@ -7,7 +7,8 @@ export default {
 
     background: '#011627',
     header: 'rgb(58, 62, 61)',
-    card: '#f9f9f9',
+    headerHover: 'rgb(98, 92, 81)',
+    card: 'rgb(138, 129, 119)',
 
     title: 'rgb(255, 200, 55)',
     text: '#f9f9f9',

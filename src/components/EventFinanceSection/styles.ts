@@ -44,7 +44,7 @@ export const Container = styled.div`
 
         > h3 {
           font-size: 20px;
-          color: var(--background-color);
+          color: var(--letter-color-5);
         }
 
         > p {

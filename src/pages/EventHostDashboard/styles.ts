@@ -700,7 +700,7 @@ export const BooleanSection = styled.div`
 
   > h3 {
     font-size: 24px;
-    color: var(--title-color);
+    color: var(--text-color);
     margin: 0 auto;
   }
 
@@ -726,18 +726,24 @@ export const BooleanSection = styled.div`
         display: flex;
         align-items: center;
         justify-content: center;
+        transition: 0.5s;
+        width: 40px;
+        height: 40px;
+
+        &:hover {
+          color: var(--title-color);
+          border-radius: 50%;
+          background: var(--header-background-color);
+          box-shadow: 0px 0px 6px 6px rgba(255, 150, 10, 0.3);
+
+          svg {
+            color: var(--title-color);
+          }
+        }
 
         > svg {
-          color: var(--primary-color);
+          color: var(--card-color);
           border-radius: 50%;
-          transition: 0.25s;
-
-          &:hover {
-            color: var(--title-color);
-            /* opacity: 0.8; */
-            background: rgba(255, 150, 10, 0.3);
-            box-shadow: 0px 0px 6px 6px rgba(255, 150, 10, 0.3);
-          }
         }
       }
     }
@@ -752,7 +758,7 @@ export const BooleanSection = styled.div`
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
-    background: var(--card-color);
+    background: var(--header-background-color);
     border-radius: 8px;
     overflow-y: scroll;
   }
@@ -771,10 +777,14 @@ export const BooleanNavigationButton = styled.button<ButtonProps>`
   justify-content: center;
   color: var(--primary-color);
   opacity: 0.65;
-  transition: 0.25s;
+  transition: 0.5s;
+  border-radius: 0;
 
   &:hover {
+    color: var(--text-color);
     opacity: 1;
+    border-radius: 15px;
+    background: var(--header-background-color-hover);
   }
   > svg {
     color: var(--primary-color);
@@ -783,9 +793,14 @@ export const BooleanNavigationButton = styled.button<ButtonProps>`
   ${props =>
     props.booleanActiveButton &&
     css`
-      color: var(--letter-color-4);
+      color: var(--text-color);
       opacity: 1;
       transition: 0.25s;
+
+      &:hover {
+        opacity: 0.8;
+        background: var(--background-color);
+      }
     `}
 `;
 
@@ -798,7 +813,7 @@ export const Guest = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--header-background-color);
+  background: var(--background-color);
   border-radius: 4px;
   transition: 0.25s;
 
@@ -808,6 +823,7 @@ export const Guest = styled.div`
 
   &:hover {
     box-shadow: 1px 1px 3px 2px rgba(255, 150, 10, 0.3);
+    background: var(--card-color);
 
     p {
       color: var(--title-color);
@@ -822,7 +838,7 @@ export const Guest = styled.div`
     width: 100%;
 
     > p {
-      color: var(--primary-color);
+      color: var(--text-color);
       font-size: 16px;
       margin-left: 8px;
     }
@@ -831,7 +847,7 @@ export const Guest = styled.div`
       background: transparent;
       border: none;
       font-size: 16px;
-      color: var(--title-color);
+      color: var(--text-color);
       margin: 0 24px;
       transition: 0.25s;
       width: 100%;
@@ -839,7 +855,7 @@ export const Guest = styled.div`
 
       &:hover {
         opacity: 0.8;
-        color: var(--primary-color);
+        color: var(--title-color);
 
         svg {
           opacity: 1;
@@ -854,7 +870,7 @@ export const Guest = styled.div`
 
       > svg {
         opacity: 0.3;
-        color: var(--title-color);
+        color: var(--text-color);
         transition: 0.25s;
         margin-left: auto;
       }
@@ -867,7 +883,7 @@ export const Guest = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--primary-color);
+    color: var(--text-color);
     margin: 0 auto;
     transition: 0.25s;
     border-radius: 4px;
@@ -892,7 +908,7 @@ export const Guest = styled.div`
       justify-content: center;
       background: transparent;
       border: none;
-      color: var(--title-color);
+      color: var(--text-color);
       transition: 0.25s;
 
       &:hover {

@@ -9,6 +9,7 @@ export default createGlobalStyle`
     /* #312e38 */
     --header-background-color: ${props => props.theme.colors.header};
     /* #28262e */
+    --header-background-color-hover: ${props => props.theme.colors.headerHover};
     --card-color: ${props => props.theme.colors.card};
     /* #3e3a47 */
     --letter-color-1: ${props => props.theme.colors.letter1};

@@ -10,6 +10,7 @@ declare module 'styled-components' {
 
       background: string;
       header: string;
+      headerHover: string;
       card: string;
 
       title: string;
@@ -28,6 +29,8 @@ declare module 'styled-components' {
       toastErrorBackgroundColor: string;
 
       windowBoxShadow: string;
+      boxShadow: string;
+      boxShadowHover: string;
 
       green: string;
       red: string;

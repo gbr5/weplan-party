@@ -330,8 +330,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleAddFriendToGroupWindow(friend.friend.id)
-                                }
+                                  handleAddFriendToGroupWindow(friend.friend.id)}
                               >
                                 <MdGroupAdd size={32} />
                               </button>
@@ -341,8 +340,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
                               onClick={() =>
                                 handleDeleteFriendFromAllGroups(
                                   friend.friend.name,
-                                )
-                              }
+                                )}
                             >
                               <FiTrash size={32} />
                             </button>
@@ -357,8 +355,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
                           <button
                             type="button"
                             onClick={() =>
-                              handleDeleteFriendFromGroup(friend.id)
-                            }
+                              handleDeleteFriendFromGroup(friend.id)}
                           >
                             Deletar
                           </button>

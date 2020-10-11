@@ -4,6 +4,7 @@ import 'react-day-picker/lib/style.css';
 import {
   FiCheckSquare,
   FiChevronRight,
+  FiSettings,
   FiSquare,
   FiStar,
 } from 'react-icons/fi';
@@ -330,21 +331,24 @@ const Dashboard: React.FC = () => {
                   ? eventsAsOwner.map(event => {
                       return (
                         <li key={event.id}>
-                          <h3>{event.name}</h3>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteEvent(event.id)}
+                          >
+                            <h3>{event.name}</h3>
+                          </button>
                           {event.owner_master === user.id && (
-                            <span>
-                              <FiStar size={16} />
-                              <button
-                                type="button"
-                                onClick={() => handleDeleteEvent(event.id)}
-                              >
-                                Deletar
-                              </button>
-                            </span>
+                            <FiStar size={16} />
                           )}
+
                           <div>
                             <span>
                               {formatStringToDate(String(event.date))}
+                            </span>
+                            <span>
+                              <button type="button">
+                                <FiSettings size={20} />
+                              </button>
                             </span>
                             <button
                               type="button"
@@ -393,7 +397,8 @@ const Dashboard: React.FC = () => {
                           handleEditConfirmedGuest({
                             id: event.guest_id,
                             confirmed: event.confirmed,
-                          })}
+                          })
+                        }
                       >
                         {event.confirmed ? (
                           <FiCheckSquare size={24} />

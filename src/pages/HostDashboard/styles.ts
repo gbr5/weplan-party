@@ -147,6 +147,9 @@ export const BottomSection = styled.div`
     overflow-y: scroll;
     height: 150px;
 
+    li + li {
+      padding-top: 14px;
+    }
     li {
       list-style: none;
       padding: 0 8px 12px;
@@ -156,27 +159,45 @@ export const BottomSection = styled.div`
       border-bottom: 1px solid var(--letter-color-4);
       transition: 0.25s;
 
-      > button {
-        background: transparent;
-        border: none;
-      }
-
       &:hover {
-        opacity: 0.8;
+        > svg {
+          color: var(--primary-color);
+        }
+
+        button {
+          h3 {
+            color: var(--primary-color);
+          }
+        }
 
         div {
           button {
             color: var(--primary-color);
           }
         }
+      }
 
-        svg {
-          color: var(--primary-color);
+      > button {
+        background: transparent;
+        border: none;
+        text-align: left;
+        width: 100%;
+
+        &:hover {
+          color: var(--title-color);
+          h3 {
+            color: var(--title-color);
+          }
+        }
+
+        h3 {
+          color: var(--letter-color-4);
         }
       }
 
-      h3 {
-        color: var(--letter-color-4);
+      > svg {
+        color: var(--title-color);
+        width: 32px;
       }
 
       span {
@@ -185,27 +206,23 @@ export const BottomSection = styled.div`
         color: var(--primary-color);
         gap: 16px;
 
-        > svg {
-          margin: auto;
-          color: var(--title-color);
-        }
-
         > button {
           color: var(--red-color);
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 100px;
-          background: rgba(0, 0, 0, 0.5);
           border-radius: 8%;
           border: none;
           transition: 0.25s;
+          background: transparent;
 
-          &:hover {
-            opacity: 1.5;
-            color: var(--title-color);
-            border-radius: 8%;
-            background: rgba(250, 0, 0, 0.5);
+          > svg {
+            margin: auto;
+            color: var(--letter-color-1);
+
+            &:hover {
+              color: var(--title-color);
+            }
           }
         }
       }
@@ -221,13 +238,12 @@ export const BottomSection = styled.div`
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 56px;
+          width: 40px;
           background: transparent;
           border: none;
           transition: 0.25s;
 
           &:hover {
-            opacity: 1.5;
             color: var(--title-color);
             border-radius: 8%;
             background: rgba(0, 0, 0, 0.5);
@@ -237,12 +253,24 @@ export const BottomSection = styled.div`
         span {
           margin-left: 4px;
           color: var(--primary-color);
+
+          > button {
+            margin: auto 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            transition: 0.25s;
+
+            &:hover {
+              color: var(--title-color);
+              border-radius: 50%;
+              background: rgba(0, 0, 0, 0.5);
+            }
+          }
         }
       }
-    }
-
-    li + li {
-      margin-top: 16px;
     }
   }
 `;
