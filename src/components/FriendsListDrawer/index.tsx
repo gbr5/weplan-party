@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 // import { MdClose } from 'react-icons/md';
 import { MouseEventHandler } from 'react-select';
-import { FriendsList, FriendButton } from './styles';
+import { FriendsList, SaveButton, FriendButton } from './styles';
 import WindowContainer from '../WindowContainer';
 import IFriendDTO from '../../dtos/IFriendDTO';
 
@@ -24,10 +24,10 @@ const FriendsListDrawer: React.FC<IPropsDTO> = ({
       onHandleCloseWindow={onHandleFriendsListDrawer}
       containerStyle={{
         zIndex: 10000,
-        top: '20%',
-        left: '30%',
-        height: '60%',
-        width: '40%',
+        top: '5%',
+        left: '5%',
+        height: '90%',
+        width: '90%',
       }}
     >
       <FriendsList onSubmit={() => handleSelectedFriend(weplanUser)}>
@@ -41,8 +41,10 @@ const FriendsListDrawer: React.FC<IPropsDTO> = ({
             {friend.friend.name}
           </FriendButton>
         ))}
-        <div>{weplanUser && <button type="submit">Salvar</button>}</div>
       </FriendsList>
+      <SaveButton>
+        {weplanUser && <button type="submit">Salvar</button>}
+      </SaveButton>
     </WindowContainer>
   );
 };
