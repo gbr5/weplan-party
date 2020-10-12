@@ -1,16 +1,29 @@
 import styled, { css } from 'styled-components';
 import '../../styles/global';
 
+export const FriendsContainer = styled.span`
+  display: grid;
+  grid-template-rows: 1fr 5fr 1fr;
+  gap: 24px;
+  width: 100%;
+  height: 100%;
+
+  > h1 {
+    font-size: 40px;
+    color: var(--title-color);
+  }
+`;
+
 export const FriendsList = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  text-align: left;
+  gap: 24px;
   overflow-y: scroll;
   width: 100%;
   height: 100%;
 `;
 
-export const SaveButton = styled.span`
+export const SaveButton = styled.div`
   button {
     background-color: var(--green-icon);
     display: flex;
@@ -19,11 +32,13 @@ export const SaveButton = styled.span`
     margin: 8px;
     border: 1px solid var(--primary-color);
     border-radius: 8px;
-    padding: 16px;
+    padding: 8px;
     position: relative;
     box-shadow: 2px 2px 5px 3px rgba(0, 0, 0, 0.2);
     width: 100%;
     transition: 0.25s;
+    font-size: 24px;
+    font-weight: 500;
 
     &:hover {
       opacity: 0.8;
