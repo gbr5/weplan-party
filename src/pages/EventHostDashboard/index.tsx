@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useRef,
   useMemo,
+  ChangeEvent,
 } from 'react';
 import * as Yup from 'yup';
 import {
@@ -30,6 +31,8 @@ import {
   MdLinkedCamera,
   MdLocalBar,
   MdBuild,
+  MdGroupAdd,
+  MdFileUpload,
 } from 'react-icons/md';
 import { differenceInCalendarDays } from 'date-fns/esm';
 import { useLocation } from 'react-router-dom';
@@ -70,9 +73,11 @@ import {
   MembersContainer,
   EditEventInfoDrawer,
   EventInfo,
+  AddMultipleGuests,
+  ListUploadWindow,
 } from './styles';
 import PageHeader from '../../components/PageHeader';
-import avatar_placeholder from '../../assets/avatar_placeholder_cat2.jpeg';
+
 import api from '../../services/api';
 import Input from '../../components/Input';
 import { useToast } from '../../hooks/toast';
@@ -90,6 +95,14 @@ import EventFinanceSection from '../../components/EventFinanceSection';
 import { numberFormat } from '../../utils/numberFormat';
 import IListEventDTO from '../../dtos/IListEventDTO';
 import IFriendDTO from '../../dtos/IFriendDTO';
+
+import avatar_placeholder from '../../assets/avatar_placeholder_cat2.jpeg';
+import guestListImage from '../../assets/guestList_0.svg';
+import guestListImage1 from '../../assets/guestList_1.svg';
+import guestListImage2 from '../../assets/guestList_2.svg';
+import guestListImage3 from '../../assets/guestList_3.svg';
+import guestListImage4 from '../../assets/guestList_4.svg';
+import logo from '../../assets/weplan.svg';
 
 interface IEvent {
   id: string;
@@ -292,6 +305,13 @@ const EventHostDashboard: React.FC = () => {
   );
   const [hiredSupplierWindow, setHiredSupplierWindow] = useState(false);
   const [selectedSupplierWindow, setSelectedSupplierWindow] = useState(false);
+  const [addGuestListWindow, setAddGuestListWindow] = useState(false);
+  const [guestList_image, setGuestList_image] = useState(false);
+  const [first_guestList_image, setFirst_guestList_image] = useState(false);
+  const [second_guestList_image, setSecond_guestList_image] = useState(false);
+  const [third_guestList_image, setThird_guestList_image] = useState(false);
+  const [fourth_guestList_image, setFourth_guestList_image] = useState(false);
+  const [guestListUpload, setGuestListUpload] = useState(false);
 
   const closeAllWindows = useCallback(() => {
     setCheckedListItemDrawer(false);
@@ -1028,6 +1048,37 @@ const EventHostDashboard: React.FC = () => {
       handleGetGuests,
     ],
   );
+  const handleGuestListUpload = useCallback(
+    async (e: ChangeEvent<HTMLInputElement>) => {
+      try {
+        if (e.target.files) {
+          const data = new FormData();
+
+          data.append('file', e.target.files[0]);
+          console.log(data);
+          await api.post(`events/${eventId}/guests/import`, data);
+        }
+
+        setAddGuestListWindow(false);
+        setAddGuestDrawer(false);
+
+        handleGetGuests();
+        return addToast({
+          type: 'success',
+          title: 'Convidados criados com sucesso',
+          description: 'As mudanças já foram atualizadas no seu evento.',
+        });
+      } catch (err) {
+        addToast({
+          type: 'error',
+          title: 'Erro ao criar convidado',
+          description: 'Erro ao criar o convidado, tente novamente.',
+        });
+        throw new Error(err);
+      }
+    },
+    [handleGetGuests, addToast, eventId],
+  );
 
   const handleEditEventInfo = useCallback(
     async (data: IEventInfo) => {
@@ -1594,6 +1645,35 @@ const EventHostDashboard: React.FC = () => {
       throw new Error(err);
     }
   }, [addToast, eventId, checkListItem, handleGetCheckListItems]);
+
+  const handleAddGuestListWindow = useCallback(() => {
+    setAddGuestListWindow(true);
+    setGuestList_image(true);
+  }, []);
+  const handleFirstGuestListWindow = useCallback(() => {
+    setGuestList_image(false);
+    setFirst_guestList_image(true);
+  }, []);
+  const handleSecondGuestListWindow = useCallback(() => {
+    setFirst_guestList_image(false);
+    setSecond_guestList_image(true);
+  }, []);
+  const handleThirdGuestListWindow = useCallback(() => {
+    setSecond_guestList_image(false);
+    setThird_guestList_image(true);
+  }, []);
+  const handleFourthGuestListWindow = useCallback(() => {
+    setThird_guestList_image(false);
+    setFourth_guestList_image(true);
+  }, []);
+  const handleGuestListUploadWindow = useCallback(() => {
+    setGuestList_image(false);
+    setFirst_guestList_image(false);
+    setSecond_guestList_image(false);
+    setThird_guestList_image(false);
+    setFourth_guestList_image(false);
+    setGuestListUpload(true);
+  }, []);
 
   const totalEventCost = useMemo(() => {
     const totalCost: number = hiredSuppliers
@@ -2234,6 +2314,13 @@ const EventHostDashboard: React.FC = () => {
             <AddGuestDrawer>
               <h1>Adicionar Convidado</h1>
 
+              <AddMultipleGuests>
+                <button type="button" onClick={handleAddGuestListWindow}>
+                  Adicionar lista de convidados
+                  <MdGroupAdd size={24} />
+                </button>
+              </AddMultipleGuests>
+
               {!weplanUser && (
                 <>
                   <Input name="first_name" type="text" placeholder="Nome" />
@@ -2279,6 +2366,106 @@ const EventHostDashboard: React.FC = () => {
               </button>
             </AddGuestDrawer>
           </Form>
+        </WindowContainer>
+      )}
+      {!!addGuestListWindow && (
+        <WindowContainer
+          onHandleCloseWindow={() => setAddGuestDrawer(false)}
+          containerStyle={{
+            zIndex: 1000,
+            top: '5%',
+            left: '20%',
+            height: '90%',
+            width: '60%',
+          }}
+        >
+          {!!guestList_image && (
+            <div>
+              <img src={guestListImage} alt="GuestList" />
+
+              <button
+                style={{ background: 'green' }}
+                type="button"
+                onClick={handleGuestListUploadWindow}
+              >
+                Pular
+              </button>
+
+              <button type="button" onClick={handleFirstGuestListWindow}>
+                Próximo
+              </button>
+            </div>
+          )}
+          {!!first_guestList_image && (
+            <div>
+              <img src={guestListImage1} alt="GuestList1" />
+
+              <button
+                style={{ background: 'green' }}
+                type="button"
+                onClick={handleGuestListUploadWindow}
+              >
+                Pular
+              </button>
+
+              <button type="button" onClick={handleSecondGuestListWindow}>
+                Próximo
+              </button>
+            </div>
+          )}
+          {!!second_guestList_image && (
+            <div>
+              <img src={guestListImage2} alt="GuestList2" />
+
+              <button
+                style={{ background: 'green' }}
+                type="button"
+                onClick={handleGuestListUploadWindow}
+              >
+                Pular
+              </button>
+
+              <button type="button" onClick={handleThirdGuestListWindow}>
+                Próximo
+              </button>
+            </div>
+          )}
+          {!!third_guestList_image && (
+            <div>
+              <img src={guestListImage3} alt="GuestList3" />
+
+              <button
+                style={{ background: 'green' }}
+                type="button"
+                onClick={handleGuestListUploadWindow}
+              >
+                Pular
+              </button>
+
+              <button type="button" onClick={handleFourthGuestListWindow}>
+                Próximo
+              </button>
+            </div>
+          )}
+          {!!fourth_guestList_image && (
+            <div>
+              <img src={guestListImage4} alt="GuestList4" />
+
+              <button type="button" onClick={handleGuestListUploadWindow}>
+                Próximo
+              </button>
+            </div>
+          )}
+          {!!guestListUpload && (
+            <ListUploadWindow>
+              <img src={logo} alt="WePlan" />
+              <h1>Escolha o arquivo</h1>
+              <label htmlFor="file">
+                <MdFileUpload size={30} />
+                <input type="file" id="file" onChange={handleGuestListUpload} />
+              </label>
+            </ListUploadWindow>
+          )}
         </WindowContainer>
       )}
       {editGuestDrawer && (

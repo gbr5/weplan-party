@@ -25,25 +25,6 @@ const appearFromLeft = keyframes`
   }
 `;
 
-// const disappearFromBottom = keyframes`
-//   from {
-//     opacity: 1;
-//     transform: translateY(0px);
-//   }
-//   /* 40% {
-//     opacity: 0.5;
-//     transform: translateY(-100px);
-//   }
-//   80% {
-//     opacity: 0.9;
-//     transform: translateY(-50px);
-//   } */
-//   to {
-//     opacity: 0;
-//     transform: translateY(-100px);
-//   }
-// `;
-
 export const Container = styled.div`
   position: relative;
   margin: 0;
@@ -924,13 +905,11 @@ export const AddGuestDrawer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 16px;
   transition: 0.25s;
   width: 100%;
 
   > h1 {
     font-size: 32px;
-    margin-bottom: 32px;
     color: var(--title-color);
   }
 
@@ -939,7 +918,6 @@ export const AddGuestDrawer = styled.div`
     grid-template-columns: 1fr 1fr;
     gap: 80px;
     width: 100%;
-    margin-bottom: 16px;
 
     > button {
       height: 40px;
@@ -976,7 +954,7 @@ export const AddGuestDrawer = styled.div`
     background: var(--primary-color);
     border: none;
     height: 40px;
-    width: 90%;
+    width: 100%;
     border-radius: 4px;
     margin-bottom: 16px;
     transition: 0.25s;
@@ -1814,5 +1792,77 @@ export const MiniForm = styled.div`
         border-radius: 4px;
       }
     }
+  }
+`;
+
+export const AddMultipleGuests = styled.span`
+  width: 100%;
+
+  > button {
+    width: 100%;
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--primary-color);
+    transition: 0.25s;
+
+    &:hover {
+      color: var(--title-color);
+      background: var(--button-background-hover);
+    }
+  }
+`;
+
+export const ListUploadWindow = styled.span`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20%;
+  position: relative;
+  width: 100%;
+
+  > label {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    bottom: 100px;
+    left: 46.7%;
+    right: 1%;
+    border: none;
+    transition: background-color 0.4s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    input {
+      display: none;
+    }
+
+    svg {
+      width: 24px;
+      height: 24px;
+      color: var(--letter-color-4);
+    }
+
+    &:hover {
+      background-color: ${shade(0.3, '#ff9000')};
+    }
+  }
+  }
+
+  button {
+    border: none;
+    margin-top: 200px;
+    height: 40px;
+    width: 100%;
+    border-radius: 8px;
+    background: var(--primary-color);
   }
 `;
