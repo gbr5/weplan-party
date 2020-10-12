@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 import '../../styles/global';
 
-export const FriendsList = styled.form`
+export const FriendsList = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   text-align: left;

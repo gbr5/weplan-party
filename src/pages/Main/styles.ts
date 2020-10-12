@@ -1,5 +1,4 @@
 import styled, { keyframes } from 'styled-components';
-import { shade } from 'polished';
 import '../../styles/global';
 
 import backImage from '../../assets/mainPageImage.jpeg';
@@ -45,7 +44,7 @@ export const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 32px;
+  gap: 20%;
 
   padding: 32px;
 
@@ -53,10 +52,9 @@ export const Container = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.8);
     height: 160px;
-    width: 640px;
-    margin-bottom: 160px;
+    width: 100%;
 
     border-radius: 8px;
 
@@ -75,28 +73,7 @@ export const Content = styled.div`
   place-content: center;
 
   width: 100%;
-  height: 100%;
   max-width: 700px;
-
-  > span {
-    position: fixed;
-    bottom: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.5);
-    height: 160px;
-    width: 800px;
-    margin-bottom: 100px;
-
-    border-radius: 8px;
-
-    > h1 {
-      color: var(--primary-color);
-      font-size: 40px;
-      animation: ${appearFromTop} 0.5s;
-    }
-  }
 `;
 
 export const AnimationContainer = styled.div`
@@ -112,22 +89,56 @@ export const AnimationContainer = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 40px;
+    gap: 20%;
 
     > div {
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(0, 0, 0, 0.3);
+      background: rgba(0, 0, 0, 0.6);
       height: 160px;
-      width: 800px;
-      margin-bottom: 160px;
+      width: 500px;
       gap: 40px;
+      transition: 0.25s;
 
       border-radius: 8px;
 
+      img {
+        width: 40px;
+        height: 40px;
+      }
+
+      &:first-child {
+        background: rgba(250, 150, 20, 0.8);
+      }
+
+      &:nth-child(2) {
+        background: rgba(150, 250, 100, 0.8);
+      }
+
       &:hover {
-        background: rgba(0, 0, 0, 0.5);
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.8);
+
+        &:first-child {
+          a {
+            color: rgba(250, 150, 20, 0.8);
+
+            svg {
+              color: var(--title-color);
+            }
+          }
+        }
+
+        &:nth-child(2) {
+          a {
+            color: var(--title-color);
+          }
+        }
+
+        > a {
+          color: var(--title-color);
+        }
       }
 
       a {
@@ -136,7 +147,7 @@ export const AnimationContainer = styled.div`
         justify-content: center;
         height: 100%;
         width: 100%;
-        color: var(--primary-color);
+        color: var(--letter-color-5);
         font-weight: 500;
         display: block;
         text-decoration: none;
@@ -154,11 +165,24 @@ export const AnimationContainer = styled.div`
         img {
           margin-right: 16px;
         }
-
-        &:hover {
-          color: ${shade(0.2, '#ff9000')};
-        }
       }
     }
+  }
+`;
+
+export const Slogan = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.8);
+  height: 100px;
+  width: 600px;
+
+  border-radius: 8px;
+
+  > h1 {
+    color: var(--primary-color);
+    font-size: 32px;
+    animation: ${appearFromTop} 0.5s;
   }
 `;

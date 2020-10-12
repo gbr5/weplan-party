@@ -30,7 +30,7 @@ const FriendsListDrawer: React.FC<IPropsDTO> = ({
         width: '90%',
       }}
     >
-      <FriendsList onSubmit={() => handleSelectedFriend(weplanUser)}>
+      <FriendsList>
         {friends.map(friend => (
           <FriendButton
             selectedFriend={friend.id === weplanUser.id}
@@ -43,7 +43,14 @@ const FriendsListDrawer: React.FC<IPropsDTO> = ({
         ))}
       </FriendsList>
       <SaveButton>
-        {weplanUser && <button type="submit">Salvar</button>}
+        {weplanUser && (
+          <button
+            type="button"
+            onClick={() => handleSelectedFriend(weplanUser)}
+          >
+            Salvar
+          </button>
+        )}
       </SaveButton>
     </WindowContainer>
   );

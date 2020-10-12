@@ -5,7 +5,7 @@ import { FiLogIn } from 'react-icons/fi';
 import door from '../../assets/door.svg';
 import logo from '../../assets/weplan.svg';
 
-import { Container, Content, AnimationContainer } from './styles';
+import { Container, Content, AnimationContainer, Slogan } from './styles';
 
 const Main: React.FC = () => {
   return (
@@ -24,23 +24,19 @@ const Main: React.FC = () => {
             </div>
             <div>
               <Link to="/signin">
-                <img
-                  src={door}
-                  alt="SignIn"
-                  style={{ width: '40px', height: '40px' }}
-                />
+                <img src={door} alt="SignIn" />
                 Login
               </Link>
             </div>
           </div>
         </AnimationContainer>
-
-        <span>
-          <h1>
-            Work hard, <strong>PARTY HARDER!</strong>
-          </h1>
-        </span>
       </Content>
+
+      <Slogan>
+        <h1>
+          Work hard, <strong>PARTY HARDER!</strong>
+        </h1>
+      </Slogan>
     </Container>
   );
 };
