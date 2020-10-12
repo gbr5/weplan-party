@@ -109,11 +109,11 @@ export const AnimationContainer = styled.div`
       }
 
       &:first-child {
-        background: rgba(250, 150, 20, 0.8);
+        background: rgba(150, 250, 100, 0.8);
       }
 
       &:nth-child(2) {
-        background: rgba(150, 250, 100, 0.8);
+        background: rgba(250, 150, 20, 0.8);
       }
 
       &:hover {
@@ -122,10 +122,9 @@ export const AnimationContainer = styled.div`
 
         &:first-child {
           a {
-            color: rgba(250, 150, 20, 0.8);
-
+            color: var(--title-color);
             svg {
-              color: var(--title-color);
+              color: rgba(250, 150, 20, 0.8);
             }
           }
         }

@@ -34,7 +34,7 @@ const Main: React.FC = () => {
 
       <Slogan>
         <h1>
-          Work hard, <strong>PARTY HARDER!</strong>
+          Work <strong>SMART</strong> & Party <strong>HARD!</strong>
         </h1>
       </Slogan>
     </Container>
