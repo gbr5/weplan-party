@@ -33,6 +33,8 @@ import {
   MdBuild,
   MdGroupAdd,
   MdFileUpload,
+  MdFlare,
+  MdWbSunny,
 } from 'react-icons/md';
 import { differenceInCalendarDays } from 'date-fns/esm';
 import { useLocation } from 'react-router-dom';
@@ -60,7 +62,6 @@ import {
   AddCheckListDrawer,
   WeplanUserDrawer,
   GuestConfirmedDrawer,
-  CheckedListItemDrawer,
   IsHiredDrawer,
   AddPlannerDrawer,
   AddOwnerDrawer,
@@ -75,6 +76,7 @@ import {
   EventInfo,
   AddMultipleGuests,
   ListUploadWindow,
+  CheckListFunnel,
 } from './styles';
 import PageHeader from '../../components/PageHeader';
 
@@ -116,7 +118,8 @@ interface IEventCheckList {
   id: string;
   name: string;
   priority_level: number;
-  checked: boolean;
+  status: number;
+  due_date: Date;
 }
 interface IEventGuest {
   id: string;
@@ -137,7 +140,8 @@ interface ICreateGuest {
 interface ICreateCheckListItem {
   name: string;
   priority_level: number;
-  checked: boolean;
+  status: number;
+  due_date: Date;
 }
 interface ICreateSupplier {
   name: string;
@@ -203,8 +207,16 @@ const EventHostDashboard: React.FC = () => {
   const [event, setEvent] = useState<IListEventDTO>({} as IListEventDTO);
   const [friends, setFriends] = useState<IFriendDTO[]>([]);
   const [friendsWindow, setFriendsWindow] = useState(false);
-  const [checkListItems, setCheckListItems] = useState<IEventCheckList[]>([]);
-  const [resolvedCheckListItems, setResolvedCheckListItems] = useState(0);
+  const [notStartedCheckListItems, setNotStartedCheckListItems] = useState<
+    IEventCheckList[]
+  >([]);
+  const [resolvedCheckListItems, setResolvedCheckListItems] = useState<
+    IEventCheckList[]
+  >([]);
+  const [inProgressCheckListItems, setInProgressCheckListItems] = useState<
+    IEventCheckList[]
+  >([]);
+  const [checkListItems, setCheckListItems] = useState(0);
   const [checkListItem, setCheckListItem] = useState<IEventCheckList>(
     {} as IEventCheckList,
   );
@@ -258,9 +270,6 @@ const EventHostDashboard: React.FC = () => {
   const [guestConfirmedMessage, setGuestConfirmedMessage] = useState('');
   const [guestConfirmed, setGuestConfirmed] = useState(false);
 
-  const [checkedListItemDrawer, setCheckedListItemDrawer] = useState(false);
-  const [CheckedListItemMessage, setCheckedListItemMessage] = useState('');
-  const [checked, setChecked] = useState(false);
   const [isHiredDrawer, setIsHiredDrawer] = useState(false);
   const [isHiredMessage, setIsHiredMessage] = useState('');
   const [isHired, setIsHired] = useState(false);
@@ -314,7 +323,6 @@ const EventHostDashboard: React.FC = () => {
   const [guestListUpload, setGuestListUpload] = useState(false);
 
   const closeAllWindows = useCallback(() => {
-    setCheckedListItemDrawer(false);
     setAddCheckListDrawer(false);
     setIsHiredDrawer(false);
     setEventInfoDrawer(false);
@@ -326,7 +334,6 @@ const EventHostDashboard: React.FC = () => {
     setEditEventNameDrawer(false);
     setWpUserQuestionDrawer(false);
     setGuestConfirmedDrawer(false);
-    setCheckedListItemDrawer(false);
     setAddPlannerDrawer(false);
     setFriendsWindow(false);
     setMemberProfileWindow(false);
@@ -461,9 +468,6 @@ const EventHostDashboard: React.FC = () => {
     closeAllWindows();
     setEditEventNameDrawer(!editEventNameDrawer);
   }, [editEventNameDrawer, closeAllWindows]);
-  const handleCheckedListItemDrawer = useCallback(() => {
-    setCheckedListItemDrawer(!checkedListItemDrawer);
-  }, [checkedListItemDrawer]);
 
   const handleAddCheckListDrawer = useCallback(() => {
     closeAllWindows();
@@ -631,9 +635,16 @@ const EventHostDashboard: React.FC = () => {
       api
         .get<IEventCheckList[]>(`/events/${eventId}/check-list`)
         .then(response => {
-          setCheckListItems(response.data);
+          console.log(response.data);
+          setCheckListItems(response.data.length);
           setResolvedCheckListItems(
-            response.data.filter(item => item.checked === true).length,
+            response.data.filter(item => Number(item.status) === 3),
+          );
+          setInProgressCheckListItems(
+            response.data.filter(item => Number(item.status) === 2),
+          );
+          setNotStartedCheckListItems(
+            response.data.filter(item => Number(item.status) === 1),
           );
         });
     } catch (err) {
@@ -791,15 +802,26 @@ const EventHostDashboard: React.FC = () => {
         formRef.current?.setErrors([]);
         const schema = Yup.object().shape({
           name: Yup.string().required('Nome é obrigatório'),
-          priority_level: Yup.string().required('Sobrenome é obrigatório'),
+          priority_level: Yup.string(),
+          status: Yup.string(),
+          due_date: Yup.date(),
         });
         await schema.validate(data, {
           abortEarly: false,
         });
+        const date = new Date(data.due_date);
+        console.log({
+          name: data.name,
+          priority_level: Number(data.priority_level),
+          status: Number(data.status),
+          due_date1: data.due_date,
+          due_date2: date,
+        });
         await api.post(`events/${eventId}/check-list`, {
           name: data.name,
-          priority_level: data.priority_level,
-          checked,
+          priority_level: Number(data.priority_level),
+          status: Number(data.status),
+          due_date: date,
         });
         addToast({
           type: 'success',
@@ -821,13 +843,7 @@ const EventHostDashboard: React.FC = () => {
         });
       }
     },
-    [
-      addToast,
-      eventId,
-      handleAddCheckListDrawer,
-      handleGetCheckListItems,
-      checked,
-    ],
+    [addToast, eventId, handleAddCheckListDrawer, handleGetCheckListItems],
   );
   const handleAddPlanner = useCallback(async () => {
     try {
@@ -1395,19 +1411,6 @@ const EventHostDashboard: React.FC = () => {
     },
     [addToast, eventId, owner, handleGetOwners],
   );
-  const handleCheckListChecked = useCallback(
-    (item_checked: boolean) => {
-      if (item_checked === true) {
-        setCheckedListItemMessage('Feito! =D');
-        setChecked(true);
-      } else {
-        setCheckedListItemMessage('Em progresso! No Worries ;D');
-        setChecked(false);
-      }
-      return handleCheckedListItemDrawer();
-    },
-    [handleCheckedListItemDrawer],
-  );
   const handleEditCheckListItem = useCallback(
     async (data: IEventCheckList) => {
       try {
@@ -1416,16 +1419,21 @@ const EventHostDashboard: React.FC = () => {
         const schema = Yup.object().shape({
           name: Yup.string().required(),
           priority_level: Yup.string().required(),
+          status: Yup.string().required(),
+          due_date: Yup.date(),
         });
 
         await schema.validate(data, {
           abortEarly: false,
         });
 
-        await api.put(`events/${eventId}/check-list/${checkListItem.id}`, {
+        const date = new Date(data.due_date);
+
+        await api.put(`events/check-list/${checkListItem.id}`, {
           name: data.name,
           priority_level: Number(data.priority_level),
-          checked: checkListItem.checked,
+          status: Number(data.status),
+          due_date: date,
         });
 
         addToast({
@@ -1451,36 +1459,7 @@ const EventHostDashboard: React.FC = () => {
         });
       }
     },
-    [addToast, eventId, checkListItem, handleGetCheckListItems],
-  );
-  const handleEditCheckedCheckListItem = useCallback(
-    async (data: IEventCheckList) => {
-      try {
-        await api.put(`events/${eventId}/check-list/${data.id}`, {
-          name: data.name,
-          priority_level: Number(data.priority_level),
-          checked: !data.checked,
-        });
-
-        addToast({
-          type: 'success',
-          title: 'Item editado com sucesso',
-          description: 'As mudanças já foram atualizadas no seu evento.',
-        });
-
-        setEditCheckListItemWindow(false);
-        setCheckListItem({} as IEventCheckList);
-        handleGetCheckListItems();
-      } catch (err) {
-        addToast({
-          type: 'error',
-          title: 'Erro ao editar item',
-          description: 'Erro ao editar o item do check-list, tente novamente.',
-        });
-        throw new Error(err);
-      }
-    },
-    [addToast, eventId, handleGetCheckListItems],
+    [addToast, checkListItem, handleGetCheckListItems],
   );
 
   const handleDeleteGuest = useCallback(async () => {
@@ -2155,34 +2134,27 @@ const EventHostDashboard: React.FC = () => {
           onHandleCloseWindow={() => setAddCheckListDrawer(false)}
           containerStyle={{
             zIndex: 10,
-            top: '20%',
-            left: '20%',
-            height: '60%',
-            width: '60%',
+            top: '5%',
+            left: '5%',
+            height: '90%',
+            width: '90%',
           }}
         >
           <Form ref={formRef} onSubmit={handleAddCheckListItem}>
             <AddCheckListDrawer>
               <h1>Adicionar</h1>
-
-              {CheckedListItemMessage === '' ? (
-                <button type="button" onClick={handleCheckedListItemDrawer}>
-                  Tarefa realizada ?
-                </button>
-              ) : (
-                <h1>
-                  <button type="button" onClick={handleCheckedListItemDrawer}>
-                    {CheckedListItemMessage}
-                  </button>
-                </h1>
-              )}
               <Input name="name" type="text" placeholder="Nome" />
-
               <Input
                 name="priority_level"
                 type="text"
-                placeholder="Nível de prioridade (1 a 5)"
+                placeholder="Nível de prioridade (1 a 3)"
               />
+              <Input
+                name="status"
+                type="text"
+                placeholder="Status | 1 = não iniciado | 2 = em progresso | 3 = concluído|"
+              />
+              <Input name="due_date" type="date" />
 
               <button type="submit">
                 <h3>Salvar</h3>
@@ -2222,36 +2194,6 @@ const EventHostDashboard: React.FC = () => {
               </button>
             </AddCheckListDrawer>
           </Form>
-        </WindowContainer>
-      )}
-      {!!checkedListItemDrawer && (
-        <WindowContainer
-          onHandleCloseWindow={() => setCheckedListItemDrawer(false)}
-          containerStyle={{
-            zIndex: 10,
-            top: '20%',
-            left: '20%',
-            height: '60%',
-            width: '60%',
-          }}
-        >
-          <CheckedListItemDrawer>
-            <h1>Tarefa Realizada?</h1>
-            <div>
-              <button
-                type="button"
-                onClick={() => handleCheckListChecked(true)}
-              >
-                Sim!
-              </button>
-              <button
-                type="button"
-                onClick={() => handleCheckListChecked(false)}
-              >
-                Ainda não ...
-              </button>
-            </div>
-          </CheckedListItemDrawer>
         </WindowContainer>
       )}
 
@@ -3023,7 +2965,7 @@ const EventHostDashboard: React.FC = () => {
                 <button type="button" onClick={handleCheckListSection}>
                   <h2>Check-List</h2>
                   <p>
-                    {resolvedCheckListItems}/{checkListItems.length}
+                    {resolvedCheckListItems.length}/{checkListItems}
                   </p>
                 </button>
               </div>
@@ -3457,47 +3399,161 @@ const EventHostDashboard: React.FC = () => {
                   <MdAdd size={30} />
                 </button>
               )}
-              <ul>
-                {checkListItems.map(item => (
-                  <li key={item.id}>
-                    {pageEvent.isOwner ? (
-                      <>
-                        <button
-                          type="button"
-                          onClick={() => handleEditCheckListItemWindow(item)}
-                        >
-                          <span>{item.name}</span>
-                        </button>
-                        <span>prioridade: {item.priority_level}</span>
-                        <button
-                          type="button"
-                          onClick={() => handleEditCheckedCheckListItem(item)}
-                        >
-                          {item.checked ? (
-                            <FiCheckSquare size={24} />
-                          ) : (
-                            <FiSquare size={24} />
-                          )}
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <button type="button">
-                          <span>{item.name}</span>
-                        </button>
-                        <span>prioridade: {item.priority_level}</span>
-                        <button type="button">
-                          {item.checked ? (
-                            <FiCheckSquare size={24} />
-                          ) : (
-                            <FiSquare size={24} />
-                          )}
-                        </button>
-                      </>
-                    )}
-                  </li>
-                ))}
-              </ul>
+              <CheckListFunnel>
+                <div>
+                  <h1>Não iniciada</h1>
+                  <ul>
+                    {notStartedCheckListItems.map(item => (
+                      <li key={item.id}>
+                        {pageEvent.isOwner ? (
+                          <>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleEditCheckListItemWindow(item)
+                              }
+                            >
+                              <span>{item.name}</span>
+                            </button>
+                            <button type="button">
+                              {Number(item.priority_level) === 3 && (
+                                <MdWbSunny color="red" size={20} />
+                              )}
+                              {Number(item.priority_level) === 2 && (
+                                <MdWbSunny color="yellow" size={20} />
+                              )}
+                              {Number(item.priority_level) === 1 && (
+                                <MdFlare color="green" size={20} />
+                              )}
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button type="button">
+                              <span>{item.name}</span>
+                            </button>
+                            <button type="button">
+                              {Number(item.priority_level) === 3 && (
+                                <MdWbSunny color="red" size={20} />
+                              )}
+                              {Number(item.priority_level) === 2 && (
+                                <MdWbSunny color="yellow" size={20} />
+                              )}
+                              {Number(item.priority_level) === 1 && (
+                                <MdFlare color="green" size={20} />
+                              )}
+                            </button>
+                          </>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h1>Em progresso</h1>
+                  <ul>
+                    {inProgressCheckListItems.map(item => (
+                      <li key={item.id}>
+                        {pageEvent.isOwner ? (
+                          <>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleEditCheckListItemWindow(item)
+                              }
+                            >
+                              <span>{item.name}</span>
+                            </button>
+                            <button type="button">
+                              {Number(item.priority_level) === 3 && (
+                                <MdWbSunny color="red" size={20} />
+                              )}
+                              {Number(item.priority_level) === 2 && (
+                                <MdWbSunny color="yellow" size={20} />
+                              )}
+                              {Number(item.priority_level) === 1 && (
+                                <MdFlare color="green" size={20} />
+                              )}
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button type="button">
+                              <span>{item.name}</span>
+                            </button>
+                            <button type="button">
+                              {Number(item.priority_level) === 3 && (
+                                <MdWbSunny color="red" size={20} />
+                              )}
+                              {Number(item.priority_level) === 2 && (
+                                <MdWbSunny color="yellow" size={20} />
+                              )}
+                              {Number(item.priority_level) === 1 && (
+                                <MdFlare color="green" size={20} />
+                              )}
+                            </button>
+                          </>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h1>Concluída</h1>
+                  <ul>
+                    {resolvedCheckListItems.map(item => (
+                      <li key={item.id}>
+                        {pageEvent.isOwner ? (
+                          <>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleEditCheckListItemWindow(item)
+                              }
+                            >
+                              <span>{item.name}</span>
+                            </button>
+                            <button type="button">
+                              <span>{item.name}</span>
+                            </button>
+                            <button type="button">
+                              {Number(item.priority_level) === 3 && (
+                                <MdWbSunny color="red" size={20} />
+                              )}
+                              {Number(item.priority_level) === 2 && (
+                                <MdWbSunny color="yellow" size={20} />
+                              )}
+                              {Number(item.priority_level) === 1 && (
+                                <MdFlare color="green" size={20} />
+                              )}
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button type="button">
+                              <span>{item.name}</span>
+                            </button>
+                            <button type="button">
+                              <span>{item.name}</span>
+                            </button>
+                            <button type="button">
+                              {Number(item.priority_level) === 3 && (
+                                <MdWbSunny color="red" size={20} />
+                              )}
+                              {Number(item.priority_level) === 2 && (
+                                <MdWbSunny color="yellow" size={20} />
+                              )}
+                              {Number(item.priority_level) === 1 && (
+                                <MdFlare color="green" size={20} />
+                              )}
+                            </button>
+                          </>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </CheckListFunnel>
             </CheckList>
           )}
         </Main>

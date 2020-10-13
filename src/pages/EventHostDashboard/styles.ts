@@ -967,21 +967,15 @@ export const AddGuestDrawer = styled.div`
 `;
 
 export const CheckList = styled.section`
-  height: 500px;
-  background: var(--card-color);
-  padding: 24px;
-  border-radius: 8px;
-  margin-bottom: 24px;
-  box-shadow: 1px 1px 5px 4px rgba(90, 90, 90, 0.02);
+  height: 450px;
   position: relative;
-  overflow-y: scroll;
-  animation: ${appearFromTop} 0.5s;
 
   > button {
     right: 16px;
     top: 16px;
     position: absolute;
-    background: transparent;
+    background: var(--card-color);
+    border-radius: 50%;
     border: none;
     color: var(--title-color);
   }
@@ -995,33 +989,66 @@ export const CheckList = styled.section`
     margin-bottom: 16px;
     padding-bottom: 16px;
   }
+`;
 
-  li {
-    list-style: none;
-    padding: 0 8px 16px;
+export const CheckListFunnel = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 32px;
+
+  > div {
+    text-align: center;
     display: flex;
-    grid-template-columns: 4fr 16fr 1fr;
+    flex-direction: column;
     align-items: center;
-    border-bottom: 1px solid var(--letter-color-3);
-    color: var(--primary-color);
+    justify-content: center;
+    gap: 24px;
+    width: 100%;
 
-    > span {
-      margin: 0 auto;
+    > h1 {
+      font-size: 24px;
+      color: var(--primary-color);
     }
 
-    button {
-      background: transparent;
-      border: none;
-      color: var(--letter-color-5);
+    > ul {
+      height: 360px;
+      background: var(--card-color);
+      overflow-y: scroll;
+      animation: ${appearFromTop} 0.5s;
+      padding: 24px;
+      border-radius: 8px;
+      box-shadow: 1px 1px 5px 4px rgba(90, 90, 90, 0.02);
+      width: 100%;
 
-      > span {
-        margin-right: auto;
+      li {
+        list-style: none;
+        padding: 0 8px 16px;
+        display: flex;
+        grid-template-columns: 4fr 16fr 1fr;
+        align-items: center;
+        border-bottom: 1px solid var(--letter-color-3);
+        color: var(--primary-color);
+        width: 100%;
+
+        > span {
+          margin: 0 auto;
+        }
+
+        button {
+          background: transparent;
+          border: none;
+          color: var(--letter-color-5);
+
+          > span {
+            margin-right: auto;
+          }
+        }
+      }
+
+      li + li {
+        margin-top: 16px;
       }
     }
-  }
-
-  li + li {
-    margin-top: 16px;
   }
 `;
 
@@ -1854,7 +1881,6 @@ export const ListUploadWindow = styled.span`
     &:hover {
       background-color: ${shade(0.3, '#ff9000')};
     }
-  }
   }
 
   button {
