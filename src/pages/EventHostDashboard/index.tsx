@@ -1411,6 +1411,105 @@ const EventHostDashboard: React.FC = () => {
     },
     [addToast, eventId, owner, handleGetOwners],
   );
+  const handleEditCheckListItemStatus1 = useCallback(
+    async (props: string) => {
+      try {
+        console.log();
+        await api.put(`events/check-list/${props}/status`, {
+          status: 1,
+        });
+
+        addToast({
+          type: 'success',
+          title: 'Item editado com sucesso',
+          description: 'As mudanças já foram atualizadas no seu evento.',
+        });
+
+        setEditCheckListItemWindow(false);
+        setCheckListItem({} as IEventCheckList);
+        handleGetCheckListItems();
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro ao editar item',
+          description: 'Erro ao editar o item do check-list, tente novamente.',
+        });
+      }
+    },
+    [addToast, handleGetCheckListItems],
+  );
+  const handleEditCheckListItemStatus2 = useCallback(
+    async (props: string) => {
+      try {
+        console.log();
+        await api.put(`events/check-list/${props}/status`, {
+          status: 2,
+        });
+
+        addToast({
+          type: 'success',
+          title: 'Item editado com sucesso',
+          description: 'As mudanças já foram atualizadas no seu evento.',
+        });
+
+        setEditCheckListItemWindow(false);
+        setCheckListItem({} as IEventCheckList);
+        handleGetCheckListItems();
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro ao editar item',
+          description: 'Erro ao editar o item do check-list, tente novamente.',
+        });
+      }
+    },
+    [addToast, handleGetCheckListItems],
+  );
+  const handleEditCheckListItemStatus3 = useCallback(
+    async (props: string) => {
+      try {
+        console.log();
+        await api.put(`events/check-list/${props}/status`, {
+          status: 3,
+        });
+
+        addToast({
+          type: 'success',
+          title: 'Item editado com sucesso',
+          description: 'As mudanças já foram atualizadas no seu evento.',
+        });
+
+        setEditCheckListItemWindow(false);
+        setCheckListItem({} as IEventCheckList);
+        handleGetCheckListItems();
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+
+          formRef.current?.setErrors(error);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro ao editar item',
+          description: 'Erro ao editar o item do check-list, tente novamente.',
+        });
+      }
+    },
+    [addToast, handleGetCheckListItems],
+  );
   const handleEditCheckListItem = useCallback(
     async (data: IEventCheckList) => {
       try {
@@ -1748,7 +1847,8 @@ const EventHostDashboard: React.FC = () => {
           onHandleEventSupplierDrawer={() => setHiredSupplierWindow(false)}
           onHandleEventSupplierUpdate={() => setHiredSupplierWindow(true)}
           onHandleDeleteEventSupplierDrawer={() =>
-            setDeleteHiredSupplierDrawer(true)}
+            setDeleteHiredSupplierDrawer(true)
+          }
         />
       )}
       {!!editEventNameDrawer && (
@@ -1804,10 +1904,12 @@ const EventHostDashboard: React.FC = () => {
           isOwner={pageEvent.isOwner}
           selectedSupplier={selectedSupplier}
           onHandleSelectedSupplierDrawer={() =>
-            setSelectedSupplierWindow(false)}
+            setSelectedSupplierWindow(false)
+          }
           onUpdateSelectedSupplierDrawer={() => setSelectedSupplierWindow(true)}
           onDeleteSelectedSupplierDrawer={() =>
-            setDeleteSelectedSupplierDrawer(true)}
+            setDeleteSelectedSupplierDrawer(true)
+          }
         />
       )}
       {!!numberOfGuestDrawer && (
@@ -1994,7 +2096,8 @@ const EventHostDashboard: React.FC = () => {
           friends={friends}
           onHandleFriendsListDrawer={() => setFriendsWindow(false)}
           handleSelectedFriend={(friend: IFriendDTO) =>
-            handleSelectedWeplanUser(friend)}
+            handleSelectedWeplanUser(friend)
+          }
         />
       )}
       {!!eventInfoDrawer && (
@@ -2748,7 +2851,8 @@ const EventHostDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={() =>
-                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')}
+                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')
+                }
               >
                 <MdBuild size={50} />
                 <h1>Estruturas, Cênica e Boate</h1>
@@ -2784,7 +2888,8 @@ const EventHostDashboard: React.FC = () => {
                   key={subCategory.id}
                   type="button"
                   onClick={() =>
-                    handleAddSupplierDrawer(subCategory.sub_category)}
+                    handleAddSupplierDrawer(subCategory.sub_category)
+                  }
                 >
                   {/* <MdFolderSpecial size={50} /> */}
                   <h1>{subCategory.sub_category}</h1>
@@ -3078,8 +3183,7 @@ const EventHostDashboard: React.FC = () => {
                           <button
                             type="button"
                             onClick={() =>
-                              handleSelectedSupplierWindow(sSupplier)
-                            }
+                              handleSelectedSupplierWindow(sSupplier)}
                           >
                             <strong>{sSupplier.name}</strong>{' '}
                             <FiEdit3 size={16} />
@@ -3097,8 +3201,7 @@ const EventHostDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() =>
-                                handleCreateTransactionWindow(sSupplier)
-                              }
+                                handleCreateTransactionWindow(sSupplier)}
                             >
                               {sSupplier.isHired ? (
                                 <FiCheckSquare size={24} />
@@ -3123,8 +3226,7 @@ const EventHostDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() =>
-                                handleHiredSupplierWindow(hSupplier)
-                              }
+                                handleHiredSupplierWindow(hSupplier)}
                             >
                               <strong>{hSupplier.name}</strong>{' '}
                               <FiChevronRight size={16} />
@@ -3410,8 +3512,7 @@ const EventHostDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() =>
-                                handleEditCheckListItemWindow(item)
-                              }
+                                handleEditCheckListItemWindow(item)}
                             >
                               <span>{item.name}</span>
                             </button>
@@ -3425,6 +3526,14 @@ const EventHostDashboard: React.FC = () => {
                               {Number(item.priority_level) === 1 && (
                                 <MdFlare color="green" size={20} />
                               )}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleEditCheckListItemStatus2(item.id)
+                              }
+                            >
+                              <FiChevronRight size={30} />
                             </button>
                           </>
                         ) : (
@@ -3442,6 +3551,14 @@ const EventHostDashboard: React.FC = () => {
                               {Number(item.priority_level) === 1 && (
                                 <MdFlare color="green" size={20} />
                               )}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleEditCheckListItemStatus2(item.id)
+                              }
+                            >
+                              <FiChevronRight size={30} />
                             </button>
                           </>
                         )}
@@ -3459,10 +3576,17 @@ const EventHostDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() =>
-                                handleEditCheckListItemWindow(item)
-                              }
+                                handleEditCheckListItemWindow(item)}
                             >
                               <span>{item.name}</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleEditCheckListItemStatus1(item.id)
+                              }
+                            >
+                              <FiChevronLeft size={30} />
                             </button>
                             <button type="button">
                               {Number(item.priority_level) === 3 && (
@@ -3474,6 +3598,14 @@ const EventHostDashboard: React.FC = () => {
                               {Number(item.priority_level) === 1 && (
                                 <MdFlare color="green" size={20} />
                               )}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleEditCheckListItemStatus3(item.id)
+                              }
+                            >
+                              <FiChevronRight size={30} />
                             </button>
                           </>
                         ) : (
@@ -3481,6 +3613,14 @@ const EventHostDashboard: React.FC = () => {
                             <button type="button">
                               <span>{item.name}</span>
                             </button>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleEditCheckListItemStatus1(item.id)
+                              }
+                            >
+                              <FiChevronLeft size={30} />
+                            </button>
                             <button type="button">
                               {Number(item.priority_level) === 3 && (
                                 <MdWbSunny color="red" size={20} />
@@ -3491,6 +3631,14 @@ const EventHostDashboard: React.FC = () => {
                               {Number(item.priority_level) === 1 && (
                                 <MdFlare color="green" size={20} />
                               )}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleEditCheckListItemStatus3(item.id)
+                              }
+                            >
+                              <FiChevronRight size={30} />
                             </button>
                           </>
                         )}
@@ -3508,13 +3656,17 @@ const EventHostDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() =>
-                                handleEditCheckListItemWindow(item)
-                              }
+                                handleEditCheckListItemWindow(item)}
                             >
                               <span>{item.name}</span>
                             </button>
-                            <button type="button">
-                              <span>{item.name}</span>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleEditCheckListItemStatus2(item.id)
+                              }
+                            >
+                              <FiChevronLeft size={30} />
                             </button>
                             <button type="button">
                               {Number(item.priority_level) === 3 && (
@@ -3533,8 +3685,13 @@ const EventHostDashboard: React.FC = () => {
                             <button type="button">
                               <span>{item.name}</span>
                             </button>
-                            <button type="button">
-                              <span>{item.name}</span>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleEditCheckListItemStatus2(item.id)
+                              }
+                            >
+                              <FiChevronLeft size={30} />
                             </button>
                             <button type="button">
                               {Number(item.priority_level) === 3 && (
