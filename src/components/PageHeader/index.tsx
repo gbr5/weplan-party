@@ -84,7 +84,7 @@ const PageHeader: React.FC = ({ children }) => {
   const [helpWindow, setHelpWindow] = useState(false);
   const [settingsWindow, setSettingsWindow] = useState(false);
 
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   const { toggleTheme, themeBoolean } = useToggleTheme();
   const history = useHistory();
 
@@ -351,6 +351,8 @@ const PageHeader: React.FC = ({ children }) => {
     handleGetAppointments();
   }, [handleGetAppointments]);
 
+  const imageProfile = user.avatar_url ? user.avatar_url : profileImg;
+
   return (
     <>
       <Header>
@@ -365,7 +367,7 @@ const PageHeader: React.FC = ({ children }) => {
 
           <Profile>
             <Link to="/profile">
-              <img src={profileImg} alt="oi" />
+              <img src={imageProfile} alt="oi" />
             </Link>
           </Profile>
           {children}
