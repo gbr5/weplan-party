@@ -1030,10 +1030,6 @@ export const CheckListFunnel = styled.div`
         color: var(--primary-color);
         width: 100%;
 
-        > span {
-          margin: 0 auto;
-        }
-
         button {
           background: transparent;
           border: none;
@@ -1041,6 +1037,24 @@ export const CheckListFunnel = styled.div`
 
           > span {
             margin-right: auto;
+          }
+        }
+
+        > span {
+          margin-left: auto;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 16px;
+
+          button {
+            background: transparent;
+            border: none;
+            color: var(--letter-color-5);
+
+            > span {
+              margin-right: auto;
+            }
           }
         }
       }

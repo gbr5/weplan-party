@@ -1847,8 +1847,7 @@ const EventHostDashboard: React.FC = () => {
           onHandleEventSupplierDrawer={() => setHiredSupplierWindow(false)}
           onHandleEventSupplierUpdate={() => setHiredSupplierWindow(true)}
           onHandleDeleteEventSupplierDrawer={() =>
-            setDeleteHiredSupplierDrawer(true)
-          }
+            setDeleteHiredSupplierDrawer(true)}
         />
       )}
       {!!editEventNameDrawer && (
@@ -1904,12 +1903,10 @@ const EventHostDashboard: React.FC = () => {
           isOwner={pageEvent.isOwner}
           selectedSupplier={selectedSupplier}
           onHandleSelectedSupplierDrawer={() =>
-            setSelectedSupplierWindow(false)
-          }
+            setSelectedSupplierWindow(false)}
           onUpdateSelectedSupplierDrawer={() => setSelectedSupplierWindow(true)}
           onDeleteSelectedSupplierDrawer={() =>
-            setDeleteSelectedSupplierDrawer(true)
-          }
+            setDeleteSelectedSupplierDrawer(true)}
         />
       )}
       {!!numberOfGuestDrawer && (
@@ -2096,8 +2093,7 @@ const EventHostDashboard: React.FC = () => {
           friends={friends}
           onHandleFriendsListDrawer={() => setFriendsWindow(false)}
           handleSelectedFriend={(friend: IFriendDTO) =>
-            handleSelectedWeplanUser(friend)
-          }
+            handleSelectedWeplanUser(friend)}
         />
       )}
       {!!eventInfoDrawer && (
@@ -2851,8 +2847,7 @@ const EventHostDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={() =>
-                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')
-                }
+                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')}
               >
                 <MdBuild size={50} />
                 <h1>Estruturas, Cênica e Boate</h1>
@@ -2888,8 +2883,7 @@ const EventHostDashboard: React.FC = () => {
                   key={subCategory.id}
                   type="button"
                   onClick={() =>
-                    handleAddSupplierDrawer(subCategory.sub_category)
-                  }
+                    handleAddSupplierDrawer(subCategory.sub_category)}
                 >
                   {/* <MdFolderSpecial size={50} /> */}
                   <h1>{subCategory.sub_category}</h1>
@@ -3183,7 +3177,8 @@ const EventHostDashboard: React.FC = () => {
                           <button
                             type="button"
                             onClick={() =>
-                              handleSelectedSupplierWindow(sSupplier)}
+                              handleSelectedSupplierWindow(sSupplier)
+                            }
                           >
                             <strong>{sSupplier.name}</strong>{' '}
                             <FiEdit3 size={16} />
@@ -3201,7 +3196,8 @@ const EventHostDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() =>
-                                handleCreateTransactionWindow(sSupplier)}
+                                handleCreateTransactionWindow(sSupplier)
+                              }
                             >
                               {sSupplier.isHired ? (
                                 <FiCheckSquare size={24} />
@@ -3226,7 +3222,8 @@ const EventHostDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() =>
-                                handleHiredSupplierWindow(hSupplier)}
+                                handleHiredSupplierWindow(hSupplier)
+                              }
                             >
                               <strong>{hSupplier.name}</strong>{' '}
                               <FiChevronRight size={16} />
@@ -3512,54 +3509,57 @@ const EventHostDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() =>
-                                handleEditCheckListItemWindow(item)}
+                                handleEditCheckListItemWindow(item)
+                              }
                             >
                               <span>{item.name}</span>
                             </button>
-                            <button type="button">
-                              {Number(item.priority_level) === 3 && (
-                                <MdWbSunny color="red" size={20} />
-                              )}
-                              {Number(item.priority_level) === 2 && (
-                                <MdWbSunny color="yellow" size={20} />
-                              )}
-                              {Number(item.priority_level) === 1 && (
-                                <MdFlare color="green" size={20} />
-                              )}
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                handleEditCheckListItemStatus2(item.id)
-                              }
-                            >
-                              <FiChevronRight size={30} />
-                            </button>
+                            <span>
+                              <button type="button">
+                                {Number(item.priority_level) === 3 && (
+                                  <MdWbSunny color="red" size={20} />
+                                )}
+                                {Number(item.priority_level) === 2 && (
+                                  <MdWbSunny color="yellow" size={20} />
+                                )}
+                                {Number(item.priority_level) === 1 && (
+                                  <MdFlare color="green" size={20} />
+                                )}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleEditCheckListItemStatus2(item.id)}
+                              >
+                                <FiChevronRight size={30} />
+                              </button>
+                            </span>
                           </>
                         ) : (
                           <>
                             <button type="button">
                               <span>{item.name}</span>
                             </button>
-                            <button type="button">
-                              {Number(item.priority_level) === 3 && (
-                                <MdWbSunny color="red" size={20} />
-                              )}
-                              {Number(item.priority_level) === 2 && (
-                                <MdWbSunny color="yellow" size={20} />
-                              )}
-                              {Number(item.priority_level) === 1 && (
-                                <MdFlare color="green" size={20} />
-                              )}
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                handleEditCheckListItemStatus2(item.id)
-                              }
-                            >
-                              <FiChevronRight size={30} />
-                            </button>
+                            <span>
+                              <button type="button">
+                                {Number(item.priority_level) === 3 && (
+                                  <MdWbSunny color="red" size={20} />
+                                )}
+                                {Number(item.priority_level) === 2 && (
+                                  <MdWbSunny color="yellow" size={20} />
+                                )}
+                                {Number(item.priority_level) === 1 && (
+                                  <MdFlare color="green" size={20} />
+                                )}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleEditCheckListItemStatus2(item.id)}
+                              >
+                                <FiChevronRight size={30} />
+                              </button>
+                            </span>
                           </>
                         )}
                       </li>
@@ -3576,70 +3576,71 @@ const EventHostDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() =>
-                                handleEditCheckListItemWindow(item)}
+                                handleEditCheckListItemWindow(item)
+                              }
                             >
                               <span>{item.name}</span>
                             </button>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                handleEditCheckListItemStatus1(item.id)
-                              }
-                            >
-                              <FiChevronLeft size={30} />
-                            </button>
-                            <button type="button">
-                              {Number(item.priority_level) === 3 && (
-                                <MdWbSunny color="red" size={20} />
-                              )}
-                              {Number(item.priority_level) === 2 && (
-                                <MdWbSunny color="yellow" size={20} />
-                              )}
-                              {Number(item.priority_level) === 1 && (
-                                <MdFlare color="green" size={20} />
-                              )}
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                handleEditCheckListItemStatus3(item.id)
-                              }
-                            >
-                              <FiChevronRight size={30} />
-                            </button>
+                            <span>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleEditCheckListItemStatus1(item.id)}
+                              >
+                                <FiChevronLeft size={30} />
+                              </button>
+                              <button type="button">
+                                {Number(item.priority_level) === 3 && (
+                                  <MdWbSunny color="red" size={20} />
+                                )}
+                                {Number(item.priority_level) === 2 && (
+                                  <MdWbSunny color="yellow" size={20} />
+                                )}
+                                {Number(item.priority_level) === 1 && (
+                                  <MdFlare color="green" size={20} />
+                                )}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleEditCheckListItemStatus3(item.id)}
+                              >
+                                <FiChevronRight size={30} />
+                              </button>
+                            </span>
                           </>
                         ) : (
                           <>
                             <button type="button">
                               <span>{item.name}</span>
                             </button>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                handleEditCheckListItemStatus1(item.id)
-                              }
-                            >
-                              <FiChevronLeft size={30} />
-                            </button>
-                            <button type="button">
-                              {Number(item.priority_level) === 3 && (
-                                <MdWbSunny color="red" size={20} />
-                              )}
-                              {Number(item.priority_level) === 2 && (
-                                <MdWbSunny color="yellow" size={20} />
-                              )}
-                              {Number(item.priority_level) === 1 && (
-                                <MdFlare color="green" size={20} />
-                              )}
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                handleEditCheckListItemStatus3(item.id)
-                              }
-                            >
-                              <FiChevronRight size={30} />
-                            </button>
+                            <span>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleEditCheckListItemStatus1(item.id)}
+                              >
+                                <FiChevronLeft size={30} />
+                              </button>
+                              <button type="button">
+                                {Number(item.priority_level) === 3 && (
+                                  <MdWbSunny color="red" size={20} />
+                                )}
+                                {Number(item.priority_level) === 2 && (
+                                  <MdWbSunny color="yellow" size={20} />
+                                )}
+                                {Number(item.priority_level) === 1 && (
+                                  <MdFlare color="green" size={20} />
+                                )}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleEditCheckListItemStatus3(item.id)}
+                              >
+                                <FiChevronRight size={30} />
+                              </button>
+                            </span>
                           </>
                         )}
                       </li>
@@ -3656,54 +3657,57 @@ const EventHostDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() =>
-                                handleEditCheckListItemWindow(item)}
+                                handleEditCheckListItemWindow(item)
+                              }
                             >
                               <span>{item.name}</span>
                             </button>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                handleEditCheckListItemStatus2(item.id)
-                              }
-                            >
-                              <FiChevronLeft size={30} />
-                            </button>
-                            <button type="button">
-                              {Number(item.priority_level) === 3 && (
-                                <MdWbSunny color="red" size={20} />
-                              )}
-                              {Number(item.priority_level) === 2 && (
-                                <MdWbSunny color="yellow" size={20} />
-                              )}
-                              {Number(item.priority_level) === 1 && (
-                                <MdFlare color="green" size={20} />
-                              )}
-                            </button>
+                            <span>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleEditCheckListItemStatus2(item.id)}
+                              >
+                                <FiChevronLeft size={30} />
+                              </button>
+                              <button type="button">
+                                {Number(item.priority_level) === 3 && (
+                                  <MdWbSunny color="red" size={20} />
+                                )}
+                                {Number(item.priority_level) === 2 && (
+                                  <MdWbSunny color="yellow" size={20} />
+                                )}
+                                {Number(item.priority_level) === 1 && (
+                                  <MdFlare color="green" size={20} />
+                                )}
+                              </button>
+                            </span>
                           </>
                         ) : (
                           <>
                             <button type="button">
                               <span>{item.name}</span>
                             </button>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                handleEditCheckListItemStatus2(item.id)
-                              }
-                            >
-                              <FiChevronLeft size={30} />
-                            </button>
-                            <button type="button">
-                              {Number(item.priority_level) === 3 && (
-                                <MdWbSunny color="red" size={20} />
-                              )}
-                              {Number(item.priority_level) === 2 && (
-                                <MdWbSunny color="yellow" size={20} />
-                              )}
-                              {Number(item.priority_level) === 1 && (
-                                <MdFlare color="green" size={20} />
-                              )}
-                            </button>
+                            <span>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleEditCheckListItemStatus2(item.id)}
+                              >
+                                <FiChevronLeft size={30} />
+                              </button>
+                              <button type="button">
+                                {Number(item.priority_level) === 3 && (
+                                  <MdWbSunny color="red" size={20} />
+                                )}
+                                {Number(item.priority_level) === 2 && (
+                                  <MdWbSunny color="yellow" size={20} />
+                                )}
+                                {Number(item.priority_level) === 1 && (
+                                  <MdFlare color="green" size={20} />
+                                )}
+                              </button>
+                            </span>
                           </>
                         )}
                       </li>
