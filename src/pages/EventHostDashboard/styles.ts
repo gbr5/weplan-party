@@ -971,22 +971,40 @@ export const CheckList = styled.section`
   position: relative;
 
   > button {
-    right: 16px;
-    top: 16px;
+    top: -16px;
+    right: 0;
+    width: 50px;
+    height: 50px;
     position: absolute;
-    background: var(--card-color);
+    background: transparent;
     border-radius: 50%;
-    border: none;
+    border: 1px solid var(--title-color);
     color: var(--title-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+    margin-left: auto;
+
+    &:hover {
+      background: var(--primary-color);
+      border-radius: 5%;
+      border: 1px solid var(--title-color);
+      box-shadow: var(--window-box-shadow);
+
+      > svg {
+        color: var(--background-color);
+      }
+    }
   }
 
   > strong {
     color: var(--primary-color);
-    font-size: 20px;
+    font-size: 24px;
     line-height: 26px;
     border-bottom: 1px solid var(--primary-color);
     display: block;
-    margin-bottom: 16px;
+    margin-bottom: 32px;
     padding-bottom: 16px;
   }
 `;
@@ -1067,7 +1085,7 @@ export const CheckListFunnel = styled.div`
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 16px;
+          gap: 4px;
 
           button {
             background: transparent;
@@ -1118,6 +1136,7 @@ export const AddCheckListDrawer = styled.div`
     align-items: center;
     justify-content: center;
     width: 100%;
+    gap: 16px;
 
     > h2 {
       font-size: 20px;
@@ -1135,12 +1154,34 @@ export const AddCheckListDrawer = styled.div`
     gap: 32px;
     width: 100%;
 
+    > button + button {
+      background: var(--red-color);
+      color: var(--title-color);
+      transition: 0.3s;
+
+      &:hover {
+        background: var(--card-color);
+        color: var(--red-color);
+        box-shadow: var(--box-shadow-hover);
+      }
+    }
+
     > button {
       background: var(--primary-color);
       border: none;
       height: 40px;
       width: 100%;
       border-radius: 4px;
+      font-size: 16px;
+      font-weight: 500;
+      box-shadow: var(--box-shadow);
+      transition: 0.3s;
+
+      &:hover {
+        background: var(--title-color);
+        color: var(--red-color);
+        box-shadow: var(--window-box-shadow);
+      }
     }
   }
 `;
