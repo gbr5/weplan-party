@@ -7,6 +7,10 @@ interface IUser {
   name: string;
   email: string;
   avatar_url?: string;
+  isSupplier: boolean;
+  isCompany: boolean;
+  company_id: string;
+  employeeId: string;
 }
 
 interface IAuthState {
@@ -57,12 +61,29 @@ const AuthProvider: React.FC = ({ children }) => {
 
     const { token, user } = response.data;
 
+    const getSupplier = await api.get('suppliers/employee/me');
+    const isSupplier = getSupplier.data;
+    console.log('auth.tsx => line 64', isSupplier);
+    console.log('auth.tsx => line 67: USER', user);
+
+    const newUser = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar ? user.avatar : '',
+      avatar_url: user.avatar_url ? user.avatar_url : '',
+      isSupplier: !!isSupplier,
+      isCompany: user.isCompany,
+      company_id: isSupplier ? isSupplier.company_id : '',
+      employeeId: isSupplier ? isSupplier.id : '',
+    };
+
     localStorage.setItem('@GoBarber:token', token);
-    localStorage.setItem('@GoBarber:user', JSON.stringify(user));
+    localStorage.setItem('@GoBarber:user', JSON.stringify(newUser));
 
     api.defaults.headers.authorization = `Bearer ${token}`;
 
-    setData({ token, user });
+    setData({ token, user: newUser });
   }, []);
 
   const updateUser = useCallback(

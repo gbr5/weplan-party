@@ -353,6 +353,8 @@ const PageHeader: React.FC = ({ children }) => {
 
   const imageProfile = user.avatar_url ? user.avatar_url : profileImg;
 
+  console.log(user);
+
   return (
     <>
       <Header>
