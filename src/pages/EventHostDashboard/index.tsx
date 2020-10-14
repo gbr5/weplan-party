@@ -1846,8 +1846,7 @@ const EventHostDashboard: React.FC = () => {
           onHandleEventSupplierDrawer={() => setHiredSupplierWindow(false)}
           onHandleEventSupplierUpdate={() => setHiredSupplierWindow(true)}
           onHandleDeleteEventSupplierDrawer={() =>
-            setDeleteHiredSupplierDrawer(true)
-          }
+            setDeleteHiredSupplierDrawer(true)}
         />
       )}
       {!!editEventNameDrawer && (
@@ -1903,12 +1902,10 @@ const EventHostDashboard: React.FC = () => {
           isOwner={pageEvent.isOwner}
           selectedSupplier={selectedSupplier}
           onHandleSelectedSupplierDrawer={() =>
-            setSelectedSupplierWindow(false)
-          }
+            setSelectedSupplierWindow(false)}
           onUpdateSelectedSupplierDrawer={() => setSelectedSupplierWindow(true)}
           onDeleteSelectedSupplierDrawer={() =>
-            setDeleteSelectedSupplierDrawer(true)
-          }
+            setDeleteSelectedSupplierDrawer(true)}
         />
       )}
       {!!numberOfGuestDrawer && (
@@ -2095,8 +2092,7 @@ const EventHostDashboard: React.FC = () => {
           friends={friends}
           onHandleFriendsListDrawer={() => setFriendsWindow(false)}
           handleSelectedFriend={(friend: IFriendDTO) =>
-            handleSelectedWeplanUser(friend)
-          }
+            handleSelectedWeplanUser(friend)}
         />
       )}
       {!!eventInfoDrawer && (
@@ -2878,8 +2874,7 @@ const EventHostDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={() =>
-                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')
-                }
+                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')}
               >
                 <MdBuild size={50} />
                 <h1>Estruturas, Cênica e Boate</h1>
@@ -2915,8 +2910,7 @@ const EventHostDashboard: React.FC = () => {
                   key={subCategory.id}
                   type="button"
                   onClick={() =>
-                    handleAddSupplierDrawer(subCategory.sub_category)
-                  }
+                    handleAddSupplierDrawer(subCategory.sub_category)}
                 >
                   {/* <MdFolderSpecial size={50} /> */}
                   <h1>{subCategory.sub_category}</h1>
@@ -3210,7 +3204,8 @@ const EventHostDashboard: React.FC = () => {
                           <button
                             type="button"
                             onClick={() =>
-                              handleSelectedSupplierWindow(sSupplier)}
+                              handleSelectedSupplierWindow(sSupplier)
+                            }
                           >
                             <strong>{sSupplier.name}</strong>{' '}
                             <FiEdit3 size={16} />
@@ -3228,7 +3223,8 @@ const EventHostDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() =>
-                                handleCreateTransactionWindow(sSupplier)}
+                                handleCreateTransactionWindow(sSupplier)
+                              }
                             >
                               {sSupplier.isHired ? (
                                 <FiCheckSquare size={24} />
@@ -3253,7 +3249,8 @@ const EventHostDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() =>
-                                handleHiredSupplierWindow(hSupplier)}
+                                handleHiredSupplierWindow(hSupplier)
+                              }
                             >
                               <strong>{hSupplier.name}</strong>{' '}
                               <FiChevronRight size={16} />
@@ -3544,7 +3541,8 @@ const EventHostDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() =>
-                                handleEditCheckListItemWindow(item)}
+                                handleEditCheckListItemWindow(item)
+                              }
                             >
                               <span>{item.name}</span>
                             </button>
@@ -3563,8 +3561,7 @@ const EventHostDashboard: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleEditCheckListItemStatus2(item.id)
-                                }
+                                  handleEditCheckListItemStatus2(item.id)}
                               >
                                 <FiChevronRight size={30} />
                               </button>
@@ -3572,6 +3569,11 @@ const EventHostDashboard: React.FC = () => {
                           </>
                         ) : (
                           <>
+                            <p>
+                              {notStartedCheckListItems.findIndex(
+                                itemIndex => itemIndex.id === item.id,
+                              ) + 1}
+                            </p>
                             <button type="button">
                               <span>{item.name}</span>
                             </button>
@@ -3590,8 +3592,7 @@ const EventHostDashboard: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleEditCheckListItemStatus2(item.id)
-                                }
+                                  handleEditCheckListItemStatus2(item.id)}
                               >
                                 <FiChevronRight size={30} />
                               </button>
@@ -3609,10 +3610,16 @@ const EventHostDashboard: React.FC = () => {
                       <li key={item.id}>
                         {pageEvent.isOwner ? (
                           <>
+                            <p>
+                              {inProgressCheckListItems.findIndex(
+                                itemIndex => itemIndex.id === item.id,
+                              ) + 1}
+                            </p>
                             <button
                               type="button"
                               onClick={() =>
-                                handleEditCheckListItemWindow(item)}
+                                handleEditCheckListItemWindow(item)
+                              }
                             >
                               <span>{item.name}</span>
                             </button>
@@ -3620,8 +3627,7 @@ const EventHostDashboard: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleEditCheckListItemStatus1(item.id)
-                                }
+                                  handleEditCheckListItemStatus1(item.id)}
                               >
                                 <FiChevronLeft size={30} />
                               </button>
@@ -3639,8 +3645,7 @@ const EventHostDashboard: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleEditCheckListItemStatus3(item.id)
-                                }
+                                  handleEditCheckListItemStatus3(item.id)}
                               >
                                 <FiChevronRight size={30} />
                               </button>
@@ -3648,6 +3653,11 @@ const EventHostDashboard: React.FC = () => {
                           </>
                         ) : (
                           <>
+                            <p>
+                              {inProgressCheckListItems.findIndex(
+                                itemIndex => itemIndex.id === item.id,
+                              ) + 1}
+                            </p>
                             <button type="button">
                               <span>{item.name}</span>
                             </button>
@@ -3655,8 +3665,7 @@ const EventHostDashboard: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleEditCheckListItemStatus1(item.id)
-                                }
+                                  handleEditCheckListItemStatus1(item.id)}
                               >
                                 <FiChevronLeft size={30} />
                               </button>
@@ -3674,8 +3683,7 @@ const EventHostDashboard: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleEditCheckListItemStatus3(item.id)
-                                }
+                                  handleEditCheckListItemStatus3(item.id)}
                               >
                                 <FiChevronRight size={30} />
                               </button>
@@ -3693,10 +3701,16 @@ const EventHostDashboard: React.FC = () => {
                       <li key={item.id}>
                         {pageEvent.isOwner ? (
                           <>
+                            <p>
+                              {resolvedCheckListItems.findIndex(
+                                itemIndex => itemIndex.id === item.id,
+                              ) + 1}
+                            </p>
                             <button
                               type="button"
                               onClick={() =>
-                                handleEditCheckListItemWindow(item)}
+                                handleEditCheckListItemWindow(item)
+                              }
                             >
                               <span>{item.name}</span>
                             </button>
@@ -3704,8 +3718,7 @@ const EventHostDashboard: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleEditCheckListItemStatus2(item.id)
-                                }
+                                  handleEditCheckListItemStatus2(item.id)}
                               >
                                 <FiChevronLeft size={30} />
                               </button>
@@ -3724,6 +3737,11 @@ const EventHostDashboard: React.FC = () => {
                           </>
                         ) : (
                           <>
+                            <p>
+                              {resolvedCheckListItems.findIndex(
+                                itemIndex => itemIndex.id === item.id,
+                              ) + 1}
+                            </p>
                             <button type="button">
                               <span>{item.name}</span>
                             </button>
@@ -3731,8 +3749,7 @@ const EventHostDashboard: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleEditCheckListItemStatus2(item.id)
-                                }
+                                  handleEditCheckListItemStatus2(item.id)}
                               >
                                 <FiChevronLeft size={30} />
                               </button>

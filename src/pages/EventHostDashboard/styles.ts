@@ -1002,7 +1002,7 @@ export const CheckListFunnel = styled.div`
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 24px;
+    gap: 16px;
     width: 100%;
 
     > h1 {
@@ -1015,7 +1015,7 @@ export const CheckListFunnel = styled.div`
       background: var(--card-color);
       overflow-y: scroll;
       animation: ${appearFromTop} 0.5s;
-      padding: 24px;
+      padding: 16px;
       border-radius: 8px;
       box-shadow: 1px 1px 5px 4px rgba(90, 90, 90, 0.02);
       width: 100%;
