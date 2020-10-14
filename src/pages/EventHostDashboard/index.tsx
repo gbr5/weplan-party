@@ -105,6 +105,7 @@ import guestListImage2 from '../../assets/guestList_2.svg';
 import guestListImage3 from '../../assets/guestList_3.svg';
 import guestListImage4 from '../../assets/guestList_4.svg';
 import logo from '../../assets/weplan.svg';
+import formatStringToDate from '../../utils/formatDateToString';
 
 interface IEvent {
   id: string;
@@ -437,10 +438,14 @@ const EventHostDashboard: React.FC = () => {
     },
     [],
   );
-  const handleEditCheckListItemPriorityLevelWindow = useCallback(props => {
-    setCheckListItem(props);
-    setEditCheckListItemPriorityLevelWindow(true);
-  }, []);
+  const handleEditCheckListItemPriorityLevelWindow = useCallback(
+    (props: IEventCheckList) => {
+      setCheckListItem(props);
+      setPriorityLevel(props.priority_level);
+      setEditCheckListItemPriorityLevelWindow(true);
+    },
+    [],
+  );
   const handleGuestWindow = useCallback(props => {
     setGuestWindow(props);
   }, []);
@@ -815,25 +820,17 @@ const EventHostDashboard: React.FC = () => {
         formRef.current?.setErrors([]);
         const schema = Yup.object().shape({
           name: Yup.string().required('Nome é obrigatório'),
-          priority_level: Yup.string(),
-          status: Yup.string(),
           due_date: Yup.date(),
         });
         await schema.validate(data, {
           abortEarly: false,
         });
         const date = new Date(data.due_date);
-        console.log({
-          name: data.name,
-          priority_level: Number(data.priority_level),
-          status: Number(data.status),
-          due_date1: data.due_date,
-          due_date2: date,
-        });
+
         await api.post(`events/${eventId}/check-list`, {
           name: data.name,
-          priority_level: Number(data.priority_level),
-          status: Number(data.status),
+          priority_level: priorityLevel,
+          status: 1,
           due_date: date,
         });
         addToast({
@@ -856,7 +853,13 @@ const EventHostDashboard: React.FC = () => {
         });
       }
     },
-    [addToast, eventId, handleAddCheckListDrawer, handleGetCheckListItems],
+    [
+      addToast,
+      eventId,
+      handleAddCheckListDrawer,
+      handleGetCheckListItems,
+      priorityLevel,
+    ],
   );
   const handleAddPlanner = useCallback(async () => {
     try {
@@ -1742,7 +1745,7 @@ const EventHostDashboard: React.FC = () => {
   }, [eventId, selectedSupplier, addToast, handleGetSuppliers]);
   const handleDeleteCheckListItem = useCallback(async () => {
     try {
-      await api.delete(`events/${eventId}/check-list/${checkListItem.id}`);
+      await api.delete(`events/check-list/${checkListItem.id}`);
 
       addToast({
         type: 'success',
@@ -1762,7 +1765,7 @@ const EventHostDashboard: React.FC = () => {
 
       throw new Error(err);
     }
-  }, [addToast, eventId, checkListItem, handleGetCheckListItems]);
+  }, [addToast, checkListItem, handleGetCheckListItems]);
 
   const handleAddGuestListWindow = useCallback(() => {
     setAddGuestListWindow(true);
@@ -2278,31 +2281,49 @@ const EventHostDashboard: React.FC = () => {
           onHandleCloseWindow={() => setAddCheckListDrawer(false)}
           containerStyle={{
             zIndex: 10,
-            top: '5%',
-            left: '5%',
-            height: '90%',
-            width: '90%',
+            top: '10%',
+            left: '20%',
+            height: '80%',
+            width: '60%',
           }}
         >
           <Form ref={formRef} onSubmit={handleAddCheckListItem}>
             <AddCheckListDrawer>
-              <h1>Adicionar</h1>
+              <h1>Adicionar Item</h1>
               <Input name="name" type="text" placeholder="Nome" />
-              <Input
-                name="priority_level"
-                type="text"
-                placeholder="Nível de prioridade (1 a 3)"
-              />
-              <Input
-                name="status"
-                type="text"
-                placeholder="Status | 1 = não iniciado | 2 = em progresso | 3 = concluído|"
-              />
               <Input name="due_date" type="date" />
+              <span>
+                <h2>Prioridade</h2>
+                <div>
+                  <FlagButton
+                    booleanActiveButton={priorityLevel === 1}
+                    type="button"
+                    onClick={() => setPriorityLevel(1)}
+                  >
+                    <MdFlag size={40} color="green" />
+                  </FlagButton>
+                  <FlagButton
+                    booleanActiveButton={priorityLevel === 2}
+                    type="button"
+                    onClick={() => setPriorityLevel(2)}
+                  >
+                    <MdFlag size={40} color="yellow" />
+                  </FlagButton>
+                  <FlagButton
+                    booleanActiveButton={priorityLevel === 3}
+                    type="button"
+                    onClick={() => setPriorityLevel(3)}
+                  >
+                    <MdFlag size={40} color="red" />
+                  </FlagButton>
+                </div>
+              </span>
 
-              <button type="submit">
-                <h3>Salvar</h3>
-              </button>
+              <div>
+                <button type="submit">
+                  <h3>Salvar</h3>
+                </button>
+              </div>
             </AddCheckListDrawer>
           </Form>
         </WindowContainer>
@@ -2312,9 +2333,9 @@ const EventHostDashboard: React.FC = () => {
           onHandleCloseWindow={() => setEditCheckListItemWindow(false)}
           containerStyle={{
             zIndex: 10,
-            top: '20%',
+            top: '10%',
             left: '20%',
-            height: '60%',
+            height: '80%',
             width: '60%',
           }}
         >
@@ -2327,6 +2348,10 @@ const EventHostDashboard: React.FC = () => {
                 type="text"
                 defaultValue={checkListItem.name}
               />
+              <p>
+                Data limite:{' '}
+                {formatStringToDate(String(checkListItem.due_date))}
+              </p>
               <Input
                 name="due_date"
                 type="date"

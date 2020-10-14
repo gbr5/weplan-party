@@ -1000,8 +1000,8 @@ export const CheckList = styled.section`
 
   > strong {
     color: var(--primary-color);
-    font-size: 24px;
-    line-height: 26px;
+    font-size: 32px;
+    line-height: 42px;
     border-bottom: 1px solid var(--primary-color);
     display: block;
     margin-bottom: 32px;
