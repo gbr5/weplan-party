@@ -120,11 +120,63 @@ export const Menu = styled.div`
     font-size: 18px;
     font-weight: 500;
     color: var(--letter-color-1);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+    border: 1px solid var(--primary-color);
+    box-shadow: var(--box-shadow);
+    border-radius: 50%;
 
     svg {
-      color: var(--letter-color-1);
+      color: var(--primary-color);
       width: 30px;
       height: 30px;
+      transition: 0.3s;
+    }
+
+    &:hover {
+      border: 1px solid var(--title-color);
+      border-radius: 4px;
+      box-shadow: var(--window-box-shadow);
+
+      svg {
+        color: var(--title-color);
+      }
+    }
+    /* &:nth-child(3) {
+      svg {
+        color: var(--letter-color-1);
+        transition: 0.3s;
+      }
+      &:hover {
+        border: 1px solid var(--letter-color-1);
+        border-radius: 4px;
+        box-shadow: var(--window-box-shadow);
+
+        svg {
+          color: var(--title-color);
+        }
+      }
+    } */
+
+    &:nth-child(4) {
+      svg {
+        color: var(--red-color);
+        transition: 0.3s;
+      }
+
+      &:hover {
+        border: 1px solid var(--red-color);
+        border-radius: 4px;
+        box-shadow: var(--window-box-shadow);
+
+        svg {
+          color: var(--title-color);
+        }
+      }
     }
   }
 `;
