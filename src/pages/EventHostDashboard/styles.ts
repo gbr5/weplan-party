@@ -981,10 +981,10 @@ export const CheckList = styled.section`
   }
 
   > strong {
-    color: var(--letter-color-5);
+    color: var(--primary-color);
     font-size: 20px;
     line-height: 26px;
-    border-bottom: 1px solid var(--letter-color-5);
+    border-bottom: 1px solid var(--primary-color);
     display: block;
     margin-bottom: 16px;
     padding-bottom: 16px;
@@ -1020,21 +1020,43 @@ export const CheckListFunnel = styled.div`
       box-shadow: 1px 1px 5px 4px rgba(90, 90, 90, 0.02);
       width: 100%;
 
+      li + li {
+        margin-top: 16px;
+      }
       li {
         list-style: none;
-        padding: 0 8px 16px;
+        padding: 8px 16px;
         display: flex;
         grid-template-columns: 4fr 16fr 1fr;
         align-items: center;
+        justify-content: center;
         border-bottom: 1px solid var(--letter-color-3);
         color: var(--primary-color);
         width: 100%;
+        border-radius: 8px;
+        background: var(--background-color);
+        box-shadow: var(--box-shadow);
+
+        &:hover {
+          opacity: 0.8;
+          box-shadow: var(--box-shadow-hover);
+        }
+
+        p {
+          margin-right: 8px;
+        }
 
         button {
           background: transparent;
           border: none;
-          color: var(--letter-color-5);
+          color: var(--letter-color-4);
+          width: 100%;
+          display: flex;
+          justify-content: left;
 
+          &:hover {
+            color: var(--primary-color);
+          }
           > span {
             margin-right: auto;
           }
@@ -1050,17 +1072,19 @@ export const CheckListFunnel = styled.div`
           button {
             background: transparent;
             border: none;
-            color: var(--letter-color-5);
+            color: var(--letter-color-4);
+            transition: 0.25s;
 
             > span {
               margin-right: auto;
+              transition: 0.25s;
+            }
+
+            &:hover {
+              color: var(--primary-color);
             }
           }
         }
-      }
-
-      li + li {
-        margin-top: 16px;
       }
     }
   }
@@ -1081,19 +1105,80 @@ export const AddCheckListDrawer = styled.div`
 
   > input {
     height: 40px;
-    width: 90%;
+    width: 100%;
     border-radius: 4px;
     padding: 0 16px;
     border: none;
   }
 
-  button {
-    background: var(--primary-color);
-    border: none;
-    height: 40px;
-    width: 90%;
-    border-radius: 4px;
+  > span {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+
+    > h2 {
+      font-size: 20px;
+      color: var(--title-color);
+    }
+
+    > div {
+      display: flex;
+      gap: 32px;
+    }
   }
+
+  > div {
+    display: flex;
+    gap: 32px;
+    width: 100%;
+
+    > button {
+      background: var(--primary-color);
+      border: none;
+      height: 40px;
+      width: 100%;
+      border-radius: 4px;
+    }
+  }
+`;
+
+export const FlagButton = styled.button<ButtonProps>`
+  font-size: 32px;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.5s;
+  border-radius: 0;
+
+  &:hover {
+    color: var(--text-color);
+    opacity: 1;
+    border-radius: 15px;
+    background: var(--header-background-color-hover);
+  }
+  > svg {
+    color: var(--primary-color);
+  }
+
+  ${props =>
+    props.booleanActiveButton &&
+    css`
+      color: var(--text-color);
+      opacity: 1;
+      transition: 0.25s;
+      box-shadow: var(--window-box-shadow);
+      border: 1px solid var(--primary-color);
+
+      &:hover {
+        opacity: 0.8;
+        background: var(--background-color);
+      }
+    `}
 `;
 
 export const Financial = styled.div`

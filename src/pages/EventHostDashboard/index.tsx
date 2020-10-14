@@ -33,8 +33,7 @@ import {
   MdBuild,
   MdGroupAdd,
   MdFileUpload,
-  MdFlare,
-  MdWbSunny,
+  MdFlag,
 } from 'react-icons/md';
 import { differenceInCalendarDays } from 'date-fns/esm';
 import { useLocation } from 'react-router-dom';
@@ -77,6 +76,7 @@ import {
   AddMultipleGuests,
   ListUploadWindow,
   CheckListFunnel,
+  FlagButton,
 } from './styles';
 import PageHeader from '../../components/PageHeader';
 
@@ -321,6 +321,7 @@ const EventHostDashboard: React.FC = () => {
   const [third_guestList_image, setThird_guestList_image] = useState(false);
   const [fourth_guestList_image, setFourth_guestList_image] = useState(false);
   const [guestListUpload, setGuestListUpload] = useState(false);
+  const [priorityLevel, setPriorityLevel] = useState(0);
 
   const closeAllWindows = useCallback(() => {
     setAddCheckListDrawer(false);
@@ -1517,8 +1518,6 @@ const EventHostDashboard: React.FC = () => {
 
         const schema = Yup.object().shape({
           name: Yup.string().required(),
-          priority_level: Yup.string().required(),
-          status: Yup.string().required(),
           due_date: Yup.date(),
         });
 
@@ -1530,8 +1529,7 @@ const EventHostDashboard: React.FC = () => {
 
         await api.put(`events/check-list/${checkListItem.id}`, {
           name: data.name,
-          priority_level: Number(data.priority_level),
-          status: Number(data.status),
+          priority_level: priorityLevel,
           due_date: date,
         });
 
@@ -1542,6 +1540,7 @@ const EventHostDashboard: React.FC = () => {
         });
 
         setEditCheckListItemWindow(false);
+        setPriorityLevel(0);
         setCheckListItem({} as IEventCheckList);
         handleGetCheckListItems();
       } catch (err) {
@@ -1558,7 +1557,7 @@ const EventHostDashboard: React.FC = () => {
         });
       }
     },
-    [addToast, checkListItem, handleGetCheckListItems],
+    [addToast, checkListItem, handleGetCheckListItems, priorityLevel],
   );
 
   const handleDeleteGuest = useCallback(async () => {
@@ -1847,7 +1846,8 @@ const EventHostDashboard: React.FC = () => {
           onHandleEventSupplierDrawer={() => setHiredSupplierWindow(false)}
           onHandleEventSupplierUpdate={() => setHiredSupplierWindow(true)}
           onHandleDeleteEventSupplierDrawer={() =>
-            setDeleteHiredSupplierDrawer(true)}
+            setDeleteHiredSupplierDrawer(true)
+          }
         />
       )}
       {!!editEventNameDrawer && (
@@ -1903,10 +1903,12 @@ const EventHostDashboard: React.FC = () => {
           isOwner={pageEvent.isOwner}
           selectedSupplier={selectedSupplier}
           onHandleSelectedSupplierDrawer={() =>
-            setSelectedSupplierWindow(false)}
+            setSelectedSupplierWindow(false)
+          }
           onUpdateSelectedSupplierDrawer={() => setSelectedSupplierWindow(true)}
           onDeleteSelectedSupplierDrawer={() =>
-            setDeleteSelectedSupplierDrawer(true)}
+            setDeleteSelectedSupplierDrawer(true)
+          }
         />
       )}
       {!!numberOfGuestDrawer && (
@@ -2093,7 +2095,8 @@ const EventHostDashboard: React.FC = () => {
           friends={friends}
           onHandleFriendsListDrawer={() => setFriendsWindow(false)}
           handleSelectedFriend={(friend: IFriendDTO) =>
-            handleSelectedWeplanUser(friend)}
+            handleSelectedWeplanUser(friend)
+          }
         />
       )}
       {!!eventInfoDrawer && (
@@ -2275,7 +2278,7 @@ const EventHostDashboard: React.FC = () => {
         >
           <Form ref={formRef} onSubmit={handleEditCheckListItem}>
             <AddCheckListDrawer>
-              <h1>Número de convidados</h1>
+              <h1>Editar Item</h1>
 
               <Input
                 name="name"
@@ -2283,14 +2286,42 @@ const EventHostDashboard: React.FC = () => {
                 defaultValue={checkListItem.name}
               />
               <Input
-                name="priority_level"
-                type="number"
-                defaultValue={checkListItem.priority_level}
+                name="due_date"
+                type="date"
+                defaultValue={String(checkListItem.due_date)}
               />
-              <button type="submit">Salvar</button>
-              <button type="button" onClick={handleDeleteCheckListItem}>
-                Deletar
-              </button>
+              <span>
+                <h2>Prioridade</h2>
+                <div>
+                  <FlagButton
+                    booleanActiveButton={priorityLevel === 1}
+                    type="button"
+                    onClick={() => setPriorityLevel(1)}
+                  >
+                    <MdFlag size={40} color="green" />
+                  </FlagButton>
+                  <FlagButton
+                    booleanActiveButton={priorityLevel === 2}
+                    type="button"
+                    onClick={() => setPriorityLevel(2)}
+                  >
+                    <MdFlag size={40} color="yellow" />
+                  </FlagButton>
+                  <FlagButton
+                    booleanActiveButton={priorityLevel === 3}
+                    type="button"
+                    onClick={() => setPriorityLevel(3)}
+                  >
+                    <MdFlag size={40} color="red" />
+                  </FlagButton>
+                </div>
+              </span>
+              <div>
+                <button type="submit">Salvar</button>
+                <button type="button" onClick={handleDeleteCheckListItem}>
+                  Deletar
+                </button>
+              </div>
             </AddCheckListDrawer>
           </Form>
         </WindowContainer>
@@ -2847,7 +2878,8 @@ const EventHostDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={() =>
-                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')}
+                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')
+                }
               >
                 <MdBuild size={50} />
                 <h1>Estruturas, Cênica e Boate</h1>
@@ -2883,7 +2915,8 @@ const EventHostDashboard: React.FC = () => {
                   key={subCategory.id}
                   type="button"
                   onClick={() =>
-                    handleAddSupplierDrawer(subCategory.sub_category)}
+                    handleAddSupplierDrawer(subCategory.sub_category)
+                  }
                 >
                   {/* <MdFolderSpecial size={50} /> */}
                   <h1>{subCategory.sub_category}</h1>
@@ -3177,8 +3210,7 @@ const EventHostDashboard: React.FC = () => {
                           <button
                             type="button"
                             onClick={() =>
-                              handleSelectedSupplierWindow(sSupplier)
-                            }
+                              handleSelectedSupplierWindow(sSupplier)}
                           >
                             <strong>{sSupplier.name}</strong>{' '}
                             <FiEdit3 size={16} />
@@ -3196,8 +3228,7 @@ const EventHostDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() =>
-                                handleCreateTransactionWindow(sSupplier)
-                              }
+                                handleCreateTransactionWindow(sSupplier)}
                             >
                               {sSupplier.isHired ? (
                                 <FiCheckSquare size={24} />
@@ -3222,8 +3253,7 @@ const EventHostDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() =>
-                                handleHiredSupplierWindow(hSupplier)
-                              }
+                                handleHiredSupplierWindow(hSupplier)}
                             >
                               <strong>{hSupplier.name}</strong>{' '}
                               <FiChevronRight size={16} />
@@ -3506,30 +3536,35 @@ const EventHostDashboard: React.FC = () => {
                       <li key={item.id}>
                         {pageEvent.isOwner ? (
                           <>
+                            <p>
+                              {notStartedCheckListItems.findIndex(
+                                itemIndex => itemIndex.id === item.id,
+                              ) + 1}
+                            </p>
                             <button
                               type="button"
                               onClick={() =>
-                                handleEditCheckListItemWindow(item)
-                              }
+                                handleEditCheckListItemWindow(item)}
                             >
                               <span>{item.name}</span>
                             </button>
                             <span>
                               <button type="button">
                                 {Number(item.priority_level) === 3 && (
-                                  <MdWbSunny color="red" size={20} />
+                                  <MdFlag color="red" size={20} />
                                 )}
                                 {Number(item.priority_level) === 2 && (
-                                  <MdWbSunny color="yellow" size={20} />
+                                  <MdFlag color="yellow" size={20} />
                                 )}
                                 {Number(item.priority_level) === 1 && (
-                                  <MdFlare color="green" size={20} />
+                                  <MdFlag color="green" size={20} />
                                 )}
                               </button>
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleEditCheckListItemStatus2(item.id)}
+                                  handleEditCheckListItemStatus2(item.id)
+                                }
                               >
                                 <FiChevronRight size={30} />
                               </button>
@@ -3543,19 +3578,20 @@ const EventHostDashboard: React.FC = () => {
                             <span>
                               <button type="button">
                                 {Number(item.priority_level) === 3 && (
-                                  <MdWbSunny color="red" size={20} />
+                                  <MdFlag color="red" size={20} />
                                 )}
                                 {Number(item.priority_level) === 2 && (
-                                  <MdWbSunny color="yellow" size={20} />
+                                  <MdFlag color="yellow" size={20} />
                                 )}
                                 {Number(item.priority_level) === 1 && (
-                                  <MdFlare color="green" size={20} />
+                                  <MdFlag color="green" size={20} />
                                 )}
                               </button>
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleEditCheckListItemStatus2(item.id)}
+                                  handleEditCheckListItemStatus2(item.id)
+                                }
                               >
                                 <FiChevronRight size={30} />
                               </button>
@@ -3576,8 +3612,7 @@ const EventHostDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() =>
-                                handleEditCheckListItemWindow(item)
-                              }
+                                handleEditCheckListItemWindow(item)}
                             >
                               <span>{item.name}</span>
                             </button>
@@ -3585,25 +3620,27 @@ const EventHostDashboard: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleEditCheckListItemStatus1(item.id)}
+                                  handleEditCheckListItemStatus1(item.id)
+                                }
                               >
                                 <FiChevronLeft size={30} />
                               </button>
                               <button type="button">
                                 {Number(item.priority_level) === 3 && (
-                                  <MdWbSunny color="red" size={20} />
+                                  <MdFlag color="red" size={20} />
                                 )}
                                 {Number(item.priority_level) === 2 && (
-                                  <MdWbSunny color="yellow" size={20} />
+                                  <MdFlag color="yellow" size={20} />
                                 )}
                                 {Number(item.priority_level) === 1 && (
-                                  <MdFlare color="green" size={20} />
+                                  <MdFlag color="green" size={20} />
                                 )}
                               </button>
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleEditCheckListItemStatus3(item.id)}
+                                  handleEditCheckListItemStatus3(item.id)
+                                }
                               >
                                 <FiChevronRight size={30} />
                               </button>
@@ -3618,25 +3655,27 @@ const EventHostDashboard: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleEditCheckListItemStatus1(item.id)}
+                                  handleEditCheckListItemStatus1(item.id)
+                                }
                               >
                                 <FiChevronLeft size={30} />
                               </button>
                               <button type="button">
                                 {Number(item.priority_level) === 3 && (
-                                  <MdWbSunny color="red" size={20} />
+                                  <MdFlag color="red" size={20} />
                                 )}
                                 {Number(item.priority_level) === 2 && (
-                                  <MdWbSunny color="yellow" size={20} />
+                                  <MdFlag color="yellow" size={20} />
                                 )}
                                 {Number(item.priority_level) === 1 && (
-                                  <MdFlare color="green" size={20} />
+                                  <MdFlag color="green" size={20} />
                                 )}
                               </button>
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleEditCheckListItemStatus3(item.id)}
+                                  handleEditCheckListItemStatus3(item.id)
+                                }
                               >
                                 <FiChevronRight size={30} />
                               </button>
@@ -3657,8 +3696,7 @@ const EventHostDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() =>
-                                handleEditCheckListItemWindow(item)
-                              }
+                                handleEditCheckListItemWindow(item)}
                             >
                               <span>{item.name}</span>
                             </button>
@@ -3666,19 +3704,20 @@ const EventHostDashboard: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleEditCheckListItemStatus2(item.id)}
+                                  handleEditCheckListItemStatus2(item.id)
+                                }
                               >
                                 <FiChevronLeft size={30} />
                               </button>
                               <button type="button">
                                 {Number(item.priority_level) === 3 && (
-                                  <MdWbSunny color="red" size={20} />
+                                  <MdFlag color="red" size={20} />
                                 )}
                                 {Number(item.priority_level) === 2 && (
-                                  <MdWbSunny color="yellow" size={20} />
+                                  <MdFlag color="yellow" size={20} />
                                 )}
                                 {Number(item.priority_level) === 1 && (
-                                  <MdFlare color="green" size={20} />
+                                  <MdFlag color="green" size={20} />
                                 )}
                               </button>
                             </span>
@@ -3692,19 +3731,20 @@ const EventHostDashboard: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleEditCheckListItemStatus2(item.id)}
+                                  handleEditCheckListItemStatus2(item.id)
+                                }
                               >
                                 <FiChevronLeft size={30} />
                               </button>
                               <button type="button">
                                 {Number(item.priority_level) === 3 && (
-                                  <MdWbSunny color="red" size={20} />
+                                  <MdFlag color="red" size={20} />
                                 )}
                                 {Number(item.priority_level) === 2 && (
-                                  <MdWbSunny color="yellow" size={20} />
+                                  <MdFlag color="yellow" size={20} />
                                 )}
                                 {Number(item.priority_level) === 1 && (
-                                  <MdFlare color="green" size={20} />
+                                  <MdFlag color="green" size={20} />
                                 )}
                               </button>
                             </span>
