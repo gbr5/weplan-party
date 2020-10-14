@@ -98,7 +98,7 @@ export const Profile = styled.div`
       width: 48px;
       height: 48px;
       border-radius: 50%;
-      box-shadow: 5px 5px 5px 5px rgba(0, 0, 0, 0.1);
+      box-shadow: var(--window-box-shadow);
     }
   }
 

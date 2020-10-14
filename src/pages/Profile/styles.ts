@@ -8,39 +8,34 @@ export const Container = styled.div`
   display: flex;
 `;
 
-export const Header = styled.header`
+export const UserInfoButton = styled.button`
   position: fixed;
-  top: 0;
-
-  width: 100%;
-  padding: 32px 0;
-
-  background: var(--header-background-color);
+  top: 230px;
+  height: 40px;
+  left: 30%;
+  width: 40%;
+  background: transparent;
+  color: var(--title-color);
+  border: none;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
   box-shadow: var(--box-shadow);
-`;
+  transition: 0.3s;
 
-export const HeaderContent = styled.div`
-  max-width: 1120px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-
-  svg {
-    color: var(--letter-color-2);
-    width: 30px;
-    height: 30px;
+  > h3 {
+    font-size: 24px;
+    font-weight: 500;
   }
 
-  button {
-    margin-left: auto;
-    background: transparent;
-    border: 0;
+  &:hover {
+    background: var(--primary-color);
+    color: var(--letter-color-5);
+    border-radius: 8px;
+    box-shadow: var(--window-box-shadow);
   }
-`;
-
-export const ProfileContent = styled.div`
-  display: flex;
-  align-items: center;
 `;
 
 export const Content = styled.div`
@@ -48,10 +43,9 @@ export const Content = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-
+  width: 100%;
+  padding: 40px;
   place-content: center;
-
-  margin: 0 auto 32px;
 
   form {
     top: 120px;
