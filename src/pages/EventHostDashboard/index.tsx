@@ -153,6 +153,7 @@ interface IEventParams {
     id: string;
     name: string;
     trimmed_name: string;
+    number_of_guests: number;
     isOwner: boolean;
     owner_master: string;
     isGuest: boolean;
@@ -727,6 +728,8 @@ const EventHostDashboard: React.FC = () => {
           name: response.data.name,
           trimmed_name: response.data.trimmed_name,
           date: `${hour}:${minute} - ${day}/${month}/${year}`,
+          userEvent_id: response.data.userEvent_id,
+          number_of_guests: response.data.number_of_guests,
           event_type: response.data.event_type,
           daysTillDate: differenceInCalendarDays(date, new Date()),
           isGuest: false,
@@ -771,6 +774,11 @@ const EventHostDashboard: React.FC = () => {
     const availableGuestNumber = totalGuestNumber - currentNumberOfGuests;
     return availableGuestNumber;
   }, [totalGuestNumber, currentNumberOfGuests]);
+  const myAvailableNumberOfGuests = useMemo(() => {
+    const availableGuestNumber =
+      Number(pageEvent.number_of_guests) - myGuests.length;
+    return availableGuestNumber;
+  }, [pageEvent, myGuests]);
 
   const handleCreateTransactionWindow = useCallback(props => {
     setSupplierInfo(props);
@@ -1041,7 +1049,7 @@ const EventHostDashboard: React.FC = () => {
       try {
         formRef.current?.setErrors([]);
 
-        if (availableNumberOfGuests <= 0) {
+        if (myAvailableNumberOfGuests <= 0) {
           addToast({
             type: 'error',
             title: 'Erro ao adicionar anfitrião',
@@ -1139,7 +1147,10 @@ const EventHostDashboard: React.FC = () => {
           const data = new FormData();
 
           data.append('file', e.target.files[0]);
-          await api.post(`events/${eventId}/guests/import`, data);
+          await api.post(
+            `events/${eventId}/guests/import/${myAvailableNumberOfGuests}`,
+            data,
+          );
         }
 
         setAddGuestListWindow(false);
@@ -1160,7 +1171,7 @@ const EventHostDashboard: React.FC = () => {
         throw new Error(err);
       }
     },
-    [handleGetGuests, addToast, eventId],
+    [handleGetGuests, addToast, eventId, myAvailableNumberOfGuests],
   );
 
   const handleEditEventInfo = useCallback(
@@ -2579,7 +2590,9 @@ const EventHostDashboard: React.FC = () => {
           <Form ref={formRef} onSubmit={handleAddGuest}>
             <AddGuestDrawer>
               <h1>Adicionar Convidado</h1>
-
+              <p>
+                Você pode adicionar até {myAvailableNumberOfGuests} convidados
+              </p>
               <AddMultipleGuests>
                 <button type="button" onClick={handleAddGuestListWindow}>
                   Adicionar lista de convidados
@@ -2726,7 +2739,7 @@ const EventHostDashboard: React.FC = () => {
               <img src={logo} alt="WePlan" />
               <h1>Escolha o arquivo</h1>
               <p>
-                Você pode adicionar até {availableNumberOfGuests} convidados
+                Você pode adicionar até {myAvailableNumberOfGuests} convidados
               </p>
               <label htmlFor="file">
                 <MdFileUpload size={30} />

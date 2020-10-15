@@ -3,6 +3,7 @@ export default interface IListEventDTO {
   userEvent_id?: string;
   name: string;
   trimmed_name: string;
+  number_of_guests: number;
   isOwner: boolean;
   owner_master: string;
   isGuest: boolean;
