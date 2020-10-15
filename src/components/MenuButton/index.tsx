@@ -234,14 +234,14 @@ const MenuButton: React.FC = () => {
               <button type="button" onClick={handleNavigateToFriends}>
                 Contatos
               </button>
-              {user.isSupplier && (
+              {/* {user.isSupplier && (
                 <button
                   type="button"
                   onClick={handleNavigateToSupplierDashboard}
                 >
                   Página de fornecedor
                 </button>
-              )}
+              )} */}
             </Menu>
           </ButtonContent>
         </WindowContainer>

@@ -14,12 +14,12 @@ import Profile from '../pages/Profile';
 import HostDashboard from '../pages/HostDashboard';
 import EventHostDashboard from '../pages/EventHostDashboard';
 import FriendsDashboard from '../pages/FriendsDashboard';
-import SupplierDashboard from '../pages/SupplierDashboard';
+// import SupplierDashboard from '../pages/SupplierDashboard';
 
-import { useAuth } from '../hooks/auth';
+// import { useAuth } from '../hooks/auth';
 
 const Routes: React.FC = () => {
-  const { user } = useAuth();
+  // const { user } = useAuth();
 
   return (
     <Switch>
@@ -38,14 +38,14 @@ const Routes: React.FC = () => {
       />
       <Route path="/dashboard" exact component={HostDashboard} isPrivate />
       <Route path="/friends" exact component={FriendsDashboard} isPrivate />
-      {user && user.isSupplier && (
+      {/* {user && user.isSupplier && (
         <Route
           path="/supplier-dashboard"
           exact
           component={SupplierDashboard}
           isPrivate
         />
-      )}
+      )} */}
     </Switch>
   );
 };
