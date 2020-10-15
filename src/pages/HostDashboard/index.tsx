@@ -154,7 +154,7 @@ const Dashboard: React.FC = () => {
   const getMyEvents = useCallback(() => {
     try {
       api.get<IListEventDTO[]>('/events').then(response => {
-        setEventsAsOwner(response.data.filter(event => event.isGuest === true));
+        setEventsAsOwner(response.data.filter(event => event.isOwner === true));
         setEventsAsMember(
           response.data.filter(
             event => event.isOwner === false && event.isGuest === false,
@@ -433,7 +433,8 @@ const Dashboard: React.FC = () => {
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    handleDeleteMasterEventWindow(event.id)}
+                                    handleDeleteMasterEventWindow(event.id)
+                                  }
                                 >
                                   <FiSettings size={20} />
                                 </button>
@@ -441,7 +442,8 @@ const Dashboard: React.FC = () => {
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    handleDeleteOwnerEventWindow(event)}
+                                    handleDeleteOwnerEventWindow(event)
+                                  }
                                 >
                                   <FiSettings size={20} />
                                 </button>
@@ -474,8 +476,7 @@ const Dashboard: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleDeleteMemberEventWindow(event)
-                                }
+                                  handleDeleteMemberEventWindow(event)}
                               >
                                 <FiSettings size={20} />
                               </button>
@@ -509,7 +510,8 @@ const Dashboard: React.FC = () => {
                         <button
                           type="button"
                           onClick={() =>
-                            handleDeleteGuestEventWindow(event.guest_id)}
+                            handleDeleteGuestEventWindow(event.guest_id)
+                          }
                         >
                           <FiSettings size={20} />
                         </button>
@@ -521,7 +523,8 @@ const Dashboard: React.FC = () => {
                           handleEditConfirmedGuest({
                             id: event.guest_id,
                             confirmed: event.confirmed,
-                          })}
+                          })
+                        }
                       >
                         {event.confirmed ? (
                           <FiCheckSquare size={24} />
