@@ -145,14 +145,14 @@ const AuthProvider: React.FC = ({ children }) => {
         });
       }
 
-      localStorage.setItem('@GoBarber:user', JSON.stringify(updatedUser));
+      localStorage.setItem('@GoBarber:user', JSON.stringify(newUser));
 
       setData({
         token: data.token,
-        user: updatedUser,
+        user: newUser,
       });
     },
-    [data.token],
+    [data.token, newUser],
   );
 
   return (

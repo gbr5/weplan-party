@@ -327,6 +327,7 @@ const EventHostDashboard: React.FC = () => {
     editCheckListItemPriorityLevelWindow,
     setEditCheckListItemPriorityLevelWindow,
   ] = useState(false);
+  const [totalGuestNumber, setTotalGuestNumber] = useState(0);
 
   const closeAllWindows = useCallback(() => {
     setAddCheckListDrawer(false);
@@ -673,6 +674,7 @@ const EventHostDashboard: React.FC = () => {
     try {
       api.get<IEventInfo>(`/events/${eventId}/event-info`).then(response => {
         setEventInfo(response.data);
+        setTotalGuestNumber(response.data.number_of_guests);
       });
     } catch (err) {
       throw new Error(err);
@@ -750,6 +752,25 @@ const EventHostDashboard: React.FC = () => {
       throw new Error(err);
     }
   }, [eventId]);
+
+  const currentNumberOfGuests = useMemo(() => {
+    const currentMembersGuestNumber: number = members
+      .map(tmember => tmember.number_of_guests)
+      .reduce((a, b) => Number(a) + Number(b), 0);
+    console.log(currentMembersGuestNumber, typeof currentMembersGuestNumber);
+    const currentOwnersGuestNumber: number = owners
+      .map(towner => towner.number_of_guests)
+      .reduce((a, b) => Number(a) + Number(b), 0);
+
+    const currentGuestNumber =
+      currentMembersGuestNumber + currentOwnersGuestNumber;
+    return currentGuestNumber;
+  }, [members, owners]);
+
+  const availableNumberOfGuests = useMemo(() => {
+    const availableGuestNumber = totalGuestNumber - currentNumberOfGuests;
+    return availableGuestNumber;
+  }, [totalGuestNumber, currentNumberOfGuests]);
 
   const handleCreateTransactionWindow = useCallback(props => {
     setSupplierInfo(props);
@@ -911,6 +932,16 @@ const EventHostDashboard: React.FC = () => {
           abortEarly: false,
         });
 
+        if (data.number_of_guests > availableNumberOfGuests) {
+          addToast({
+            type: 'error',
+            title: 'Erro ao adicionar anfitrião',
+            description:
+              'Número de convidados excede o limite, tente novamente.',
+          });
+          throw new Error('Number of guests is higher than allowed!');
+        }
+
         await api.post(`events/${eventId}/event-owners`, {
           owner_id: wpUserId,
           description: data.description,
@@ -945,7 +976,7 @@ const EventHostDashboard: React.FC = () => {
         });
       }
     },
-    [addToast, eventId, handleGetOwners, wpUserId],
+    [addToast, eventId, handleGetOwners, wpUserId, availableNumberOfGuests],
   );
   const handleAddMember = useCallback(
     async (data: IEventMemberDTO) => {
@@ -959,6 +990,16 @@ const EventHostDashboard: React.FC = () => {
         await schema.validate(data, {
           abortEarly: false,
         });
+
+        if (data.number_of_guests > availableNumberOfGuests) {
+          addToast({
+            type: 'error',
+            title: 'Erro ao adicionar anfitrião',
+            description:
+              'Número de convidados excede o limite, tente novamente.',
+          });
+          throw new Error('Number of guests is higher than allowed!');
+        }
 
         await api.post(`events/${eventId}/event-members`, {
           number_of_guests: Number(data.number_of_guests),
@@ -993,12 +1034,22 @@ const EventHostDashboard: React.FC = () => {
         });
       }
     },
-    [addToast, eventId, wpUserId, handleGetMembers],
+    [addToast, eventId, wpUserId, handleGetMembers, availableNumberOfGuests],
   );
   const handleAddGuest = useCallback(
     async (data: ICreateGuest) => {
       try {
         formRef.current?.setErrors([]);
+
+        if (availableNumberOfGuests <= 0) {
+          addToast({
+            type: 'error',
+            title: 'Erro ao adicionar anfitrião',
+            description:
+              'Número de convidados excede o limite, tente novamente.',
+          });
+          throw new Error('Number of guests is higher than allowed!');
+        }
 
         if (weplanUser) {
           const schema = Yup.object().shape({
@@ -1070,6 +1121,7 @@ const EventHostDashboard: React.FC = () => {
       }
     },
     [
+      availableNumberOfGuests,
       addToast,
       eventId,
       handleAddGuestDrawer,
@@ -1131,6 +1183,16 @@ const EventHostDashboard: React.FC = () => {
           abortEarly: false,
         });
 
+        if (data.number_of_guests < currentNumberOfGuests) {
+          addToast({
+            type: 'error',
+            title: 'Erro ao adicionar anfitrião',
+            description:
+              'Número de convidados excede o limite, tente novamente.',
+          });
+          throw new Error('Number of guests is higher than allowed!');
+        }
+
         await api.put(`events/${eventId}/event-info`, data);
         setEventInfo(data);
         setEditEventInfoDrawer(false);
@@ -1154,7 +1216,7 @@ const EventHostDashboard: React.FC = () => {
         });
       }
     },
-    [addToast, eventId],
+    [addToast, eventId, currentNumberOfGuests],
   );
   const handleEditBudget = useCallback(
     async (data: IEventInfo) => {
@@ -1352,6 +1414,16 @@ const EventHostDashboard: React.FC = () => {
           abortEarly: false,
         });
 
+        if (data.number_of_guests > availableNumberOfGuests) {
+          addToast({
+            type: 'error',
+            title: 'Erro ao adicionar anfitrião',
+            description:
+              'Número de convidados excede o limite, tente novamente.',
+          });
+          throw new Error('Number of guests is higher than allowed!');
+        }
+
         await api.put(`events/${eventId}/event-members/${member.id}`, {
           number_of_guests: Number(data.number_of_guests),
         });
@@ -1380,7 +1452,7 @@ const EventHostDashboard: React.FC = () => {
         });
       }
     },
-    [addToast, eventId, member, handleGetMembers],
+    [addToast, eventId, member, handleGetMembers, availableNumberOfGuests],
   );
   const handleEditOwner = useCallback(
     async (data: IEventOwnerDTO) => {
@@ -1395,6 +1467,16 @@ const EventHostDashboard: React.FC = () => {
         await schema.validate(data, {
           abortEarly: false,
         });
+
+        if (data.number_of_guests > availableNumberOfGuests) {
+          addToast({
+            type: 'error',
+            title: 'Erro ao adicionar anfitrião',
+            description:
+              'Número de convidados excede o limite, tente novamente.',
+          });
+          throw new Error('Number of guests is higher than allowed!');
+        }
 
         await api.put(`events/${eventId}/event-owners/${owner.id}`, {
           description: data.description,
@@ -1425,7 +1507,7 @@ const EventHostDashboard: React.FC = () => {
         });
       }
     },
-    [addToast, eventId, owner, handleGetOwners],
+    [addToast, eventId, owner, handleGetOwners, availableNumberOfGuests],
   );
   const handleEditCheckListItemStatus1 = useCallback(
     async (props: string) => {
@@ -1891,8 +1973,7 @@ const EventHostDashboard: React.FC = () => {
           onHandleEventSupplierDrawer={() => setHiredSupplierWindow(false)}
           onHandleEventSupplierUpdate={() => setHiredSupplierWindow(true)}
           onHandleDeleteEventSupplierDrawer={() =>
-            setDeleteHiredSupplierDrawer(true)
-          }
+            setDeleteHiredSupplierDrawer(true)}
         />
       )}
       {!!editEventNameDrawer && (
@@ -1948,12 +2029,10 @@ const EventHostDashboard: React.FC = () => {
           isOwner={pageEvent.isOwner}
           selectedSupplier={selectedSupplier}
           onHandleSelectedSupplierDrawer={() =>
-            setSelectedSupplierWindow(false)
-          }
+            setSelectedSupplierWindow(false)}
           onUpdateSelectedSupplierDrawer={() => setSelectedSupplierWindow(true)}
           onDeleteSelectedSupplierDrawer={() =>
-            setDeleteSelectedSupplierDrawer(true)
-          }
+            setDeleteSelectedSupplierDrawer(true)}
         />
       )}
       {!!numberOfGuestDrawer && (
@@ -1970,6 +2049,9 @@ const EventHostDashboard: React.FC = () => {
           <Form ref={formRef} onSubmit={handleEditMember}>
             <NumberOfGuestWindow>
               <h1>Número de convidados</h1>
+              <p>
+                Você pode adicionar até {availableNumberOfGuests} convidados
+              </p>
 
               <Input
                 name="number_of_guests"
@@ -1995,13 +2077,16 @@ const EventHostDashboard: React.FC = () => {
         >
           <Form ref={formRef} onSubmit={handleEditOwner}>
             <NumberOfGuestWindow>
-              <h1>Número de convidados</h1>
+              <h1>Editar anfitrião</h1>
 
               <Input
                 name="description"
                 type="text"
                 defaultValue={owner.description}
               />
+              <p>
+                Você pode adicionar até {availableNumberOfGuests} convidados
+              </p>
               <Input
                 name="number_of_guests"
                 type="number"
@@ -2140,8 +2225,7 @@ const EventHostDashboard: React.FC = () => {
           friends={friends}
           onHandleFriendsListDrawer={() => setFriendsWindow(false)}
           handleSelectedFriend={(friend: IFriendDTO) =>
-            handleSelectedWeplanUser(friend)
-          }
+            handleSelectedWeplanUser(friend)}
         />
       )}
       {!!eventInfoDrawer && (
@@ -2397,8 +2481,7 @@ const EventHostDashboard: React.FC = () => {
       {!!editCheckListItemPriorityLevelWindow && (
         <WindowContainer
           onHandleCloseWindow={() =>
-            setEditCheckListItemPriorityLevelWindow(false)
-          }
+            setEditCheckListItemPriorityLevelWindow(false)}
           containerStyle={{
             zIndex: 1000,
             top: '35%',
@@ -2553,7 +2636,7 @@ const EventHostDashboard: React.FC = () => {
       )}
       {!!addGuestListWindow && (
         <WindowContainer
-          onHandleCloseWindow={() => setAddGuestDrawer(false)}
+          onHandleCloseWindow={() => setAddGuestListWindow(false)}
           containerStyle={{
             zIndex: 1000,
             top: '5%',
@@ -2565,7 +2648,6 @@ const EventHostDashboard: React.FC = () => {
           {!!guestList_image && (
             <div>
               <img src={guestListImage} alt="GuestList" />
-
               <button
                 style={{ background: 'green' }}
                 type="button"
@@ -2643,6 +2725,9 @@ const EventHostDashboard: React.FC = () => {
             <ListUploadWindow>
               <img src={logo} alt="WePlan" />
               <h1>Escolha o arquivo</h1>
+              <p>
+                Você pode adicionar até {availableNumberOfGuests} convidados
+              </p>
               <label htmlFor="file">
                 <MdFileUpload size={30} />
                 <input type="file" id="file" onChange={handleGuestListUpload} />
@@ -2841,6 +2926,10 @@ const EventHostDashboard: React.FC = () => {
                 placeholder="Título do Anfitrião (Noiva, Mãe da noiva, ...)"
               />
               <p>Número de convidados é opcional</p>
+              <p>
+                Você pode adicionar até {availableNumberOfGuests} convidados
+              </p>
+
               <Input name="number_of_guests" type="number" defaultValue={0} />
               <button type="submit">
                 <h3>Salvar</h3>
@@ -2871,6 +2960,10 @@ const EventHostDashboard: React.FC = () => {
               )}
 
               <p>Número de convidados é opcional</p>
+              <p>
+                Você pode adicionar até {availableNumberOfGuests} convidados
+              </p>
+
               <Input name="number_of_guests" type="number" defaultValue={0} />
 
               <button type="submit">
@@ -2994,8 +3087,7 @@ const EventHostDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={() =>
-                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')
-                }
+                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')}
               >
                 <MdBuild size={50} />
                 <h1>Estruturas, Cênica e Boate</h1>
@@ -3031,8 +3123,7 @@ const EventHostDashboard: React.FC = () => {
                   key={subCategory.id}
                   type="button"
                   onClick={() =>
-                    handleAddSupplierDrawer(subCategory.sub_category)
-                  }
+                    handleAddSupplierDrawer(subCategory.sub_category)}
                 >
                   {/* <MdFolderSpecial size={50} /> */}
                   <h1>{subCategory.sub_category}</h1>
@@ -3326,7 +3417,8 @@ const EventHostDashboard: React.FC = () => {
                           <button
                             type="button"
                             onClick={() =>
-                              handleSelectedSupplierWindow(sSupplier)}
+                              handleSelectedSupplierWindow(sSupplier)
+                            }
                           >
                             <strong>{sSupplier.name}</strong>{' '}
                             <FiEdit3 size={16} />
@@ -3344,7 +3436,8 @@ const EventHostDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() =>
-                                handleCreateTransactionWindow(sSupplier)}
+                                handleCreateTransactionWindow(sSupplier)
+                              }
                             >
                               {sSupplier.isHired ? (
                                 <FiCheckSquare size={24} />
@@ -3369,7 +3462,8 @@ const EventHostDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() =>
-                                handleHiredSupplierWindow(hSupplier)}
+                                handleHiredSupplierWindow(hSupplier)
+                              }
                             >
                               <strong>{hSupplier.name}</strong>{' '}
                               <FiChevronRight size={16} />
@@ -3660,7 +3754,8 @@ const EventHostDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() =>
-                                handleEditCheckListItemWindow(item)}
+                                handleEditCheckListItemWindow(item)
+                              }
                             >
                               <span>{item.name}</span>
                             </button>
@@ -3670,8 +3765,7 @@ const EventHostDashboard: React.FC = () => {
                                 onClick={() =>
                                   handleEditCheckListItemPriorityLevelWindow(
                                     item,
-                                  )
-                                }
+                                  )}
                               >
                                 {Number(item.priority_level) === 3 && (
                                   <MdFlag color="red" size={20} />
@@ -3686,8 +3780,7 @@ const EventHostDashboard: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleEditCheckListItemStatus2(item.id)
-                                }
+                                  handleEditCheckListItemStatus2(item.id)}
                               >
                                 <FiChevronRight size={30} />
                               </button>
@@ -3718,8 +3811,7 @@ const EventHostDashboard: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleEditCheckListItemStatus2(item.id)
-                                }
+                                  handleEditCheckListItemStatus2(item.id)}
                               >
                                 <FiChevronRight size={30} />
                               </button>
@@ -3745,7 +3837,8 @@ const EventHostDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() =>
-                                handleEditCheckListItemWindow(item)}
+                                handleEditCheckListItemWindow(item)
+                              }
                             >
                               <span>{item.name}</span>
                             </button>
@@ -3753,8 +3846,7 @@ const EventHostDashboard: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleEditCheckListItemStatus1(item.id)
-                                }
+                                  handleEditCheckListItemStatus1(item.id)}
                               >
                                 <FiChevronLeft size={30} />
                               </button>
@@ -3763,8 +3855,7 @@ const EventHostDashboard: React.FC = () => {
                                 onClick={() =>
                                   handleEditCheckListItemPriorityLevelWindow(
                                     item,
-                                  )
-                                }
+                                  )}
                               >
                                 {Number(item.priority_level) === 3 && (
                                   <MdFlag color="red" size={20} />
@@ -3779,8 +3870,7 @@ const EventHostDashboard: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleEditCheckListItemStatus3(item.id)
-                                }
+                                  handleEditCheckListItemStatus3(item.id)}
                               >
                                 <FiChevronRight size={30} />
                               </button>
@@ -3800,8 +3890,7 @@ const EventHostDashboard: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleEditCheckListItemStatus1(item.id)
-                                }
+                                  handleEditCheckListItemStatus1(item.id)}
                               >
                                 <FiChevronLeft size={30} />
                               </button>
@@ -3819,8 +3908,7 @@ const EventHostDashboard: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleEditCheckListItemStatus3(item.id)
-                                }
+                                  handleEditCheckListItemStatus3(item.id)}
                               >
                                 <FiChevronRight size={30} />
                               </button>
@@ -3846,7 +3934,8 @@ const EventHostDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() =>
-                                handleEditCheckListItemWindow(item)}
+                                handleEditCheckListItemWindow(item)
+                              }
                             >
                               <span>{item.name}</span>
                             </button>
@@ -3854,8 +3943,7 @@ const EventHostDashboard: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleEditCheckListItemStatus2(item.id)
-                                }
+                                  handleEditCheckListItemStatus2(item.id)}
                               >
                                 <FiChevronLeft size={30} />
                               </button>
@@ -3864,8 +3952,7 @@ const EventHostDashboard: React.FC = () => {
                                 onClick={() =>
                                   handleEditCheckListItemPriorityLevelWindow(
                                     item,
-                                  )
-                                }
+                                  )}
                               >
                                 {Number(item.priority_level) === 3 && (
                                   <MdFlag color="red" size={20} />
@@ -3893,8 +3980,7 @@ const EventHostDashboard: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleEditCheckListItemStatus2(item.id)
-                                }
+                                  handleEditCheckListItemStatus2(item.id)}
                               >
                                 <FiChevronLeft size={30} />
                               </button>
