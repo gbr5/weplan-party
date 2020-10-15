@@ -6,6 +6,7 @@ interface IUser {
   id: string;
   name: string;
   email: string;
+  avatar?: string;
   avatar_url?: string;
   isSupplier: boolean;
   isCompany: boolean;
@@ -45,6 +46,7 @@ const AuthProvider: React.FC = ({ children }) => {
 
     return {} as IAuthState;
   });
+  const [newUser, setNewUser] = useState<IUser>({} as IUser);
 
   const signOut = useCallback(() => {
     localStorage.removeItem('@GoBarber:token');
@@ -53,41 +55,96 @@ const AuthProvider: React.FC = ({ children }) => {
     setData({} as IAuthState);
   }, []);
 
-  const signIn = useCallback(async ({ email, password }) => {
-    const response = await api.post('sessions', {
-      email,
-      password,
-    });
+  const signIn = useCallback(
+    async ({ email, password }) => {
+      const response = await api.post('sessions', {
+        email,
+        password,
+      });
 
-    const { token, user } = response.data;
+      const { token, user } = response.data;
 
-    const getSupplier = await api.get(`supplier-employees/employee/${user.id}`);
-    const isSupplier = getSupplier.data;
-    console.log('auth.tsx => line 64', isSupplier);
-    console.log('auth.tsx => line 67: USER', user);
+      const getSupplier = await api.get(
+        `supplier-employees/employee/${user.id}`,
+      );
 
-    const newUser = {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      avatar: user.avatar ? user.avatar : '',
-      avatar_url: user.avatar_url ? user.avatar_url : '',
-      isSupplier: !!isSupplier,
-      isCompany: user.isCompany,
-      company_id: isSupplier ? isSupplier.company_id : '',
-      employeeId: isSupplier ? isSupplier.id : '',
-    };
+      setNewUser({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar ? user.avatar : '',
+        avatar_url: user.avatar_url ? user.avatar_url : '',
+        isSupplier: user.isCompany,
+        isCompany: user.isCompany,
+        company_id: '',
+        employeeId: '',
+      });
 
-    localStorage.setItem('@GoBarber:token', token);
-    localStorage.setItem('@GoBarber:user', JSON.stringify(newUser));
+      if (getSupplier.data) {
+        const isSupplier = getSupplier.data;
+        console.log('auth.tsx => line 64', isSupplier);
+        console.log('auth.tsx => line 67: USER', user);
 
-    api.defaults.headers.authorization = `Bearer ${token}`;
+        setNewUser({
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          avatar: user.avatar ? user.avatar : '',
+          avatar_url: user.avatar_url ? user.avatar_url : '',
+          isSupplier: !!isSupplier,
+          isCompany: user.isCompany,
+          company_id: isSupplier ? isSupplier.company_id : '',
+          employeeId: isSupplier ? isSupplier.id : '',
+        });
+      }
 
-    setData({ token, user: newUser });
-  }, []);
+      localStorage.setItem('@GoBarber:token', token);
+      localStorage.setItem('@GoBarber:user', JSON.stringify(newUser));
+
+      api.defaults.headers.authorization = `Bearer ${token}`;
+
+      setData({ token, user: newUser });
+    },
+    [newUser],
+  );
 
   const updateUser = useCallback(
-    (updatedUser: IUser) => {
+    async (updatedUser: IUser) => {
+      const getSupplier = await api.get(
+        `supplier-employees/employee/${updatedUser.id}`,
+      );
+      console.log(getSupplier);
+
+      setNewUser({
+        id: updatedUser.id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        avatar: updatedUser.avatar ? updatedUser.avatar : '',
+        avatar_url: updatedUser.avatar_url ? updatedUser.avatar_url : '',
+        isSupplier: updatedUser.isCompany,
+        isCompany: updatedUser.isCompany,
+        company_id: '',
+        employeeId: '',
+      });
+
+      if (getSupplier.data) {
+        const isSupplier = getSupplier.data;
+        console.log('auth.tsx => line 64', isSupplier);
+        console.log('auth.tsx => line 67: USER', updatedUser);
+
+        setNewUser({
+          id: updatedUser.id,
+          name: updatedUser.name,
+          email: updatedUser.email,
+          avatar: updatedUser.avatar ? updatedUser.avatar : '',
+          avatar_url: updatedUser.avatar_url ? updatedUser.avatar_url : '',
+          isSupplier: !!isSupplier,
+          isCompany: updatedUser.isCompany,
+          company_id: isSupplier ? isSupplier.company_id : '',
+          employeeId: isSupplier ? isSupplier.id : '',
+        });
+      }
+
       localStorage.setItem('@GoBarber:user', JSON.stringify(updatedUser));
 
       setData({
