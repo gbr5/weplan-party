@@ -627,7 +627,7 @@ const PageHeader: React.FC = ({ children }) => {
         <WindowContainer
           onHandleCloseWindow={() => setAppointmentsWindow(false)}
           containerStyle={{
-            zIndex: 10,
+            zIndex: 15,
             top: '2%',
             left: '5%',
             height: '96%',
@@ -670,6 +670,7 @@ const PageHeader: React.FC = ({ children }) => {
             left: '5%',
             height: '96%',
             width: '90%',
+            zIndex: 15,
           }}
         >
           <h1>Opções de ajuda</h1>
@@ -683,6 +684,7 @@ const PageHeader: React.FC = ({ children }) => {
             right: '8px',
             height: '200px',
             width: '250px',
+            zIndex: 15,
           }}
         >
           <ToggleButton>

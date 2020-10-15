@@ -123,7 +123,7 @@ const TransactionAgreementForm: React.FC<IPropsDTO> = ({
     <WindowContainer
       onHandleCloseWindow={onHandleCloseWindow}
       containerStyle={{
-        zIndex: 100,
+        zIndex: 10,
         top: '5%',
         left: '5%',
         height: '90%',
@@ -167,7 +167,7 @@ const TransactionAgreementForm: React.FC<IPropsDTO> = ({
           <WindowContainer
             onHandleCloseWindow={onHandleCloseWindow}
             containerStyle={{
-              zIndex: 100,
+              zIndex: 10,
               top: '5%',
               left: '5%',
               height: '90%',

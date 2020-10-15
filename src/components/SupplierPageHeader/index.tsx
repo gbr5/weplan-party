@@ -410,7 +410,7 @@ const SupplierPageHeader: React.FC<IPropsDTO> = ({
         <WindowContainer
           onHandleCloseWindow={() => setAppointmentTypeDrawer(false)}
           containerStyle={{
-            zIndex: 1000,
+            zIndex: 10000,
             top: '35%',
             left: '40%',
             height: '30%',
@@ -440,7 +440,7 @@ const SupplierPageHeader: React.FC<IPropsDTO> = ({
         <WindowContainer
           onHandleCloseWindow={() => setAddAppointmentDrawer(false)}
           containerStyle={{
-            zIndex: 100,
+            zIndex: 1000,
             top: '2%',
             left: '5%',
             height: '96%',
@@ -540,7 +540,7 @@ const SupplierPageHeader: React.FC<IPropsDTO> = ({
         <WindowContainer
           onHandleCloseWindow={() => setEditAppointmentDrawer(false)}
           containerStyle={{
-            zIndex: 100,
+            zIndex: 10000,
             top: '2%',
             left: '5%',
             height: '96%',
@@ -644,7 +644,7 @@ const SupplierPageHeader: React.FC<IPropsDTO> = ({
         <WindowContainer
           onHandleCloseWindow={() => setAppointmentsWindow(false)}
           containerStyle={{
-            zIndex: 10,
+            zIndex: 1000,
             top: '2%',
             left: '5%',
             height: '96%',
