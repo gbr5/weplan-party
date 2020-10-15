@@ -13,7 +13,7 @@ import 'react-day-picker/lib/style.css';
 import DayPicker from 'react-day-picker';
 import * as Yup from 'yup';
 
-import { useHistory, Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { MdAdd, MdHelp, MdSchedule } from 'react-icons/md';
 import {
   FiSettings,
@@ -26,7 +26,6 @@ import { Form } from '@unform/web';
 import {
   Header,
   HeaderContent,
-  Profile,
   Menu,
   AppointmentTypeDrawer,
   Calendar,
@@ -37,7 +36,6 @@ import {
 } from './styles';
 import { useToggleTheme } from '../../hooks/theme';
 
-import profileImg from '../../assets/avatar_placeholder.jpg';
 import logo from '../../assets/weplan.svg';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
@@ -100,7 +98,7 @@ const SupplierPageHeader: React.FC<IPropsDTO> = ({
   const [helpWindow, setHelpWindow] = useState(false);
   const [settingsWindow, setSettingsWindow] = useState(false);
 
-  const { signOut, user } = useAuth();
+  const { signOut } = useAuth();
   const { toggleTheme, themeBoolean } = useToggleTheme();
   const history = useHistory();
 
@@ -367,10 +365,6 @@ const SupplierPageHeader: React.FC<IPropsDTO> = ({
     handleGetAppointments();
   }, [handleGetAppointments]);
 
-  const imageProfile = user.avatar_url ? user.avatar_url : profileImg;
-
-  console.log(user);
-
   return (
     <>
       <Header>
@@ -384,11 +378,6 @@ const SupplierPageHeader: React.FC<IPropsDTO> = ({
             <h1>Fornecedor</h1>
           </button>
 
-          {/* <Profile>
-            <Link to="/profile">
-              <img src={imageProfile} alt="oi" />
-            </Link>
-          </Profile> */}
           <h2>
             {module}
 
