@@ -3,9 +3,12 @@ import '../../styles/global';
 import { shade } from 'polished';
 
 export const Button = styled.button`
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
 
   background: var(--primary-color);
   box-shadow: var(--box-shadow);

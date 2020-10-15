@@ -61,7 +61,7 @@ const AuthProvider: React.FC = ({ children }) => {
 
     const { token, user } = response.data;
 
-    const getSupplier = await api.get('suppliers/employee/me');
+    const getSupplier = await api.get(`supplier-employees/employee/${user.id}`);
     const isSupplier = getSupplier.data;
     console.log('auth.tsx => line 64', isSupplier);
     console.log('auth.tsx => line 67: USER', user);

@@ -15,33 +15,41 @@ import HostDashboard from '../pages/HostDashboard';
 import EventHostDashboard from '../pages/EventHostDashboard';
 import FriendsDashboard from '../pages/FriendsDashboard';
 import EventsDashboard from '../pages/EventsDashboard';
-import FriendEventDashboard from '../pages/FriendEventDashboard';
+import SupplierDashboard from '../pages/SupplierDashboard';
 
-const Routes: React.FC = () => (
-  <Switch>
-    <Route path="/" exact component={Main} />
-    <Route path="/signin" exact component={SignIn} />
-    <Route path="/signup" exact component={SignUp} />
-    <Route path="/forgot-password" exact component={ForgotPassword} />
-    <Route path="/reset-password" exact component={ResetPassword} />
+import { useAuth } from '../hooks/auth';
 
-    <Route path="/profile" exact component={Profile} isPrivate />
-    <Route path="/events" exact component={EventsDashboard} isPrivate />
-    <Route
-      path="/dashboard/my-event/:name"
-      exact
-      component={EventHostDashboard}
-      isPrivate
-    />
-    <Route path="/dashboard" exact component={HostDashboard} isPrivate />
-    <Route path="/friends" exact component={FriendsDashboard} isPrivate />
-    <Route
-      path="/friends/event"
-      exact
-      component={FriendEventDashboard}
-      isPrivate
-    />
-  </Switch>
-);
+const Routes: React.FC = () => {
+  const { user } = useAuth();
+
+  return (
+    <Switch>
+      <Route path="/" exact component={Main} />
+      <Route path="/signin" exact component={SignIn} />
+      <Route path="/signup" exact component={SignUp} />
+      <Route path="/forgot-password" exact component={ForgotPassword} />
+      <Route path="/reset-password" exact component={ResetPassword} />
+
+      <Route path="/profile" exact component={Profile} isPrivate />
+      <Route path="/events" exact component={EventsDashboard} isPrivate />
+      <Route
+        path="/dashboard/my-event/:name"
+        exact
+        component={EventHostDashboard}
+        isPrivate
+      />
+      <Route path="/dashboard" exact component={HostDashboard} isPrivate />
+      <Route path="/friends" exact component={FriendsDashboard} isPrivate />
+      {user && user.isSupplier && (
+        <Route
+          path="/supplier-dashboard"
+          exact
+          component={SupplierDashboard}
+          isPrivate
+        />
+      )}
+    </Switch>
+  );
+};
 
 export default Routes;

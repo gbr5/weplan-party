@@ -4,8 +4,10 @@ import { MdClose, MdMenu } from 'react-icons/md';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 import { Form } from '@unform/web';
+import { useHistory } from 'react-router-dom';
 
 import { useToast } from '../../hooks/toast';
+import { useAuth } from '../../hooks/auth';
 import api from '../../services/api';
 import getValidationErrors from '../../utils/getValidationErros';
 
@@ -62,6 +64,8 @@ const MenuButton: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
 
   const { addToast } = useToast();
+  const { user } = useAuth();
+  const history = useHistory();
 
   const handleButtonDrawer = useCallback(() => {
     setButtonDrawer(!buttonDrawer);
@@ -80,6 +84,10 @@ const MenuButton: React.FC = () => {
     setButtonDrawer(false);
     setFriendsWindow(true);
   }, []);
+
+  const handleNavigateToSupplierDashboard = useCallback(() => {
+    history.push('/supplier-dashboard');
+  }, [history]);
 
   const handleEventTypeChange = useCallback(
     (option: string) => {
@@ -203,7 +211,7 @@ const MenuButton: React.FC = () => {
   return (
     <>
       <Button type="button" onClick={handleButtonDrawer}>
-        <MdMenu size={40} />
+        <MdMenu size={24} />
       </Button>
       {!!buttonDrawer && (
         <WindowContainer
@@ -226,12 +234,14 @@ const MenuButton: React.FC = () => {
               <button type="button" onClick={handleNavigateToFriends}>
                 Contatos
               </button>
-              {/* <button type="button" onClick={handleNavigateToEvents}>
-                Eventos
-              </button> */}
-              {/* <button type="button" onClick={handleNavigateToEvents}>
-                Fornecedores
-              </button> */}
+              {user.isSupplier && (
+                <button
+                  type="button"
+                  onClick={handleNavigateToSupplierDashboard}
+                >
+                  Página de fornecedor
+                </button>
+              )}
             </Menu>
           </ButtonContent>
         </WindowContainer>
