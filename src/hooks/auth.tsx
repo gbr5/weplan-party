@@ -66,14 +66,17 @@ const AuthProvider: React.FC = ({ children }) => {
     setData({ token, user });
   }, []);
 
-  const updateUser = useCallback((updatedUser: IUser) => {
-    localStorage.setItem('@GoBarber:user', JSON.stringify(updatedUser));
+  const updateUser = useCallback(
+    (updatedUser: IUser) => {
+      localStorage.setItem('@GoBarber:user', JSON.stringify(updatedUser));
 
-    setData({
-      token: data.token,
-      user: updatedUser,
-    });
-  }, []);
+      setData({
+        token: data.token,
+        user: updatedUser,
+      });
+    },
+    [data],
+  );
 
   return (
     <AuthContext.Provider

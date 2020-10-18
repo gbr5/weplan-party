@@ -760,7 +760,6 @@ const EventHostDashboard: React.FC = () => {
     const currentMembersGuestNumber: number = members
       .map(tmember => tmember.number_of_guests)
       .reduce((a, b) => Number(a) + Number(b), 0);
-    console.log(currentMembersGuestNumber, typeof currentMembersGuestNumber);
     const currentOwnersGuestNumber: number = owners
       .map(towner => towner.number_of_guests)
       .reduce((a, b) => Number(a) + Number(b), 0);
@@ -1105,7 +1104,7 @@ const EventHostDashboard: React.FC = () => {
 
         handleAddGuestDrawer();
         handleGetGuests();
-
+        handleGetEvent();
         return addToast({
           type: 'success',
           title: 'Convidado criado com sucesso',
@@ -1138,6 +1137,7 @@ const EventHostDashboard: React.FC = () => {
       wpUser,
       handleGetGuests,
       myAvailableNumberOfGuests,
+      handleGetEvent,
     ],
   );
   const handleGuestListUpload = useCallback(
@@ -1157,6 +1157,7 @@ const EventHostDashboard: React.FC = () => {
         setAddGuestDrawer(false);
 
         handleGetGuests();
+        handleGetEvent();
         return addToast({
           type: 'success',
           title: 'Convidados criados com sucesso',
@@ -1171,7 +1172,13 @@ const EventHostDashboard: React.FC = () => {
         throw new Error(err);
       }
     },
-    [handleGetGuests, addToast, eventId, myAvailableNumberOfGuests],
+    [
+      handleGetGuests,
+      addToast,
+      eventId,
+      myAvailableNumberOfGuests,
+      handleGetEvent,
+    ],
   );
 
   const handleEditEventInfo = useCallback(
@@ -1207,6 +1214,7 @@ const EventHostDashboard: React.FC = () => {
         await api.put(`events/${eventId}/event-info`, data);
         setEventInfo(data);
         setEditEventInfoDrawer(false);
+        handleGetEvent();
 
         addToast({
           type: 'success',
@@ -1227,7 +1235,7 @@ const EventHostDashboard: React.FC = () => {
         });
       }
     },
-    [addToast, eventId, currentNumberOfGuests],
+    [addToast, eventId, currentNumberOfGuests, handleGetEvent],
   );
   const handleEditBudget = useCallback(
     async (data: IEventInfo) => {
@@ -1449,6 +1457,7 @@ const EventHostDashboard: React.FC = () => {
         setMemberProfileWindow(false);
         setMember({} as IEventMemberDTO);
         handleGetMembers();
+        handleGetEvent();
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const error = getValidationErrors(err);
@@ -1463,7 +1472,14 @@ const EventHostDashboard: React.FC = () => {
         });
       }
     },
-    [addToast, eventId, member, handleGetMembers, availableNumberOfGuests],
+    [
+      addToast,
+      eventId,
+      member,
+      handleGetMembers,
+      availableNumberOfGuests,
+      handleGetEvent,
+    ],
   );
   const handleEditOwner = useCallback(
     async (data: IEventOwnerDTO) => {
@@ -2050,7 +2066,7 @@ const EventHostDashboard: React.FC = () => {
         <WindowContainer
           onHandleCloseWindow={() => setNumberOfGuestDrawer(false)}
           containerStyle={{
-            zIndex: 1000,
+            zIndex: 100000,
             top: '25%',
             left: '30%',
             height: '50%',
@@ -2112,7 +2128,7 @@ const EventHostDashboard: React.FC = () => {
         <WindowContainer
           onHandleCloseWindow={() => setDeleteMemberDrawer(false)}
           containerStyle={{
-            zIndex: 1000,
+            zIndex: 1000000,
             top: '25%',
             left: '30%',
             height: '50%',

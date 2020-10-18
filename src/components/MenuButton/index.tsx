@@ -4,10 +4,10 @@ import { MdClose, MdMenu } from 'react-icons/md';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 import { Form } from '@unform/web';
-import { useHistory } from 'react-router-dom';
+// import { useHistory } from 'react-router-dom';
 
 import { useToast } from '../../hooks/toast';
-import { useAuth } from '../../hooks/auth';
+// import { useAuth } from '../../hooks/auth';
 import api from '../../services/api';
 import getValidationErrors from '../../utils/getValidationErros';
 
@@ -64,8 +64,7 @@ const MenuButton: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
 
   const { addToast } = useToast();
-  const { user } = useAuth();
-  const history = useHistory();
+  // const history = useHistory();
 
   const handleButtonDrawer = useCallback(() => {
     setButtonDrawer(!buttonDrawer);
@@ -85,9 +84,9 @@ const MenuButton: React.FC = () => {
     setFriendsWindow(true);
   }, []);
 
-  const handleNavigateToSupplierDashboard = useCallback(() => {
-    history.push('/supplier-dashboard');
-  }, [history]);
+  // const handleNavigateToSupplierDashboard = useCallback(() => {
+  //   history.push('/supplier-dashboard');
+  // }, [history]);
 
   const handleEventTypeChange = useCallback(
     (option: string) => {
