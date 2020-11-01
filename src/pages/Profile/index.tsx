@@ -158,7 +158,8 @@ const Profile: React.FC = () => {
 
         data.append('avatar', e.target.files[0]);
 
-        api.patch('/users/avatar', data).then(response => {
+        api.patch(`/users/avatar/${user.id}`, data).then(response => {
+          console.log(response.data);
           updateUser(response.data);
 
           addToast({
@@ -166,9 +167,16 @@ const Profile: React.FC = () => {
             title: 'Avatar atualizado com sucesso.',
           });
         });
+      } else {
+        addToast({
+          type: 'error',
+          title: 'Erro na atualização',
+          description:
+            'Ocorreu um erro ao atualizar o perfil, tente novamente.',
+        });
       }
     },
-    [addToast, updateUser],
+    [addToast, updateUser, user],
   );
 
   const editPersonInfo = useCallback(
@@ -186,7 +194,7 @@ const Profile: React.FC = () => {
           abortEarly: false,
         });
 
-        if (personInfo) {
+        if (personInfo !== undefined) {
           await api.put('person-info', {
             first_name: data.first_name,
             last_name: data.last_name,
@@ -231,7 +239,6 @@ const Profile: React.FC = () => {
   const handleGetPersonInfo = useCallback(() => {
     try {
       api.get('person-info').then(response => {
-        console.log(response.data);
         setPersonInfo(response.data);
       });
     } catch (err) {
