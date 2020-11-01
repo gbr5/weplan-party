@@ -476,7 +476,8 @@ const Dashboard: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleDeleteMemberEventWindow(event)}
+                                  handleDeleteMemberEventWindow(event)
+                                }
                               >
                                 <FiSettings size={20} />
                               </button>
