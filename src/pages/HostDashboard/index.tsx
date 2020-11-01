@@ -433,7 +433,8 @@ const Dashboard: React.FC = () => {
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    handleDeleteMasterEventWindow(event.id)}
+                                    handleDeleteMasterEventWindow(event.id)
+                                  }
                                 >
                                   <FiSettings size={20} />
                                 </button>
@@ -441,7 +442,8 @@ const Dashboard: React.FC = () => {
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    handleDeleteOwnerEventWindow(event)}
+                                    handleDeleteOwnerEventWindow(event)
+                                  }
                                 >
                                   <FiSettings size={20} />
                                 </button>
@@ -509,7 +511,8 @@ const Dashboard: React.FC = () => {
                         <button
                           type="button"
                           onClick={() =>
-                            handleDeleteGuestEventWindow(event.guest_id)}
+                            handleDeleteGuestEventWindow(event.guest_id)
+                          }
                         >
                           <FiSettings size={20} />
                         </button>
@@ -521,7 +524,8 @@ const Dashboard: React.FC = () => {
                           handleEditConfirmedGuest({
                             id: event.guest_id,
                             confirmed: event.confirmed,
-                          })}
+                          })
+                        }
                       >
                         {event.confirmed ? (
                           <FiCheckSquare size={24} />

@@ -3449,7 +3449,8 @@ const EventHostDashboard: React.FC = () => {
                           <button
                             type="button"
                             onClick={() =>
-                              handleSelectedSupplierWindow(sSupplier)}
+                              handleSelectedSupplierWindow(sSupplier)
+                            }
                           >
                             <strong>{sSupplier.name}</strong>{' '}
                             <FiEdit3 size={16} />
@@ -3467,7 +3468,8 @@ const EventHostDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() =>
-                                handleCreateTransactionWindow(sSupplier)}
+                                handleCreateTransactionWindow(sSupplier)
+                              }
                             >
                               {sSupplier.isHired ? (
                                 <FiCheckSquare size={24} />
@@ -3492,7 +3494,8 @@ const EventHostDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() =>
-                                handleHiredSupplierWindow(hSupplier)}
+                                handleHiredSupplierWindow(hSupplier)
+                              }
                             >
                               <strong>{hSupplier.name}</strong>{' '}
                               <FiChevronRight size={16} />
@@ -3783,7 +3786,8 @@ const EventHostDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() =>
-                                handleEditCheckListItemWindow(item)}
+                                handleEditCheckListItemWindow(item)
+                              }
                             >
                               <span>{item.name}</span>
                             </button>
@@ -3868,7 +3872,8 @@ const EventHostDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() =>
-                                handleEditCheckListItemWindow(item)}
+                                handleEditCheckListItemWindow(item)
+                              }
                             >
                               <span>{item.name}</span>
                             </button>
@@ -3969,7 +3974,8 @@ const EventHostDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() =>
-                                handleEditCheckListItemWindow(item)}
+                                handleEditCheckListItemWindow(item)
+                              }
                             >
                               <span>{item.name}</span>
                             </button>
