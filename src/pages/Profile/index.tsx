@@ -193,14 +193,14 @@ const Profile: React.FC = () => {
           abortEarly: false,
         });
 
-        if (personInfo !== undefined) {
-          await api.put('person-info', {
+        if (personInfo.first_name) {
+          await api.put('person-info/edit', {
             first_name: data.first_name,
             last_name: data.last_name,
             person_id: data.person_id,
           });
         } else {
-          await api.post('person-info', {
+          await api.post(`person-info/${user.id}`, {
             first_name: data.first_name,
             last_name: data.last_name,
             person_id: data.person_id,
@@ -224,7 +224,7 @@ const Profile: React.FC = () => {
         throw new Error(err);
       }
     },
-    [addToast, history, personInfo],
+    [addToast, history, personInfo, user],
   );
 
   const handlePasswordDrawer = useCallback(() => {
