@@ -232,7 +232,6 @@ const EventHostDashboard: React.FC = () => {
   );
   const [wpUserId, setWpUserId] = useState(''); // wpUser é para usuários dos sistema que não seja o próprio usuário
   const [wpUserName, setWpUserName] = useState('');
-  const [wpUser, setWpUser] = useState<IFriendDTO>({} as IFriendDTO);
   const [planners, setPlanners] = useState<IUserInfoDTO[]>([]);
   const [owners, setOwners] = useState<IEventOwnerDTO[]>([]);
   const [owner, setOwner] = useState<IEventOwnerDTO>({} as IEventOwnerDTO);
@@ -538,8 +537,7 @@ const EventHostDashboard: React.FC = () => {
 
   const handleSelectedWeplanUser = useCallback((WPUser: IFriendDTO) => {
     setWpUserName(WPUser.friend.name);
-    setWpUser(WPUser);
-    setWpUserId(WPUser.friend.id);
+    setWpUserId(WPUser.friend_id);
     setFriendsWindow(false);
   }, []);
   const handleGuestConfirmedQuestion = useCallback(
@@ -1065,10 +1063,11 @@ const EventHostDashboard: React.FC = () => {
           await schema.validate(data, {
             abortEarly: false,
           });
+          const thisDate = new Date();
 
           await api.post(`events/${eventId}/guests`, {
-            first_name: wpUser.friend.name,
-            last_name: 'WePlan',
+            first_name: `${thisDate}`,
+            last_name: `${thisDate}`,
             description: data.description,
             weplanUser,
             confirmed: guestConfirmed,
@@ -1133,12 +1132,12 @@ const EventHostDashboard: React.FC = () => {
       weplanUser,
       guestConfirmed,
       wpUserId,
-      wpUser,
       handleGetGuests,
       myAvailableNumberOfGuests,
       handleGetEvent,
     ],
   );
+
   const handleGuestListUpload = useCallback(
     async (e: ChangeEvent<HTMLInputElement>) => {
       try {
