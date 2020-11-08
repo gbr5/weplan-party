@@ -60,11 +60,10 @@ const SignUp: React.FC = () => {
           abortEarly: false,
         });
 
-        await api.post('/person-info', {
+        await api.post(`/person-info/${userId}`, {
           person_id: data.person_id,
           first_name: data.first_name,
           last_name: data.last_name,
-          user_id: userId,
         });
 
         history.push('/signin');
