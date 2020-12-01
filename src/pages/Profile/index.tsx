@@ -193,7 +193,7 @@ const Profile: React.FC = () => {
           abortEarly: false,
         });
 
-        if (personInfo.first_name) {
+        if (personInfo.first_name !== '') {
           await api.put('person-info/edit', {
             first_name: data.first_name,
             last_name: data.last_name,
@@ -237,13 +237,14 @@ const Profile: React.FC = () => {
 
   const handleGetPersonInfo = useCallback(() => {
     try {
-      api.get('person-info').then(response => {
+      api.get(`person-info/${user.id}`).then(response => {
+        console.log(response.data);
         setPersonInfo(response.data);
       });
     } catch (err) {
       throw new Error(err);
     }
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     handleGetPersonInfo();
