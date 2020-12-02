@@ -60,7 +60,7 @@ const SelectedSupplierWindow: React.FC<IPropsDTO> = ({
               type="button"
               onClick={onDeleteSelectedSupplierDrawer}
             >
-              > Deletar
+              Deletar
               <MdDelete size={24} />
             </DeleteButton>
           </div>

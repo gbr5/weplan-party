@@ -106,6 +106,9 @@ import guestListImage3 from '../../assets/guestList_3.svg';
 import guestListImage4 from '../../assets/guestList_4.svg';
 import logo from '../../assets/weplan.svg';
 import formatStringToDate from '../../utils/formatDateToString';
+import SuppliersListDrawer from '../../components/SuppliersListDrawer';
+import ISupplierDTO from '../../dtos/ISupplierDTO';
+import SupplierServiceOrderFormWindow from '../../components/SupplierServiceOrderFormWindow';
 
 interface IEvent {
   id: string;
@@ -247,6 +250,9 @@ const EventHostDashboard: React.FC = () => {
   const [selectedSupplier, setSelectedSupplier] = useState<
     ISelectedSupplierDTO
   >({} as ISelectedSupplierDTO);
+  const [weplanSupplierListWindow, setWeplanSupplierListWindow] = useState(
+    false,
+  );
   const [hiredSuppliers, setHiredSuppliers] = useState<ISelectedSupplierDTO[]>(
     [],
   );
@@ -274,6 +280,10 @@ const EventHostDashboard: React.FC = () => {
   const [isHiredDrawer, setIsHiredDrawer] = useState(false);
   const [isHiredMessage, setIsHiredMessage] = useState('');
   const [isHired, setIsHired] = useState(false);
+  const [weplanSupplier, setWeplanSupplier] = useState(false);
+  const [supplierServiceOrderWindow, setSupplierServiceOrderWindow] = useState(
+    false,
+  );
   const [addPlannerDrawer, setAddPlannerDrawer] = useState(false);
   const [addOwnerDrawer, setAddOwnerDrawer] = useState(false);
   const [addMemberDrawer, setAddMemberDrawer] = useState(false);
@@ -306,7 +316,13 @@ const EventHostDashboard: React.FC = () => {
   const [supplierSubCategories, setSupplierSubCategories] = useState<
     ISupplierSubCategoryDTO[]
   >([]);
+  const [selectedWeplanSupplier, setSelectedWeplanSupplier] = useState<
+    ISupplierDTO
+  >({} as ISupplierDTO);
   const [supplierCategoryWindow, setSupplierCategoryWindow] = useState(false);
+  const [supplierSubCategoryWindow, setSupplierSubCategoryWindow] = useState(
+    false,
+  );
   const [transactionAgreementWindow, setTransactionAgreementWindow] = useState(
     false,
   );
@@ -402,13 +418,8 @@ const EventHostDashboard: React.FC = () => {
     [closeAllWindows],
   );
   const handleSupplierCategory = useCallback(() => {
-    if (supplierCategoryWindow) {
-      setSupplierCategoryWindow(false);
-      setSupplierCategory('');
-      setSupplierSubCategory('');
-    } else {
-      setSupplierCategoryWindow(true);
-    }
+    setSupplierSubCategoryWindow(supplierCategoryWindow);
+    setSupplierCategoryWindow(!supplierCategoryWindow);
   }, [supplierCategoryWindow]);
   const handleHiredSupplierWindow = useCallback(
     (props: ISelectedSupplierDTO) => {
@@ -470,7 +481,6 @@ const EventHostDashboard: React.FC = () => {
         handleSupplierCategory();
         closeAllWindows();
       } else {
-        setSupplierCategory('');
         handleSupplierCategory();
         setSupplierSubCategory(props);
         closeAllWindows();
@@ -792,30 +802,57 @@ const EventHostDashboard: React.FC = () => {
           abortEarly: false,
         });
 
-        const newSupplier = await api.post(
-          `events/event-suppliers/${eventId}`,
-          {
-            name: data.name,
-            supplier_sub_category: supplierSubCategory,
-            isHired,
-            weplanUser: false,
-          },
-        );
+        if (weplanSupplier) {
+          const newSupplier = await api.post(
+            `events/event-suppliers/${eventId}`,
+            {
+              name: selectedWeplanSupplier.supplier.name,
+              supplier_sub_category: supplierSubCategory,
+              isHired,
+              weplanUser: true,
+            },
+          );
+          setSupplierServiceOrderWindow(true);
+          setAddSupplierDrawer(false);
+          setSupplierCategory('');
+          setSupplierSubCategory('');
 
-        setAddSupplierDrawer(false);
-        setSupplierCategory('');
-        setSupplierSubCategory('');
+          handleGetSuppliers();
+          handleGetHiredSuppliers();
+          addToast({
+            type: 'success',
+            title: `${data.name} adicionado com Sucesso`,
+            description:
+              'Você já pode visualizar as alterações na página do seu evento.',
+          });
+          if (isHired) {
+            handleCreateTransactionWindow(newSupplier.data);
+          }
+        } else {
+          const newSupplier = await api.post(
+            `events/event-suppliers/${eventId}`,
+            {
+              name: data.name,
+              supplier_sub_category: supplierSubCategory,
+              isHired,
+              weplanUser: false,
+            },
+          );
+          setAddSupplierDrawer(false);
+          setSupplierCategory('');
+          setSupplierSubCategory('');
 
-        handleGetSuppliers();
-        handleGetHiredSuppliers();
-        addToast({
-          type: 'success',
-          title: `${data.name} adicionado com Sucesso`,
-          description:
-            'Você já pode visualizar as alterações na página do seu evento.',
-        });
-        if (isHired) {
-          handleCreateTransactionWindow(newSupplier.data);
+          handleGetSuppliers();
+          handleGetHiredSuppliers();
+          addToast({
+            type: 'success',
+            title: `${data.name} adicionado com Sucesso`,
+            description:
+              'Você já pode visualizar as alterações na página do seu evento.',
+          });
+          if (isHired) {
+            handleCreateTransactionWindow(newSupplier.data);
+          }
         }
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
@@ -837,6 +874,8 @@ const EventHostDashboard: React.FC = () => {
       supplierSubCategory,
       handleGetHiredSuppliers,
       handleCreateTransactionWindow,
+      selectedWeplanSupplier,
+      weplanSupplier,
     ],
   );
   const handleAddCheckListItem = useCallback(
@@ -1900,6 +1939,18 @@ const EventHostDashboard: React.FC = () => {
     setGuestListUpload(true);
   }, []);
 
+  const handleSetWeplanSupplierListWindow = useCallback((props: boolean) => {
+    if (props) {
+      setWeplanSupplierListWindow(true);
+    }
+    setWeplanSupplier(props);
+  }, []);
+
+  const handleSetSelectedWeplanSupplier = useCallback((props: ISupplierDTO) => {
+    setSelectedWeplanSupplier(props);
+    setWeplanSupplierListWindow(false);
+  }, []);
+
   const totalEventCost = useMemo(() => {
     const totalCost: number = hiredSuppliers
       .map(supplier => {
@@ -1917,6 +1968,16 @@ const EventHostDashboard: React.FC = () => {
       .reduce((a, b) => a + b, 0);
     return totalCost;
   }, [hiredSuppliers]);
+
+  const handleCloseSupplierServiceOrderFormWindow = useCallback(() => {
+    setSupplierServiceOrderWindow(false);
+  }, []);
+
+  const handleSetSupplierCategory = useCallback((props: string) => {
+    setSupplierCategoryWindow(false);
+    setSupplierSubCategoryWindow(true);
+    setSupplierCategory(props);
+  }, []);
 
   useEffect(() => {
     handleGetSuppliers();
@@ -1986,6 +2047,24 @@ const EventHostDashboard: React.FC = () => {
           onChildClick={() => setWpUserWindow(false)}
         />
       )} */}
+      {supplierServiceOrderWindow && (
+        <SupplierServiceOrderFormWindow
+          event_id={event.id}
+          supplier_id={selectedWeplanSupplier.supplier.id}
+          handleCloseWindow={handleCloseSupplierServiceOrderFormWindow}
+          onHandleCloseWindow={() => setSupplierServiceOrderWindow(false)}
+        />
+      )}
+      {weplanSupplierListWindow && (
+        <SuppliersListDrawer
+          category={supplierCategory}
+          sub_category={supplierSubCategory}
+          handleSelectedSupplier={handleSetSelectedWeplanSupplier}
+          onHandleSuppliersListDrawer={() =>
+            setWeplanSupplierListWindow(!weplanSupplierListWindow)
+          }
+        />
+      )}
       {!!hiredSupplierWindow && (
         <EventSupplierWindow
           isOwner={pageEvent.isOwner}
@@ -2579,6 +2658,24 @@ const EventHostDashboard: React.FC = () => {
                   </button>
                 </h1>
               )}
+
+              {weplanSupplier ? (
+                <button
+                  type="button"
+                  onClick={() => handleSetWeplanSupplierListWindow(false)}
+                >
+                  Fornecedor WePlan
+                </button>
+              ) : (
+                <h1>
+                  <button
+                    type="button"
+                    onClick={() => handleSetWeplanSupplierListWindow(true)}
+                  >
+                    Forcecedor WePlan?
+                  </button>
+                </h1>
+              )}
               <Input
                 name="name"
                 type="text"
@@ -3042,7 +3139,7 @@ const EventHostDashboard: React.FC = () => {
         <WindowContainer
           onHandleCloseWindow={handleSupplierCategory}
           containerStyle={{
-            zIndex: 1000,
+            zIndex: 99,
             top: '5%',
             left: '5%',
             height: '90%',
@@ -3055,7 +3152,7 @@ const EventHostDashboard: React.FC = () => {
             <MembersContainer>
               <button
                 type="button"
-                onClick={() => setSupplierCategory('Planning')}
+                onClick={() => handleSetSupplierCategory('Planning')}
               >
                 <MdFolderSpecial size={50} />
                 <h1>Planejamento</h1>
@@ -3063,7 +3160,7 @@ const EventHostDashboard: React.FC = () => {
               {/* 2 */}
               <button
                 type="button"
-                onClick={() => setSupplierCategory('Event_Desing')}
+                onClick={() => handleSetSupplierCategory('Event_Desing')}
               >
                 <MdLocalFlorist size={50} />
                 <h1>Decoração</h1>
@@ -3071,7 +3168,7 @@ const EventHostDashboard: React.FC = () => {
               {/* 3 */}
               <button
                 type="button"
-                onClick={() => setSupplierCategory('Venue')}
+                onClick={() => handleSetSupplierCategory('Venue')}
               >
                 <FiHome size={50} />
                 <h1>Espaços e Igrejas</h1>
@@ -3081,7 +3178,7 @@ const EventHostDashboard: React.FC = () => {
               {/* <MembersContainer> */}
               <button
                 type="button"
-                onClick={() => setSupplierCategory('Catering')}
+                onClick={() => handleSetSupplierCategory('Catering')}
               >
                 <MdLocalDining size={50} />
                 <h1>Buffet, lanches e Doces</h1>
@@ -3089,7 +3186,9 @@ const EventHostDashboard: React.FC = () => {
               {/* 5 */}
               <button
                 type="button"
-                onClick={() => setSupplierCategory('Film_And_Photography')}
+                onClick={() =>
+                  handleSetSupplierCategory('Film_And_Photography')
+                }
               >
                 <MdLinkedCamera size={50} />
                 <h1>Fotos e Filmes</h1>
@@ -3097,7 +3196,9 @@ const EventHostDashboard: React.FC = () => {
               {/* 6 */}
               <button
                 type="button"
-                onClick={() => setSupplierCategory('Entertainment_Artists')}
+                onClick={() =>
+                  handleSetSupplierCategory('Entertainment_Artists')
+                }
               >
                 <FiMusic size={50} />
                 <h1>Artistas e Entretenimento</h1>
@@ -3107,7 +3208,9 @@ const EventHostDashboard: React.FC = () => {
               {/* <MembersContainer> */}
               <button
                 type="button"
-                onClick={() => setSupplierCategory('Bartenders_And_Drinks')}
+                onClick={() =>
+                  handleSetSupplierCategory('Bartenders_And_Drinks')
+                }
               >
                 <MdLocalBar size={50} />
                 <h1>Bar e Bebidas</h1>
@@ -3116,7 +3219,9 @@ const EventHostDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={() =>
-                  setSupplierCategory('Dance_Floors_Structures_And_Lighting')
+                  handleSetSupplierCategory(
+                    'Dance_Floors_Structures_And_Lighting',
+                  )
                 }
               >
                 <MdBuild size={50} />
@@ -3125,7 +3230,7 @@ const EventHostDashboard: React.FC = () => {
               {/* 9 */}
               <button
                 type="button"
-                onClick={() => setSupplierCategory('Others')}
+                onClick={() => handleSetSupplierCategory('Others')}
               >
                 <FiHelpCircle size={50} />
                 <h1>Outros</h1>
@@ -3134,11 +3239,11 @@ const EventHostDashboard: React.FC = () => {
           </MembersWindow>
         </WindowContainer>
       )}
-      {supplierCategoryWindow && supplierCategory !== '' && (
+      {supplierSubCategoryWindow && (
         <WindowContainer
-          onHandleCloseWindow={handleSupplierCategory}
+          onHandleCloseWindow={() => setSupplierSubCategoryWindow(false)}
           containerStyle={{
-            zIndex: 10000,
+            zIndex: 100,
             top: '5%',
             left: '5%',
             height: '90%',
