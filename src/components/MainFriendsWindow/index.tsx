@@ -52,17 +52,32 @@ const MainFriendsWindow: React.FC<IProps> = ({
     setAddFriendGroupWindow(props);
   }, []);
 
+  const handleAddAllFriendGroup = useCallback(async () => {
+    try {
+      const newAllGroupFriend = await api.post('users/friend-groups', {
+        name: 'All',
+      });
+
+      setAllFriendGroupId(newAllGroupFriend.data.id);
+    } catch (err) {
+      throw new Error(err);
+    }
+  }, []);
+
   const getFriendGroups = useCallback(() => {
     try {
       api.get<IFriendGroupDTO[]>('/users/friend-groups/list').then(response => {
         setFriendGroups(response.data.filter(group => group.name !== 'All'));
         const allGroupId = response.data.filter(group => group.name === 'All');
-        setAllFriendGroupId(allGroupId[0]);
+        if (allGroupId.length <= 0) {
+          return handleAddAllFriendGroup();
+        }
+        return setAllFriendGroupId(allGroupId[0]);
       });
     } catch (err) {
       throw new Error(err);
     }
-  }, []);
+  }, [handleAddAllFriendGroup]);
 
   const handleAllFriends = useCallback(() => {
     setFriendsByGroup([]);
@@ -330,7 +345,8 @@ const MainFriendsWindow: React.FC<IProps> = ({
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleAddFriendToGroupWindow(friend.friend.id)}
+                                  handleAddFriendToGroupWindow(friend.friend.id)
+                                }
                               >
                                 <MdGroupAdd size={32} />
                               </button>
@@ -340,7 +356,8 @@ const MainFriendsWindow: React.FC<IProps> = ({
                               onClick={() =>
                                 handleDeleteFriendFromAllGroups(
                                   friend.friend.name,
-                                )}
+                                )
+                              }
                             >
                               <FiTrash size={32} />
                             </button>
@@ -355,7 +372,8 @@ const MainFriendsWindow: React.FC<IProps> = ({
                           <button
                             type="button"
                             onClick={() =>
-                              handleDeleteFriendFromGroup(friend.id)}
+                              handleDeleteFriendFromGroup(friend.id)
+                            }
                           >
                             Deletar
                           </button>
