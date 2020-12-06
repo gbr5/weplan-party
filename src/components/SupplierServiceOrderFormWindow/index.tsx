@@ -80,6 +80,14 @@ const SupplierServiceOrderFormWindow: React.FC<IPropsDTO> = ({
 
         let companyContact = {} as ICompanyContact;
         if (personInfo.first_name && personInfo.last_name) {
+          console.log({
+            company_id: supplier_id,
+            name: `${personInfo.first_name} ${personInfo.last_name}`,
+            description: 'Cliente Weplan',
+            company_contact_type: 'Customer',
+            weplanUser: true,
+            isCompany: user.isCompany,
+          });
           const response = await api.post('/company/contacts', {
             company_id: supplier_id,
             name: `${personInfo.first_name} ${personInfo.last_name}`,
@@ -90,10 +98,17 @@ const SupplierServiceOrderFormWindow: React.FC<IPropsDTO> = ({
           });
           companyContact = response.data;
         } else {
+          console.log({
+            company_id: supplier_id,
+            name: user.name,
+            description: 'Cliente Weplan',
+            company_contact_type: 'Customer',
+            weplanUser: true,
+            isCompany: user.isCompany,
+          });
           const response1 = await api.post('/company/contacts', {
             company_id: supplier_id,
-            name:
-              `${personInfo.first_name} ${personInfo.last_name}` || user.name,
+            name: user.name,
             description: 'Cliente Weplan',
             company_contact_type: 'Customer',
             weplanUser: true,
