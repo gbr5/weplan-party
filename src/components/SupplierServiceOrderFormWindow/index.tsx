@@ -12,10 +12,27 @@ import { useToast } from '../../hooks/toast';
 import getValidationErrors from '../../utils/getValidationErros';
 import Input from '../Input';
 import IPersonInfoDTO from '../../dtos/IPersonInfoDTO';
+import IUserDTO from '../../dtos/IUserDTO';
 
 interface IForm {
   title: string;
   message: string;
+}
+
+interface IContactInfo {
+  info_type: string;
+  info: string;
+}
+
+interface ICompanyContact {
+  id: string;
+  name: string;
+  description: string;
+  company_contact_type: string;
+  weplanUser: boolean;
+  isCompany: boolean;
+  company: IUserDTO;
+  contact_infos: IContactInfo[];
 }
 
 interface IPropsDTO {
@@ -61,17 +78,32 @@ const SupplierServiceOrderFormWindow: React.FC<IPropsDTO> = ({
           abortEarly: false,
         });
 
-        const companyContact = await api.post('/company/contacts', {
-          company_id: supplier_id,
-          name: `${personInfo.first_name} ${personInfo.last_name}` || user.name,
-          description: 'Cliente Weplan',
-          company_contact_type: 'Customer',
-          weplanUser: true,
-          isCompany: user.isCompany,
-        });
+        let companyContact = {} as ICompanyContact;
+        if (personInfo.first_name && personInfo.last_name) {
+          const response = await api.post('/company/contacts', {
+            company_id: supplier_id,
+            name: `${personInfo.first_name} ${personInfo.last_name}`,
+            description: 'Cliente Weplan',
+            company_contact_type: 'Customer',
+            weplanUser: true,
+            isCompany: user.isCompany,
+          });
+          companyContact = response.data;
+        } else {
+          const response1 = await api.post('/company/contacts', {
+            company_id: supplier_id,
+            name:
+              `${personInfo.first_name} ${personInfo.last_name}` || user.name,
+            description: 'Cliente Weplan',
+            company_contact_type: 'Customer',
+            weplanUser: true,
+            isCompany: user.isCompany,
+          });
+          companyContact = response1.data;
+        }
 
         const customerServiceOrder = await api.post('/service-order/customer', {
-          customer_id: companyContact.data.id,
+          customer_id: companyContact.id,
           company_id: supplier_id,
           title: data.title,
           message: data.message,
