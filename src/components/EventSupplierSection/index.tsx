@@ -5,21 +5,9 @@ import {
   FiCheckSquare,
   FiChevronRight,
   FiEdit3,
-  FiHelpCircle,
-  FiHome,
-  FiMusic,
   FiSquare,
 } from 'react-icons/fi';
-import {
-  MdBuild,
-  MdFolderSpecial,
-  MdLinkedCamera,
-  MdLocalBar,
-  MdLocalDining,
-  MdLocalFlorist,
-  MdPersonAdd,
-} from 'react-icons/md';
-import { Form } from '@unform/web';
+import { MdPersonAdd } from 'react-icons/md';
 import IListEventDTO from '../../dtos/IListEventDTO';
 import ISelectedSupplierDTO from '../../dtos/ISelectedSupplierDTO';
 import ISupplierDTO from '../../dtos/ISupplierDTO';
@@ -30,30 +18,15 @@ import SelectedSupplierWindow from '../SelectedSupplierWindow';
 import SupplierServiceOrderFormWindow from '../SupplierServiceOrderFormWindow';
 import SuppliersListDrawer from '../SuppliersListDrawer';
 import TransactionAgreementForm from '../TransactionAgreementForm';
-import WindowContainer from '../WindowContainer';
 
-import {
-  Container,
-  Supplier,
-  BooleanNavigationButton,
-  MembersWindow,
-  MembersContainer,
-  AddSupplierDrawer,
-} from './styles';
+import { Container, Supplier, BooleanNavigationButton } from './styles';
 import getValidationErrors from '../../utils/getValidationErros';
 import DeleteConfirmationWindow from '../DeleteConfirmationWindow';
 import BooleanQuestionWindow from '../BooleanQuestionWindow';
-import Input from '../Input';
-
-interface ICreateSupplier {
-  name: string;
-  supplier_sub_category: string;
-}
-
-interface ISupplierSubCategoryDTO {
-  id: string;
-  sub_category: string;
-}
+import SelectSupplierCategoryWindow from '../SelectSupplierCategoryWindow';
+import ISupplierSubCategoryDTO from '../../dtos/ISupplierSubCategoryDTO';
+import SelectSupplierSubCategoryWindow from '../SelectSupplierSubCategoryWindow';
+import AddSupplierWindow from '../AddSupplierWindow';
 
 interface IProps {
   pageEvent: IListEventDTO;
@@ -184,95 +157,21 @@ const EventSupplierSection: React.FC<IProps> = ({
   const handleIsHiredDrawer = useCallback(() => {
     setIsHiredDrawer(!isHiredDrawer);
   }, [isHiredDrawer]);
+  const handleCloseAddSupplierWindow = useCallback(() => {
+    setSupplierCategory('');
+    setSupplierSubCategory('');
 
-  const handleAddSupplier = useCallback(
-    async (data: ICreateSupplier) => {
-      try {
-        formRef.current?.setErrors([]);
+    if (weplanSupplier && !isHired) {
+      setSupplierServiceOrderWindow(true);
+    }
+    setIsHired(false);
+    setWeplanSupplier(false);
+    setSelectedSupplier({} as ISelectedSupplierDTO);
 
-        const schema = Yup.object().shape({
-          name: Yup.string().required(),
-        });
-        await schema.validate(data, {
-          abortEarly: false,
-        });
-
-        if (weplanSupplier) {
-          const newSupplier = await api.post(
-            `events/event-suppliers/${pageEvent.id}`,
-            {
-              name: selectedWeplanSupplier.supplier.name,
-              supplier_sub_category: supplierSubCategory,
-              isHired,
-              weplanUser: weplanSupplier,
-            },
-          );
-          setSupplierServiceOrderWindow(true);
-          setAddSupplierDrawer(false);
-          setSupplierCategory('');
-          setSupplierSubCategory('');
-
-          handleGetSuppliers();
-          handleGetHiredSuppliers();
-          addToast({
-            type: 'success',
-            title: `${data.name} adicionado com Sucesso`,
-            description:
-              'Você já pode visualizar as alterações na página do seu evento.',
-          });
-          if (isHired) {
-            handleCreateTransactionWindow(newSupplier.data);
-          }
-        } else {
-          const newSupplier = await api.post(
-            `events/event-suppliers/${pageEvent.id}`,
-            {
-              name: data.name,
-              supplier_sub_category: supplierSubCategory,
-              isHired,
-              weplanUser: weplanSupplier,
-            },
-          );
-          setAddSupplierDrawer(false);
-          setSupplierCategory('');
-          setSupplierSubCategory('');
-
-          handleGetSuppliers();
-          handleGetHiredSuppliers();
-          addToast({
-            type: 'success',
-            title: `${data.name} adicionado com Sucesso`,
-            description:
-              'Você já pode visualizar as alterações na página do seu evento.',
-          });
-          if (isHired) {
-            handleCreateTransactionWindow(newSupplier.data);
-          }
-        }
-      } catch (err) {
-        if (err instanceof Yup.ValidationError) {
-          const error = getValidationErrors(err);
-          formRef.current?.setErrors(error);
-        }
-        addToast({
-          type: 'error',
-          title: 'Erro ao selecionar fornecedor',
-          description: 'Erro selecionar fornecedor, tente novamente.',
-        });
-      }
-    },
-    [
-      isHired,
-      pageEvent,
-      addToast,
-      handleGetSuppliers,
-      supplierSubCategory,
-      handleGetHiredSuppliers,
-      handleCreateTransactionWindow,
-      selectedWeplanSupplier,
-      weplanSupplier,
-    ],
-  );
+    handleGetSuppliers();
+    handleGetHiredSuppliers();
+    setAddSupplierDrawer(false);
+  }, [handleGetSuppliers, handleGetHiredSuppliers, weplanSupplier, isHired]);
 
   const handleDeleteHiredSupplier = useCallback(async () => {
     try {
@@ -347,6 +246,7 @@ const EventSupplierSection: React.FC<IProps> = ({
 
   const handleCloseSupplierServiceOrderFormWindow = useCallback(() => {
     setSupplierServiceOrderWindow(false);
+    setSelectedWeplanSupplier({} as ISupplierDTO);
   }, []);
 
   const handleSetSupplierCategory = useCallback((props: string) => {
@@ -366,6 +266,13 @@ const EventSupplierSection: React.FC<IProps> = ({
     }
     return setWeplanSupplier(false);
   }, []);
+
+  const handleCloseSupplierSubCategoryWindow = useCallback(() => {
+    setSupplierSubCategoryWindow(false);
+    setSupplierSubCategory('');
+    setSupplierCategory('');
+  }, []);
+
   useEffect(() => {
     if (supplierCategory !== '') {
       handleGetSupplierSubCategory();
@@ -378,61 +285,19 @@ const EventSupplierSection: React.FC<IProps> = ({
   return (
     <>
       {!!addSupplierDrawer && (
-        <WindowContainer
-          onHandleCloseWindow={() => setAddSupplierDrawer(false)}
-          containerStyle={{
-            zIndex: 1000,
-            top: '20%',
-            left: '20%',
-            height: '60%',
-            width: '60%',
-          }}
-        >
-          <Form ref={formRef} onSubmit={handleAddSupplier}>
-            <AddSupplierDrawer>
-              <h1>Adicionar Fornecedor</h1>
-
-              {isHiredMessage === '' ? (
-                <button type="button" onClick={handleIsHiredDrawer}>
-                  Contratado?
-                </button>
-              ) : (
-                <h1>
-                  <button type="button" onClick={handleIsHiredDrawer}>
-                    {isHiredMessage}
-                  </button>
-                </h1>
-              )}
-
-              {weplanSupplier ? (
-                <button
-                  type="button"
-                  onClick={() => handleSetWeplanSupplierListWindow(false)}
-                >
-                  Fornecedor WePlan
-                </button>
-              ) : (
-                <h1>
-                  <button
-                    type="button"
-                    onClick={() => handleSetWeplanSupplierListWindow(true)}
-                  >
-                    Forcecedor WePlan?
-                  </button>
-                </h1>
-              )}
-              <Input
-                name="name"
-                type="text"
-                placeholder="Nome do fornecedor"
-                containerStyle={{ height: '40px' }}
-              />
-              <button type="submit">
-                <h3>Salvar</h3>
-              </button>
-            </AddSupplierDrawer>
-          </Form>
-        </WindowContainer>
+        <AddSupplierWindow
+          eventId={pageEvent.id}
+          handleCloseWindow={handleCloseAddSupplierWindow}
+          handleCreateTransactionWindow={handleCreateTransactionWindow}
+          handleIsHiredDrawer={handleIsHiredDrawer}
+          handleSetWeplanSupplierListWindow={handleSetWeplanSupplierListWindow}
+          isHired={isHired}
+          isHiredMessage={isHiredMessage}
+          onHandleCloseWindow={() => handleCloseAddSupplierWindow()}
+          selectedWeplanSupplier={selectedWeplanSupplier}
+          supplierSubCategory={supplierSubCategory}
+          weplanSupplier={weplanSupplier}
+        />
       )}
       {!!isHiredDrawer && (
         <BooleanQuestionWindow
@@ -467,138 +332,19 @@ const EventSupplierSection: React.FC<IProps> = ({
         />
       )}
       {!!supplierCategoryWindow && (
-        <WindowContainer
-          onHandleCloseWindow={handleSupplierCategory}
-          containerStyle={{
-            zIndex: 99,
-            top: '5%',
-            left: '5%',
-            height: '90%',
-            width: '90%',
-          }}
-        >
-          <h1>Categoria de Fornecedores</h1>
-          <MembersWindow>
-            {/* 1 */}
-            <MembersContainer>
-              <button
-                type="button"
-                onClick={() => handleSetSupplierCategory('Planning')}
-              >
-                <MdFolderSpecial size={50} />
-                <h1>Planejamento</h1>
-              </button>
-              {/* 2 */}
-              <button
-                type="button"
-                onClick={() => handleSetSupplierCategory('Event_Desing')}
-              >
-                <MdLocalFlorist size={50} />
-                <h1>Decoração</h1>
-              </button>
-              {/* 3 */}
-              <button
-                type="button"
-                onClick={() => handleSetSupplierCategory('Venue')}
-              >
-                <FiHome size={50} />
-                <h1>Espaços e Igrejas</h1>
-              </button>
-              {/* </MembersContainer> */}
-              {/* 4 */}
-              {/* <MembersContainer> */}
-              <button
-                type="button"
-                onClick={() => handleSetSupplierCategory('Catering')}
-              >
-                <MdLocalDining size={50} />
-                <h1>Buffet, lanches e Doces</h1>
-              </button>
-              {/* 5 */}
-              <button
-                type="button"
-                onClick={() =>
-                  handleSetSupplierCategory('Film_And_Photography')
-                }
-              >
-                <MdLinkedCamera size={50} />
-                <h1>Fotos e Filmes</h1>
-              </button>
-              {/* 6 */}
-              <button
-                type="button"
-                onClick={() =>
-                  handleSetSupplierCategory('Entertainment_Artists')
-                }
-              >
-                <FiMusic size={50} />
-                <h1>Artistas e Entretenimento</h1>
-              </button>
-              {/* </MembersContainer> */}
-              {/* 7 */}
-              {/* <MembersContainer> */}
-              <button
-                type="button"
-                onClick={() =>
-                  handleSetSupplierCategory('Bartenders_And_Drinks')
-                }
-              >
-                <MdLocalBar size={50} />
-                <h1>Bar e Bebidas</h1>
-              </button>
-              {/* 8 */}
-              <button
-                type="button"
-                onClick={() =>
-                  handleSetSupplierCategory(
-                    'Dance_Floors_Structures_And_Lighting',
-                  )
-                }
-              >
-                <MdBuild size={50} />
-                <h1>Estruturas, Cênica e Boate</h1>
-              </button>
-              {/* 9 */}
-              <button
-                type="button"
-                onClick={() => handleSetSupplierCategory('Others')}
-              >
-                <FiHelpCircle size={50} />
-                <h1>Outros</h1>
-              </button>
-            </MembersContainer>
-          </MembersWindow>
-        </WindowContainer>
+        <SelectSupplierCategoryWindow
+          handleSetSupplierCategory={(e: string) =>
+            handleSetSupplierCategory(e)
+          }
+          handleSupplierCategory={handleSupplierCategory}
+        />
       )}
       {supplierSubCategoryWindow && (
-        <WindowContainer
-          onHandleCloseWindow={() => setSupplierSubCategoryWindow(false)}
-          containerStyle={{
-            zIndex: 100,
-            top: '5%',
-            left: '5%',
-            height: '90%',
-            width: '90%',
-          }}
-        >
-          <h1>Sub-Categoria de Fornecedores</h1>
-          <MembersWindow>
-            <MembersContainer>
-              {supplierSubCategories.map(subCategory => (
-                <button
-                  key={subCategory.id}
-                  type="button"
-                  onClick={() =>
-                    handleAddSupplierDrawer(subCategory.sub_category)
-                  }
-                >
-                  {/* <MdFolderSpecial size={50} /> */}
-                  <h1>{subCategory.sub_category}</h1>
-                </button>
-              ))}
-            </MembersContainer>
-          </MembersWindow>
-        </WindowContainer>
+        <SelectSupplierSubCategoryWindow
+          handleCloseWindow={handleCloseSupplierSubCategoryWindow}
+          handleAddSupplierDrawer={(e: string) => handleAddSupplierDrawer(e)}
+          supplierSubCategories={supplierSubCategories}
+        />
       )}
       {!!transactionAgreementWindow && (
         <TransactionAgreementForm
