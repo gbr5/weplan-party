@@ -161,10 +161,14 @@ const EventSupplierSection: React.FC<IProps> = ({
     setSupplierCategory('');
     setSupplierSubCategory('');
 
+    if (weplanSupplier) {
+      setSupplierServiceOrderWindow(true);
+    }
+
     handleGetSuppliers();
     handleGetHiredSuppliers();
     setAddSupplierDrawer(false);
-  }, [handleGetSuppliers, handleGetHiredSuppliers]);
+  }, [handleGetSuppliers, handleGetHiredSuppliers, weplanSupplier]);
 
   const handleDeleteHiredSupplier = useCallback(async () => {
     try {

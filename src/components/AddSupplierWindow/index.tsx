@@ -71,7 +71,6 @@ const AddSupplierWindow: React.FC<IProps> = ({
             },
           );
 
-          handleCloseWindow();
           addToast({
             type: 'success',
             title: `${data.name} adicionado com Sucesso`,
@@ -81,6 +80,7 @@ const AddSupplierWindow: React.FC<IProps> = ({
           if (isHired) {
             handleCreateTransactionWindow(newSupplier.data);
           }
+          handleCloseWindow();
         } else {
           const newSupplier = await api.post(
             `events/event-suppliers/${eventId}`,
