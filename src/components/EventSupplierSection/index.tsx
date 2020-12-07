@@ -167,7 +167,6 @@ const EventSupplierSection: React.FC<IProps> = ({
     setIsHired(false);
     setWeplanSupplier(false);
     setSelectedSupplier({} as ISelectedSupplierDTO);
-    // setSelectedWeplanSupplier({} as ISupplierDTO);
 
     handleGetSuppliers();
     handleGetHiredSuppliers();
@@ -247,6 +246,7 @@ const EventSupplierSection: React.FC<IProps> = ({
 
   const handleCloseSupplierServiceOrderFormWindow = useCallback(() => {
     setSupplierServiceOrderWindow(false);
+    setSelectedWeplanSupplier({} as ISupplierDTO);
   }, []);
 
   const handleSetSupplierCategory = useCallback((props: string) => {
