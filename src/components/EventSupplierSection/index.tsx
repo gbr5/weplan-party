@@ -161,14 +161,18 @@ const EventSupplierSection: React.FC<IProps> = ({
     setSupplierCategory('');
     setSupplierSubCategory('');
 
-    if (weplanSupplier) {
+    if (weplanSupplier && !isHired) {
       setSupplierServiceOrderWindow(true);
     }
+    setIsHired(false);
+    setWeplanSupplier(false);
+    setSelectedSupplier({} as ISelectedSupplierDTO);
+    setSelectedWeplanSupplier({} as ISupplierDTO);
 
     handleGetSuppliers();
     handleGetHiredSuppliers();
     setAddSupplierDrawer(false);
-  }, [handleGetSuppliers, handleGetHiredSuppliers, weplanSupplier]);
+  }, [handleGetSuppliers, handleGetHiredSuppliers, weplanSupplier, isHired]);
 
   const handleDeleteHiredSupplier = useCallback(async () => {
     try {
