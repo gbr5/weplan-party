@@ -13,13 +13,13 @@ interface IFriendsDTO {
 
 interface IPropsDTO {
   friends: IFriendsDTO[];
-  onHandleFriendsListDrawer: MouseEventHandler;
+  onHandleCheckListFormWindow: MouseEventHandler;
   handleSelectedFriend(arg: IFriendsDTO): void;
 }
 
-const FriendsListDrawer: React.FC<IPropsDTO> = ({
+const CheckListFormWindow: React.FC<IPropsDTO> = ({
   friends,
-  onHandleFriendsListDrawer,
+  onHandleCheckListFormWindow,
   handleSelectedFriend,
 }: IPropsDTO) => {
   const [weplanUser, setWeplanUser] = useState<IFriendsDTO>({} as IFriendsDTO);
@@ -27,7 +27,7 @@ const FriendsListDrawer: React.FC<IPropsDTO> = ({
   return (
     <FriendsList onSubmit={() => handleSelectedFriend(weplanUser)}>
       <span>
-        <button type="button" onClick={onHandleFriendsListDrawer}>
+        <button type="button" onClick={onHandleCheckListFormWindow}>
           <MdClose size={30} />
         </button>
       </span>
@@ -46,4 +46,4 @@ const FriendsListDrawer: React.FC<IPropsDTO> = ({
   );
 };
 
-export default FriendsListDrawer;
+export default CheckListFormWindow;

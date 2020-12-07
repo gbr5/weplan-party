@@ -17,7 +17,7 @@ interface IPropsDTO {
   onHandleEventSupplierDrawer: MouseEventHandler;
   onHandleEventSupplierUpdate: MouseEventHandler;
   onHandleDeleteEventSupplierDrawer: MouseEventHandler;
-  getEventSuppliers: Function;
+  handleGetSuppliers: Function;
   getHiredSuppliers: Function;
 }
 
@@ -27,7 +27,7 @@ const EventSupplierWindow: React.FC<IPropsDTO> = ({
   onHandleEventSupplierDrawer,
   onHandleEventSupplierUpdate,
   onHandleDeleteEventSupplierDrawer,
-  getEventSuppliers,
+  handleGetSuppliers,
   getHiredSuppliers,
 }: IPropsDTO) => {
   const [editSupplierWindow, setEditSupplierWindow] = useState(false);
@@ -49,7 +49,7 @@ const EventSupplierWindow: React.FC<IPropsDTO> = ({
       {!!editSupplierWindow && (
         <TransactionAgreementForm
           agreement={thisAgreement}
-          getEventSuppliers={getEventSuppliers}
+          handleGetSuppliers={handleGetSuppliers}
           getHiredSuppliers={getHiredSuppliers}
           hiredSupplier={eventSupplier}
           onHandleCloseWindow={() => setEditSupplierWindow(false)}
