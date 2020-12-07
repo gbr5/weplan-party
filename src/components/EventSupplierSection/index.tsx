@@ -167,7 +167,7 @@ const EventSupplierSection: React.FC<IProps> = ({
     setIsHired(false);
     setWeplanSupplier(false);
     setSelectedSupplier({} as ISelectedSupplierDTO);
-    setSelectedWeplanSupplier({} as ISupplierDTO);
+    // setSelectedWeplanSupplier({} as ISupplierDTO);
 
     handleGetSuppliers();
     handleGetHiredSuppliers();
