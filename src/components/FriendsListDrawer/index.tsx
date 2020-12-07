@@ -13,20 +13,20 @@ import IFriendDTO from '../../dtos/IFriendDTO';
 
 interface IPropsDTO {
   friends: IFriendDTO[];
-  onHandleFriendsListDrawer: MouseEventHandler;
+  onHandleCloseWindow: MouseEventHandler;
   handleSelectedFriend(arg: IFriendDTO): void;
 }
 
 const FriendsListDrawer: React.FC<IPropsDTO> = ({
   friends,
-  onHandleFriendsListDrawer,
+  onHandleCloseWindow,
   handleSelectedFriend,
 }: IPropsDTO) => {
   const [weplanUser, setWeplanUser] = useState<IFriendDTO>({} as IFriendDTO);
 
   return (
     <WindowContainer
-      onHandleCloseWindow={onHandleFriendsListDrawer}
+      onHandleCloseWindow={onHandleCloseWindow}
       containerStyle={{
         zIndex: 10000,
         top: '5%',

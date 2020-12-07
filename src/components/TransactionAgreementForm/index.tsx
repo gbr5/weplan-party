@@ -17,14 +17,14 @@ interface IPropsDTO {
   agreement?: ITransactionAgreementDTO;
   hiredSupplier: ISelectedSupplierDTO;
   onHandleCloseWindow: MouseEventHandler;
-  getEventSuppliers: Function;
+  handleGetSuppliers: Function;
   getHiredSuppliers: Function;
 }
 
 const TransactionAgreementForm: React.FC<IPropsDTO> = ({
   onHandleCloseWindow,
   hiredSupplier,
-  getEventSuppliers,
+  handleGetSuppliers,
   getHiredSuppliers,
   agreement,
 }: IPropsDTO) => {
@@ -104,7 +104,7 @@ const TransactionAgreementForm: React.FC<IPropsDTO> = ({
           title: 'Membro da festa adicionado com sucesso',
           description: 'Ele já pode visualizar as informações do evento.',
         });
-        getEventSuppliers();
+        handleGetSuppliers();
         getHiredSuppliers();
         setTransactionContainer(false);
       } catch (err) {
@@ -116,7 +116,7 @@ const TransactionAgreementForm: React.FC<IPropsDTO> = ({
         throw new Error(err);
       }
     },
-    [addToast, hiredSupplier, getEventSuppliers, getHiredSuppliers, agreement],
+    [addToast, hiredSupplier, handleGetSuppliers, getHiredSuppliers, agreement],
   );
 
   return (
