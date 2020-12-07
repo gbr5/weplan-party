@@ -1,10 +1,4 @@
-import React, {
-  MouseEventHandler,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import * as Yup from 'yup';
 import { FormHandles } from '@unform/core';
 import {
@@ -78,9 +72,6 @@ const EventSupplierSection: React.FC<IProps> = ({
 }: IProps) => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
-  const [wpSupplierQuestionDrawer, setWpSupplierQuestionDrawer] = useState(
-    false,
-  );
 
   const [isHiredDrawer, setIsHiredDrawer] = useState(false);
   const [isHiredMessage, setIsHiredMessage] = useState('');
@@ -138,9 +129,6 @@ const EventSupplierSection: React.FC<IProps> = ({
   const handleHiredSuppliersSection = useCallback(props => {
     setHiredSuppliersSection(props);
   }, []);
-  const handleWeplanGuestDrawer = useCallback(props => {
-    setWpSupplierQuestionDrawer(props);
-  }, []);
   const handleCreateTransactionWindow = useCallback(props => {
     setSupplierInfo(props);
     setTransactionAgreementWindow(true);
@@ -165,10 +153,6 @@ const EventSupplierSection: React.FC<IProps> = ({
     setSupplierSubCategoryWindow(supplierCategoryWindow);
     setSupplierCategoryWindow(!supplierCategoryWindow);
   }, [supplierCategoryWindow]);
-
-  const [hiredSuppliersLength, setHiredSuppliersLength] = useState(
-    hiredSuppliers.length === 0,
-  );
 
   const handleGetSupplierSubCategory = useCallback(() => {
     try {
@@ -220,7 +204,7 @@ const EventSupplierSection: React.FC<IProps> = ({
               name: selectedWeplanSupplier.supplier.name,
               supplier_sub_category: supplierSubCategory,
               isHired,
-              weplanUser: true,
+              weplanUser: weplanSupplier,
             },
           );
           setSupplierServiceOrderWindow(true);
@@ -246,7 +230,7 @@ const EventSupplierSection: React.FC<IProps> = ({
               name: data.name,
               supplier_sub_category: supplierSubCategory,
               isHired,
-              weplanUser: false,
+              weplanUser: weplanSupplier,
             },
           );
           setAddSupplierDrawer(false);
@@ -370,21 +354,18 @@ const EventSupplierSection: React.FC<IProps> = ({
     setSupplierSubCategoryWindow(true);
     setSupplierCategory(props);
   }, []);
-  const handleIsHiredQuestion = useCallback(
-    (is_hired: boolean) => {
-      if (is_hired === true) {
-        setIsHiredMessage('Contratado S2!');
-        setIsHired(true);
-        setIsHiredDrawer(false);
-      } else {
-        setIsHiredMessage('Avaliando ...');
-        setIsHired(false);
-        setIsHiredDrawer(false);
-      }
-      return handleWeplanGuestDrawer(false);
-    },
-    [handleWeplanGuestDrawer],
-  );
+  const handleIsHiredQuestion = useCallback((is_hired: boolean) => {
+    if (is_hired === true) {
+      setIsHiredMessage('Contratado S2!');
+      setIsHired(true);
+      setIsHiredDrawer(false);
+    } else {
+      setIsHiredMessage('Avaliando ...');
+      setIsHired(false);
+      setIsHiredDrawer(false);
+    }
+    return setWeplanSupplier(false);
+  }, []);
   useEffect(() => {
     if (supplierCategory !== '') {
       handleGetSupplierSubCategory();
