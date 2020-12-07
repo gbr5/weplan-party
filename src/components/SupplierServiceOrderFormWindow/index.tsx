@@ -12,10 +12,33 @@ import { useToast } from '../../hooks/toast';
 import getValidationErrors from '../../utils/getValidationErros';
 import Input from '../Input';
 import IPersonInfoDTO from '../../dtos/IPersonInfoDTO';
+import IUserDTO from '../../dtos/IUserDTO';
 
 interface IForm {
   title: string;
   message: string;
+}
+
+interface IContactInfo {
+  info_type: string;
+  info: string;
+}
+
+interface ICompanyContact {
+  id: string;
+  name: string;
+  description: string;
+  company_contact_type: string;
+  weplanUser: boolean;
+  isCompany: boolean;
+  company: IUserDTO;
+  contact_infos: IContactInfo[];
+}
+
+interface IWPContact {
+  id: string;
+  user_id: string;
+  companyContact: ICompanyContact;
 }
 
 interface IPropsDTO {
@@ -39,6 +62,8 @@ const SupplierServiceOrderFormWindow: React.FC<IPropsDTO> = ({
     {} as IPersonInfoDTO,
   );
 
+  const [wpContact, setWPContact] = useState<IWPContact>({} as IWPContact);
+
   const getPersonInfo = useCallback(() => {
     api.get<IPersonInfoDTO>(`person-info/${user.id}`).then(response => {
       setPersonInfo(response.data);
@@ -48,6 +73,19 @@ const SupplierServiceOrderFormWindow: React.FC<IPropsDTO> = ({
   useEffect(() => {
     getPersonInfo();
   }, [getPersonInfo]);
+
+  const getWPCompanyContact = useCallback(() => {
+    api
+      .get<IWPContact>(`company/contact/wp-user/show/${user.id}/${supplier_id}`)
+      .then(response => {
+        setWPContact(response.data);
+      });
+  }, [user, supplier_id]);
+
+  useEffect(() => {
+    getWPCompanyContact();
+  }, [getWPCompanyContact]);
+
   const handleSubmit = useCallback(
     async (data: IForm) => {
       try {
@@ -61,27 +99,84 @@ const SupplierServiceOrderFormWindow: React.FC<IPropsDTO> = ({
           abortEarly: false,
         });
 
-        const companyContact = await api.post('/company/contacts', {
-          company_id: supplier_id,
-          name: `${personInfo.first_name} ${personInfo.last_name}` || user.name,
-          description: 'Cliente Weplan',
-          company_contact_type: 'Customer',
-          weplanUser: true,
-          isCompany: user.isCompany,
-        });
+        if (wpContact.id === undefined) {
+          let companyContact = {} as ICompanyContact;
+          if (personInfo.first_name && personInfo.last_name) {
+            const response = await api.post('/company/contacts', {
+              company_id: supplier_id,
+              name: `${personInfo.first_name} ${personInfo.last_name}`,
+              description: 'Cliente Weplan',
+              company_contact_type: 'Customer',
+              weplanUser: true,
+              isCompany: user.isCompany,
+            });
+            Promise.all([
+              api.post('company/contacts/info/', {
+                company_contact_id: response.data.id,
+                info_type: 'Email',
+                info: user.email,
+              }),
+              api.post('company/contact/wp-user/', {
+                company_contact_id: response.data.id,
+                user_id: user.id,
+              }),
+            ]);
+            companyContact = response.data;
+          } else {
+            const response1 = await api.post('/company/contacts', {
+              company_id: supplier_id,
+              name: user.name,
+              description: 'Cliente Weplan',
+              company_contact_type: 'Customer',
+              weplanUser: true,
+              isCompany: user.isCompany,
+            });
+            Promise.all([
+              api.post('company/contacts/info/', {
+                company_contact_id: response1.data.id,
+                info_type: 'Email',
+                info: user.email,
+              }),
+              api.post('company/contact/wp-user/', {
+                company_contact_id: response1.data.id,
+                user_id: user.id,
+              }),
+            ]);
+            companyContact = response1.data;
+          }
+          const customerServiceOrder = await api.post(
+            '/service-order/customer',
+            {
+              customer_id: companyContact.id,
+              company_id: supplier_id,
+              title: data.title,
+              message: data.message,
+              isResponded: false,
+            },
+          );
 
-        const customerServiceOrder = await api.post('/service-order/customer', {
-          customer_id: companyContact.data.id,
-          company_id: supplier_id,
-          title: data.title,
-          message: data.message,
-          isResponded: false,
-        });
+          await api.post('event/service-orders', {
+            customer_service_order_id: customerServiceOrder.data.id,
+            event_id,
+          });
+        } else {
+          const customerServiceOrder = await api.post(
+            '/service-order/customer',
+            {
+              customer_id: wpContact.companyContact.id,
+              company_id: supplier_id,
+              title: data.title,
+              message: data.message,
+              isResponded: false,
+            },
+          );
 
-        await api.post('event/service-orders', {
-          customer_service_order_id: customerServiceOrder.data.id,
-          event_id,
-        });
+          await api.post('event/service-orders', {
+            customer_service_order_id: customerServiceOrder.data.id,
+            event_id,
+          });
+        }
+
         handleCloseWindow();
         addToast({
           type: 'success',
@@ -101,7 +196,15 @@ const SupplierServiceOrderFormWindow: React.FC<IPropsDTO> = ({
         });
       }
     },
-    [addToast, handleCloseWindow, event_id, supplier_id, user, personInfo],
+    [
+      addToast,
+      handleCloseWindow,
+      event_id,
+      wpContact,
+      supplier_id,
+      user,
+      personInfo,
+    ],
   );
 
   return (
