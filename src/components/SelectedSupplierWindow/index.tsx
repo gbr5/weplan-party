@@ -11,11 +11,11 @@ import {
 import avatar_placeholder from '../../assets/avatar_placeholder.jpg';
 import WindowContainer from '../WindowContainer';
 
-import ISelectedSupplierDTO from '../../dtos/ISelectedSupplierDTO';
+import IEventSupplierDTO from '../../dtos/IEventSupplierDTO';
 
 interface IPropsDTO {
   isOwner: boolean;
-  selectedSupplier: ISelectedSupplierDTO;
+  selectedSupplier: IEventSupplierDTO;
   onHandleSelectedSupplierDrawer: MouseEventHandler;
   onUpdateSelectedSupplierDrawer: MouseEventHandler;
   onDeleteSelectedSupplierDrawer: MouseEventHandler;

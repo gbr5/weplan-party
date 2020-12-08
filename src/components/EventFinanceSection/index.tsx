@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { differenceInDays } from 'date-fns';
-import ISelectedSupplierDTO from '../../dtos/ISelectedSupplierDTO';
+import IEventSupplierDTO from '../../dtos/IEventSupplierDTO';
 import PageContainer from '../PageContainer';
 
 import ITransactionDTO from '../../dtos/ITransactionDTO';
@@ -21,7 +21,7 @@ import TransactionAgreement from '../TransactionAgreement';
 
 interface IPropsDTO {
   isOwner: boolean;
-  hiredSuppliers: ISelectedSupplierDTO[];
+  hiredSuppliers: IEventSupplierDTO[];
   refreshHiredSuppliers: Function;
 }
 
@@ -31,9 +31,9 @@ const EventFinanceSection: React.FC<IPropsDTO> = ({
   refreshHiredSuppliers,
 }: IPropsDTO) => {
   const [supplierTransactions, setSupplierTransactions] = useState(false);
-  const [selectedSupplier, setSelectedSupplier] = useState<
-    ISelectedSupplierDTO
-  >({} as ISelectedSupplierDTO);
+  const [selectedSupplier, setSelectedSupplier] = useState<IEventSupplierDTO>(
+    {} as IEventSupplierDTO,
+  );
   const [totalEventCost, setTotalEventCost] = useState(0);
   const [totalPaid, setTotalPaid] = useState(0);
   const [totalToPay, setTotalToPay] = useState(0);
@@ -61,7 +61,7 @@ const EventFinanceSection: React.FC<IPropsDTO> = ({
     setPaidTransactionsWindow(false);
     setNotPaidTransactionsWindow(false);
     setOverdueTransactionsWindow(false);
-    setSelectedSupplier({} as ISelectedSupplierDTO);
+    setSelectedSupplier({} as IEventSupplierDTO);
   }, []);
 
   const handleAllTransactionsWindow = useCallback(() => {
