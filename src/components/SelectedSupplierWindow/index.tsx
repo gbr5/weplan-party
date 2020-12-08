@@ -11,10 +11,7 @@ import {
 import avatar_placeholder from '../../assets/avatar_placeholder.jpg';
 import WindowContainer from '../WindowContainer';
 
-interface ISelectedSupplierDTO {
-  id: string;
-  name: string;
-}
+import ISelectedSupplierDTO from '../../dtos/ISelectedSupplierDTO';
 
 interface IPropsDTO {
   isOwner: boolean;
@@ -43,9 +40,32 @@ const SelectedSupplierWindow: React.FC<IPropsDTO> = ({
       }}
     >
       <SelectedSupplierDrawer>
-        <img src={avatar_placeholder} alt={selectedSupplier.name} />
-
-        <h1>{selectedSupplier.name}</h1>
+        <h1>Fornecedor Selecionado</h1>
+        <div>
+          {!selectedSupplier.eventWeplanSupplier && (
+            <>
+              <h1>{selectedSupplier.name}</h1>
+              <strong>{selectedSupplier.supplier_sub_category}</strong>
+            </>
+          )}
+          {selectedSupplier.eventWeplanSupplier &&
+            selectedSupplier.eventWeplanSupplier.weplanEventSupplier && (
+              <>
+                <h1>{selectedSupplier.name}</h1>
+                <strong>{selectedSupplier.supplier_sub_category}</strong>
+                <img
+                  src={
+                    selectedSupplier.eventWeplanSupplier.weplanEventSupplier
+                      .avatar_url
+                      ? selectedSupplier.eventWeplanSupplier.weplanEventSupplier
+                          .avatar_url
+                      : avatar_placeholder
+                  }
+                  alt={selectedSupplier.name}
+                />
+              </>
+            )}
+        </div>
 
         {isOwner && (
           <div>

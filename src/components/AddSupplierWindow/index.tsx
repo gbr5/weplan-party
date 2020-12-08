@@ -70,6 +70,10 @@ const AddSupplierWindow: React.FC<IProps> = ({
               weplanUser: weplanSupplier,
             },
           );
+          await api.post(`events/${eventId}/event-weplan-suppliers`, {
+            user_id: selectedWeplanSupplier.supplier.id,
+            event_supplier_id: newSupplier.data.id,
+          });
 
           addToast({
             type: 'success',
