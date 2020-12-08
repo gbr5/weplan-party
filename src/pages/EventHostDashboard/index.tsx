@@ -64,14 +64,6 @@ import AddPlannerWindow from '../../components/AddPlannerWindow';
 import MessageSection from '../../components/MessageSection';
 import LatestNewsSection from '../../components/LatestNewsSection';
 
-interface IEvent {
-  id: string;
-  name: string;
-  trimmed_name: string;
-  date: string;
-  event_type: string;
-  daysTillDate: number;
-}
 interface IEventGuest {
   id: string;
   confirmed: boolean;
@@ -80,13 +72,6 @@ interface IEventGuest {
   last_name: string;
   weplanUser: boolean;
   description: string;
-}
-interface ICreateGuest {
-  first_name: string;
-  last_name: string;
-  description: string;
-  confirmed: boolean;
-  weplanUser: boolean;
 }
 interface IEventParams {
   params: {
@@ -124,16 +109,6 @@ const EventHostDashboard: React.FC = () => {
     {} as IFriendDTO,
   );
 
-  const handleSeletedFriend = useCallback(
-    (props: IFriendDTO) => {
-      if (selectedFriend.id === props.id) {
-        return setSelectedFriend({} as IFriendDTO);
-      }
-      return setSelectedFriend(props);
-    },
-    [selectedFriend],
-  );
-
   const [event, setEvent] = useState<IListEventDTO>({} as IListEventDTO);
   const [friends, setFriends] = useState<IFriendDTO[]>([]);
 
@@ -162,7 +137,7 @@ const EventHostDashboard: React.FC = () => {
 
   const [addPlannerDrawer, setAddPlannerDrawer] = useState(false);
   const [addOwnerDrawer, setAddOwnerDrawer] = useState(false);
-  const [addMemberDrawer, setAddMemberDrawer] = useState(false);
+  const [addMemberWindowForm, setAddMemberWindowForm] = useState(false);
   const [memberProfileWindow, setMemberProfileWindow] = useState(false);
   const [ownerProfileWindow, setOwnerProfileWindow] = useState(false);
   const [numberOfGuestDrawer, setNumberOfGuestDrawer] = useState(false);
@@ -200,7 +175,7 @@ const EventHostDashboard: React.FC = () => {
   const closeAllWindows = useCallback(() => {
     setEventInfoDrawer(false);
     setBudgetDrawer(false);
-    setAddMemberDrawer(false);
+    setAddMemberWindowForm(false);
     setAddOwnerDrawer(false);
     setEditEventNameDrawer(false);
     setAddPlannerDrawer(false);
@@ -262,10 +237,16 @@ const EventHostDashboard: React.FC = () => {
     closeAllWindows();
     setEditEventNameDrawer(!editEventNameDrawer);
   }, [editEventNameDrawer, closeAllWindows]);
-  const handleAddMemberDrawer = useCallback(() => {
+  const handleSelectFriendAsMember = useCallback(() => {
     closeAllWindows();
-    setAddMemberDrawer(!addMemberDrawer);
-  }, [addMemberDrawer, closeAllWindows]);
+    setFriendsWindow(true);
+    setAddMemberWindowForm(true);
+  }, [closeAllWindows]);
+  const handleSelectFriendAsOwner = useCallback(() => {
+    closeAllWindows();
+    setFriendsWindow(true);
+    setAddOwnerDrawer(true);
+  }, [closeAllWindows]);
   const handleAddOwnerDrawer = useCallback(() => {
     closeAllWindows();
     setAddOwnerDrawer(!addOwnerDrawer);
@@ -475,7 +456,7 @@ const EventHostDashboard: React.FC = () => {
 
   const handleCloseAddMemberWindow = useCallback(() => {
     setSelectedFriend({} as IFriendDTO);
-    setAddMemberDrawer(false);
+    setAddMemberWindowForm(false);
     handleGetMembers();
   }, [handleGetMembers]);
 
@@ -640,6 +621,24 @@ const EventHostDashboard: React.FC = () => {
     return totalCost;
   }, [hiredSuppliers]);
 
+  const handleSeletedFriend = useCallback(
+    (props: IFriendDTO) => {
+      if (addMemberWindowForm) {
+        closeAllWindows();
+        setSelectedFriend(props);
+
+        return setAddMemberWindowForm(true);
+      }
+      if (addOwnerDrawer) {
+        closeAllWindows();
+        setSelectedFriend(props);
+        return setAddOwnerDrawer(true);
+      }
+      return '';
+    },
+    [addMemberWindowForm, addOwnerDrawer, closeAllWindows],
+  );
+
   useEffect(() => {
     handleGetSuppliers();
   }, [handleGetSuppliers]);
@@ -781,28 +780,29 @@ const EventHostDashboard: React.FC = () => {
       )}
       {!!addOwnerDrawer && (
         <AddOwnerWindow
-          handleFriendsWindow={() => setFriendsWindow(true)}
+          handleFriendsWindow={() => handleSelectFriendAsOwner()}
           availableNumberOfGuests={availableNumberOfGuests}
           eventId={eventId}
           handleCloseWindow={handleCloseAddOwnerWindow}
           onHandleCloseWindow={() => setAddOwnerDrawer(false)}
-          wpUserId={selectedFriend.id}
+          selectedFriend={selectedFriend}
         />
       )}
       {friendsWindow && (
         <FriendsListDrawer
+          selectedFriend={selectedFriend}
           friends={friends}
-          handleSelectedFriend={handleSeletedFriend}
+          handleSelectedFriend={(e: IFriendDTO) => handleSeletedFriend(e)}
           onHandleCloseWindow={() => setFriendsWindow(false)}
         />
       )}
-      {!!addMemberDrawer && (
+      {!!addMemberWindowForm && (
         <AddMemberWindow
           availableNumberOfGuests={availableNumberOfGuests}
           eventId={eventId}
           handleCloseWindow={handleCloseAddMemberWindow}
           onHandleCloseWindow={() => handleCloseAddMemberWindow()}
-          wpUserId={selectedFriend.id}
+          selectedFriend={selectedFriend}
           handleFriendsWindow={() => setFriendsWindow(true)}
         />
       )}
@@ -868,7 +868,7 @@ const EventHostDashboard: React.FC = () => {
             )}
 
             {pageEvent.isOwner ? (
-              <button type="button" onClick={handleAddMemberDrawer}>
+              <button type="button" onClick={handleSelectFriendAsMember}>
                 <h1>Membros: {numberOfMembers}</h1>
                 <MdPersonAdd size={24} />
               </button>
@@ -1028,6 +1028,7 @@ const EventHostDashboard: React.FC = () => {
           {!!messagesSection && <MessageSection />}
           {!!guestsSection && (
             <EventGuestSection
+              selectedFriend={selectedFriend}
               friends={friends}
               myGuestsConfirmed={myGuestsConfirmed}
               myAvailableNumberOfGuests={myAvailableNumberOfGuests}

@@ -55,6 +55,7 @@ interface IProps {
   myGuests: IEventGuest[];
   myGuestsConfirmed: number;
   friends: IFriendDTO[];
+  selectedFriend: IFriendDTO;
 }
 
 const EventGuestSection: React.FC<IProps> = ({
@@ -68,6 +69,7 @@ const EventGuestSection: React.FC<IProps> = ({
   myGuests,
   myGuestsConfirmed,
   friends,
+  selectedFriend,
 }: IProps) => {
   const { user } = useAuth();
   const { addToast } = useToast();
@@ -391,6 +393,7 @@ const EventGuestSection: React.FC<IProps> = ({
     <>
       {!!friendsWindow && (
         <FriendsListDrawer
+          selectedFriend={selectedFriend}
           friends={friends}
           onHandleCloseWindow={() => setFriendsWindow(false)}
           handleSelectedFriend={(friend: IFriendDTO) =>

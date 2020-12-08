@@ -12,13 +12,14 @@ import { Container } from './styles';
 import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
 import getValidationErrors from '../../utils/getValidationErros';
+import IFriendDTO from '../../dtos/IFriendDTO';
 
 interface IProps {
   onHandleCloseWindow: MouseEventHandler;
   eventId: string;
   availableNumberOfGuests: number;
   handleCloseWindow: Function;
-  wpUserId: string;
+  selectedFriend: IFriendDTO;
   handleFriendsWindow: Function;
 }
 
@@ -27,7 +28,7 @@ const AddMemberWindow: React.FC<IProps> = ({
   eventId,
   availableNumberOfGuests,
   handleCloseWindow,
-  wpUserId,
+  selectedFriend,
   handleFriendsWindow,
 }: IProps) => {
   const formRef = useRef<FormHandles>(null);
@@ -58,7 +59,7 @@ const AddMemberWindow: React.FC<IProps> = ({
 
         await api.post(`events/${eventId}/event-members`, {
           number_of_guests: Number(data.number_of_guests),
-          member_id: wpUserId,
+          member_id: selectedFriend.friend_id,
         });
         handleCloseWindow();
 
@@ -81,7 +82,13 @@ const AddMemberWindow: React.FC<IProps> = ({
         });
       }
     },
-    [addToast, eventId, wpUserId, handleCloseWindow, availableNumberOfGuests],
+    [
+      addToast,
+      eventId,
+      selectedFriend,
+      handleCloseWindow,
+      availableNumberOfGuests,
+    ],
   );
 
   return (
@@ -99,11 +106,11 @@ const AddMemberWindow: React.FC<IProps> = ({
         <Container>
           <h1>Adicionar Membro</h1>
 
-          {wpUserId === '' && (
-            <button type="button" onClick={() => handleFriendsWindow(true)}>
-              Escolher usuário
-            </button>
-          )}
+          <button type="button" onClick={() => handleFriendsWindow(true)}>
+            {selectedFriend.friend
+              ? `Amigo selecionado: ${selectedFriend.friend.name}`
+              : 'Selecionar Amigo'}
+          </button>
 
           <p>Número de convidados é opcional</p>
           <p>Você pode adicionar até {availableNumberOfGuests} convidados</p>

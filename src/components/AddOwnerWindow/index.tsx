@@ -12,13 +12,14 @@ import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
 import getValidationErrors from '../../utils/getValidationErros';
 import IEventOwnerDTO from '../../dtos/IEventOwnerDTO';
+import IFriendDTO from '../../dtos/IFriendDTO';
 
 interface IProps {
   onHandleCloseWindow: MouseEventHandler;
   eventId: string;
   availableNumberOfGuests: number;
   handleCloseWindow: Function;
-  wpUserId: string;
+  selectedFriend: IFriendDTO;
   handleFriendsWindow: Function;
 }
 
@@ -27,7 +28,7 @@ const AddOwnerWindow: React.FC<IProps> = ({
   eventId,
   availableNumberOfGuests,
   handleCloseWindow,
-  wpUserId,
+  selectedFriend,
   handleFriendsWindow,
 }: IProps) => {
   const formRef = useRef<FormHandles>(null);
@@ -58,7 +59,7 @@ const AddOwnerWindow: React.FC<IProps> = ({
         }
 
         await api.post(`events/${eventId}/event-owners`, {
-          owner_id: wpUserId,
+          owner_id: selectedFriend.friend_id,
           description: data.description,
           number_of_guests: data.number_of_guests,
         });
@@ -83,7 +84,13 @@ const AddOwnerWindow: React.FC<IProps> = ({
         });
       }
     },
-    [addToast, eventId, handleCloseWindow, wpUserId, availableNumberOfGuests],
+    [
+      addToast,
+      eventId,
+      handleCloseWindow,
+      selectedFriend,
+      availableNumberOfGuests,
+    ],
   );
 
   return (
@@ -100,11 +107,12 @@ const AddOwnerWindow: React.FC<IProps> = ({
       <Form ref={formRef} onSubmit={handleAddOwner}>
         <Container>
           <h1>Adicionar Anfitrião</h1>
-          {wpUserId === '' && (
-            <button type="button" onClick={() => handleFriendsWindow(true)}>
-              Escolher usuário
-            </button>
-          )}
+
+          <button type="button" onClick={() => handleFriendsWindow(true)}>
+            {selectedFriend.friend
+              ? `Amigo selecionado: ${selectedFriend.friend.name}`
+              : 'Selecionar Amigo'}
+          </button>
 
           <Input
             name="description"
