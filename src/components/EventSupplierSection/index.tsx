@@ -10,7 +10,7 @@ import {
 } from 'react-icons/fi';
 import { MdPersonAdd } from 'react-icons/md';
 import IListEventDTO from '../../dtos/IListEventDTO';
-import ISelectedSupplierDTO from '../../dtos/ISelectedSupplierDTO';
+import IEventSupplierDTO from '../../dtos/IEventSupplierDTO';
 import ISupplierDTO from '../../dtos/ISupplierDTO';
 import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
@@ -33,8 +33,8 @@ interface IProps {
   pageEvent: IListEventDTO;
   handleGetSuppliers: Function;
   handleGetHiredSuppliers: Function;
-  selectedSuppliers: ISelectedSupplierDTO[];
-  hiredSuppliers: ISelectedSupplierDTO[];
+  selectedSuppliers: IEventSupplierDTO[];
+  hiredSuppliers: IEventSupplierDTO[];
 }
 
 const EventSupplierSection: React.FC<IProps> = ({
@@ -70,20 +70,20 @@ const EventSupplierSection: React.FC<IProps> = ({
   const [selectedWeplanSupplier, setSelectedWeplanSupplier] = useState<
     ISupplierDTO
   >({} as ISupplierDTO);
-  const [supplierInfo, setSupplierInfo] = useState<ISelectedSupplierDTO>(
-    {} as ISelectedSupplierDTO,
+  const [supplierInfo, setSupplierInfo] = useState<IEventSupplierDTO>(
+    {} as IEventSupplierDTO,
   );
   const [supplierCategoryWindow, setSupplierCategoryWindow] = useState(false);
   const [supplierSubCategoryWindow, setSupplierSubCategoryWindow] = useState(
     false,
   );
 
-  const [hiredSupplier, setHiredSupplier] = useState<ISelectedSupplierDTO>(
-    {} as ISelectedSupplierDTO,
+  const [hiredSupplier, setHiredSupplier] = useState<IEventSupplierDTO>(
+    {} as IEventSupplierDTO,
   );
-  const [selectedSupplier, setSelectedSupplier] = useState<
-    ISelectedSupplierDTO
-  >({} as ISelectedSupplierDTO);
+  const [selectedSupplier, setSelectedSupplier] = useState<IEventSupplierDTO>(
+    {} as IEventSupplierDTO,
+  );
 
   const [hiredSupplierWindow, setHiredSupplierWindow] = useState(false);
   const [selectedSupplierWindow, setSelectedSupplierWindow] = useState(false);
@@ -108,7 +108,7 @@ const EventSupplierSection: React.FC<IProps> = ({
     setTransactionAgreementWindow(true);
   }, []);
   const handleHiredSupplierWindow = useCallback(
-    (props: ISelectedSupplierDTO) => {
+    (props: IEventSupplierDTO) => {
       closeAllWindows();
       setHiredSupplier(props);
       setHiredSupplierWindow(true);
@@ -116,7 +116,7 @@ const EventSupplierSection: React.FC<IProps> = ({
     [closeAllWindows],
   );
   const handleSelectedSupplierWindow = useCallback(
-    (props: ISelectedSupplierDTO) => {
+    (props: IEventSupplierDTO) => {
       closeAllWindows();
       setSelectedSupplier(props);
       setSelectedSupplierWindow(true);
@@ -167,7 +167,7 @@ const EventSupplierSection: React.FC<IProps> = ({
     }
     setIsHired(false);
     setWeplanSupplier(false);
-    setSelectedSupplier({} as ISelectedSupplierDTO);
+    setSelectedSupplier({} as IEventSupplierDTO);
 
     handleGetSuppliers();
     handleGetHiredSuppliers();
@@ -358,7 +358,7 @@ const EventSupplierSection: React.FC<IProps> = ({
       {supplierServiceOrderWindow && (
         <SupplierServiceOrderFormWindow
           event_id={pageEvent.id}
-          supplier_id={selectedWeplanSupplier.supplier.id}
+          supplier_id={selectedWeplanSupplier.userBySupplierCategory.id}
           handleCloseWindow={handleCloseSupplierServiceOrderFormWindow}
           onHandleCloseWindow={() => setSupplierServiceOrderWindow(false)}
         />

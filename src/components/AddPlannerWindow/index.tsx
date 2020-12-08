@@ -11,13 +11,13 @@ import { Container } from './styles';
 import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
 import getValidationErrors from '../../utils/getValidationErros';
-import ISelectedSupplierDTO from '../../dtos/ISelectedSupplierDTO';
+import IEventSupplierDTO from '../../dtos/IEventSupplierDTO';
 
 interface IProps {
   onHandleCloseWindow: MouseEventHandler;
   eventId: string;
   handleCloseWindow: Function;
-  selectedSupplier: ISelectedSupplierDTO;
+  selectedSupplier: IEventSupplierDTO;
 }
 
 const AddPlannerWindow: React.FC<IProps> = ({

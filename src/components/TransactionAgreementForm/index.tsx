@@ -10,12 +10,12 @@ import WindowContainer from '../WindowContainer';
 import TransactionInputRow from '../TransactionInputRow';
 import ITransactionAgreementDTO from '../../dtos/ITransactionAgreementDTO';
 import api from '../../services/api';
-import ISelectedSupplierDTO from '../../dtos/ISelectedSupplierDTO';
+import IEventSupplierDTO from '../../dtos/IEventSupplierDTO';
 
 interface IPropsDTO {
   // eslint-disable-next-line react/require-default-props
   agreement?: ITransactionAgreementDTO;
-  hiredSupplier: ISelectedSupplierDTO;
+  hiredSupplier: IEventSupplierDTO;
   onHandleCloseWindow: MouseEventHandler;
   handleGetSuppliers: Function;
   getHiredSuppliers: Function;

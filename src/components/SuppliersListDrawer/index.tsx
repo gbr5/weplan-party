@@ -68,7 +68,7 @@ const SuppliersListDrawer: React.FC<IPropsDTO> = ({
                   onClick={() => setSupplier(xSupplier)}
                   key={xSupplier.id}
                 >
-                  {xSupplier.supplier.name}
+                  {xSupplier.userBySupplierCategory.name}
                 </SupplierButton>
               );
             })}

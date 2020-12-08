@@ -7,13 +7,13 @@ import { Container, Contracts, DeleteButton } from './styles';
 import avatar_placeholder from '../../assets/avatar_placeholder.jpg';
 
 import WindowContainer from '../WindowContainer';
-import ISelectedSupplierDTO from '../../dtos/ISelectedSupplierDTO';
+import IEventSupplierDTO from '../../dtos/IEventSupplierDTO';
 import TransactionAgreementForm from '../TransactionAgreementForm';
 import ITransactionAgreementDTO from '../../dtos/ITransactionAgreementDTO';
 
 interface IPropsDTO {
   isOwner: boolean;
-  eventSupplier: ISelectedSupplierDTO;
+  eventSupplier: IEventSupplierDTO;
   onHandleEventSupplierDrawer: MouseEventHandler;
   onHandleEventSupplierUpdate: MouseEventHandler;
   onHandleDeleteEventSupplierDrawer: MouseEventHandler;

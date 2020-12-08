@@ -64,14 +64,14 @@ const AddSupplierWindow: React.FC<IProps> = ({
           const newSupplier = await api.post(
             `events/event-suppliers/${eventId}`,
             {
-              name: selectedWeplanSupplier.supplier.name,
+              name: selectedWeplanSupplier.userBySupplierCategory.name,
               supplier_sub_category: supplierSubCategory,
               isHired,
               weplanUser: weplanSupplier,
             },
           );
           await api.post(`events/${eventId}/event-weplan-suppliers`, {
-            user_id: selectedWeplanSupplier.supplier.id,
+            user_id: selectedWeplanSupplier.userBySupplierCategory.id,
             event_supplier_id: newSupplier.data.id,
           });
 
