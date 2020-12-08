@@ -6,6 +6,7 @@ import {
   FiChevronRight,
   FiEdit3,
   FiSquare,
+  FiUser,
 } from 'react-icons/fi';
 import { MdPersonAdd } from 'react-icons/md';
 import IListEventDTO from '../../dtos/IListEventDTO';
@@ -431,15 +432,18 @@ const EventSupplierSection: React.FC<IProps> = ({
                       type="button"
                       onClick={() => handleSelectedSupplierWindow(sSupplier)}
                     >
-                      <strong>{sSupplier.name}</strong> <FiEdit3 size={16} />
+                      <strong>{sSupplier.name}</strong>
+                      <p>{sSupplier.supplier_sub_category}</p>
+                      <FiEdit3 size={16} />
                     </button>
                   </span>
 
-                  {/* {sSupplier.weplanUser && (
-                    <button type="button">
-                      <FiUser size={24} />
-                    </button>
-                  )} */}
+                  {sSupplier.eventWeplanSupplier &&
+                    sSupplier.eventWeplanSupplier.weplanEventSupplier && (
+                      <button type="button">
+                        <FiUser size={24} />
+                      </button>
+                    )}
 
                   <div>
                     {pageEvent.isOwner && (
@@ -471,20 +475,24 @@ const EventSupplierSection: React.FC<IProps> = ({
                         type="button"
                         onClick={() => handleHiredSupplierWindow(hSupplier)}
                       >
-                        <strong>{hSupplier.name}</strong>{' '}
+                        <strong>{hSupplier.name}</strong>
+                        <p>{hSupplier.supplier_sub_category}</p>
+
                         <FiChevronRight size={16} />
                       </button>
                     ) : (
                       <button type="button">
                         <strong>{hSupplier.name}</strong>{' '}
+                        <p>{hSupplier.supplier_sub_category}</p>
                       </button>
                     )}
                   </span>
-                  {/* {hSupplier.weplanUser && (
-                    <button type="button">
-                      <FiUser size={24} />
-                    </button>
-                  )} */}
+                  {hSupplier.eventWeplanSupplier &&
+                    hSupplier.eventWeplanSupplier.weplanEventSupplier && (
+                      <button type="button">
+                        <FiUser size={24} />
+                      </button>
+                    )}
                 </Supplier>
               );
             })}
