@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 // import { MdClose } from 'react-icons/md';
 import { MouseEventHandler } from 'react-select';
@@ -12,18 +12,18 @@ import WindowContainer from '../WindowContainer';
 import IFriendDTO from '../../dtos/IFriendDTO';
 
 interface IPropsDTO {
+  selectedFriend: IFriendDTO;
   friends: IFriendDTO[];
   onHandleCloseWindow: MouseEventHandler;
-  handleSelectedFriend(arg: IFriendDTO): void;
+  handleSelectedFriend: Function;
 }
 
 const FriendsListDrawer: React.FC<IPropsDTO> = ({
+  selectedFriend,
   friends,
   onHandleCloseWindow,
   handleSelectedFriend,
 }: IPropsDTO) => {
-  const [weplanUser, setWeplanUser] = useState<IFriendDTO>({} as IFriendDTO);
-
   return (
     <WindowContainer
       onHandleCloseWindow={onHandleCloseWindow}
@@ -40,9 +40,9 @@ const FriendsListDrawer: React.FC<IPropsDTO> = ({
         <FriendsList>
           {friends.map(friend => (
             <FriendButton
-              selectedFriend={friend.id === weplanUser.id}
+              selectedFriend={friend.id === selectedFriend.id}
               type="button"
-              onClick={() => setWeplanUser(friend)}
+              onClick={() => handleSelectedFriend(friend)}
               key={friend.id}
             >
               {friend.friend.name}
@@ -50,11 +50,8 @@ const FriendsListDrawer: React.FC<IPropsDTO> = ({
           ))}
         </FriendsList>
         <SaveButton>
-          {weplanUser && (
-            <button
-              type="button"
-              onClick={() => handleSelectedFriend(weplanUser)}
-            >
+          {selectedFriend.id !== undefined && (
+            <button type="button" onClick={onHandleCloseWindow}>
               Salvar
             </button>
           )}
