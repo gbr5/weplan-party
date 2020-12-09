@@ -48,6 +48,7 @@ const EventSupplierWindow: React.FC<IPropsDTO> = ({
     <>
       {!!editSupplierWindow && (
         <TransactionAgreementForm
+          handleCloseWindow={() => setEditSupplierWindow(false)}
           agreement={thisAgreement}
           handleGetSuppliers={handleGetSuppliers}
           getHiredSuppliers={getHiredSuppliers}
@@ -57,7 +58,13 @@ const EventSupplierWindow: React.FC<IPropsDTO> = ({
       )}
       <WindowContainer
         onHandleCloseWindow={onHandleEventSupplierDrawer}
-        containerStyle={{ top: '5%', left: '5%', height: '90%', width: '90%' }}
+        containerStyle={{
+          zIndex: 10,
+          top: '5%',
+          left: '5%',
+          height: '90%',
+          width: '90%',
+        }}
       >
         <Container>
           <div>

@@ -314,7 +314,7 @@ const Dashboard: React.FC = () => {
             left: '35%',
             height: '25%',
             width: '30%',
-            zIndex: 1000000,
+            zIndex: 40,
           }}
           onHandleCloseWindow={() => setDeleteEventWindow(false)}
         >

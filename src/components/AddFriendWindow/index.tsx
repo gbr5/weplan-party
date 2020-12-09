@@ -102,7 +102,7 @@ const AddFriendWindow: React.FC<IPropsDTO> = ({
           left: '25%',
           height: '80%',
           width: '50%',
-          zIndex: '1000',
+          zIndex: 15,
         }}
       >
         <Container>

@@ -19,6 +19,7 @@ interface IPropsDTO {
   onHandleCloseWindow: MouseEventHandler;
   handleGetSuppliers: Function;
   getHiredSuppliers: Function;
+  handleCloseWindow: Function;
 }
 
 const TransactionAgreementForm: React.FC<IPropsDTO> = ({
@@ -26,6 +27,7 @@ const TransactionAgreementForm: React.FC<IPropsDTO> = ({
   hiredSupplier,
   handleGetSuppliers,
   getHiredSuppliers,
+  handleCloseWindow,
   agreement,
 }: IPropsDTO) => {
   const { addToast } = useToast();
@@ -107,6 +109,7 @@ const TransactionAgreementForm: React.FC<IPropsDTO> = ({
         handleGetSuppliers();
         getHiredSuppliers();
         setTransactionContainer(false);
+        handleCloseWindow();
       } catch (err) {
         addToast({
           type: 'error',
@@ -116,14 +119,21 @@ const TransactionAgreementForm: React.FC<IPropsDTO> = ({
         throw new Error(err);
       }
     },
-    [addToast, hiredSupplier, handleGetSuppliers, getHiredSuppliers, agreement],
+    [
+      addToast,
+      hiredSupplier,
+      handleGetSuppliers,
+      getHiredSuppliers,
+      agreement,
+      handleCloseWindow,
+    ],
   );
 
   return (
     <WindowContainer
       onHandleCloseWindow={onHandleCloseWindow}
       containerStyle={{
-        zIndex: 10,
+        zIndex: 20,
         top: '5%',
         left: '5%',
         height: '90%',

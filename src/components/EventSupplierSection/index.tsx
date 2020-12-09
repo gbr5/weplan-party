@@ -307,12 +307,14 @@ const EventSupplierSection: React.FC<IProps> = ({
           question="Fornecedor contratado?"
         />
       )}
+      {/* HIRED SUPPLIERS */}
       {!!deleteHiredSupplierDrawer && (
         <DeleteConfirmationWindow
           handleDelete={() => handleDeleteHiredSupplier()}
           onHandleCloseWindow={() => setDeleteHiredSupplierDrawer(false)}
         />
       )}
+      {/* SELECTED SUPPLIERS */}
       {!!deleteSelectedSupplierDrawer && (
         <DeleteConfirmationWindow
           handleDelete={() => handleDeleteSelectedSupplier()}
@@ -337,7 +339,7 @@ const EventSupplierSection: React.FC<IProps> = ({
           handleSetSupplierCategory={(e: string) =>
             handleSetSupplierCategory(e)
           }
-          handleSupplierCategory={handleSupplierCategory}
+          onHandleCloseWindow={() => setSupplierCategoryWindow(false)}
         />
       )}
       {supplierSubCategoryWindow && (
@@ -353,6 +355,7 @@ const EventSupplierSection: React.FC<IProps> = ({
           onHandleCloseWindow={() => setTransactionAgreementWindow(false)}
           handleGetSuppliers={handleGetSuppliers}
           getHiredSuppliers={handleGetHiredSuppliers}
+          handleCloseWindow={() => setTransactionAgreementWindow(false)}
         />
       )}
       {supplierServiceOrderWindow && (

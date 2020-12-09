@@ -19,7 +19,7 @@ const BooleanQuestionWindow: React.FC<IProps> = ({
     <WindowContainer
       onHandleCloseWindow={onHandleCloseWindow}
       containerStyle={{
-        zIndex: 10000,
+        zIndex: 40,
         top: '5%',
         left: '20%',
         height: '90%',

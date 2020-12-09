@@ -211,7 +211,7 @@ const SupplierServiceOrderFormWindow: React.FC<IPropsDTO> = ({
     <WindowContainer
       onHandleCloseWindow={onHandleCloseWindow}
       containerStyle={{
-        zIndex: 15000,
+        zIndex: 15,
         top: '5%',
         left: '5%',
         height: '90%',

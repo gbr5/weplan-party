@@ -95,7 +95,7 @@ const AddMemberWindow: React.FC<IProps> = ({
     <WindowContainer
       onHandleCloseWindow={onHandleCloseWindow}
       containerStyle={{
-        zIndex: 1000,
+        zIndex: 15,
         top: '20%',
         left: '20%',
         height: '60%',

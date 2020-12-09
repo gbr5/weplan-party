@@ -84,7 +84,7 @@ const EditMemberNumberOfGuestsWindow: React.FC<IProps> = ({
     <WindowContainer
       onHandleCloseWindow={onHandleCloseWindow}
       containerStyle={{
-        zIndex: 100000,
+        zIndex: 20,
         top: '25%',
         left: '30%',
         height: '50%',

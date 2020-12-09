@@ -20,7 +20,7 @@ const SelectSupplierSubCategoryWindow: React.FC<IProps> = ({
     <WindowContainer
       onHandleCloseWindow={() => handleCloseWindow()}
       containerStyle={{
-        zIndex: 100,
+        zIndex: 20,
         top: '5%',
         left: '5%',
         height: '90%',

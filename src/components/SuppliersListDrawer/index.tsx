@@ -49,7 +49,7 @@ const SuppliersListDrawer: React.FC<IPropsDTO> = ({
     <WindowContainer
       onHandleCloseWindow={onHandleSuppliersListDrawer}
       containerStyle={{
-        zIndex: 11000,
+        zIndex: 30,
         top: '5%',
         left: '5%',
         height: '90%',

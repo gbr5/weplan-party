@@ -28,7 +28,7 @@ const FriendsListDrawer: React.FC<IPropsDTO> = ({
     <WindowContainer
       onHandleCloseWindow={onHandleCloseWindow}
       containerStyle={{
-        zIndex: 10000,
+        zIndex: 40,
         top: '5%',
         left: '5%',
         height: '90%',

@@ -144,7 +144,7 @@ const AddEventGuestListWindow: React.FC<IProps> = ({
     <WindowContainer
       onHandleCloseWindow={onHandleCloseWindow}
       containerStyle={{
-        zIndex: 100,
+        zIndex: 15,
         top: '5%',
         left: '10%',
         height: '90%',
