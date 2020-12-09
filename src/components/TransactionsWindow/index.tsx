@@ -1,8 +1,6 @@
-import React, { MouseEventHandler } from 'react';
+import React from 'react';
 import ITransactionDTO from '../../dtos/ITransactionDTO';
 import Transaction from '../Transaction';
-
-import WindowContainer from '../WindowContainer';
 
 import { Container } from './styles';
 
