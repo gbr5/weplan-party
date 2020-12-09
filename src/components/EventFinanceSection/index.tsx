@@ -134,8 +134,8 @@ const EventFinanceSection: React.FC<IPropsDTO> = ({
   let allTransactionsIndex = 0;
 
   hiredSuppliers.map(supplier => {
-    supplier.transactionAgreement &&
-      supplier.transactionAgreement.map(agreement => {
+    supplier.transactionAgreements &&
+      supplier.transactionAgreements.map(agreement => {
         agreements.push(agreement);
         agreement.transactions &&
           agreement.transactions.map(transaction => {
@@ -336,7 +336,7 @@ const EventFinanceSection: React.FC<IPropsDTO> = ({
             <SupplierTransactionAgreementsWindow>
               <h1>{selectedSupplier.name}</h1>
               <div>
-                {selectedSupplier.transactionAgreement?.map(agreement => {
+                {selectedSupplier.transactionAgreements.map(agreement => {
                   agreementIndex += 1;
                   const key = String(agreementIndex);
                   return (

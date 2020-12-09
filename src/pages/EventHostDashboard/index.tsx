@@ -621,13 +621,10 @@ const EventHostDashboard: React.FC = () => {
     const totalCost: number = hiredSuppliers
       .map(supplier => {
         let cost = 0;
-        if (supplier.transactionAgreement) {
-          if (supplier.transactionAgreement) {
-            cost = supplier.transactionAgreement
-              .map(agreement => Number(agreement.amount))
-              .reduce((a, b) => a + b, 0);
-          }
-          return cost;
+        if (supplier.transactionAgreements) {
+          cost = supplier.transactionAgreements
+            .map(agreement => Number(agreement.amount))
+            .reduce((a, b) => a + b, 0);
         }
         return cost;
       })

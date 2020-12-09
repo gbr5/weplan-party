@@ -84,17 +84,17 @@ const EventSupplierWindow: React.FC<IPropsDTO> = ({
               )}
             </div>
 
-            {eventSupplier.transactionAgreement &&
-              (eventSupplier.transactionAgreement.length > 1 ? (
+            {eventSupplier.transactionAgreements &&
+              (eventSupplier.transactionAgreements.length > 1 ? (
                 <h2>Contratos:</h2>
               ) : (
                 <h2>Contrato:</h2>
               ))}
           </div>
 
-          {eventSupplier.transactionAgreement && (
+          {eventSupplier.transactionAgreements && (
             <Contracts>
-              {eventSupplier.transactionAgreement.map(agreement => {
+              {eventSupplier.transactionAgreements.map(agreement => {
                 iAgreement += 1;
                 return (
                   <button

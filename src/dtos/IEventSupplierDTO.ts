@@ -12,7 +12,7 @@ export default interface ISelectedSupplierDTO {
   weplanUser: boolean;
   eventWeplanSupplier: IEventWeplanSupplier;
   isHired: boolean;
-  transactionAgreement?: ITransactionAgreementDTO[];
+  transactionAgreements: ITransactionAgreementDTO[];
   status?: string;
   index?: number;
 }
