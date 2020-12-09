@@ -9,7 +9,6 @@ import {
   Container,
   Suppliers,
   SupplierButton,
-  TransactionsWindow,
   MenuButton,
   SupplierTransactionAgreementsWindow,
 } from './styles';
@@ -18,6 +17,7 @@ import formatDateToString from '../../utils/formatDateToString';
 import { numberFormat } from '../../utils/numberFormat';
 import Transaction from '../Transaction';
 import TransactionAgreement from '../TransactionAgreement';
+import TransactionsWindow from '../TransactionsWindow';
 
 interface IPropsDTO {
   isOwner: boolean;
@@ -369,76 +369,36 @@ const EventFinanceSection: React.FC<IPropsDTO> = ({
             </SupplierTransactionAgreementsWindow>
           )}
           {!!allTransactionsWindow && (
-            <TransactionsWindow>
-              <h3>Transações</h3>
-              {sortedTransactions.map(transaction => {
-                allTransactionsIndex += 1;
-                const key = String(allTransactionsIndex);
-                return (
-                  <Transaction
-                    isOwner={isOwner}
-                    refreshHiredSuppliers={refreshHiredSuppliers}
-                    key={key}
-                    allTransactions
-                    transaction={transaction}
-                  />
-                );
-              })}
-            </TransactionsWindow>
+            <TransactionsWindow
+              title="Transações"
+              isOwner={isOwner}
+              refreshHiredSuppliers={refreshHiredSuppliers}
+              transactions={sortedTransactions}
+            />
           )}
           {!!paidTransactionsWindow && (
-            <TransactionsWindow>
-              <h3>Transações Efetuadas</h3>
-              {paidSortedTransactions.map(transaction => {
-                allTransactionsIndex += 1;
-                const key = String(allTransactionsIndex);
-                return (
-                  <Transaction
-                    isOwner={isOwner}
-                    allTransactions={false}
-                    refreshHiredSuppliers={refreshHiredSuppliers}
-                    key={key}
-                    transaction={transaction}
-                  />
-                );
-              })}
-            </TransactionsWindow>
+            <TransactionsWindow
+              title="Transações Efetuadas"
+              isOwner={isOwner}
+              refreshHiredSuppliers={refreshHiredSuppliers}
+              transactions={paidSortedTransactions}
+            />
           )}
           {!!notPaidTransactionsWindow && (
-            <TransactionsWindow>
-              <h3>Transações a Pagar</h3>
-              {notPaidSortedTransactions.map(transaction => {
-                allTransactionsIndex += 1;
-                const key = String(allTransactionsIndex);
-                return (
-                  <Transaction
-                    isOwner={isOwner}
-                    allTransactions={false}
-                    refreshHiredSuppliers={refreshHiredSuppliers}
-                    key={key}
-                    transaction={transaction}
-                  />
-                );
-              })}
-            </TransactionsWindow>
+            <TransactionsWindow
+              title="Transações a Pagar"
+              isOwner={isOwner}
+              refreshHiredSuppliers={refreshHiredSuppliers}
+              transactions={notPaidSortedTransactions}
+            />
           )}
           {!!overdueTransactionsWindow && (
-            <TransactionsWindow>
-              <h3>Transações Atrasadas</h3>
-              {overdueSortedTransactions.map(transaction => {
-                allTransactionsIndex += 1;
-                const key = String(allTransactionsIndex);
-                return (
-                  <Transaction
-                    isOwner={isOwner}
-                    allTransactions={false}
-                    refreshHiredSuppliers={refreshHiredSuppliers}
-                    key={key}
-                    transaction={transaction}
-                  />
-                );
-              })}
-            </TransactionsWindow>
+            <TransactionsWindow
+              isOwner
+              refreshHiredSuppliers={refreshHiredSuppliers}
+              title="Transações Atrasadas"
+              transactions={overdueSortedTransactions}
+            />
           )}
         </PageContainer>
       </div>
