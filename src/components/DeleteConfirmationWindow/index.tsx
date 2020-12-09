@@ -17,7 +17,7 @@ const DeleteConfirmationWindow: React.FC<IProps> = ({
     <WindowContainer
       onHandleCloseWindow={onHandleCloseWindow}
       containerStyle={{
-        zIndex: 100,
+        zIndex: 50,
         top: '25%',
         left: '30%',
         height: '50%',

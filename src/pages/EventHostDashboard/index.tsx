@@ -103,38 +103,12 @@ const EventHostDashboard: React.FC = () => {
 
   const eventId = pageEvent.id;
 
-  const [checkListSection, setCheckListSection] = useState(false);
   const [friendsWindow, setFriendsWindow] = useState(false);
-  const [selectedFriend, setSelectedFriend] = useState<IFriendDTO>(
-    {} as IFriendDTO,
-  );
-
-  const [event, setEvent] = useState<IListEventDTO>({} as IListEventDTO);
-  const [friends, setFriends] = useState<IFriendDTO[]>([]);
-
-  const [eventGuests, setEventGuests] = useState<IEventGuest[]>([]);
-  const [confirmedGuests, setConfirmedGuests] = useState(0);
-  const [myGuests, setMyGuests] = useState<IEventGuest[]>([]);
-  const [myGuestsConfirmed, setMyGuestsConfirmed] = useState(0);
-  const [planners, setPlanners] = useState<IUserInfoDTO[]>([]);
-  const [owners, setOwners] = useState<IEventOwnerDTO[]>([]);
-  const [owner, setOwner] = useState<IEventOwnerDTO>({} as IEventOwnerDTO);
-  const [members, setMembers] = useState<IEventMemberDTO[]>([]);
-  const [member, setMember] = useState<IEventMemberDTO>({} as IEventMemberDTO);
   const [membersWindow, setMembersWindow] = useState(false);
-  const [eventInfo, setEventInfo] = useState<IEventInfoDTO>(
-    {} as IEventInfoDTO,
-  );
   const [eventInfoDrawer, setEventInfoDrawer] = useState(false);
   const [editEventInfoDrawer, setEditEventInfoDrawer] = useState(false);
   const [budgetDrawer, setBudgetDrawer] = useState(false);
   const [editEventNameDrawer, setEditEventNameDrawer] = useState(false);
-  const [latestActionsSection, setLatestActionsSection] = useState(true);
-  const [guestsSection, setGuestsSection] = useState(false);
-  const [financeSection, setFinanceSection] = useState(false);
-  const [supplierSection, setSupplierSection] = useState(false);
-  const [messagesSection, setMessagesSection] = useState(false);
-
   const [addPlannerDrawer, setAddPlannerDrawer] = useState(false);
   const [addOwnerDrawer, setAddOwnerDrawer] = useState(false);
   const [addMemberWindowForm, setAddMemberWindowForm] = useState(false);
@@ -144,20 +118,48 @@ const EventHostDashboard: React.FC = () => {
   const [editOwnerDrawer, setEditOwnerDrawer] = useState(false);
   const [deleteMemberDrawer, setDeleteMemberDrawer] = useState(false);
   const [deleteOwnerDrawer, setDeleteOwnerDrawer] = useState(false);
+  const [firstRow, setFirstRow] = useState(true);
+  const [sidebar, setSidebar] = useState(false);
+
+  const [checkListSection, setCheckListSection] = useState(false);
+  const [latestActionsSection, setLatestActionsSection] = useState(true);
+  const [guestsSection, setGuestsSection] = useState(false);
+  const [financeSection, setFinanceSection] = useState(false);
+  const [supplierSection, setSupplierSection] = useState(false);
+  const [messagesSection, setMessagesSection] = useState(false);
+
+  const [eventDate, setEventDate] = useState(new Date());
+
+  const [confirmedGuests, setConfirmedGuests] = useState(0);
+  const [myGuestsConfirmed, setMyGuestsConfirmed] = useState(0);
+  const [numberOfOwners, setNumberOfOwners] = useState(0);
+  const [numberOfMembers, setNumberOfMembers] = useState(0);
+  const [numberOfPlanners, setNumberOfPlanners] = useState(0);
+  const [totalGuestNumber, setTotalGuestNumber] = useState(0);
+  const [checkListTasks, setCheckListTasks] = useState(0);
+
+  const [myGuests, setMyGuests] = useState<IEventGuest[]>([]);
+  const [selectedFriend, setSelectedFriend] = useState<IFriendDTO>(
+    {} as IFriendDTO,
+  );
+  const [event, setEvent] = useState<IListEventDTO>({} as IListEventDTO);
+  const [friends, setFriends] = useState<IFriendDTO[]>([]);
+  const [eventGuests, setEventGuests] = useState<IEventGuest[]>([]);
+  const [planners, setPlanners] = useState<IUserInfoDTO[]>([]);
+  const [owners, setOwners] = useState<IEventOwnerDTO[]>([]);
+  const [owner, setOwner] = useState<IEventOwnerDTO>({} as IEventOwnerDTO);
+  const [members, setMembers] = useState<IEventMemberDTO[]>([]);
+  const [member, setMember] = useState<IEventMemberDTO>({} as IEventMemberDTO);
+  const [eventInfo, setEventInfo] = useState<IEventInfoDTO>(
+    {} as IEventInfoDTO,
+  );
   const [selectedSupplier, setSelectedSupplier] = useState<IEventSupplierDTO>(
     {} as IEventSupplierDTO,
   );
-
   const [hiredSuppliers, setHiredSuppliers] = useState<IEventSupplierDTO[]>([]);
   const [selectedSuppliers, setSelectedSuppliers] = useState<
     IEventSupplierDTO[]
   >([]);
-  const [numberOfOwners, setNumberOfOwners] = useState(0);
-  const [numberOfMembers, setNumberOfMembers] = useState(0);
-  const [numberOfPlanners, setNumberOfPlanners] = useState(0);
-  const [eventDate, setEventDate] = useState(new Date());
-  const [firstRow, setFirstRow] = useState(true);
-  const [sidebar, setSidebar] = useState(false);
   const [inProgressCheckListTasks, setInProgressCheckListTasks] = useState<
     IEventCheckListDTO[]
   >([]);
@@ -167,11 +169,20 @@ const EventHostDashboard: React.FC = () => {
   const [notStartedCheckListTasks, setNotStartedCheckListTasks] = useState<
     IEventCheckListDTO[]
   >([]);
-  const [totalGuestNumber, setTotalGuestNumber] = useState(0);
-  const [checkListTasks, setCheckListTasks] = useState(0);
 
   const closeAllWindows = useCallback(() => {
+    setSelectedFriend({} as IFriendDTO);
+    setOwner({} as IEventOwnerDTO);
+    setMember({} as IEventMemberDTO);
+    setSelectedSupplier({} as IEventSupplierDTO);
+    setFriendsWindow(false);
+    setMembersWindow(false);
+    setEditEventInfoDrawer(false);
+    setOwnerProfileWindow(false);
+    setEditOwnerDrawer(false);
+    setDeleteOwnerDrawer(false);
     setEventInfoDrawer(false);
+    setFirstRow(false);
     setBudgetDrawer(false);
     setAddMemberWindowForm(false);
     setAddOwnerDrawer(false);
@@ -180,18 +191,13 @@ const EventHostDashboard: React.FC = () => {
     setMemberProfileWindow(false);
     setDeleteMemberDrawer(false);
     setNumberOfGuestDrawer(false);
-  }, []);
-
-  const handleFirstRow = useCallback(() => {
-    setFirstRow(!firstRow);
     setSidebar(false);
-    closeAllWindows();
-  }, [firstRow, closeAllWindows]);
-  const handleSideBar = useCallback(() => {
-    setSidebar(!sidebar);
-    setFirstRow(false);
-  }, [sidebar]);
+  }, []);
   const closeAllSections = useCallback(() => {
+    setSelectedFriend({} as IFriendDTO);
+    setOwner({} as IEventOwnerDTO);
+    setMember({} as IEventMemberDTO);
+    setSelectedSupplier({} as IEventSupplierDTO);
     setLatestActionsSection(false);
     setGuestsSection(false);
     setFinanceSection(false);
@@ -201,7 +207,17 @@ const EventHostDashboard: React.FC = () => {
     setFirstRow(false);
     setSidebar(false);
   }, []);
-  const handleEventInfoDrawer = useCallback(() => {
+
+  const handleFirstRow = useCallback(() => {
+    closeAllWindows();
+    setFirstRow(!firstRow);
+  }, [firstRow, closeAllWindows]);
+  const handleSideBar = useCallback(() => {
+    setSidebar(!sidebar);
+    setFirstRow(false);
+  }, [sidebar]);
+
+  const handleEventInfoWindow = useCallback(() => {
     closeAllWindows();
     setEventInfoDrawer(!eventInfoDrawer);
   }, [eventInfoDrawer, closeAllWindows]);
@@ -605,13 +621,10 @@ const EventHostDashboard: React.FC = () => {
     const totalCost: number = hiredSuppliers
       .map(supplier => {
         let cost = 0;
-        if (supplier.transactionAgreement) {
-          if (supplier.transactionAgreement) {
-            cost = supplier.transactionAgreement
-              .map(agreement => Number(agreement.amount))
-              .reduce((a, b) => a + b, 0);
-          }
-          return cost;
+        if (supplier.transactionAgreements) {
+          cost = supplier.transactionAgreements
+            .map(agreement => Number(agreement.amount))
+            .reduce((a, b) => a + b, 0);
         }
         return cost;
       })
@@ -905,7 +918,7 @@ const EventHostDashboard: React.FC = () => {
                 )}
               </span>
             ))}
-            <button type="button" onClick={handleEventInfoDrawer}>
+            <button type="button" onClick={handleEventInfoWindow}>
               Informações do Evento
             </button>
             <button type="button" onClick={handleLatestActionsSection}>

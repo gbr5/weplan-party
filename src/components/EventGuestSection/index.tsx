@@ -412,7 +412,7 @@ const EventGuestSection: React.FC<IProps> = ({
         <WindowContainer
           onHandleCloseWindow={() => setAddGuestDrawer(false)}
           containerStyle={{
-            zIndex: 1000,
+            zIndex: 15,
             top: '5%',
             left: '20%',
             height: '90%',
@@ -491,7 +491,7 @@ const EventGuestSection: React.FC<IProps> = ({
         <WindowContainer
           onHandleCloseWindow={() => setEditGuestDrawer(false)}
           containerStyle={{
-            zIndex: 1000,
+            zIndex: 20,
             top: '5%',
             left: '20%',
             height: '90%',
@@ -540,7 +540,7 @@ const EventGuestSection: React.FC<IProps> = ({
         <WindowContainer
           onHandleCloseWindow={() => setGuestConfirmedDrawer(false)}
           containerStyle={{
-            zIndex: 1000,
+            zIndex: 25,
             top: '5%',
             left: '20%',
             height: '90%',

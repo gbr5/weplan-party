@@ -86,7 +86,7 @@ const EditEventOwnerWindow: React.FC<IProps> = ({
     <WindowContainer
       onHandleCloseWindow={onHandleCloseWindow}
       containerStyle={{
-        zIndex: 1000,
+        zIndex: 20,
         top: '22,5%',
         left: '30%',
         height: '55%',

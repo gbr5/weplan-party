@@ -328,7 +328,7 @@ const EventCheckListSection: React.FC<IProps> = ({
         <WindowContainer
           onHandleCloseWindow={() => setAddCheckListDrawer(false)}
           containerStyle={{
-            zIndex: 1000,
+            zIndex: 15,
             top: '10%',
             left: '20%',
             height: '80%',
@@ -380,7 +380,7 @@ const EventCheckListSection: React.FC<IProps> = ({
         <WindowContainer
           onHandleCloseWindow={() => setEditCheckListTaskWindow(false)}
           containerStyle={{
-            zIndex: 1000,
+            zIndex: 20,
             top: '10%',
             left: '20%',
             height: '80%',
@@ -448,7 +448,7 @@ const EventCheckListSection: React.FC<IProps> = ({
             setEditCheckListTaskPriorityLevelWindow(false)
           }
           containerStyle={{
-            zIndex: 1000,
+            zIndex: 20,
             top: '35%',
             left: '20%',
             height: '30%',

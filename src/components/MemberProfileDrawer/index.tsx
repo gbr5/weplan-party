@@ -37,7 +37,7 @@ const MemberProfileDrawer: React.FC<IPropsDTO> = ({
     <WindowContainer
       onHandleCloseWindow={onHandleMemberDrawer}
       containerStyle={{
-        zIndex: 10005,
+        zIndex: 10,
         top: '20%',
         left: '20%',
         height: '60%',

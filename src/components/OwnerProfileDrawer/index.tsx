@@ -38,7 +38,13 @@ const OwnerProfileDrawer: React.FC<IPropsDTO> = ({
   return (
     <WindowContainer
       onHandleCloseWindow={onHandleOwnerDrawer}
-      containerStyle={{ top: '20%', left: '25%', height: '60%', width: '50%' }}
+      containerStyle={{
+        zIndex: 10,
+        top: '20%',
+        left: '25%',
+        height: '60%',
+        width: '50%',
+      }}
     >
       <Container>
         <img src={avatar} alt={owner.name} />

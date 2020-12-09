@@ -391,7 +391,7 @@ const PageHeader: React.FC = ({ children }) => {
         <WindowContainer
           onHandleCloseWindow={() => setAppointmentTypeDrawer(false)}
           containerStyle={{
-            zIndex: 1000,
+            zIndex: 20,
             top: '35%',
             left: '40%',
             height: '30%',
@@ -421,7 +421,7 @@ const PageHeader: React.FC = ({ children }) => {
         <WindowContainer
           onHandleCloseWindow={() => setAddAppointmentDrawer(false)}
           containerStyle={{
-            zIndex: 100,
+            zIndex: 15,
             top: '2%',
             left: '5%',
             height: '96%',

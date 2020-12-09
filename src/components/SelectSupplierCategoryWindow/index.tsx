@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { MouseEventHandler } from 'react';
 
 import { FiHelpCircle, FiHome, FiMusic } from 'react-icons/fi';
 import {
@@ -14,19 +14,19 @@ import WindowContainer from '../WindowContainer';
 import { Container, SuppliersContainer } from './styles';
 
 interface IProps {
-  handleSupplierCategory: Function;
+  onHandleCloseWindow: MouseEventHandler;
   handleSetSupplierCategory: Function;
 }
 
 const SelectSupplierCategoryWindow: React.FC<IProps> = ({
-  handleSupplierCategory,
+  onHandleCloseWindow,
   handleSetSupplierCategory,
 }: IProps) => {
   return (
     <WindowContainer
-      onHandleCloseWindow={() => handleSupplierCategory}
+      onHandleCloseWindow={onHandleCloseWindow}
       containerStyle={{
-        zIndex: 99,
+        zIndex: 18,
         top: '5%',
         left: '5%',
         height: '90%',
