@@ -39,14 +39,14 @@ const MembersWindow: React.FC<IProps> = ({
             >
               <img
                 src={
-                  eventMember.avatar === ''
+                  eventMember.userEventMember.avatar_url === ''
                     ? avatar_placeholder
-                    : eventMember.avatar
+                    : eventMember.userEventMember.avatar_url
                 }
-                alt={eventMember.name}
+                alt={eventMember.userEventMember.name}
               />
 
-              <h1>{eventMember.name}</h1>
+              <h1>{eventMember.userEventMember.name}</h1>
             </button>
           ))}
         </MembersContainer>

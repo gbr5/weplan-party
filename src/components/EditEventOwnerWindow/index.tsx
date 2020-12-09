@@ -1,21 +1,26 @@
-import React, { MouseEventHandler, useCallback, useRef } from 'react';
-import { FormHandles } from '@unform/core';
-import { Form } from '@unform/web';
-import * as Yup from 'yup';
+import React, {
+  MouseEventHandler,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 
 import Input from '../Input';
 import WindowContainer from '../WindowContainer';
 
 import { NumberOfGuestWindow } from './styles';
 import { useToast } from '../../hooks/toast';
-import getValidationErrors from '../../utils/getValidationErros';
 import api from '../../services/api';
 import IEventOwnerDTO from '../../dtos/IEventOwnerDTO';
+import BooleanQuestionWindow from '../BooleanQuestionWindow';
+import IListEventDTO from '../../dtos/IListEventDTO';
 
 interface IProps {
   onHandleCloseWindow: MouseEventHandler;
   handleCloseWindow: Function;
-  eventId: string;
+  getEventInfo: Function;
+  getEventOwners: Function;
+  event: IListEventDTO;
   owner: IEventOwnerDTO;
   availableNumberOfGuests: number;
 }
@@ -23,77 +28,126 @@ interface IProps {
 const EditEventOwnerWindow: React.FC<IProps> = ({
   onHandleCloseWindow,
   handleCloseWindow,
-  eventId,
+  getEventOwners,
+  getEventInfo,
+  event,
   owner,
   availableNumberOfGuests,
 }: IProps) => {
-  const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
 
-  const handleEditOwner = useCallback(
-    async (data: IEventOwnerDTO) => {
-      try {
-        formRef.current?.setErrors([]);
+  const [ownerUpdatedNumberOfGuests, setOwnerUpdatedNumberOfGuests] = useState(
+    0,
+  );
+  const [
+    confirmUpdateEventNumberOfGuests,
+    setConfirmUpdateEventNumberOfGuests,
+  ] = useState(false);
 
-        const schema = Yup.object().shape({
-          description: Yup.string(),
-          number_of_guests: Yup.number(),
-        });
-
-        await schema.validate(data, {
-          abortEarly: false,
-        });
-
-        if (data.number_of_guests > availableNumberOfGuests) {
-          addToast({
-            type: 'error',
-            title: 'Erro ao adicionar anfitrião',
-            description:
-              'Número de convidados excede o limite, tente novamente.',
-          });
-          throw new Error('Number of guests is higher than allowed!');
-        }
-
-        await api.put(`events/${eventId}/event-owners/${owner.id}`, {
-          description: data.description,
-          number_of_guests: Number(data.number_of_guests),
-        });
-
-        addToast({
-          type: 'success',
-          title: 'Anfitrião editado com sucesso',
-          description: 'As mudanças já foram atualizadas no seu evento.',
-        });
-        handleCloseWindow();
-      } catch (err) {
-        if (err instanceof Yup.ValidationError) {
-          const error = getValidationErrors(err);
-
-          formRef.current?.setErrors(error);
-        }
-
-        addToast({
-          type: 'error',
-          title: 'Erro ao editar anfitrião',
-          description: 'Erro ao editar o anfitrião, tente novamente.',
-        });
-      }
-    },
-    [addToast, eventId, owner, handleCloseWindow, availableNumberOfGuests],
+  const [ownerUpdatedDescription, setOwnerUpdatedDescription] = useState(
+    owner.description,
   );
 
+  const handleUpdateOwner = useCallback(async () => {
+    try {
+      await api.put(`events/${event.id}/event-owners`, {
+        description: ownerUpdatedDescription,
+        number_of_guests: ownerUpdatedNumberOfGuests,
+      });
+      handleCloseWindow();
+      getEventOwners();
+      addToast({
+        type: 'success',
+        title: 'As informações do evento foram atualizadas com sucesso',
+        description: 'As mudanças já foram atualizadas no seu evento.',
+      });
+    } catch (err) {
+      addToast({
+        type: 'error',
+        title: 'Erro ao editar informações do evento.',
+        description:
+          'Erro ao editar as informações do evento, tente novamente.',
+      });
+      throw new Error(err);
+    }
+  }, [
+    addToast,
+    handleCloseWindow,
+    getEventOwners,
+    event,
+    ownerUpdatedDescription,
+    ownerUpdatedNumberOfGuests,
+  ]);
+
+  const handleUpdateNumberOfGuests = useCallback(
+    async (props: boolean) => {
+      if (props) {
+        try {
+          await api.put(`events/update-number-of-guests/${event.id}`, {
+            number_of_guests: ownerUpdatedNumberOfGuests,
+          });
+          getEventInfo();
+          addToast({
+            type: 'success',
+            title: 'As informações do evento foram atualizadas com sucesso',
+            description: 'As mudanças já foram atualizadas no seu evento.',
+          });
+        } catch (err) {
+          addToast({
+            type: 'error',
+            title: 'Erro ao editar informações do evento.',
+            description:
+              'Erro ao editar as informações do evento, tente novamente.',
+          });
+          throw new Error(err);
+        }
+      }
+      setConfirmUpdateEventNumberOfGuests(false);
+    },
+    [addToast, event, ownerUpdatedNumberOfGuests, getEventInfo],
+  );
+
+  const handleOwnersUpdatedNumberOfGuests = useCallback((props: number) => {
+    setOwnerUpdatedNumberOfGuests(props);
+  }, []);
+
+  const handleOwnersUpdatedDescription = useCallback((props: string) => {
+    setOwnerUpdatedDescription(props);
+  }, []);
+
+  useEffect(() => {
+    if (
+      ownerUpdatedNumberOfGuests - owner.number_of_guests >
+      availableNumberOfGuests
+    ) {
+      setConfirmUpdateEventNumberOfGuests(true);
+    }
+  }, [ownerUpdatedNumberOfGuests, availableNumberOfGuests, owner]);
+
   return (
-    <WindowContainer
-      onHandleCloseWindow={onHandleCloseWindow}
-      containerStyle={{
-        zIndex: 20,
-        top: '22,5%',
-        left: '30%',
-        height: '55%',
-        width: '40%',
-      }}
-    >
-      <Form ref={formRef} onSubmit={handleEditOwner}>
+    <>
+      {confirmUpdateEventNumberOfGuests && (
+        <BooleanQuestionWindow
+          handleWeplanUserQuestion={(e: boolean) =>
+            handleUpdateNumberOfGuests(e)
+          }
+          onHandleCloseWindow={() => setConfirmUpdateEventNumberOfGuests(false)}
+          question={`O número de escolhido irá aumentar o número de convidados do evento para ${
+            availableNumberOfGuests +
+            (ownerUpdatedNumberOfGuests - owner.number_of_guests)
+          }. Deseja atualizar as informações do evento?`}
+        />
+      )}
+      <WindowContainer
+        onHandleCloseWindow={onHandleCloseWindow}
+        containerStyle={{
+          zIndex: 20,
+          top: '22,5%',
+          left: '30%',
+          height: '55%',
+          width: '40%',
+        }}
+      >
         <NumberOfGuestWindow>
           <h1>Editar anfitrião</h1>
 
@@ -101,17 +155,30 @@ const EditEventOwnerWindow: React.FC<IProps> = ({
             name="description"
             type="text"
             defaultValue={owner.description}
+            onChange={e => handleOwnersUpdatedDescription(e.target.value)}
           />
-          <p>Você pode adicionar até {availableNumberOfGuests} convidados</p>
+          <p>Com o número de convidados do evento,</p>
+          <p>
+            você pode adicionar até
+            {availableNumberOfGuests +
+              owner.number_of_guests -
+              ownerUpdatedNumberOfGuests}{' '}
+            convidados.
+          </p>
           <Input
             name="number_of_guests"
             type="number"
             defaultValue={owner.number_of_guests}
+            onChange={e =>
+              handleOwnersUpdatedNumberOfGuests(Number(e.target.value))
+            }
           />
-          <button type="submit">Salvar</button>
+          <button type="button" onClick={handleUpdateOwner}>
+            Salvar
+          </button>
         </NumberOfGuestWindow>
-      </Form>
-    </WindowContainer>
+      </WindowContainer>
+    </>
   );
 };
 

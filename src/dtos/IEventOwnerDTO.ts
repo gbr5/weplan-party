@@ -1,7 +1,8 @@
+import IUserDTO from './IUserDTO';
+
 export default interface IEventOwnerDTO {
   id: string;
-  name: string;
-  avatar: string;
   description: string;
   number_of_guests: number;
+  userEventOwner: IUserDTO;
 }

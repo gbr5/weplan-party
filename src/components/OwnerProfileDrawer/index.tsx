@@ -8,14 +8,7 @@ import avatar_placeholder from '../../assets/avatar_placeholder.jpg';
 import { useAuth } from '../../hooks/auth';
 
 import WindowContainer from '../WindowContainer';
-
-interface IEventOwnerDTO {
-  id: string;
-  name: string;
-  avatar: string;
-  number_of_guests: number;
-  description: string;
-}
+import IEventOwnerDTO from '../../dtos/IEventOwnerDTO';
 
 interface IPropsDTO {
   isOwner: boolean;
@@ -32,7 +25,10 @@ const OwnerProfileDrawer: React.FC<IPropsDTO> = ({
   onHandleNumberOfGuestDrawer,
   onHandleDeleteOwnerDrawer,
 }: IPropsDTO) => {
-  const avatar = owner.avatar === '' ? avatar_placeholder : owner.avatar;
+  const avatar =
+    owner.userEventOwner.avatar_url === ''
+      ? avatar_placeholder
+      : owner.userEventOwner.avatar_url;
   const { user } = useAuth();
 
   return (
@@ -47,16 +43,24 @@ const OwnerProfileDrawer: React.FC<IPropsDTO> = ({
       }}
     >
       <Container>
-        <img src={avatar} alt={owner.name} />
-        {owner.id === user.id || isOwner ? (
+        <img src={avatar} alt={owner.userEventOwner.name} />
+        {owner.userEventOwner.id === user.id || isOwner ? (
           <>
             <button type="button" onClick={onHandleNumberOfGuestDrawer}>
               <FiEdit3 size={24} />
 
               <h1>
                 username:
-                <strong>{owner.name}</strong>
+                <strong>{owner.userEventOwner.name}</strong>
               </h1>
+              {owner.userEventOwner.personInfo && (
+                <h1>
+                  Nome:
+                  <strong>{owner.userEventOwner.personInfo.first_name}</strong>
+                  Sobrenome:
+                  <strong>{owner.userEventOwner.personInfo.first_name}</strong>
+                </h1>
+              )}
               <div>
                 <h2>
                   Descrição: <strong>{owner.description}</strong>
@@ -84,8 +88,16 @@ const OwnerProfileDrawer: React.FC<IPropsDTO> = ({
             <button type="button">
               <h1>
                 username:
-                <strong>{owner.name}</strong>
+                <strong>{owner.userEventOwner.name}</strong>
               </h1>
+              {owner.userEventOwner.personInfo && (
+                <h1>
+                  Nome:
+                  <strong>{owner.userEventOwner.personInfo.first_name}</strong>
+                  Sobrenome:
+                  <strong>{owner.userEventOwner.personInfo.first_name}</strong>
+                </h1>
+              )}
               <div>
                 <h2>
                   Descrição: <strong>{owner.description}</strong>

@@ -332,13 +332,19 @@ const EventHostDashboard: React.FC = () => {
       api
         .get<IEventOwnerDTO[]>(`events/${eventId}/event-owners`)
         .then(response => {
+          if (owner.id) {
+            const updatedOwner = response.data.find(
+              xOwner => xOwner.id === owner.id,
+            );
+            updatedOwner && setOwner(updatedOwner);
+          }
           setOwners(response.data);
           setNumberOfOwners(response.data.length);
         });
     } catch (err) {
       throw new Error(err);
     }
-  }, [eventId]);
+  }, [eventId, owner]);
   const handleGetMembers = useCallback(() => {
     try {
       api
@@ -564,7 +570,9 @@ const EventHostDashboard: React.FC = () => {
   }, [handleGetOwners]);
   const handleDeleteMember = useCallback(async () => {
     try {
-      await api.delete(`/events/${eventId}/event-members/${member.id}`);
+      await api.delete(
+        `/events/${eventId}/event-members/${member.userEventMember.id}`,
+      );
 
       addToast({
         type: 'success',
@@ -591,7 +599,9 @@ const EventHostDashboard: React.FC = () => {
   }, [eventId, member, addToast, handleGetMembers]);
   const handleDeleteOwner = useCallback(async () => {
     try {
-      await api.delete(`/events/${eventId}/event-owners/${owner.id}`);
+      await api.delete(
+        `/events/${eventId}/event-owners/${owner.userEventOwner.id}`,
+      );
 
       addToast({
         type: 'success',
@@ -741,9 +751,11 @@ const EventHostDashboard: React.FC = () => {
       )}
       {!!editOwnerDrawer && (
         <EditEventOwnerWindow
+          getEventInfo={handleGetEventInfo}
+          getEventOwners={handleGetOwners}
           handleCloseWindow={handleCloseEditEventOwnerWindow}
           availableNumberOfGuests={availableNumberOfGuests}
-          eventId={eventId}
+          event={pageEvent}
           onHandleCloseWindow={() => setEditOwnerDrawer(false)}
           owner={owner}
         />
@@ -860,7 +872,7 @@ const EventHostDashboard: React.FC = () => {
                     type="button"
                     onClick={() => handleOwnerProfileWindow(eventOwner)}
                   >
-                    <h2>{eventOwner.name}</h2>
+                    <h2>{eventOwner.userEventOwner.name}</h2>
                   </button>
                 ))}
               </span>
@@ -872,7 +884,7 @@ const EventHostDashboard: React.FC = () => {
                     type="button"
                     onClick={() => handleOwnerProfileWindow(eventOwner)}
                   >
-                    <h2>{eventOwner.name}</h2>
+                    <h2>{eventOwner.userEventOwner.name}</h2>
                   </button>
                 ))}
               </span>
