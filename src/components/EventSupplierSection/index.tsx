@@ -9,7 +9,7 @@ import {
   FiUser,
 } from 'react-icons/fi';
 import { MdPersonAdd } from 'react-icons/md';
-import IListEventDTO from '../../dtos/IListEventDTO';
+import IEventDTO from '../../dtos/IEventDTO';
 import IEventSupplierDTO from '../../dtos/IEventSupplierDTO';
 import ISupplierDTO from '../../dtos/ISupplierDTO';
 import { useToast } from '../../hooks/toast';
@@ -28,9 +28,10 @@ import SelectSupplierCategoryWindow from '../SelectSupplierCategoryWindow';
 import ISupplierSubCategoryDTO from '../../dtos/ISupplierSubCategoryDTO';
 import SelectSupplierSubCategoryWindow from '../SelectSupplierSubCategoryWindow';
 import AddSupplierWindow from '../AddSupplierWindow';
+import { useAuth } from '../../hooks/auth';
 
 interface IProps {
-  pageEvent: IListEventDTO;
+  pageEvent: IEventDTO;
   handleGetSuppliers: Function;
   handleGetHiredSuppliers: Function;
   selectedSuppliers: IEventSupplierDTO[];
@@ -46,6 +47,7 @@ const EventSupplierSection: React.FC<IProps> = ({
 }: IProps) => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
+  const { user } = useAuth();
 
   const [isHiredDrawer, setIsHiredDrawer] = useState(false);
   const [isHiredMessage, setIsHiredMessage] = useState('');
@@ -323,7 +325,7 @@ const EventSupplierSection: React.FC<IProps> = ({
       )}
       {!!selectedSupplierWindow && (
         <SelectedSupplierWindow
-          isOwner={pageEvent.isOwner}
+          isOwner={pageEvent.user_id === user.id}
           selectedSupplier={selectedSupplier}
           onHandleSelectedSupplierDrawer={() =>
             setSelectedSupplierWindow(false)
@@ -378,7 +380,7 @@ const EventSupplierSection: React.FC<IProps> = ({
       )}
       {!!hiredSupplierWindow && (
         <EventSupplierWindow
-          isOwner={pageEvent.isOwner}
+          isOwner={pageEvent.user_id === user.id}
           handleGetSuppliers={handleGetSuppliers}
           getHiredSuppliers={handleGetHiredSuppliers}
           eventSupplier={hiredSupplier}

@@ -15,7 +15,6 @@ import {
   FiEdit,
 } from 'react-icons/fi';
 import { MdPersonAdd } from 'react-icons/md';
-import { differenceInCalendarDays } from 'date-fns/esm';
 import { useLocation } from 'react-router-dom';
 import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
@@ -39,7 +38,7 @@ import OwnerProfileDrawer from '../../components/OwnerProfileDrawer';
 import WindowContainer from '../../components/WindowContainer';
 import EventFinanceSection from '../../components/EventFinanceSection';
 import { numberFormat } from '../../utils/numberFormat';
-import IListEventDTO from '../../dtos/IListEventDTO';
+import IEventDTO from '../../dtos/IEventDTO';
 import IFriendDTO from '../../dtos/IFriendDTO';
 
 import EditEventNameWindow from '../../components/EditEventNameWindow';
@@ -63,6 +62,8 @@ import EditEventInfoWindow from '../../components/EditEventInfoWindow';
 import AddPlannerWindow from '../../components/AddPlannerWindow';
 import MessageSection from '../../components/MessageSection';
 import LatestNewsSection from '../../components/LatestNewsSection';
+import IShowEventDTO from '../../dtos/IShowEventDTO';
+import formatStringToDate from '../../utils/formatDateToString';
 
 interface IEventGuest {
   id: string;
@@ -73,30 +74,20 @@ interface IEventGuest {
   weplanUser: boolean;
   description: string;
 }
-interface IEventParams {
-  params: {
-    id: string;
-    name: string;
-    trimmed_name: string;
-    number_of_guests: number;
-    isOwner: boolean;
-    owner_master: string;
-    isGuest: boolean;
-    event_type: string;
-    date: Date | string;
-    daysTillDate: number;
-  };
-}
 interface IUserInfoDTO {
   id: string;
   name: string;
   avatar: string;
 }
 
+interface IParams {
+  params: IEventDTO;
+}
+
 const EventHostDashboard: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
-  const location = useLocation<IEventParams>();
+  const location = useLocation<IParams>();
   const { user } = useAuth();
 
   const pageEvent = location.state.params;
@@ -127,8 +118,9 @@ const EventHostDashboard: React.FC = () => {
   const [financeSection, setFinanceSection] = useState(false);
   const [supplierSection, setSupplierSection] = useState(false);
   const [messagesSection, setMessagesSection] = useState(false);
+  const today = new Date();
 
-  const [eventDate, setEventDate] = useState(new Date());
+  const [eventDate, setEventDate] = useState(`${today}`);
 
   const [confirmedGuests, setConfirmedGuests] = useState(0);
   const [myGuestsConfirmed, setMyGuestsConfirmed] = useState(0);
@@ -142,7 +134,6 @@ const EventHostDashboard: React.FC = () => {
   const [selectedFriend, setSelectedFriend] = useState<IFriendDTO>(
     {} as IFriendDTO,
   );
-  const [event, setEvent] = useState<IListEventDTO>({} as IListEventDTO);
   const [friends, setFriends] = useState<IFriendDTO[]>([]);
   const [eventGuests, setEventGuests] = useState<IEventGuest[]>([]);
   const [planners, setPlanners] = useState<IUserInfoDTO[]>([]);
@@ -207,6 +198,16 @@ const EventHostDashboard: React.FC = () => {
     setFirstRow(false);
     setSidebar(false);
   }, []);
+
+  const handleGetEvent = useCallback(() => {
+    try {
+      api.get<IShowEventDTO>(`events/${pageEvent.id}`).then(response => {
+        setEventDate(formatStringToDate(String(response.data.event.date)));
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
+  }, [pageEvent]);
 
   const handleFirstRow = useCallback(() => {
     closeAllWindows();
@@ -397,37 +398,6 @@ const EventHostDashboard: React.FC = () => {
       throw new Error(err);
     }
   }, [eventId, user]);
-  const handleGetEvent = useCallback(() => {
-    try {
-      api.get<IListEventDTO>(`/events/${pageEvent.id}`).then(response => {
-        const date = new Date(response.data.date);
-        const year = date.getFullYear();
-        const month =
-          date.getMonth() < 10 ? `0${date.getMonth()}` : date.getMonth();
-        const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
-        const hour =
-          date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
-        const minute =
-          date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
-        setEvent({
-          id: response.data.id,
-          name: response.data.name,
-          trimmed_name: response.data.trimmed_name,
-          date: `${hour}:${minute} - ${day}/${month}/${year}`,
-          userEvent_id: response.data.userEvent_id,
-          number_of_guests: response.data.number_of_guests,
-          event_type: response.data.event_type,
-          daysTillDate: differenceInCalendarDays(date, new Date()),
-          isGuest: false,
-          isOwner: pageEvent.isOwner,
-          owner_master: pageEvent.owner_master,
-        });
-        setEventDate(date);
-      });
-    } catch (err) {
-      throw Error(err);
-    }
-  }, [pageEvent]);
 
   const currentNumberOfGuests = useMemo(() => {
     const currentMembersGuestNumber: number = members
@@ -491,6 +461,7 @@ const EventHostDashboard: React.FC = () => {
       throw new Error(err);
     }
   }, [pageEvent.id]);
+
   const handleCloseEditEventInfoWindow = useCallback(
     (data: IEventInfoDTO) => {
       setEventInfo(data);
@@ -626,7 +597,10 @@ const EventHostDashboard: React.FC = () => {
       });
     }
   }, [eventId, owner, addToast, handleGetOwners]);
-
+  // const handleEditOwnerWindow = useCallback(() => {
+  //   setOwnerProfileWindow(false);
+  //   setEditOwnerDrawer(true);
+  // }, []);
   const totalEventCost = useMemo(() => {
     const totalCost: number = hiredSuppliers
       .map(supplier => {
@@ -698,7 +672,7 @@ const EventHostDashboard: React.FC = () => {
           <span>
             <button type="button" onClick={handleEditEventNameDrawer}>
               <h5>
-                {event.name}
+                {pageEvent.name}
                 <FiEdit3 size={16} />
               </h5>
             </button>
@@ -706,7 +680,7 @@ const EventHostDashboard: React.FC = () => {
         ) : (
           <span>
             <button type="button">
-              <h5>{event.name}</h5>
+              <h5>{pageEvent.name}</h5>
             </button>
           </span>
         )}
@@ -716,23 +690,22 @@ const EventHostDashboard: React.FC = () => {
           handleCloseWindow={handleCloseEditEventNameWindow}
           eventDate={eventDate}
           eventId={eventId}
-          eventName={event.name}
+          eventName={pageEvent.name}
           onHandleCloseWindow={() => setEditEventNameDrawer(false)}
         />
       )}
       {!!ownerProfileWindow && (
         <OwnerProfileDrawer
-          isOwner={pageEvent.isOwner}
+          isOwner={pageEvent.user_id === user.id}
           owner={owner}
-          onHandleOwnerDrawer={() => setOwnerProfileWindow(false)}
-          onHandleNumberOfGuestDrawer={() => setEditOwnerDrawer(true)}
-          onHandleDeleteOwnerDrawer={() => setDeleteOwnerDrawer(true)}
+          event={pageEvent}
+          handleCloseWindow={() => setOwnerProfileWindow(false)}
+          onHandleCloseWindow={() => setOwnerProfileWindow(false)}
         />
       )}
       {!!memberProfileWindow && (
         <MemberProfileDrawer
-          isGuest={pageEvent.isGuest}
-          isOwner={pageEvent.isOwner}
+          isOwner={pageEvent.user_id === user.id}
           member={member}
           onHandleMemberDrawer={() => setMemberProfileWindow(false)}
           onHandleNumberOfGuestDrawer={() => setNumberOfGuestDrawer(true)}
@@ -853,7 +826,7 @@ const EventHostDashboard: React.FC = () => {
 
         {sidebar && (
           <SideBar>
-            {pageEvent.owner_master === user.id ? (
+            {pageEvent.user_id === user.id ? (
               <button type="button" onClick={handleAddOwnerDrawer}>
                 <h1>Anfitriões: {numberOfOwners}</h1>
                 <MdPersonAdd size={24} />
@@ -964,7 +937,7 @@ const EventHostDashboard: React.FC = () => {
                 </button>
               </div>
               <div>
-                {pageEvent.owner_master === user.id ? (
+                {pageEvent.user_id === user.id ? (
                   <button type="button" onClick={handleBudgetDrawer}>
                     <h2>Orçamento</h2>
                     <p>
@@ -1066,7 +1039,7 @@ const EventHostDashboard: React.FC = () => {
           )}
           {!!financeSection && (
             <EventFinanceSection
-              isOwner={pageEvent.isOwner}
+              isOwner={pageEvent.user_id === user.id}
               refreshHiredSuppliers={handleGetHiredSuppliers}
               hiredSuppliers={hiredSuppliers}
             />

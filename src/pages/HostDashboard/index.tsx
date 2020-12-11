@@ -9,17 +9,11 @@ import {
   FiStar,
 } from 'react-icons/fi';
 import { useHistory } from 'react-router-dom';
-import { isAfter } from 'date-fns';
-import { differenceInCalendarDays } from 'date-fns/esm';
 import {
   Container,
   Content,
   BottomPage,
   BottomSection,
-  MyNextEvent,
-  MyNextEventTitle,
-  Section,
-  Fields,
   MiddlePage,
   BooleanNavigationButton,
 } from './styles';
@@ -27,84 +21,67 @@ import {
 import PageHeader from '../../components/PageHeader';
 
 import api from '../../services/api';
-import IListEventDTO from '../../dtos/IListEventDTO';
+import IEventDTO from '../../dtos/IEventDTO';
 import formatStringToDate from '../../utils/formatDateToString';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import WindowContainer from '../../components/WindowContainer';
-
-interface IFriendsEvents {
-  id: string;
-  guest_id: string;
-  event_name: string;
-  host: string;
-  date: Date;
-  confirmed: boolean;
-}
-
-interface INextFriendsEvent {
-  guest_id: string;
-  event_name: string;
-  host: string;
-  date: string;
-  daysTillDate: number;
-  confirmed: boolean;
-}
-
-interface IEventCheckList {
-  id: string;
-  checked: boolean;
-}
-
-interface IEventGuest {
-  id: string;
-  confirmed: boolean;
-}
+import IEventOwnerDTO from '../../dtos/IEventOwnerDTO';
+import IEventMemberDTO from '../../dtos/IEventMemberDTO';
+import IEventGuestDTO from '../../dtos/IEventGuestDTO';
+import IShowEventDTO from '../../dtos/IShowEventDTO';
+import MyNextEventSection from '../../components/EventComponents/MyNextEventSection';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const { addToast } = useToast();
   const history = useHistory();
 
-  const [eventsAsOwner, setEventsAsOwner] = useState<IListEventDTO[]>([]);
-  const [eventsAsMember, setEventsAsMember] = useState<IListEventDTO[]>([]);
-  const [eventsAsGuest, setEventsAsGuest] = useState<IListEventDTO[]>([]);
-  eventsAsGuest === [] && console.log(eventsAsGuest);
-  const [myFriendsEvents, setMyFriendsEvents] = useState<IFriendsEvents[]>([]);
-  // const [myFriendEvent, setMyFriendEvent] = useState<IFriendsEvents>(
-  //   {} as IFriendsEvents,
-  // );
+  const [eventsAsOwner, setEventsAsOwner] = useState<IEventOwnerDTO[]>([]);
+  const [eventsAsMember, setEventsAsMember] = useState<IEventMemberDTO[]>([]);
+  const [eventsAsGuest, setEventsAsGuest] = useState<IEventGuestDTO[]>([]);
 
-  const [myNextEvent, setMyNextEvent] = useState<IListEventDTO>(
-    {} as IListEventDTO,
+  const [myNextEvent, setMyNextEvent] = useState<IShowEventDTO>(
+    {} as IShowEventDTO,
   );
   const [eventToDelete, setEventToDelete] = useState('');
-  const [userEventToDelete, setUserEventToDelete] = useState('');
   const [thisEvent, setThisEvent] = useState('');
-  const [myNextEventCheckList, setMyNextEventCheckList] = useState(0);
-  const [resolvedCheckList, setResolvedCheckList] = useState(0);
-  const [myNextEventGuests, setMyNextEventGuests] = useState(0);
-  const [confirmedGuests, setConfirmedGuests] = useState(0);
   const [eventOwner, setEventOwner] = useState(true);
   const [deleteEventWindow, setDeleteEventWindow] = useState(false);
+
+  const getMyNextEvent = useCallback(() => {
+    try {
+      api.get<IShowEventDTO>('/my-next-event').then(response => {
+        setMyNextEvent(response.data);
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
+  }, []);
+
+  useEffect(() => {
+    getMyNextEvent();
+  }, [getMyNextEvent]);
 
   const handleDeleteMasterEventWindow = useCallback((props: string) => {
     setEventToDelete(props);
     setThisEvent('master');
     setDeleteEventWindow(true);
   }, []);
-  const handleDeleteOwnerEventWindow = useCallback((props: IListEventDTO) => {
-    setEventToDelete(props.id);
-    setUserEventToDelete(props.userEvent_id ? props.userEvent_id : '');
+
+  const handleDeleteOwnerEventWindow = useCallback((props: IEventOwnerDTO) => {
+    setEventToDelete(props.event.id);
     setThisEvent('owner');
     setDeleteEventWindow(true);
   }, []);
-  const handleDeleteMemberEventWindow = useCallback((props: IListEventDTO) => {
-    setEventToDelete(props.id);
-    setUserEventToDelete(props.userEvent_id ? props.userEvent_id : '');
-    setThisEvent('member');
-    setDeleteEventWindow(true);
-  }, []);
+  const handleDeleteMemberEventWindow = useCallback(
+    (props: IEventMemberDTO) => {
+      setEventToDelete(props.event.id);
+      setThisEvent('member');
+      setDeleteEventWindow(true);
+    },
+    [],
+  );
   const handleDeleteGuestEventWindow = useCallback((props: string) => {
     setEventToDelete(props);
     setThisEvent('guest');
@@ -112,7 +89,7 @@ const Dashboard: React.FC = () => {
   }, []);
 
   const handleMyEventDashboard = useCallback(
-    (event: IListEventDTO) => {
+    (event: IEventDTO) => {
       history.push(`/dashboard/my-event/${event.trimmed_name}`, {
         params: event,
       });
@@ -120,97 +97,50 @@ const Dashboard: React.FC = () => {
     [history],
   );
 
-  const getMyNextEventCheckList = useCallback(() => {
+  const getEventsAsOwner = useCallback(() => {
     try {
-      api
-        .get<IEventCheckList[]>(`/events/${myNextEvent.id}/check-list`)
-        .then(response => {
-          setMyNextEventCheckList(response.data.length);
-          setResolvedCheckList(
-            response.data.filter(checkList => checkList.checked === true)
-              .length,
-          );
-        });
+      api.get<IEventOwnerDTO[]>('list/events/user-as-owner/').then(response => {
+        setEventsAsOwner(response.data);
+      });
     } catch (err) {
-      throw new Error('host dashboard, rota checklist para o backend');
+      throw new Error(err);
     }
-  }, [myNextEvent]);
+  }, []);
 
-  const getMyNextEventGuests = useCallback(() => {
+  const getEventsAsMember = useCallback(() => {
     try {
       api
-        .get<IEventGuest[]>(`/events/${myNextEvent.id}/guests`)
+        .get<IEventMemberDTO[]>('list/events/user-as-member/')
         .then(response => {
-          setMyNextEventGuests(response.data.length);
-          setConfirmedGuests(
-            response.data.filter(guest => guest.confirmed === true).length,
-          );
+          setEventsAsMember(response.data);
         });
     } catch (err) {
-      throw new Error('host dashboard, rota guests para o backend');
+      throw new Error(err);
     }
-  }, [myNextEvent]);
+  }, []);
+
+  const getEventsAsGuest = useCallback(() => {
+    try {
+      api
+        .get<IEventGuestDTO[]>(`/event/weplan-guests/user/${user.id}`)
+        .then(response => {
+          setEventsAsGuest(response.data);
+        });
+    } catch (err) {
+      throw new Error(err);
+    }
+  }, [user]);
 
   const getMyEvents = useCallback(() => {
-    try {
-      api.get<IListEventDTO[]>('/events').then(response => {
-        setEventsAsOwner(response.data.filter(event => event.isOwner === true));
-        setEventsAsMember(
-          response.data.filter(
-            event => event.isOwner === false && event.isGuest === false,
-          ),
-        );
-        setEventsAsGuest(response.data.filter(event => event.isGuest === true));
-        const nextEvent = response.data.find(myEvent => {
-          const nEvent = myEvent.isOwner
-            ? isAfter(new Date(myEvent.date), new Date())
-            : '';
-          return nEvent;
-        });
+    getMyNextEvent();
+    getEventsAsMember();
+    getEventsAsOwner();
+    getEventsAsGuest();
+  }, [getEventsAsMember, getMyNextEvent, getEventsAsOwner, getEventsAsGuest]);
 
-        if (nextEvent) {
-          const date = new Date(nextEvent.date);
-          const year = date.getFullYear();
-          const month =
-            date.getMonth() < 10 ? `0${date.getMonth()}` : date.getMonth();
-          const day =
-            date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
-          const hour =
-            date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
-          const minute =
-            date.getMinutes() < 10
-              ? `0${date.getMinutes()}`
-              : date.getMinutes();
-
-          setMyNextEvent({
-            id: nextEvent.id,
-            name: nextEvent.name,
-            trimmed_name: nextEvent.trimmed_name,
-            date: `${hour}:${minute} - ${day}/${month}/${year}`,
-            daysTillDate: differenceInCalendarDays(date, new Date()),
-            number_of_guests: nextEvent.number_of_guests,
-            userEvent_id: nextEvent.userEvent_id,
-            event_type: nextEvent.event_type,
-            isGuest: nextEvent.isGuest,
-            isOwner: nextEvent.isOwner,
-            owner_master: nextEvent.owner_master,
-          });
-        }
-      });
-    } catch (err) {
-      throw Error(err);
-    }
-  }, []);
-
-  const handleGetMyFriendsEvents = useCallback(() => {
-    try {
-      api.get<IFriendsEvents[]>('/friends-events').then(response => {
-        setMyFriendsEvents(response.data);
-      });
-    } catch (err) {
-      throw Error(err);
-    }
-  }, []);
+  useEffect(() => {
+    getMyEvents();
+  }, [getMyEvents]);
 
   const handleDeleteEvent = useCallback(
     async props => {
@@ -219,21 +149,16 @@ const Dashboard: React.FC = () => {
           await api.delete(`/events/${props}`);
         }
         if (thisEvent === 'owner') {
-          await api.delete(
-            `/events/${props}/event-owners/${userEventToDelete}`,
-          );
+          await api.delete(`/events/${props}/event-owners/${user.id}`);
         }
         if (thisEvent === 'member') {
-          await api.delete(
-            `/events/${props}/event-members/${userEventToDelete}`,
-          );
+          await api.delete(`/events/${props}/event-members/${user.id}`);
         }
         if (thisEvent === 'guest') {
           await api.delete(`/events/guests/${props}`);
         }
 
         getMyEvents();
-        handleGetMyFriendsEvents();
         setDeleteEventWindow(false);
         addToast({
           type: 'success',
@@ -250,13 +175,7 @@ const Dashboard: React.FC = () => {
         throw new Error(err);
       }
     },
-    [
-      addToast,
-      getMyEvents,
-      thisEvent,
-      userEventToDelete,
-      handleGetMyFriendsEvents,
-    ],
+    [addToast, getMyEvents, thisEvent, user],
   );
 
   const handleEventOwnerOrMember = useCallback(props => {
@@ -264,18 +183,16 @@ const Dashboard: React.FC = () => {
   }, []);
 
   const handleEditConfirmedGuest = useCallback(
-    async (props: IEventGuest) => {
+    async (props: IEventGuestDTO) => {
       try {
-        await api.put(`events/weplan-user-guest/${props.id}`, {
-          confirmed: !props.confirmed,
-        });
+        await api.put(`events/weplan-user-guest/${props.id}`);
 
         addToast({
           type: 'success',
           title: 'Convidado editado com sucesso',
           description: 'As mudanças já foram atualizadas no seu evento.',
         });
-        handleGetMyFriendsEvents();
+        getEventsAsGuest();
       } catch (err) {
         addToast({
           type: 'error',
@@ -285,24 +202,8 @@ const Dashboard: React.FC = () => {
         throw new Error(err);
       }
     },
-    [addToast, handleGetMyFriendsEvents],
+    [addToast, getEventsAsGuest],
   );
-
-  useEffect(() => {
-    getMyEvents();
-  }, [getMyEvents]);
-
-  useEffect(() => {
-    getMyNextEventGuests();
-  }, [getMyNextEventGuests]);
-
-  useEffect(() => {
-    getMyNextEventCheckList();
-  }, [getMyNextEventCheckList]);
-
-  useEffect(() => {
-    handleGetMyFriendsEvents();
-  }, [handleGetMyFriendsEvents]);
 
   return (
     <Container>
@@ -334,58 +235,10 @@ const Dashboard: React.FC = () => {
       )}
       <Content>
         <MiddlePage>
-          <MyNextEvent>
-            {myNextEvent ? (
-              <button
-                type="button"
-                onClick={() => handleMyEventDashboard(myNextEvent)}
-              >
-                <MyNextEventTitle>
-                  <strong>Meu próximo evento:</strong>
-                  <h2>{myNextEvent.name}</h2>
-                  <span>{myNextEvent.date}</span>
-                </MyNextEventTitle>
-
-                <Section>
-                  <Fields>
-                    <img
-                      src="https://images.unsplash.com/photo-1496843916299-590492c751f4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"
-                      alt=""
-                    />
-                  </Fields>
-
-                  <Fields>
-                    <p>Convidados:</p>
-                    <h2>
-                      {confirmedGuests}/{myNextEventGuests}
-                    </h2>
-                  </Fields>
-
-                  <Fields>
-                    <p>Check-list:</p>
-                    <h2>
-                      {resolvedCheckList}/{myNextEventCheckList}
-                    </h2>
-                  </Fields>
-
-                  <Fields>
-                    <p>Orçamento:</p>
-                    <h2>63%</h2>
-                  </Fields>
-                  <Fields>
-                    <p>Faltam</p>
-                    <h2>{myNextEvent.daysTillDate} dias</h2>
-                  </Fields>
-                </Section>
-              </button>
-            ) : (
-              <>
-                <strong>Meu próximo evento:</strong>
-                <h2>Você não tem nenhum evento futuro.</h2>
-                <span>-</span>
-              </>
-            )}
-          </MyNextEvent>
+          <MyNextEventSection
+            nextEvent={myNextEvent}
+            handleMyEventDashboard={handleMyEventDashboard}
+          />
 
           <BottomPage>
             <BottomSection>
@@ -416,24 +269,26 @@ const Dashboard: React.FC = () => {
                         <li key={event.id}>
                           <button
                             type="button"
-                            onClick={() => handleMyEventDashboard(event)}
+                            onClick={() => handleMyEventDashboard(event.event)}
                           >
-                            <h3>{event.name}</h3>
+                            <h3>{event.event.name}</h3>
                           </button>
-                          {event.owner_master === user.id && (
+                          {event.event.user_id === user.id && (
                             <FiStar size={16} />
                           )}
 
                           <div>
                             <span>
-                              {formatStringToDate(String(event.date))}
+                              {formatStringToDate(String(event.event.date))}
                             </span>
                             <span>
-                              {event.owner_master === user.id ? (
+                              {event.event.user_id === user.id ? (
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    handleDeleteMasterEventWindow(event.id)
+                                    handleDeleteMasterEventWindow(
+                                      event.event.id,
+                                    )
                                   }
                                 >
                                   <FiSettings size={20} />
@@ -451,7 +306,9 @@ const Dashboard: React.FC = () => {
                             </span>
                             <button
                               type="button"
-                              onClick={() => handleMyEventDashboard(event)}
+                              onClick={() =>
+                                handleMyEventDashboard(event.event)
+                              }
                             >
                               <FiChevronRight size={24} />
                             </button>
@@ -464,13 +321,13 @@ const Dashboard: React.FC = () => {
                         <li key={event.id}>
                           <button
                             type="button"
-                            onClick={() => handleMyEventDashboard(event)}
+                            onClick={() => handleMyEventDashboard(event.event)}
                           >
-                            <h3>{event.name}</h3>
+                            <h3>{event.userEventMember.name}</h3>
                           </button>
                           <div>
                             <span>
-                              {formatStringToDate(String(event.date))}
+                              {formatStringToDate(String(event.event.date))}
                             </span>
                             <span>
                               <button
@@ -484,7 +341,9 @@ const Dashboard: React.FC = () => {
                             </span>
                             <button
                               type="button"
-                              onClick={() => handleMyEventDashboard(event)}
+                              onClick={() =>
+                                handleMyEventDashboard(event.event)
+                              }
                             >
                               <FiChevronRight size={24} />
                             </button>
@@ -500,19 +359,21 @@ const Dashboard: React.FC = () => {
                 <strong>Festas de Amigos</strong>
               </div>
               <ul>
-                {myFriendsEvents.map(event => (
-                  <li key={event.event_name}>
+                {eventsAsGuest.map(event => (
+                  <li key={event.id}>
                     <button type="button">
-                      <h3>{event.event_name}</h3>
+                      <h3>{event.weplanGuest.event.name}</h3>
                     </button>
                     <div>
-                      <span>{formatStringToDate(String(event.date))}</span>
+                      <span>
+                        {formatStringToDate(
+                          String(event.weplanGuest.event.date),
+                        )}
+                      </span>
                       <span>
                         <button
                           type="button"
-                          onClick={() =>
-                            handleDeleteGuestEventWindow(event.guest_id)
-                          }
+                          onClick={() => handleDeleteGuestEventWindow(event.id)}
                         >
                           <FiSettings size={20} />
                         </button>
@@ -520,12 +381,7 @@ const Dashboard: React.FC = () => {
                       <p>Confirmado: </p>
                       <button
                         type="button"
-                        onClick={() =>
-                          handleEditConfirmedGuest({
-                            id: event.guest_id,
-                            confirmed: event.confirmed,
-                          })
-                        }
+                        onClick={() => handleEditConfirmedGuest(event)}
                       >
                         {event.confirmed ? (
                           <FiCheckSquare size={24} />

@@ -1,9 +1,4 @@
-import React, {
-  MouseEventHandler,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import React, { MouseEventHandler, useCallback, useState } from 'react';
 
 import Input from '../Input';
 import WindowContainer from '../WindowContainer';
@@ -13,14 +8,14 @@ import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
 import IEventOwnerDTO from '../../dtos/IEventOwnerDTO';
 import BooleanQuestionWindow from '../BooleanQuestionWindow';
-import IListEventDTO from '../../dtos/IListEventDTO';
+import IEventDTO from '../../dtos/IEventDTO';
 
 interface IProps {
   onHandleCloseWindow: MouseEventHandler;
   handleCloseWindow: Function;
   getEventInfo: Function;
   getEventOwners: Function;
-  event: IListEventDTO;
+  event: IEventDTO;
   owner: IEventOwnerDTO;
   availableNumberOfGuests: number;
 }
@@ -45,7 +40,7 @@ const EditEventOwnerWindow: React.FC<IProps> = ({
   ] = useState(false);
 
   const [ownerUpdatedDescription, setOwnerUpdatedDescription] = useState(
-    owner.description,
+    owner ? owner.description : '',
   );
 
   const handleUpdateOwner = useCallback(async () => {
@@ -115,14 +110,14 @@ const EditEventOwnerWindow: React.FC<IProps> = ({
     setOwnerUpdatedDescription(props);
   }, []);
 
-  useEffect(() => {
-    if (
-      ownerUpdatedNumberOfGuests - owner.number_of_guests >
-      availableNumberOfGuests
-    ) {
-      setConfirmUpdateEventNumberOfGuests(true);
-    }
-  }, [ownerUpdatedNumberOfGuests, availableNumberOfGuests, owner]);
+  // useEffect(() => {
+  //   if (
+  //     ownerUpdatedNumberOfGuests - owner.number_of_guests >
+  //     availableNumberOfGuests
+  //   ) {
+  //     setConfirmUpdateEventNumberOfGuests(true);
+  //   }
+  // }, [ownerUpdatedNumberOfGuests, availableNumberOfGuests, owner]);
 
   return (
     <>

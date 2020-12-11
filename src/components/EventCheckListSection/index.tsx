@@ -6,7 +6,7 @@ import { MdAdd, MdFlag } from 'react-icons/md';
 import * as Yup from 'yup';
 import ICreateCheckListTaskDTO from '../../dtos/ICreateCheckListTaskDTO';
 import IEventCheckListDTO from '../../dtos/IEventCheckListDTO';
-import IListEventDTO from '../../dtos/IListEventDTO';
+import IEventDTO from '../../dtos/IEventDTO';
 import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
 import formatStringToDate from '../../utils/formatDateToString';
@@ -25,7 +25,7 @@ import {
 interface IProps {
   handleGetCheckListTasks: Function;
   closeAllWindows: Function;
-  pageEvent: IListEventDTO;
+  pageEvent: IEventDTO;
   inProgressCheckListTasks: IEventCheckListDTO[];
   resolvedCheckListTasks: IEventCheckListDTO[];
   notStartedCheckListTasks: IEventCheckListDTO[];

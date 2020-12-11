@@ -10,7 +10,6 @@ import IEventMemberDTO from '../../dtos/IEventMemberDTO';
 
 interface IPropsDTO {
   isOwner: boolean;
-  isGuest: boolean;
   member: IEventMemberDTO;
   onHandleMemberDrawer: MouseEventHandler;
   onHandleNumberOfGuestDrawer: MouseEventHandler;
@@ -19,7 +18,6 @@ interface IPropsDTO {
 
 const MemberProfileDrawer: React.FC<IPropsDTO> = ({
   isOwner,
-  isGuest,
   member,
   onHandleMemberDrawer,
   onHandleNumberOfGuestDrawer,
@@ -47,7 +45,7 @@ const MemberProfileDrawer: React.FC<IPropsDTO> = ({
         <h1>{member.userEventMember.name}</h1>
 
         <div>
-          {isOwner && !isGuest ? (
+          {isOwner ? (
             <>
               <EditMemberButton
                 type="button"
