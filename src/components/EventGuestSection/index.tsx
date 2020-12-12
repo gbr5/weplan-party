@@ -5,7 +5,7 @@ import { FiCheckSquare, FiEdit3, FiSquare, FiUser } from 'react-icons/fi';
 
 import { Form } from '@unform/web';
 import { MdGroupAdd, MdPersonAdd } from 'react-icons/md';
-import IListEventDTO from '../../dtos/IListEventDTO';
+import IEventDTO from '../../dtos/IEventDTO';
 
 import AddEventGuestListWindow from '../AddEventGuestListWindow';
 
@@ -48,7 +48,7 @@ interface IProps {
   closeAllWindows: Function;
   handleGetEvent: Function;
   handleGetGuests: Function;
-  pageEvent: IListEventDTO;
+  pageEvent: IEventDTO;
   myAvailableNumberOfGuests: number;
   eventGuests: IEventGuest[];
   confirmedGuests: number;

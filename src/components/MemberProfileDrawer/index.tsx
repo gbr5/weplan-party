@@ -6,17 +6,10 @@ import { FiEdit } from 'react-icons/fi';
 import { MemberDrawer, EditMemberButton, DeleteMemberButton } from './styles';
 import avatar_placeholder from '../../assets/avatar_placeholder.jpg';
 import WindowContainer from '../WindowContainer';
-
-interface IEventMemberDTO {
-  id: string;
-  name: string;
-  avatar: string;
-  number_of_guests: number;
-}
+import IEventMemberDTO from '../../dtos/IEventMemberDTO';
 
 interface IPropsDTO {
   isOwner: boolean;
-  isGuest: boolean;
   member: IEventMemberDTO;
   onHandleMemberDrawer: MouseEventHandler;
   onHandleNumberOfGuestDrawer: MouseEventHandler;
@@ -25,13 +18,15 @@ interface IPropsDTO {
 
 const MemberProfileDrawer: React.FC<IPropsDTO> = ({
   isOwner,
-  isGuest,
   member,
   onHandleMemberDrawer,
   onHandleNumberOfGuestDrawer,
   onHandleDeleteMemberDrawer,
 }: IPropsDTO) => {
-  const avatar = member.avatar === '' ? avatar_placeholder : member.avatar;
+  const avatar =
+    member.userEventMember.avatar_url === ''
+      ? avatar_placeholder
+      : member.userEventMember.avatar_url;
 
   return (
     <WindowContainer
@@ -45,12 +40,12 @@ const MemberProfileDrawer: React.FC<IPropsDTO> = ({
       }}
     >
       <MemberDrawer>
-        <img src={avatar} alt={member.name} />
+        <img src={avatar} alt={member.userEventMember.name} />
 
-        <h1>{member.name}</h1>
+        <h1>{member.userEventMember.name}</h1>
 
         <div>
-          {isOwner && !isGuest ? (
+          {isOwner ? (
             <>
               <EditMemberButton
                 type="button"

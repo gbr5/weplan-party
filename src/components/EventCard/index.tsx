@@ -1,13 +1,13 @@
 import React, { memo } from 'react';
 
-import IListEventDTO from '../../dtos/IListEventDTO';
+import IEventDTO from '../../dtos/IEventDTO';
 
 import { Container, EventDate } from './styles';
 // import api from '../../services/api';
 // import { useToast } from '../../hooks/toast';
 
 interface IPropsDTO {
-  event: IListEventDTO;
+  event: IEventDTO;
   // refreshEvents: Function;
 }
 

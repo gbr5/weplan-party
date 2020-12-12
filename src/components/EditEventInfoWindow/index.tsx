@@ -12,20 +12,21 @@ import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
 import getValidationErrors from '../../utils/getValidationErros';
 import IEventInfoDTO from '../../dtos/IEventInfoDTO';
+import IEventDTO from '../../dtos/IEventDTO';
 
 interface IProps {
   onHandleCloseWindow: MouseEventHandler;
-  eventId: string;
   currentNumberOfGuests: number;
   handleCloseWindow: Function;
+  event: IEventDTO;
   eventInfo: IEventInfoDTO;
 }
 
 const EditEventInfoWindow: React.FC<IProps> = ({
   onHandleCloseWindow,
-  eventId,
   currentNumberOfGuests,
   handleCloseWindow,
+  event,
   eventInfo,
 }: IProps) => {
   const formRef = useRef<FormHandles>(null);
@@ -34,34 +35,81 @@ const EditEventInfoWindow: React.FC<IProps> = ({
   const handleEditEventInfo = useCallback(
     async (data: IEventInfoDTO) => {
       try {
-        formRef.current?.setErrors([]);
+        if (!eventInfo.id && !event.eventInfo) {
+          formRef.current?.setErrors([]);
 
-        const schema = Yup.object().shape({
-          duration: Yup.number(),
-          number_of_guests: Yup.number(),
-          budget: Yup.number(),
-          description: Yup.string(),
-          country: Yup.string(),
-          local_state: Yup.string(),
-          city: Yup.string(),
-          address: Yup.string(),
-        });
-
-        await schema.validate(data, {
-          abortEarly: false,
-        });
-
-        if (data.number_of_guests < currentNumberOfGuests) {
-          addToast({
-            type: 'error',
-            title: 'Erro ao adicionar anfitrião',
-            description:
-              'Número de convidados excede o limite, tente novamente.',
+          const schema = Yup.object().shape({
+            duration: Yup.number(),
+            number_of_guests: Yup.number(),
+            budget: Yup.number(),
+            country: Yup.string(),
+            local_state: Yup.string(),
+            city: Yup.string(),
+            address: Yup.string(),
           });
-          throw new Error('Number of guests is higher than allowed!');
-        }
 
-        await api.put(`events/${eventId}/event-info`, data);
+          await schema.validate(data, {
+            abortEarly: false,
+          });
+
+          if (data.number_of_guests < currentNumberOfGuests) {
+            addToast({
+              type: 'error',
+              title: 'Erro ao adicionar anfitrião',
+              description:
+                'Número de convidados excede o limite, tente novamente.',
+            });
+            throw new Error('Number of guests is higher than allowed!');
+          }
+
+          await api.post(`events/${event.id}/event-info`, {
+            number_of_guests: data.number_of_guests,
+            local_state: data.local_state,
+            city: data.city,
+            duration: data.duration,
+            country: data.country,
+            address: data.address,
+            budget: data.budget,
+            description: 'Descrição',
+          });
+        } else {
+          formRef.current?.setErrors([]);
+
+          const schema = Yup.object().shape({
+            duration: Yup.number(),
+            number_of_guests: Yup.number(),
+            budget: Yup.number(),
+            country: Yup.string(),
+            local_state: Yup.string(),
+            city: Yup.string(),
+            address: Yup.string(),
+          });
+
+          await schema.validate(data, {
+            abortEarly: false,
+          });
+
+          if (data.number_of_guests < currentNumberOfGuests) {
+            addToast({
+              type: 'error',
+              title: 'Erro ao adicionar anfitrião',
+              description:
+                'Número de convidados excede o limite, tente novamente.',
+            });
+            throw new Error('Number of guests is higher than allowed!');
+          }
+
+          await api.put(`events/${event.id}/event-info`, {
+            number_of_guests: data.number_of_guests,
+            local_state: data.local_state,
+            city: data.city,
+            duration: data.duration,
+            country: data.country,
+            address: data.address,
+            budget: data.budget,
+            description: 'Descrição',
+          });
+        }
 
         handleCloseWindow();
         addToast({
@@ -83,7 +131,7 @@ const EditEventInfoWindow: React.FC<IProps> = ({
         });
       }
     },
-    [addToast, eventId, currentNumberOfGuests, handleCloseWindow],
+    [addToast, currentNumberOfGuests, handleCloseWindow, event, eventInfo],
   );
 
   return (
@@ -103,19 +151,19 @@ const EditEventInfoWindow: React.FC<IProps> = ({
           <div>
             <div>
               <Input
-                defaultValue={eventInfo.duration}
+                defaultValue={eventInfo ? eventInfo.duration : ''}
                 name="duration"
                 type="number"
                 placeholder="Duração (em horas)"
               />
               <Input
-                defaultValue={eventInfo.number_of_guests}
+                defaultValue={eventInfo ? eventInfo.number_of_guests : ''}
                 name="number_of_guests"
                 type="number"
                 placeholder="Número de convidados"
               />
               <Input
-                defaultValue={eventInfo.budget}
+                defaultValue={eventInfo ? eventInfo.budget : ''}
                 name="budget"
                 type="number"
                 placeholder="Orçamento"
@@ -123,26 +171,26 @@ const EditEventInfoWindow: React.FC<IProps> = ({
             </div>
             <div>
               <Input
-                defaultValue={eventInfo.country}
+                defaultValue={eventInfo ? eventInfo.country : ''}
                 name="country"
                 type="text"
                 placeholder="País"
               />
               <Input
-                defaultValue={eventInfo.local_state}
+                defaultValue={eventInfo ? eventInfo.local_state : ''}
                 name="local_state"
                 type="text"
                 placeholder="Estado"
               />
               <Input
-                defaultValue={eventInfo.city}
+                defaultValue={eventInfo ? eventInfo.city : ''}
                 name="city"
                 type="text"
                 placeholder="Cidade"
               />
             </div>
             <Input
-              defaultValue={eventInfo.address}
+              defaultValue={eventInfo ? eventInfo.address : ''}
               name="address"
               type="text"
               placeholder="Endereço"

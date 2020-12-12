@@ -8,7 +8,7 @@ import WindowContainer from '../WindowContainer';
 
 import { Container } from './styles';
 import { useToast } from '../../hooks/toast';
-import IListEventDTO from '../../dtos/IListEventDTO';
+import IEventDTO from '../../dtos/IEventDTO';
 import getValidationErrors from '../../utils/getValidationErros';
 import api from '../../services/api';
 
@@ -17,7 +17,7 @@ interface IProps {
   handleCloseWindow: Function;
   eventId: string;
   eventName: string;
-  eventDate: Date;
+  eventDate: string;
 }
 
 const EditEventNameWindow: React.FC<IProps> = ({
@@ -31,7 +31,7 @@ const EditEventNameWindow: React.FC<IProps> = ({
   const { addToast } = useToast();
 
   const handleEditEventName = useCallback(
-    async (data: IListEventDTO) => {
+    async (data: IEventDTO) => {
       try {
         formRef.current?.setErrors([]);
 

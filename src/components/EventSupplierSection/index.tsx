@@ -9,7 +9,7 @@ import {
   FiUser,
 } from 'react-icons/fi';
 import { MdPersonAdd } from 'react-icons/md';
-import IListEventDTO from '../../dtos/IListEventDTO';
+import IEventDTO from '../../dtos/IEventDTO';
 import IEventSupplierDTO from '../../dtos/IEventSupplierDTO';
 import ISupplierDTO from '../../dtos/ISupplierDTO';
 import { useToast } from '../../hooks/toast';
@@ -30,11 +30,12 @@ import SelectSupplierSubCategoryWindow from '../SelectSupplierSubCategoryWindow'
 import AddSupplierWindow from '../AddSupplierWindow';
 
 interface IProps {
-  pageEvent: IListEventDTO;
+  pageEvent: IEventDTO;
   handleGetSuppliers: Function;
   handleGetHiredSuppliers: Function;
   selectedSuppliers: IEventSupplierDTO[];
   hiredSuppliers: IEventSupplierDTO[];
+  isOwner: boolean;
 }
 
 const EventSupplierSection: React.FC<IProps> = ({
@@ -43,6 +44,7 @@ const EventSupplierSection: React.FC<IProps> = ({
   handleGetHiredSuppliers,
   hiredSuppliers,
   pageEvent,
+  isOwner,
 }: IProps) => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
@@ -323,7 +325,7 @@ const EventSupplierSection: React.FC<IProps> = ({
       )}
       {!!selectedSupplierWindow && (
         <SelectedSupplierWindow
-          isOwner={pageEvent.isOwner}
+          isOwner={isOwner}
           selectedSupplier={selectedSupplier}
           onHandleSelectedSupplierDrawer={() =>
             setSelectedSupplierWindow(false)
@@ -378,7 +380,7 @@ const EventSupplierSection: React.FC<IProps> = ({
       )}
       {!!hiredSupplierWindow && (
         <EventSupplierWindow
-          isOwner={pageEvent.isOwner}
+          isOwner={isOwner}
           handleGetSuppliers={handleGetSuppliers}
           getHiredSuppliers={handleGetHiredSuppliers}
           eventSupplier={hiredSupplier}
@@ -409,7 +411,7 @@ const EventSupplierSection: React.FC<IProps> = ({
             Contratados
           </BooleanNavigationButton>
 
-          {pageEvent.isOwner && (
+          {isOwner && (
             <span>
               <button type="button" onClick={handleSupplierCategory}>
                 <MdPersonAdd size={30} />
@@ -449,7 +451,7 @@ const EventSupplierSection: React.FC<IProps> = ({
                     )}
 
                   <div>
-                    {pageEvent.isOwner && (
+                    {isOwner && (
                       <button
                         type="button"
                         onClick={() => handleCreateTransactionWindow(sSupplier)}
@@ -473,7 +475,7 @@ const EventSupplierSection: React.FC<IProps> = ({
                 <Supplier key={hSupplier.id}>
                   <span>
                     <p>{hiredSupplierCount}</p>
-                    {pageEvent.isOwner ? (
+                    {isOwner ? (
                       <button
                         type="button"
                         onClick={() => handleHiredSupplierWindow(hSupplier)}

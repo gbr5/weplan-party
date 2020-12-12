@@ -1,8 +1,8 @@
 import React from 'react';
 import { Container } from './styles';
 
-const Dashboard: React.FC = () => {
+const EventsAsGuestListSection: React.FC = () => {
   return <Container />;
 };
 
-export default Dashboard;
+export default EventsAsGuestListSection;
