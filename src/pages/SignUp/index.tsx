@@ -33,10 +33,6 @@ interface IPersonUser {
   first_name: string;
   last_name: string;
 }
-interface ICompanyUser {
-  company_id: string;
-  name: string;
-}
 
 const SignUp: React.FC = () => {
   const [userId, setUserId] = useState('');

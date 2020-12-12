@@ -44,7 +44,6 @@ import IFriendDTO from '../../dtos/IFriendDTO';
 import EditEventNameWindow from '../../components/EditEventNameWindow';
 import IEventMemberDTO from '../../dtos/IEventMemberDTO';
 import EditMemberNumberOfGuestsWindow from '../../components/EditEventMemberNumberOfGuestsWindow';
-import EditEventOwnerWindow from '../../components/EditEventOwnerWindow';
 import DeleteConfirmationWindow from '../../components/DeleteConfirmationWindow';
 import IEventOwnerDTO from '../../dtos/IEventOwnerDTO';
 import EventCheckListSection from '../../components/EventCheckListSection';
@@ -64,6 +63,7 @@ import MessageSection from '../../components/MessageSection';
 import LatestNewsSection from '../../components/LatestNewsSection';
 import IShowEventDTO from '../../dtos/IShowEventDTO';
 import formatStringToDate from '../../utils/formatDateToString';
+import CreateEventInfoWindowForm from '../../components/CreateEventInfoWindowForm';
 
 interface IEventGuest {
   id: string;
@@ -94,6 +94,24 @@ const EventHostDashboard: React.FC = () => {
 
   const eventId = pageEvent.id;
 
+  const [event, setEvent] = useState<IEventDTO>({} as IEventDTO);
+
+  const getEvent = useCallback(() => {
+    try {
+      api.get(`events/${eventId}`).then(response => {
+        setEvent(response.data);
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
+  }, [eventId]);
+
+  useEffect(() => {
+    getEvent();
+  }, [getEvent]);
+
+  const [isOwner, setIsOwner] = useState(false);
+
   const [friendsWindow, setFriendsWindow] = useState(false);
   const [membersWindow, setMembersWindow] = useState(false);
   const [eventInfoDrawer, setEventInfoDrawer] = useState(false);
@@ -106,7 +124,6 @@ const EventHostDashboard: React.FC = () => {
   const [memberProfileWindow, setMemberProfileWindow] = useState(false);
   const [ownerProfileWindow, setOwnerProfileWindow] = useState(false);
   const [numberOfGuestDrawer, setNumberOfGuestDrawer] = useState(false);
-  const [editOwnerDrawer, setEditOwnerDrawer] = useState(false);
   const [deleteMemberDrawer, setDeleteMemberDrawer] = useState(false);
   const [deleteOwnerDrawer, setDeleteOwnerDrawer] = useState(false);
   const [firstRow, setFirstRow] = useState(true);
@@ -118,6 +135,9 @@ const EventHostDashboard: React.FC = () => {
   const [financeSection, setFinanceSection] = useState(false);
   const [supplierSection, setSupplierSection] = useState(false);
   const [messagesSection, setMessagesSection] = useState(false);
+  const [createEventInfoWindowForm, setCreateEventInfoWindowForm] = useState(
+    false,
+  );
   const today = new Date();
 
   const [eventDate, setEventDate] = useState(`${today}`);
@@ -162,6 +182,7 @@ const EventHostDashboard: React.FC = () => {
   >([]);
 
   const closeAllWindows = useCallback(() => {
+    setCreateEventInfoWindowForm(false);
     setSelectedFriend({} as IFriendDTO);
     setOwner({} as IEventOwnerDTO);
     setMember({} as IEventMemberDTO);
@@ -170,7 +191,6 @@ const EventHostDashboard: React.FC = () => {
     setMembersWindow(false);
     setEditEventInfoDrawer(false);
     setOwnerProfileWindow(false);
-    setEditOwnerDrawer(false);
     setDeleteOwnerDrawer(false);
     setEventInfoDrawer(false);
     setFirstRow(false);
@@ -184,6 +204,7 @@ const EventHostDashboard: React.FC = () => {
     setNumberOfGuestDrawer(false);
     setSidebar(false);
   }, []);
+
   const closeAllSections = useCallback(() => {
     setSelectedFriend({} as IFriendDTO);
     setOwner({} as IEventOwnerDTO);
@@ -198,6 +219,20 @@ const EventHostDashboard: React.FC = () => {
     setFirstRow(false);
     setSidebar(false);
   }, []);
+
+  const closeEventInfoWindowForm = useCallback(() => {
+    setCreateEventInfoWindowForm(false);
+  }, []);
+
+  const openEventInfoWindowForm = useCallback(() => {
+    setCreateEventInfoWindowForm(true);
+  }, []);
+
+  useEffect(() => {
+    if (!pageEvent.eventInfo && !eventInfo.id) {
+      openEventInfoWindowForm();
+    }
+  }, [openEventInfoWindowForm, eventInfo, pageEvent]);
 
   const handleGetEvent = useCallback(() => {
     try {
@@ -339,13 +374,18 @@ const EventHostDashboard: React.FC = () => {
             );
             updatedOwner && setOwner(updatedOwner);
           }
+
+          response.data.map(xOwner => {
+            xOwner.userEventOwner.id === user.id && setIsOwner(true);
+            return xOwner;
+          });
           setOwners(response.data);
           setNumberOfOwners(response.data.length);
         });
     } catch (err) {
       throw new Error(err);
     }
-  }, [eventId, owner]);
+  }, [eventId, owner, user]);
   const handleGetMembers = useCallback(() => {
     try {
       api
@@ -418,9 +458,9 @@ const EventHostDashboard: React.FC = () => {
   }, [totalGuestNumber, currentNumberOfGuests]);
   const myAvailableNumberOfGuests = useMemo(() => {
     const availableGuestNumber =
-      Number(pageEvent.number_of_guests) - myGuests.length;
+      Number(event.number_of_guests) - myGuests.length;
     return availableGuestNumber;
-  }, [pageEvent, myGuests]);
+  }, [event, myGuests]);
 
   const handleGetSuppliers = useCallback(() => {
     try {
@@ -434,7 +474,7 @@ const EventHostDashboard: React.FC = () => {
     } catch (err) {
       throw new Error(err);
     }
-  }, [pageEvent.id]);
+  }, [pageEvent]);
 
   const handleCloseAddPlannerWindow = useCallback(() => {
     setSelectedSupplier({} as IEventSupplierDTO);
@@ -460,7 +500,7 @@ const EventHostDashboard: React.FC = () => {
     } catch (err) {
       throw new Error(err);
     }
-  }, [pageEvent.id]);
+  }, [pageEvent]);
 
   const handleCloseEditEventInfoWindow = useCallback(
     (data: IEventInfoDTO) => {
@@ -533,12 +573,7 @@ const EventHostDashboard: React.FC = () => {
     handleGetMembers();
     handleGetEvent();
   }, [handleGetEvent, handleGetMembers]);
-  const handleCloseEditEventOwnerWindow = useCallback(() => {
-    setOwnerProfileWindow(false);
-    setEditOwnerDrawer(false);
-    setOwner({} as IEventOwnerDTO);
-    handleGetOwners();
-  }, [handleGetOwners]);
+
   const handleDeleteMember = useCallback(async () => {
     try {
       await api.delete(
@@ -668,11 +703,11 @@ const EventHostDashboard: React.FC = () => {
   return (
     <Container>
       <PageHeader>
-        {pageEvent.isOwner ? (
+        {isOwner ? (
           <span>
             <button type="button" onClick={handleEditEventNameDrawer}>
               <h5>
-                {pageEvent.name}
+                {event.name}
                 <FiEdit3 size={16} />
               </h5>
             </button>
@@ -680,39 +715,47 @@ const EventHostDashboard: React.FC = () => {
         ) : (
           <span>
             <button type="button">
-              <h5>{pageEvent.name}</h5>
+              <h5>{event.name}</h5>
             </button>
           </span>
         )}
       </PageHeader>
+      {!!createEventInfoWindowForm && (
+        <CreateEventInfoWindowForm
+          eventId={eventId}
+          getEventInfo={handleGetEventInfo}
+          handleCloseWindow={closeEventInfoWindowForm}
+        />
+      )}
       {!!editEventNameDrawer && (
         <EditEventNameWindow
           handleCloseWindow={handleCloseEditEventNameWindow}
           eventDate={eventDate}
           eventId={eventId}
-          eventName={pageEvent.name}
+          eventName={event.name}
           onHandleCloseWindow={() => setEditEventNameDrawer(false)}
         />
       )}
       {!!ownerProfileWindow && (
         <OwnerProfileDrawer
-          isOwner={pageEvent.user_id === user.id}
+          availableNumberOfGuests={availableNumberOfGuests}
+          getOwner={handleGetOwners}
+          isOwner={isOwner}
           owner={owner}
-          event={pageEvent}
+          event={event}
           handleCloseWindow={() => setOwnerProfileWindow(false)}
           onHandleCloseWindow={() => setOwnerProfileWindow(false)}
         />
       )}
       {!!memberProfileWindow && (
         <MemberProfileDrawer
-          isOwner={pageEvent.user_id === user.id}
+          isOwner={isOwner}
           member={member}
           onHandleMemberDrawer={() => setMemberProfileWindow(false)}
           onHandleNumberOfGuestDrawer={() => setNumberOfGuestDrawer(true)}
           onHandleDeleteMemberDrawer={() => setDeleteMemberDrawer(true)}
         />
       )}
-
       {!!numberOfGuestDrawer && (
         <EditMemberNumberOfGuestsWindow
           availableNumberOfGuests={availableNumberOfGuests}
@@ -720,17 +763,6 @@ const EventHostDashboard: React.FC = () => {
           member={member}
           onHandleCloseWindow={() => setNumberOfGuestDrawer(false)}
           handleCloseWindow={handleCloseEditMemberNumberOfGuestsWindow}
-        />
-      )}
-      {!!editOwnerDrawer && (
-        <EditEventOwnerWindow
-          getEventInfo={handleGetEventInfo}
-          getEventOwners={handleGetOwners}
-          handleCloseWindow={handleCloseEditEventOwnerWindow}
-          availableNumberOfGuests={availableNumberOfGuests}
-          event={pageEvent}
-          onHandleCloseWindow={() => setEditOwnerDrawer(false)}
-          owner={owner}
         />
       )}
       {!!deleteMemberDrawer && (
@@ -748,17 +780,18 @@ const EventHostDashboard: React.FC = () => {
 
       {!!eventInfoDrawer && (
         <EventInfoWindow
+          isOwner={isOwner}
           eventInfo={eventInfo}
           handleEditEventInfo={() => setEditEventInfoDrawer(true)}
           onHandleCloseWindow={() => setEventInfoDrawer(false)}
-          pageEvent={pageEvent}
+          pageEvent={event}
         />
       )}
       {!!editEventInfoDrawer && (
         <EditEventInfoWindow
-          currentNumberOfGuests={currentNumberOfGuests}
-          eventId={eventId}
           eventInfo={eventInfo}
+          currentNumberOfGuests={currentNumberOfGuests}
+          event={event}
           handleCloseWindow={(e: IEventInfoDTO) =>
             handleCloseEditEventInfoWindow(e)
           }
@@ -826,7 +859,7 @@ const EventHostDashboard: React.FC = () => {
 
         {sidebar && (
           <SideBar>
-            {pageEvent.user_id === user.id ? (
+            {isOwner ? (
               <button type="button" onClick={handleAddOwnerDrawer}>
                 <h1>Anfitriões: {numberOfOwners}</h1>
                 <MdPersonAdd size={24} />
@@ -863,7 +896,7 @@ const EventHostDashboard: React.FC = () => {
               </span>
             )}
 
-            {pageEvent.isOwner ? (
+            {isOwner ? (
               <button type="button" onClick={handleSelectFriendAsMember}>
                 <h1>Membros: {numberOfMembers}</h1>
                 <MdPersonAdd size={24} />
@@ -879,7 +912,7 @@ const EventHostDashboard: React.FC = () => {
                 <h2>Visualizar</h2>
               </button>
             </span>
-            {pageEvent.isOwner ? (
+            {isOwner ? (
               <button type="button" onClick={handleAddPlannerDrawer}>
                 <h1>Cerimonialistas: {numberOfPlanners}</h1>
                 <MdPersonAdd size={24} />
@@ -891,7 +924,7 @@ const EventHostDashboard: React.FC = () => {
             )}
             {planners.map(planner => (
               <span key={planner.id}>
-                {pageEvent.isOwner ? (
+                {isOwner ? (
                   <button type="button">
                     <h2>{planner.name}</h2>
                     <FiEdit size={24} />
@@ -937,12 +970,10 @@ const EventHostDashboard: React.FC = () => {
                 </button>
               </div>
               <div>
-                {pageEvent.user_id === user.id ? (
+                {isOwner ? (
                   <button type="button" onClick={handleBudgetDrawer}>
                     <h2>Orçamento</h2>
-                    <p>
-                      {eventInfo.budget ? numberFormat(eventInfo.budget) : ''}
-                    </p>
+                    <p>{eventInfo ? numberFormat(eventInfo.budget) : ''}</p>
                   </button>
                 ) : (
                   <button type="button">
@@ -1017,7 +1048,8 @@ const EventHostDashboard: React.FC = () => {
               handleGetHiredSuppliers={handleGetHiredSuppliers}
               handleGetSuppliers={handleGetSuppliers}
               hiredSuppliers={hiredSuppliers}
-              pageEvent={pageEvent}
+              pageEvent={event}
+              isOwner={isOwner}
               selectedSuppliers={selectedSuppliers}
             />
           )}
@@ -1039,7 +1071,7 @@ const EventHostDashboard: React.FC = () => {
           )}
           {!!financeSection && (
             <EventFinanceSection
-              isOwner={pageEvent.user_id === user.id}
+              isOwner={isOwner}
               refreshHiredSuppliers={handleGetHiredSuppliers}
               hiredSuppliers={hiredSuppliers}
             />
@@ -1051,7 +1083,8 @@ const EventHostDashboard: React.FC = () => {
               resolvedCheckListTasks={resolvedCheckListTasks}
               handleGetCheckListTasks={handleGetCheckListTasks}
               closeAllWindows={closeAllWindows}
-              pageEvent={pageEvent}
+              pageEvent={event}
+              isOwner={isOwner}
             />
           )}
         </Main>

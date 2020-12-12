@@ -29,6 +29,7 @@ interface IProps {
   inProgressCheckListTasks: IEventCheckListDTO[];
   resolvedCheckListTasks: IEventCheckListDTO[];
   notStartedCheckListTasks: IEventCheckListDTO[];
+  isOwner: boolean;
 }
 
 const EventCheckListSection: React.FC<IProps> = ({
@@ -38,6 +39,7 @@ const EventCheckListSection: React.FC<IProps> = ({
   inProgressCheckListTasks,
   resolvedCheckListTasks,
   notStartedCheckListTasks,
+  isOwner,
 }: IProps) => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
@@ -492,7 +494,7 @@ const EventCheckListSection: React.FC<IProps> = ({
       )}
       <Container>
         <strong>Check List</strong>
-        {pageEvent.isOwner && (
+        {isOwner && (
           <button type="button" onClick={handleAddCheckListDrawer}>
             <MdAdd size={40} />
           </button>
@@ -503,7 +505,7 @@ const EventCheckListSection: React.FC<IProps> = ({
             <ul>
               {notStartedCheckListTasks.map(item => (
                 <li key={item.id}>
-                  {pageEvent.isOwner ? (
+                  {isOwner ? (
                     <>
                       <p>
                         {notStartedCheckListTasks.findIndex(
@@ -585,7 +587,7 @@ const EventCheckListSection: React.FC<IProps> = ({
             <ul>
               {inProgressCheckListTasks.map(item => (
                 <li key={item.id}>
-                  {pageEvent.isOwner ? (
+                  {isOwner ? (
                     <>
                       <p>
                         {inProgressCheckListTasks.findIndex(
@@ -683,7 +685,7 @@ const EventCheckListSection: React.FC<IProps> = ({
             <ul>
               {resolvedCheckListTasks.map(item => (
                 <li key={item.id}>
-                  {pageEvent.isOwner ? (
+                  {isOwner ? (
                     <>
                       <p>
                         {resolvedCheckListTasks.findIndex(

@@ -23,23 +23,13 @@ import {
 } from './styles';
 import WindowContainer from '../WindowContainer';
 import MainFriendsWindow from '../MainFriendsWindow';
+import ICreateEventInfoDTO from '../../dtos/ICreateEventInfoDTO';
 
 interface ICreateEventDTO {
   name: string;
   date: string;
   event_type: string;
   start_time: string;
-}
-
-interface ICreateEventInfo {
-  number_of_guests: number;
-  duration: number;
-  budget: number;
-  description: boolean;
-  country: string;
-  local_state: string;
-  city: string;
-  address: string;
 }
 
 interface IEvent {
@@ -101,7 +91,7 @@ const MenuButton: React.FC = () => {
   }, [eventInfoDrawer]);
 
   const handlePostEventInfo = useCallback(
-    async (data: ICreateEventInfo) => {
+    async (data: ICreateEventInfoDTO) => {
       try {
         const new_event = myEvents.find(event => event.name === eventName);
         formRef.current?.setErrors([]);
@@ -334,11 +324,11 @@ const MenuButton: React.FC = () => {
       {!!eventInfoDrawer && (
         <Form ref={formRef} onSubmit={handlePostEventInfo}>
           <EventInfoDrawer>
-            <span>
+            {/* <span>
               <button type="button" onClick={handleEventInfoDrawer}>
                 <MdClose size={30} />
               </button>
-            </span>
+            </span> */}
             <h1>Informações do evento</h1>
             <div>
               <div>

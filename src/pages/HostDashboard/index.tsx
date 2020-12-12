@@ -31,15 +31,22 @@ import IEventMemberDTO from '../../dtos/IEventMemberDTO';
 import IEventGuestDTO from '../../dtos/IEventGuestDTO';
 import IShowEventDTO from '../../dtos/IShowEventDTO';
 import MyNextEventSection from '../../components/EventComponents/MyNextEventSection';
+import IPersonInfoDTO from '../../dtos/IPersonInfoDTO';
+import CreatePersonInfoWindowForm from '../../components/CreatePersonInfoWindowForm';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const { addToast } = useToast();
   const history = useHistory();
 
+  const [createPersonInfoWindow, setCreatePersonInfoWindow] = useState(false);
+
   const [eventsAsOwner, setEventsAsOwner] = useState<IEventOwnerDTO[]>([]);
   const [eventsAsMember, setEventsAsMember] = useState<IEventMemberDTO[]>([]);
   const [eventsAsGuest, setEventsAsGuest] = useState<IEventGuestDTO[]>([]);
+  const [personInfo, setPersonInfo] = useState<IPersonInfoDTO>(
+    {} as IPersonInfoDTO,
+  );
 
   const [myNextEvent, setMyNextEvent] = useState<IShowEventDTO>(
     {} as IShowEventDTO,
@@ -62,6 +69,31 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     getMyNextEvent();
   }, [getMyNextEvent]);
+
+  const closeCreatePersonInfoWindow = useCallback(() => {
+    setCreatePersonInfoWindow(true);
+  }, []);
+
+  const getPersonInfo = useCallback(() => {
+    try {
+      api.get<IPersonInfoDTO>(`person-info/${user.id}`).then(response => {
+        setPersonInfo(response.data);
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
+  }, [user]);
+  useEffect(() => {
+    getPersonInfo();
+  }, [getPersonInfo]);
+
+  useEffect(() => {
+    if (personInfo.first_name) {
+      setCreatePersonInfoWindow(false);
+    } else {
+      setCreatePersonInfoWindow(true);
+    }
+  }, [personInfo]);
 
   const handleDeleteMasterEventWindow = useCallback((props: string) => {
     setEventToDelete(props);
@@ -208,6 +240,12 @@ const Dashboard: React.FC = () => {
   return (
     <Container>
       <PageHeader />
+      {!!createPersonInfoWindow && (
+        <CreatePersonInfoWindowForm
+          getPersonInfo={getPersonInfo}
+          handleCloseWindow={closeCreatePersonInfoWindow}
+        />
+      )}
       {!!deleteEventWindow && (
         <WindowContainer
           containerStyle={{

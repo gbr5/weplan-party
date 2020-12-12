@@ -1,9 +1,8 @@
-export default interface IEventInfoDTO {
-  id: string;
+export default interface ICreateEventInfoDTO {
   number_of_guests: number;
   duration: number;
   budget: number;
-  description: string;
+  description: boolean;
   country: string;
   local_state: string;
   city: string;

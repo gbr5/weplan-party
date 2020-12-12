@@ -29,7 +29,13 @@ const EditEventOwnerWindow: React.FC<IProps> = ({
   owner,
   availableNumberOfGuests,
 }: IProps) => {
+  console.log(owner);
   const { addToast } = useToast();
+
+  const ownerNumberOfGuests =
+    owner && owner.number_of_guests ? owner.number_of_guests : 0;
+
+  const ownerDescription = owner && owner.description ? owner.description : '0';
 
   const [ownerUpdatedNumberOfGuests, setOwnerUpdatedNumberOfGuests] = useState(
     0,
@@ -40,7 +46,7 @@ const EditEventOwnerWindow: React.FC<IProps> = ({
   ] = useState(false);
 
   const [ownerUpdatedDescription, setOwnerUpdatedDescription] = useState(
-    owner ? owner.description : '',
+    ownerDescription,
   );
 
   const handleUpdateOwner = useCallback(async () => {
@@ -129,7 +135,7 @@ const EditEventOwnerWindow: React.FC<IProps> = ({
           onHandleCloseWindow={() => setConfirmUpdateEventNumberOfGuests(false)}
           question={`O número de escolhido irá aumentar o número de convidados do evento para ${
             availableNumberOfGuests +
-            (ownerUpdatedNumberOfGuests - owner.number_of_guests)
+            (ownerUpdatedNumberOfGuests - ownerNumberOfGuests)
           }. Deseja atualizar as informações do evento?`}
         />
       )}
@@ -149,21 +155,21 @@ const EditEventOwnerWindow: React.FC<IProps> = ({
           <Input
             name="description"
             type="text"
-            defaultValue={owner.description}
+            defaultValue={ownerDescription}
             onChange={e => handleOwnersUpdatedDescription(e.target.value)}
           />
           <p>Com o número de convidados do evento,</p>
           <p>
             você pode adicionar até
             {availableNumberOfGuests +
-              owner.number_of_guests -
+              ownerNumberOfGuests -
               ownerUpdatedNumberOfGuests}{' '}
             convidados.
           </p>
           <Input
             name="number_of_guests"
             type="number"
-            defaultValue={owner.number_of_guests}
+            defaultValue={ownerNumberOfGuests}
             onChange={e =>
               handleOwnersUpdatedNumberOfGuests(Number(e.target.value))
             }

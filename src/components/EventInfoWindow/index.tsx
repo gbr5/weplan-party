@@ -12,13 +12,15 @@ interface IProps {
   handleEditEventInfo: Function;
   pageEvent: IEventDTO;
   eventInfo: IEventInfoDTO;
+  isOwner: boolean;
 }
 
 const EventInfoWindow: React.FC<IProps> = ({
   onHandleCloseWindow,
+  eventInfo,
   pageEvent,
   handleEditEventInfo,
-  eventInfo,
+  isOwner,
 }: IProps) => {
   return (
     <WindowContainer
@@ -39,38 +41,38 @@ const EventInfoWindow: React.FC<IProps> = ({
             <div>
               <div>
                 <p>Duração: </p>
-                <h3>{eventInfo.duration}</h3>
+                <h3>{eventInfo ? eventInfo.duration : ''}</h3>
               </div>
               <div>
                 <p>N° de convidados: </p>
-                <h3>{eventInfo.number_of_guests}</h3>
+                <h3>{eventInfo ? eventInfo.number_of_guests : ''}</h3>
               </div>
               <div>
                 <p>Orçamento: </p>
-                <h3>{eventInfo.budget}</h3>
+                <h3>{eventInfo ? eventInfo.budget : ''}</h3>
               </div>
             </div>
             <div>
               <div>
                 <p>País: </p>
-                <h3>{eventInfo.country}</h3>
+                <h3>{eventInfo ? eventInfo.country : ''}</h3>
               </div>
               <div>
                 <p>Estado: </p>
-                <h3>{eventInfo.local_state}</h3>
+                <h3>{eventInfo ? eventInfo.local_state : ''}</h3>
               </div>
               <div>
                 <p>Cidade: </p>
-                <h3>{eventInfo.city}</h3>
+                <h3>{eventInfo ? eventInfo.city : ''}</h3>
               </div>
             </div>
           </span>
           <div>
             <p>Endereço: </p>
-            <h3>{eventInfo.address}</h3>
+            <h3>{eventInfo ? eventInfo.address : ''}</h3>
           </div>
         </EventInfo>
-        {pageEvent.isOwner && (
+        {isOwner && (
           <button type="button" onClick={() => handleEditEventInfo()}>
             <h3>
               Editar <FiEdit3 size={24} />
