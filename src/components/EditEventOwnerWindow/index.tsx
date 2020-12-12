@@ -29,7 +29,6 @@ const EditEventOwnerWindow: React.FC<IProps> = ({
   owner,
   availableNumberOfGuests,
 }: IProps) => {
-  console.log(owner);
   const { addToast } = useToast();
 
   const ownerNumberOfGuests =
