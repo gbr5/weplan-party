@@ -46,7 +46,6 @@ interface ICreateGuest {
 }
 interface IProps {
   closeAllWindows: Function;
-  handleGetEvent: Function;
   handleGetGuests: Function;
   pageEvent: IEventDTO;
   myAvailableNumberOfGuests: number;
@@ -59,7 +58,6 @@ interface IProps {
 }
 
 const EventGuestSection: React.FC<IProps> = ({
-  handleGetEvent,
   handleGetGuests,
   closeAllWindows,
   pageEvent,
@@ -114,8 +112,7 @@ const EventGuestSection: React.FC<IProps> = ({
   const handleCloseAddGuestListWindow = useCallback(() => {
     closeAllWindows();
     handleGetGuests();
-    handleGetEvent();
-  }, [closeAllWindows, handleGetEvent, handleGetGuests]);
+  }, [closeAllWindows, handleGetGuests]);
 
   const handleAddGuestDrawer = useCallback(() => {
     closeAllWindows();
@@ -199,7 +196,6 @@ const EventGuestSection: React.FC<IProps> = ({
 
         handleAddGuestDrawer();
         handleGetGuests();
-        handleGetEvent();
         return addToast({
           type: 'success',
           title: 'Convidado criado com sucesso',
@@ -231,7 +227,6 @@ const EventGuestSection: React.FC<IProps> = ({
       wpUserId,
       handleGetGuests,
       myAvailableNumberOfGuests,
-      handleGetEvent,
     ],
   );
   const handleEditGuest = useCallback(

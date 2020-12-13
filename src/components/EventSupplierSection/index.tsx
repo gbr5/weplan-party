@@ -9,7 +9,6 @@ import {
   FiUser,
 } from 'react-icons/fi';
 import { MdPersonAdd } from 'react-icons/md';
-import IEventDTO from '../../dtos/IEventDTO';
 import IEventSupplierDTO from '../../dtos/IEventSupplierDTO';
 import ISupplierDTO from '../../dtos/ISupplierDTO';
 import { useToast } from '../../hooks/toast';
@@ -30,12 +29,12 @@ import SelectSupplierSubCategoryWindow from '../SelectSupplierSubCategoryWindow'
 import AddSupplierWindow from '../AddSupplierWindow';
 
 interface IProps {
-  pageEvent: IEventDTO;
   handleGetSuppliers: Function;
   handleGetHiredSuppliers: Function;
   selectedSuppliers: IEventSupplierDTO[];
   hiredSuppliers: IEventSupplierDTO[];
   isOwner: boolean;
+  eventId: string;
 }
 
 const EventSupplierSection: React.FC<IProps> = ({
@@ -43,8 +42,8 @@ const EventSupplierSection: React.FC<IProps> = ({
   selectedSuppliers,
   handleGetHiredSuppliers,
   hiredSuppliers,
-  pageEvent,
   isOwner,
+  eventId,
 }: IProps) => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
@@ -179,7 +178,7 @@ const EventSupplierSection: React.FC<IProps> = ({
   const handleDeleteHiredSupplier = useCallback(async () => {
     try {
       await api.delete(
-        `/events/${pageEvent.id}/event-suppliers/${hiredSupplier.id}`,
+        `/events/${eventId}/event-suppliers/${hiredSupplier.id}`,
       );
 
       addToast({
@@ -204,11 +203,11 @@ const EventSupplierSection: React.FC<IProps> = ({
         description: 'Erro ao excluir o fornecedor, tente novamente.',
       });
     }
-  }, [pageEvent.id, hiredSupplier, addToast, handleGetHiredSuppliers]);
+  }, [eventId, hiredSupplier, addToast, handleGetHiredSuppliers]);
   const handleDeleteSelectedSupplier = useCallback(async () => {
     try {
       await api.delete(
-        `/events/${pageEvent.id}/event-suppliers/${selectedSupplier.id}`,
+        `/events/${eventId}/event-suppliers/${selectedSupplier.id}`,
       );
 
       addToast({
@@ -233,7 +232,7 @@ const EventSupplierSection: React.FC<IProps> = ({
         description: 'Erro ao excluir o fornecedor, tente novamente.',
       });
     }
-  }, [pageEvent.id, selectedSupplier, addToast, handleGetSuppliers]);
+  }, [eventId, selectedSupplier, addToast, handleGetSuppliers]);
 
   const handleSetWeplanSupplierListWindow = useCallback((props: boolean) => {
     if (props) {
@@ -289,7 +288,7 @@ const EventSupplierSection: React.FC<IProps> = ({
     <>
       {!!addSupplierDrawer && (
         <AddSupplierWindow
-          eventId={pageEvent.id}
+          eventId={eventId}
           handleCloseWindow={handleCloseAddSupplierWindow}
           handleCreateTransactionWindow={handleCreateTransactionWindow}
           handleIsHiredDrawer={handleIsHiredDrawer}
@@ -362,7 +361,7 @@ const EventSupplierSection: React.FC<IProps> = ({
       )}
       {supplierServiceOrderWindow && (
         <SupplierServiceOrderFormWindow
-          event_id={pageEvent.id}
+          event_id={eventId}
           supplier_id={selectedWeplanSupplier.userBySupplierCategory.id}
           handleCloseWindow={handleCloseSupplierServiceOrderFormWindow}
           onHandleCloseWindow={() => setSupplierServiceOrderWindow(false)}

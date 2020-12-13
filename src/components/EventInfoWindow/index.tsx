@@ -4,13 +4,12 @@ import { FiEdit3 } from 'react-icons/fi';
 import WindowContainer from '../WindowContainer';
 
 import { Container, EventInfo } from './styles';
-import IEventDTO from '../../dtos/IEventDTO';
 import IEventInfoDTO from '../../dtos/IEventInfoDTO';
 
 interface IProps {
   onHandleCloseWindow: MouseEventHandler;
   handleEditEventInfo: Function;
-  pageEvent: IEventDTO;
+  eventName: string;
   eventInfo: IEventInfoDTO;
   isOwner: boolean;
 }
@@ -18,7 +17,7 @@ interface IProps {
 const EventInfoWindow: React.FC<IProps> = ({
   onHandleCloseWindow,
   eventInfo,
-  pageEvent,
+  eventName,
   handleEditEventInfo,
   isOwner,
 }: IProps) => {
@@ -35,7 +34,7 @@ const EventInfoWindow: React.FC<IProps> = ({
     >
       <Container>
         <h1>Informações do evento</h1>
-        <h2>{pageEvent.name}</h2>
+        <h2>{eventName}</h2>
         <EventInfo>
           <span>
             <div>

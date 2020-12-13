@@ -52,7 +52,7 @@ const MemberProfileDrawer: React.FC<IPropsDTO> = ({
                 onClick={onHandleNumberOfGuestDrawer}
               >
                 Número de convidados:
-                <strong>{member.number_of_guests}</strong>
+                <strong>{member ? member.number_of_guests : 0}</strong>
                 <FiEdit size={24} />
               </EditMemberButton>
               <DeleteMemberButton
@@ -67,7 +67,7 @@ const MemberProfileDrawer: React.FC<IPropsDTO> = ({
             <>
               <EditMemberButton type="button">
                 Número de convidados:
-                <strong>{member.number_of_guests}</strong>
+                <strong>{member ? member.number_of_guests : 0}</strong>
               </EditMemberButton>
             </>
           )}

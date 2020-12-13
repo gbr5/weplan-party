@@ -1,61 +1,65 @@
 import React, { MouseEventHandler, useCallback, useState } from 'react';
 
-import Input from '../Input';
 import WindowContainer from '../WindowContainer';
 
 import { NumberOfGuestWindow } from './styles';
 import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
 import IEventOwnerDTO from '../../dtos/IEventOwnerDTO';
-import BooleanQuestionWindow from '../BooleanQuestionWindow';
-import IEventDTO from '../../dtos/IEventDTO';
 
 interface IProps {
+  eventMaster: string;
   onHandleCloseWindow: MouseEventHandler;
   handleCloseWindow: Function;
+  getOwners: Function;
   getEventInfo: Function;
-  getEventOwners: Function;
-  event: IEventDTO;
   owner: IEventOwnerDTO;
   availableNumberOfGuests: number;
+  eventId: string;
 }
 
 const EditEventOwnerWindow: React.FC<IProps> = ({
+  eventMaster,
   onHandleCloseWindow,
   handleCloseWindow,
-  getEventOwners,
+  getOwners,
   getEventInfo,
-  event,
   owner,
   availableNumberOfGuests,
+  eventId,
 }: IProps) => {
   const { addToast } = useToast();
 
   const ownerNumberOfGuests =
     owner && owner.number_of_guests ? owner.number_of_guests : 0;
 
-  const ownerDescription = owner && owner.description ? owner.description : '0';
-
   const [ownerUpdatedNumberOfGuests, setOwnerUpdatedNumberOfGuests] = useState(
     0,
   );
-  const [
-    confirmUpdateEventNumberOfGuests,
-    setConfirmUpdateEventNumberOfGuests,
-  ] = useState(false);
 
   const [ownerUpdatedDescription, setOwnerUpdatedDescription] = useState(
-    ownerDescription,
+    owner && owner.description ? owner.description : '0',
   );
 
   const handleUpdateOwner = useCallback(async () => {
     try {
-      await api.put(`events/${event.id}/event-owners`, {
-        description: ownerUpdatedDescription,
-        number_of_guests: ownerUpdatedNumberOfGuests,
-      });
+      if (eventMaster === owner.userEventOwner.id) {
+        await api.put(`events/master-number-of-guests/${eventId}`, {
+          description: ownerUpdatedDescription,
+          number_of_guests: ownerUpdatedNumberOfGuests,
+        });
+      } else {
+        await api.put(
+          `events/${eventId}/event-owners/${owner.userEventOwner.id}`,
+          {
+            description: ownerUpdatedDescription,
+            number_of_guests: ownerUpdatedNumberOfGuests,
+          },
+        );
+      }
+      getEventInfo();
+      getOwners();
       handleCloseWindow();
-      getEventOwners();
       addToast({
         type: 'success',
         title: 'As informações do evento foram atualizadas com sucesso',
@@ -71,41 +75,16 @@ const EditEventOwnerWindow: React.FC<IProps> = ({
       throw new Error(err);
     }
   }, [
+    getOwners,
+    getEventInfo,
     addToast,
     handleCloseWindow,
-    getEventOwners,
-    event,
+    eventId,
     ownerUpdatedDescription,
     ownerUpdatedNumberOfGuests,
+    owner,
+    eventMaster,
   ]);
-
-  const handleUpdateNumberOfGuests = useCallback(
-    async (props: boolean) => {
-      if (props) {
-        try {
-          await api.put(`events/update-number-of-guests/${event.id}`, {
-            number_of_guests: ownerUpdatedNumberOfGuests,
-          });
-          getEventInfo();
-          addToast({
-            type: 'success',
-            title: 'As informações do evento foram atualizadas com sucesso',
-            description: 'As mudanças já foram atualizadas no seu evento.',
-          });
-        } catch (err) {
-          addToast({
-            type: 'error',
-            title: 'Erro ao editar informações do evento.',
-            description:
-              'Erro ao editar as informações do evento, tente novamente.',
-          });
-          throw new Error(err);
-        }
-      }
-      setConfirmUpdateEventNumberOfGuests(false);
-    },
-    [addToast, event, ownerUpdatedNumberOfGuests, getEventInfo],
-  );
 
   const handleOwnersUpdatedNumberOfGuests = useCallback((props: number) => {
     setOwnerUpdatedNumberOfGuests(props);
@@ -115,34 +94,13 @@ const EditEventOwnerWindow: React.FC<IProps> = ({
     setOwnerUpdatedDescription(props);
   }, []);
 
-  // useEffect(() => {
-  //   if (
-  //     ownerUpdatedNumberOfGuests - owner.number_of_guests >
-  //     availableNumberOfGuests
-  //   ) {
-  //     setConfirmUpdateEventNumberOfGuests(true);
-  //   }
-  // }, [ownerUpdatedNumberOfGuests, availableNumberOfGuests, owner]);
-
   return (
     <>
-      {confirmUpdateEventNumberOfGuests && (
-        <BooleanQuestionWindow
-          handleWeplanUserQuestion={(e: boolean) =>
-            handleUpdateNumberOfGuests(e)
-          }
-          onHandleCloseWindow={() => setConfirmUpdateEventNumberOfGuests(false)}
-          question={`O número de escolhido irá aumentar o número de convidados do evento para ${
-            availableNumberOfGuests +
-            (ownerUpdatedNumberOfGuests - ownerNumberOfGuests)
-          }. Deseja atualizar as informações do evento?`}
-        />
-      )}
       <WindowContainer
         onHandleCloseWindow={onHandleCloseWindow}
         containerStyle={{
           zIndex: 20,
-          top: '22,5%',
+          top: '22.5%',
           left: '30%',
           height: '55%',
           width: '40%',
@@ -151,24 +109,28 @@ const EditEventOwnerWindow: React.FC<IProps> = ({
         <NumberOfGuestWindow>
           <h1>Editar anfitrião</h1>
 
-          <Input
+          <input
             name="description"
             type="text"
-            defaultValue={ownerDescription}
+            defaultValue={ownerUpdatedDescription || ''}
             onChange={e => handleOwnersUpdatedDescription(e.target.value)}
           />
-          <p>Com o número de convidados do evento,</p>
-          <p>
-            você pode adicionar até
-            {availableNumberOfGuests +
-              ownerNumberOfGuests -
-              ownerUpdatedNumberOfGuests}{' '}
-            convidados.
-          </p>
-          <Input
+          {eventMaster !== owner.userEventOwner.id && (
+            <>
+              <p>Com o número de convidados do evento,</p>
+              <p>
+                você pode adicionar até
+                {availableNumberOfGuests +
+                  ownerNumberOfGuests -
+                  ownerUpdatedNumberOfGuests}{' '}
+                convidados.
+              </p>
+            </>
+          )}
+          <input
             name="number_of_guests"
             type="number"
-            defaultValue={ownerNumberOfGuests}
+            defaultValue={ownerNumberOfGuests || ''}
             onChange={e =>
               handleOwnersUpdatedNumberOfGuests(Number(e.target.value))
             }

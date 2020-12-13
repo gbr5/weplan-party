@@ -15,16 +15,16 @@ import api from '../../services/api';
 interface IProps {
   onHandleCloseWindow: MouseEventHandler;
   handleCloseWindow: Function;
+  setEventName: Function;
   eventId: string;
   eventName: string;
-  eventDate: string;
 }
 
 const EditEventNameWindow: React.FC<IProps> = ({
   onHandleCloseWindow,
   handleCloseWindow,
+  setEventName,
   eventName,
-  eventDate,
   eventId,
 }: IProps) => {
   const formRef = useRef<FormHandles>(null);
@@ -43,10 +43,10 @@ const EditEventNameWindow: React.FC<IProps> = ({
           abortEarly: false,
         });
 
-        await api.put(`events/${eventId}`, {
+        const response = await api.put(`events/name/${eventId}`, {
           name: data.name,
-          date: eventDate,
         });
+        setEventName(response.data.name);
 
         handleCloseWindow();
         addToast({
@@ -67,7 +67,7 @@ const EditEventNameWindow: React.FC<IProps> = ({
         });
       }
     },
-    [addToast, eventId, handleCloseWindow, eventDate],
+    [addToast, eventId, handleCloseWindow, setEventName],
   );
 
   return (

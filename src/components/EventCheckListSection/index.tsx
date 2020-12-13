@@ -6,7 +6,6 @@ import { MdAdd, MdFlag } from 'react-icons/md';
 import * as Yup from 'yup';
 import ICreateCheckListTaskDTO from '../../dtos/ICreateCheckListTaskDTO';
 import IEventCheckListDTO from '../../dtos/IEventCheckListDTO';
-import IEventDTO from '../../dtos/IEventDTO';
 import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
 import formatStringToDate from '../../utils/formatDateToString';
@@ -25,7 +24,7 @@ import {
 interface IProps {
   handleGetCheckListTasks: Function;
   closeAllWindows: Function;
-  pageEvent: IEventDTO;
+  eventId: string;
   inProgressCheckListTasks: IEventCheckListDTO[];
   resolvedCheckListTasks: IEventCheckListDTO[];
   notStartedCheckListTasks: IEventCheckListDTO[];
@@ -35,7 +34,7 @@ interface IProps {
 const EventCheckListSection: React.FC<IProps> = ({
   handleGetCheckListTasks,
   closeAllWindows,
-  pageEvent,
+  eventId,
   inProgressCheckListTasks,
   resolvedCheckListTasks,
   notStartedCheckListTasks,
@@ -92,7 +91,7 @@ const EventCheckListSection: React.FC<IProps> = ({
         });
         const date = new Date(data.due_date);
 
-        await api.post(`events/${pageEvent.id}/check-list`, {
+        await api.post(`events/${eventId}/check-list`, {
           name: data.name,
           priority_level: priorityLevel,
           status: 1,
@@ -120,7 +119,7 @@ const EventCheckListSection: React.FC<IProps> = ({
     },
     [
       addToast,
-      pageEvent.id,
+      eventId,
       handleAddCheckListDrawer,
       handleGetCheckListTasks,
       priorityLevel,

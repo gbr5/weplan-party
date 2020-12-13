@@ -10,28 +10,31 @@ import { useAuth } from '../../hooks/auth';
 import WindowContainer from '../WindowContainer';
 import IEventOwnerDTO from '../../dtos/IEventOwnerDTO';
 import api from '../../services/api';
-import IEventDTO from '../../dtos/IEventDTO';
 import EditEventOwnerWindow from '../EditEventOwnerWindow';
 import { useToast } from '../../hooks/toast';
 
 interface IPropsDTO {
+  eventMaster: string;
   isOwner: boolean;
-  owner: IEventOwnerDTO;
-  event: IEventDTO;
-  availableNumberOfGuests: number;
   onHandleCloseWindow: MouseEventHandler;
   handleCloseWindow: Function;
-  getOwner: Function;
+  getOwners: Function;
+  getEventInfo: Function;
+  owner: IEventOwnerDTO;
+  availableNumberOfGuests: number;
+  eventId: string;
 }
 
 const OwnerProfileDrawer: React.FC<IPropsDTO> = ({
+  eventMaster,
   isOwner,
-  owner,
-  event,
-  availableNumberOfGuests,
   onHandleCloseWindow,
   handleCloseWindow,
-  getOwner,
+  getOwners,
+  getEventInfo,
+  owner,
+  availableNumberOfGuests,
+  eventId,
 }: IPropsDTO) => {
   const { user } = useAuth();
   const { addToast } = useToast();
@@ -46,11 +49,15 @@ const OwnerProfileDrawer: React.FC<IPropsDTO> = ({
 
   const closeEditOwnerWindow = useCallback(() => {
     setEditOwnerWindow(false);
-  }, []);
+    handleCloseWindow();
+  }, [handleCloseWindow]);
 
   const deleteOwner = useCallback(async () => {
     try {
-      await api.delete(`events/${event.id}/event-owners/${owner.id}`);
+      if (eventMaster !== owner.id) {
+        await api.delete(`events/${eventId}/event-owners/${owner.id}`);
+      }
+      getOwners();
       handleCloseWindow();
       addToast({
         type: 'success',
@@ -65,7 +72,7 @@ const OwnerProfileDrawer: React.FC<IPropsDTO> = ({
       });
       throw new Error(err);
     }
-  }, [owner, event, addToast, handleCloseWindow]);
+  }, [owner, eventMaster, eventId, addToast, getOwners, handleCloseWindow]);
 
   useEffect(() => {
     if (owner.userEventOwner.avatar_url) {
@@ -77,13 +84,14 @@ const OwnerProfileDrawer: React.FC<IPropsDTO> = ({
     <>
       {editOwnerWindow && (
         <EditEventOwnerWindow
-          availableNumberOfGuests={availableNumberOfGuests}
-          event={event}
-          getEventInfo={getOwner}
-          getEventOwners={getOwner}
+          eventMaster={eventMaster}
           handleCloseWindow={closeEditOwnerWindow}
-          onHandleCloseWindow={() => setEditOwnerWindow(false)}
+          onHandleCloseWindow={() => closeEditOwnerWindow()}
+          availableNumberOfGuests={availableNumberOfGuests}
           owner={owner}
+          getOwners={getOwners}
+          getEventInfo={getEventInfo}
+          eventId={eventId}
         />
       )}
       <WindowContainer
@@ -114,11 +122,15 @@ const OwnerProfileDrawer: React.FC<IPropsDTO> = ({
                   <h1>
                     Nome:
                     <strong>
-                      {owner ? owner.userEventOwner.personInfo.first_name : '0'}
+                      {owner && owner.userEventOwner.personInfo
+                        ? owner.userEventOwner.personInfo.first_name
+                        : '0'}
                     </strong>
                     Sobrenome:
                     <strong>
-                      {owner ? owner.userEventOwner.personInfo.last_name : '0'}
+                      {owner && owner.userEventOwner.personInfo
+                        ? owner.userEventOwner.personInfo.last_name
+                        : '0'}
                     </strong>
                   </h1>
                 )}
@@ -133,7 +145,7 @@ const OwnerProfileDrawer: React.FC<IPropsDTO> = ({
                   </h2>
                 </div>
               </button>
-              {event.user_id !== owner.id && event.user_id !== user.id && (
+              {eventMaster !== owner.id && eventMaster !== user.id && (
                 <div>
                   <DeleteOwnerButton type="button" onClick={deleteOwner}>
                     Deletar
@@ -149,7 +161,7 @@ const OwnerProfileDrawer: React.FC<IPropsDTO> = ({
                   username:
                   <strong>{owner.userEventOwner.name}</strong>
                 </h1>
-                {owner.userEventOwner.personInfo && (
+                {owner && owner.userEventOwner.personInfo && (
                   <h1>
                     Nome:
                     <strong>

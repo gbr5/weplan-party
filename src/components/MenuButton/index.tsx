@@ -111,16 +111,17 @@ const MenuButton: React.FC = () => {
           abortEarly: false,
         });
 
-        await api.post(`events/${new_event?.id}/event-info`, {
-          number_of_guests: data.number_of_guests,
-          duration: data.duration,
-          budget: data.budget,
-          description: data.description,
-          country: data.country,
-          local_state: data.local_state,
-          city: data.city,
-          address: data.address,
-        });
+        new_event &&
+          (await api.post(`events/${new_event.id}/event-info`, {
+            number_of_guests: data.number_of_guests,
+            duration: data.duration,
+            budget: data.budget,
+            description: data.description,
+            country: data.country,
+            local_state: data.local_state,
+            city: data.city,
+            address: data.address,
+          }));
 
         addToast({
           type: 'success',
