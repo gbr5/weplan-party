@@ -14,7 +14,7 @@ import {
   FiChevronLeft,
   FiEdit,
 } from 'react-icons/fi';
-import { MdPersonAdd } from 'react-icons/md';
+import { MdGroupAdd, MdPersonAdd } from 'react-icons/md';
 import { useLocation } from 'react-router-dom';
 import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
@@ -62,16 +62,10 @@ import AddPlannerWindow from '../../components/AddPlannerWindow';
 import MessageSection from '../../components/MessageSection';
 import LatestNewsSection from '../../components/LatestNewsSection';
 import CreateEventInfoWindowForm from '../../components/CreateEventInfoWindowForm';
+import UpdateEventNumberOfGuestsWindow from '../../components/UpdateEventNumberOfGuestsWindow';
+import GuestAlocationWindow from '../../components/GuestAlocationWindow';
+import IEventGuestDTO from '../../dtos/IEventGuestDTO';
 
-interface IEventGuest {
-  id: string;
-  confirmed: boolean;
-  host: string;
-  first_name: string;
-  last_name: string;
-  weplanUser: boolean;
-  description: string;
-}
 interface IUserInfoDTO {
   id: string;
   name: string;
@@ -97,6 +91,7 @@ const EventHostDashboard: React.FC = () => {
   const [isOwner, setIsOwner] = useState(false);
 
   const [friendsWindow, setFriendsWindow] = useState(false);
+  const [guestAlocationWindow, setGuestAlocationWindow] = useState(false);
   const [membersWindow, setMembersWindow] = useState(false);
   const [eventInfoDrawer, setEventInfoDrawer] = useState(false);
   const [editEventInfoDrawer, setEditEventInfoDrawer] = useState(false);
@@ -119,6 +114,10 @@ const EventHostDashboard: React.FC = () => {
   const [financeSection, setFinanceSection] = useState(false);
   const [supplierSection, setSupplierSection] = useState(false);
   const [messagesSection, setMessagesSection] = useState(false);
+  const [
+    updateEventNumberOfGuestsWindow,
+    setUpdateEventNumberOfGuestsWindow,
+  ] = useState(false);
   const [createEventInfoWindowForm, setCreateEventInfoWindowForm] = useState(
     false,
   );
@@ -131,12 +130,12 @@ const EventHostDashboard: React.FC = () => {
   const [totalGuestNumber, setTotalGuestNumber] = useState(0);
   const [checkListTasks, setCheckListTasks] = useState(0);
 
-  const [myGuests, setMyGuests] = useState<IEventGuest[]>([]);
+  const [myGuests, setMyGuests] = useState<IEventGuestDTO[]>([]);
   const [selectedFriend, setSelectedFriend] = useState<IFriendDTO>(
     {} as IFriendDTO,
   );
   const [friends, setFriends] = useState<IFriendDTO[]>([]);
-  const [eventGuests, setEventGuests] = useState<IEventGuest[]>([]);
+  const [eventGuests, setEventGuests] = useState<IEventGuestDTO[]>([]);
   const [planners, setPlanners] = useState<IUserInfoDTO[]>([]);
   const [owners, setOwners] = useState<IEventOwnerDTO[]>([]);
   const [owner, setOwner] = useState<IEventOwnerDTO>({} as IEventOwnerDTO);
@@ -163,7 +162,9 @@ const EventHostDashboard: React.FC = () => {
   >([]);
 
   const closeAllWindows = useCallback(() => {
+    setGuestAlocationWindow(false);
     setCreateEventInfoWindowForm(false);
+    setUpdateEventNumberOfGuestsWindow(false);
     setSelectedFriend({} as IFriendDTO);
     setOwner({} as IEventOwnerDTO);
     setMember({} as IEventMemberDTO);
@@ -223,6 +224,22 @@ const EventHostDashboard: React.FC = () => {
     setSidebar(!sidebar);
     setFirstRow(false);
   }, [sidebar]);
+
+  const openGuestAlocationWindow = useCallback(() => {
+    setGuestAlocationWindow(true);
+  }, []);
+
+  const closeGuestAlocationWindow = useCallback(() => {
+    setGuestAlocationWindow(false);
+  }, []);
+
+  const openUpdateEventNumberOfGuestsWindow = useCallback(() => {
+    setUpdateEventNumberOfGuestsWindow(true);
+  }, []);
+
+  const closeUpdateEventNumberOfGuestsWindow = useCallback(() => {
+    setUpdateEventNumberOfGuestsWindow(false);
+  }, []);
 
   const handleEventInfoWindow = useCallback(() => {
     closeAllWindows();
@@ -386,15 +403,17 @@ const EventHostDashboard: React.FC = () => {
   }, [eventId]);
   const handleGetGuests = useCallback(() => {
     try {
-      api.get<IEventGuest[]>(`/events/${eventId}/guests`).then(response => {
+      api.get<IEventGuestDTO[]>(`/events/${eventId}/guests`).then(response => {
         setEventGuests(response.data);
         setConfirmedGuests(
           response.data.filter(guest => guest.confirmed === true).length,
         );
-        setMyGuests(response.data.filter(guest => guest.host === user.name));
+        setMyGuests(
+          response.data.filter(guest => guest.host.name === user.name),
+        );
         setMyGuestsConfirmed(
           response.data.filter(
-            guest => guest.host === user.name && guest.confirmed === true,
+            guest => guest.host.name === user.name && guest.confirmed === true,
           ).length,
         );
       });
@@ -439,6 +458,15 @@ const EventHostDashboard: React.FC = () => {
       throw new Error(err);
     }
   }, [pageEvent]);
+
+  const guestAlocatedPercentage = useMemo(() => {
+    const cNumberOfGuests = currentNumberOfGuests && 0;
+    const eNumberOfGuests = eventInfo ? eventInfo.number_of_guests : 0;
+    if (eNumberOfGuests === 0) {
+      return 100;
+    }
+    return Number(cNumberOfGuests) / Number(eNumberOfGuests);
+  }, [currentNumberOfGuests, eventInfo]);
 
   const handleCloseAddPlannerWindow = useCallback(() => {
     setSelectedSupplier({} as IEventSupplierDTO);
@@ -697,6 +725,20 @@ const EventHostDashboard: React.FC = () => {
           handleCloseWindow={closeEventInfoWindowForm}
         />
       )}
+      {guestAlocationWindow && (
+        <GuestAlocationWindow
+          onHandleCloseWindow={() => closeGuestAlocationWindow()}
+          masterId={pageEvent.user_id}
+          members={members}
+          owners={owners}
+          availableNumberOfGuests={availableNumberOfGuests}
+          eventInfo={eventInfo}
+          getMembers={handleGetMembers}
+          getOwners={handleGetOwners}
+          guests={eventGuests}
+          handleUpdateEventNumberOfGuests={openUpdateEventNumberOfGuestsWindow}
+        />
+      )}
       {!!editEventNameDrawer && (
         <EditEventNameWindow
           setEventName={(e: string) => setEventName(e)}
@@ -816,6 +858,16 @@ const EventHostDashboard: React.FC = () => {
           onHandleCloseWindow={() => setMembersWindow(false)}
         />
       )}
+      {!!updateEventNumberOfGuestsWindow && (
+        <UpdateEventNumberOfGuestsWindow
+          setEventInfo={(e: IEventInfoDTO) => setEventInfo(e)}
+          currentNumberOfGuests={currentNumberOfGuests}
+          eventId={eventId}
+          eventInfo={eventInfo}
+          handleCloseWindow={closeUpdateEventNumberOfGuestsWindow}
+          onHandleCloseWindow={() => closeUpdateEventNumberOfGuestsWindow()}
+        />
+      )}
       <EventPageContent>
         {sidebar ? (
           <span>
@@ -831,6 +883,16 @@ const EventHostDashboard: React.FC = () => {
 
         {sidebar && (
           <SideBar>
+            {isOwner && (
+              <button type="button" onClick={openGuestAlocationWindow}>
+                <h1>
+                  Alocação de Convidados:
+                  {guestAlocatedPercentage}%
+                </h1>
+                <MdGroupAdd size={24} />
+              </button>
+            )}
+
             {isOwner ? (
               <button type="button" onClick={handleAddOwnerDrawer}>
                 <h1>Anfitriões: {numberOfOwners}</h1>
