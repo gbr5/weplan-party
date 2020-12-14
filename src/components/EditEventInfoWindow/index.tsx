@@ -12,13 +12,12 @@ import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
 import getValidationErrors from '../../utils/getValidationErros';
 import IEventInfoDTO from '../../dtos/IEventInfoDTO';
-import IEventDTO from '../../dtos/IEventDTO';
 
 interface IProps {
   onHandleCloseWindow: MouseEventHandler;
   currentNumberOfGuests: number;
   handleCloseWindow: Function;
-  event: IEventDTO;
+  eventId: string;
   eventInfo: IEventInfoDTO;
 }
 
@@ -26,7 +25,7 @@ const EditEventInfoWindow: React.FC<IProps> = ({
   onHandleCloseWindow,
   currentNumberOfGuests,
   handleCloseWindow,
-  event,
+  eventId,
   eventInfo,
 }: IProps) => {
   const formRef = useRef<FormHandles>(null);
@@ -35,34 +34,34 @@ const EditEventInfoWindow: React.FC<IProps> = ({
   const handleEditEventInfo = useCallback(
     async (data: IEventInfoDTO) => {
       try {
-        if (!eventInfo.id && !event.eventInfo) {
-          formRef.current?.setErrors([]);
+        formRef.current?.setErrors([]);
 
-          const schema = Yup.object().shape({
-            duration: Yup.number(),
-            number_of_guests: Yup.number(),
-            budget: Yup.number(),
-            country: Yup.string(),
-            local_state: Yup.string(),
-            city: Yup.string(),
-            address: Yup.string(),
+        const schema = Yup.object().shape({
+          duration: Yup.number(),
+          number_of_guests: Yup.number(),
+          budget: Yup.number(),
+          country: Yup.string(),
+          local_state: Yup.string(),
+          city: Yup.string(),
+          address: Yup.string(),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+        if (data.number_of_guests < currentNumberOfGuests) {
+          addToast({
+            type: 'error',
+            title: 'Erro ao editar informações do evento',
+            description:
+              'Número de convidados do evento não pode ser menor do que o número de convidados alocados para membros e anfitriões.',
           });
+          throw new Error('Number of guests is higher than allowed!');
+        }
+        let updatedEventInfo = {} as IEventInfoDTO;
 
-          await schema.validate(data, {
-            abortEarly: false,
-          });
-
-          if (data.number_of_guests < currentNumberOfGuests) {
-            addToast({
-              type: 'error',
-              title: 'Erro ao adicionar anfitrião',
-              description:
-                'Número de convidados excede o limite, tente novamente.',
-            });
-            throw new Error('Number of guests is higher than allowed!');
-          }
-
-          await api.post(`events/${event.id}/event-info`, {
+        if (!eventInfo.id) {
+          const response = await api.post(`events/${eventId}/event-info`, {
             number_of_guests: data.number_of_guests,
             local_state: data.local_state,
             city: data.city,
@@ -72,34 +71,9 @@ const EditEventInfoWindow: React.FC<IProps> = ({
             budget: data.budget,
             description: 'Descrição',
           });
+          updatedEventInfo = response.data;
         } else {
-          formRef.current?.setErrors([]);
-
-          const schema = Yup.object().shape({
-            duration: Yup.number(),
-            number_of_guests: Yup.number(),
-            budget: Yup.number(),
-            country: Yup.string(),
-            local_state: Yup.string(),
-            city: Yup.string(),
-            address: Yup.string(),
-          });
-
-          await schema.validate(data, {
-            abortEarly: false,
-          });
-
-          if (data.number_of_guests < currentNumberOfGuests) {
-            addToast({
-              type: 'error',
-              title: 'Erro ao adicionar anfitrião',
-              description:
-                'Número de convidados excede o limite, tente novamente.',
-            });
-            throw new Error('Number of guests is higher than allowed!');
-          }
-
-          await api.put(`events/${event.id}/event-info`, {
+          const response = await api.put(`events/${eventId}/event-info`, {
             number_of_guests: data.number_of_guests,
             local_state: data.local_state,
             city: data.city,
@@ -109,9 +83,10 @@ const EditEventInfoWindow: React.FC<IProps> = ({
             budget: data.budget,
             description: 'Descrição',
           });
+          updatedEventInfo = response.data;
         }
 
-        handleCloseWindow();
+        handleCloseWindow(updatedEventInfo);
         addToast({
           type: 'success',
           title: 'Informações editadas com sucesso',
@@ -131,7 +106,7 @@ const EditEventInfoWindow: React.FC<IProps> = ({
         });
       }
     },
-    [addToast, currentNumberOfGuests, handleCloseWindow, event, eventInfo],
+    [addToast, currentNumberOfGuests, handleCloseWindow, eventId, eventInfo],
   );
 
   return (

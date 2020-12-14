@@ -1,5 +1,6 @@
 export default interface IEventInfoDTO {
   id: string;
+  event_id: string;
   number_of_guests: number;
   duration: number;
   budget: number;

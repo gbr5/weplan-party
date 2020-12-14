@@ -27,16 +27,8 @@ import { useAuth } from '../../hooks/auth';
 import BooleanQuestionWindow from '../BooleanQuestionWindow';
 import FriendsListDrawer from '../FriendsListDrawer';
 import IFriendDTO from '../../dtos/IFriendDTO';
+import IEventGuestDTO from '../../dtos/IEventGuestDTO';
 
-interface IEventGuest {
-  id: string;
-  confirmed: boolean;
-  host: string;
-  first_name: string;
-  last_name: string;
-  weplanUser: boolean;
-  description: string;
-}
 interface ICreateGuest {
   first_name: string;
   last_name: string;
@@ -46,20 +38,18 @@ interface ICreateGuest {
 }
 interface IProps {
   closeAllWindows: Function;
-  handleGetEvent: Function;
   handleGetGuests: Function;
   pageEvent: IEventDTO;
   myAvailableNumberOfGuests: number;
-  eventGuests: IEventGuest[];
+  eventGuests: IEventGuestDTO[];
   confirmedGuests: number;
-  myGuests: IEventGuest[];
+  myGuests: IEventGuestDTO[];
   myGuestsConfirmed: number;
   friends: IFriendDTO[];
   selectedFriend: IFriendDTO;
 }
 
 const EventGuestSection: React.FC<IProps> = ({
-  handleGetEvent,
   handleGetGuests,
   closeAllWindows,
   pageEvent,
@@ -75,8 +65,8 @@ const EventGuestSection: React.FC<IProps> = ({
   const { addToast } = useToast();
   const formRef = useRef<FormHandles>(null);
 
-  const [updated_guest, setUpdated_guest] = useState<IEventGuest>(
-    {} as IEventGuest,
+  const [updated_guest, setUpdated_guest] = useState<IEventGuestDTO>(
+    {} as IEventGuestDTO,
   );
   const [wpUserName, setWpUserName] = useState('');
   const [wpUserId, setWpUserId] = useState(''); // wpUser é para usuários dos sistema que não seja o próprio usuário
@@ -95,7 +85,7 @@ const EventGuestSection: React.FC<IProps> = ({
     setGuestWindow(props);
   }, []);
   const handleEditGuestDrawer = useCallback(
-    (props: IEventGuest) => {
+    (props: IEventGuestDTO) => {
       closeAllWindows();
       setUpdated_guest(props);
       if (props.weplanUser === true) {
@@ -114,8 +104,7 @@ const EventGuestSection: React.FC<IProps> = ({
   const handleCloseAddGuestListWindow = useCallback(() => {
     closeAllWindows();
     handleGetGuests();
-    handleGetEvent();
-  }, [closeAllWindows, handleGetEvent, handleGetGuests]);
+  }, [closeAllWindows, handleGetGuests]);
 
   const handleAddGuestDrawer = useCallback(() => {
     closeAllWindows();
@@ -199,7 +188,6 @@ const EventGuestSection: React.FC<IProps> = ({
 
         handleAddGuestDrawer();
         handleGetGuests();
-        handleGetEvent();
         return addToast({
           type: 'success',
           title: 'Convidado criado com sucesso',
@@ -231,11 +219,10 @@ const EventGuestSection: React.FC<IProps> = ({
       wpUserId,
       handleGetGuests,
       myAvailableNumberOfGuests,
-      handleGetEvent,
     ],
   );
   const handleEditGuest = useCallback(
-    async (data: IEventGuest) => {
+    async (data: IEventGuestDTO) => {
       try {
         formRef.current?.setErrors([]);
 
@@ -331,7 +318,7 @@ const EventGuestSection: React.FC<IProps> = ({
   }, [closeAllWindows]);
 
   const handleEditConfirmedGuest = useCallback(
-    async (props: IEventGuest) => {
+    async (props: IEventGuestDTO) => {
       try {
         await api.put(`events/${pageEvent.id}/guests/${props.id}`, {
           first_name: props.first_name,
@@ -612,7 +599,7 @@ const EventGuestSection: React.FC<IProps> = ({
                 <Guest key={eGuest.id}>
                   <span>
                     <p>{guestCount}</p>
-                    {eGuest.host === user.name ? (
+                    {eGuest.host.name === user.name ? (
                       <button
                         type="button"
                         onClick={() => handleEditGuestDrawer(eGuest)}
@@ -633,7 +620,7 @@ const EventGuestSection: React.FC<IProps> = ({
                     </button>
                   )}
 
-                  {eGuest.host === user.name ? (
+                  {eGuest.host.name === user.name ? (
                     <div>
                       <button
                         type="button"
