@@ -1,18 +1,34 @@
-import React, { MouseEventHandler, useCallback, useRef } from 'react';
+import React, {
+  MouseEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
-import { MdGroupAdd, MdPartyMode } from 'react-icons/md';
+import { MdArrowBack, MdFavorite, MdGroupAdd } from 'react-icons/md';
 
 import Input from '../Input';
-import WindowContainer from '../WindowContainer';
 
-import { Container, AddMultipleGuests } from './styles';
+import {
+  Container,
+  ButtonContainer,
+  Section,
+  InfoSection,
+  Header,
+  Body,
+  InputContainer,
+  InfoInputContainer,
+} from './styles';
 import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
 import getValidationErrors from '../../utils/getValidationErros';
 import IFriendDTO from '../../dtos/IFriendDTO';
+import WindowUnFormattedContainer from '../WindowUnFormattedContainer';
+import IContactTypeDTO from '../../dtos/IContactTypeDTO';
 
 interface ICreateGuest {
   first_name: string;
@@ -20,6 +36,10 @@ interface ICreateGuest {
   description: string;
   confirmed: boolean;
   weplanUser: boolean;
+  whatsapp: string;
+  phone: string;
+  email: string;
+  address: string;
 }
 
 interface IProps {
@@ -56,6 +76,44 @@ const AddGuestWindow: React.FC<IProps> = ({
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
 
+  const [whatsappField, setWhatsappField] = useState(false);
+  const [phoneField, setPhoneField] = useState(false);
+  const [emailField, setEmailField] = useState(false);
+  const [addressField, setAddressField] = useState(false);
+
+  const [whatsappContactType, setWhatsappContactType] = useState<
+    IContactTypeDTO
+  >({} as IContactTypeDTO);
+  const [phoneContactType, setPhoneContactType] = useState<IContactTypeDTO>(
+    {} as IContactTypeDTO,
+  );
+  const [emailContactType, setEmailContactType] = useState<IContactTypeDTO>(
+    {} as IContactTypeDTO,
+  );
+  const [addressContactType, setAddressContactType] = useState<IContactTypeDTO>(
+    {} as IContactTypeDTO,
+  );
+
+  const getContactTypes = useCallback(() => {
+    try {
+      api.get<IContactTypeDTO[]>('/contact-types').then(response => {
+        response.data.map(type => {
+          type.name === 'Phone' && setPhoneContactType(type);
+          type.name === 'Whatsapp' && setWhatsappContactType(type);
+          type.name === 'Address' && setAddressContactType(type);
+          type.name === 'Email' && setEmailContactType(type);
+          return type;
+        });
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
+  }, []);
+
+  useEffect(() => {
+    getContactTypes();
+  }, [getContactTypes]);
+
   const handleAddGuest = useCallback(
     async (data: ICreateGuest) => {
       try {
@@ -80,7 +138,7 @@ const AddGuestWindow: React.FC<IProps> = ({
             abortEarly: false,
           });
 
-          await api.post(`events/${eventId}/guests`, {
+          const guest = await api.post(`events/${eventId}/guests`, {
             first_name: selectedFriend.friend.personInfo.first_name,
             last_name: selectedFriend.friend.personInfo.last_name,
             description: data.description,
@@ -88,6 +146,29 @@ const AddGuestWindow: React.FC<IProps> = ({
             confirmed: guestConfirmed,
             user_id: selectedFriend.friend.id,
           });
+
+          Promise.all([
+            api.post(`guest-contact-info/`, {
+              contact_info: data.whatsapp ? data.whatsapp : 'n/a',
+              contact_type_id: whatsappContactType.id,
+              guest_id: guest.data.id,
+            }),
+            api.post(`guest-contact-info/`, {
+              contact_info: data.phone ? data.phone : 'n/a',
+              contact_type_id: phoneContactType.id,
+              guest_id: guest.data.id,
+            }),
+            api.post(`guest-contact-info/`, {
+              contact_info: data.email ? data.email : 'n/a',
+              contact_type_id: emailContactType.id,
+              guest_id: guest.data.id,
+            }),
+            api.post(`guest-contact-info/`, {
+              contact_info: data.address ? data.address : 'n/a',
+              contact_type_id: addressContactType.id,
+              guest_id: guest.data.id,
+            }),
+          ]);
         } else {
           const schema = Yup.object().shape({
             first_name: Yup.string().required('Primeiro nome é obrigatório'),
@@ -99,7 +180,7 @@ const AddGuestWindow: React.FC<IProps> = ({
             abortEarly: false,
           });
 
-          await api.post(`events/${eventId}/guests`, {
+          const guest = await api.post(`events/${eventId}/guests`, {
             first_name: data.first_name,
             last_name: data.last_name,
             description: data.description,
@@ -107,6 +188,29 @@ const AddGuestWindow: React.FC<IProps> = ({
             confirmed: guestConfirmed,
             user_id: '0',
           });
+
+          Promise.all([
+            api.post(`guest-contact-info/`, {
+              contact_info: data.whatsapp ? data.whatsapp : 'n/a',
+              contact_type_id: whatsappContactType.id,
+              guest_id: guest.data.id,
+            }),
+            api.post(`guest-contact-info/`, {
+              contact_info: data.phone ? data.phone : 'n/a',
+              contact_type_id: phoneContactType.id,
+              guest_id: guest.data.id,
+            }),
+            api.post(`guest-contact-info/`, {
+              contact_info: data.email ? data.email : 'n/a',
+              contact_type_id: emailContactType.id,
+              guest_id: guest.data.id,
+            }),
+            api.post(`guest-contact-info/`, {
+              contact_info: data.address ? data.address : 'n/a',
+              contact_type_id: addressContactType.id,
+              guest_id: guest.data.id,
+            }),
+          ]);
         }
 
         handleCloseWindow();
@@ -137,83 +241,210 @@ const AddGuestWindow: React.FC<IProps> = ({
       myAvailableNumberOfGuests,
       selectedFriend,
       handleCloseWindow,
+      whatsappContactType,
+      phoneContactType,
+      addressContactType,
+      emailContactType,
     ],
   );
 
   return (
-    <WindowContainer
+    <WindowUnFormattedContainer
       onHandleCloseWindow={onHandleCloseWindow}
       containerStyle={{
         zIndex: 15,
         top: '5%',
-        left: '20%',
+        left: '5%',
         height: '90%',
-        width: '60%',
+        width: '90%',
       }}
     >
       <Form ref={formRef} onSubmit={handleAddGuest}>
         <Container>
-          <h1>Adicionar Convidado</h1>
-          <p>Você pode adicionar até {myAvailableNumberOfGuests} convidados</p>
-          <AddMultipleGuests>
-            <button type="button" onClick={handleAddGuestListWindow}>
-              Adicionar lista de convidados
-              <MdGroupAdd size={24} />
-            </button>
-            {isOwner && (
-              <button type="button" onClick={handleGuestAllocationWindow}>
-                Editar alocação de convidados
+          <Header>
+            <h1>Formulário de Convidados</h1>
+            <p>
+              Você pode adicionar até{' '}
+              <strong>{myAvailableNumberOfGuests}</strong> convidados
+            </p>
+            <ButtonContainer>
+              <button type="button" onClick={handleAddGuestListWindow}>
+                Adicionar lista de convidados
+                <MdGroupAdd size={24} />
               </button>
-            )}
-          </AddMultipleGuests>
-
-          {!weplanUser && (
-            <>
-              <Input name="first_name" type="text" placeholder="Nome" />
-              <Input name="last_name" type="text" placeholder="Sobrenome" />
-            </>
-          )}
-
-          <Input name="description" type="text" defaultValue="Descrição" />
-
-          <div>
-            {!guestConfirmed ? (
-              <button type="button" onClick={handleGuestConfirmedWindow}>
-                Não confirmado
-              </button>
-            ) : (
-              <h1>
-                <button type="button" onClick={handleGuestConfirmedWindow}>
-                  <MdPartyMode />
-                  Confirmado!
+              {isOwner && (
+                <button type="button" onClick={handleGuestAllocationWindow}>
+                  Editar alocação de convidados
                 </button>
-              </h1>
-            )}
-            {!weplanUser && !selectedFriend.friend ? (
-              <button
-                type="button"
-                onClick={() => openWPGuestQuestionWindow(true)}
-              >
-                Convidado Weplan ?
-              </button>
-            ) : (
-              <h1>
-                <button
-                  type="button"
-                  onClick={() => openWPGuestQuestionWindow(true)}
-                >
-                  {selectedFriend.friend.name}
-                </button>
-              </h1>
-            )}
-          </div>
+              )}
+            </ButtonContainer>
+          </Header>
+          <Body>
+            <Section>
+              {!weplanUser && (
+                <>
+                  <InputContainer>
+                    <p>Nome:</p>
+                    <Input name="first_name" type="text" placeholder="Nome" />
+                  </InputContainer>
+                  <InputContainer>
+                    <p>Sobrenome:</p>
+                    <Input
+                      name="last_name"
+                      type="text"
+                      placeholder="Sobrenome"
+                    />
+                  </InputContainer>
+                </>
+              )}
+              <InfoInputContainer>
+                <p>Descrição:</p>
+                <Input
+                  name="description"
+                  type="text"
+                  defaultValue="Descrição"
+                />
+              </InfoInputContainer>
+
+              <ButtonContainer>
+                {!guestConfirmed ? (
+                  <button type="button" onClick={handleGuestConfirmedWindow}>
+                    Não confirmado
+                  </button>
+                ) : (
+                  <button type="button" onClick={handleGuestConfirmedWindow}>
+                    <MdFavorite />
+                    Confirmado!
+                  </button>
+                )}
+                {!weplanUser && !selectedFriend.friend ? (
+                  <button
+                    type="button"
+                    onClick={() => openWPGuestQuestionWindow(true)}
+                  >
+                    Convidado Weplan ?
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => openWPGuestQuestionWindow(true)}
+                  >
+                    {selectedFriend &&
+                      selectedFriend.friend &&
+                      selectedFriend.friend.name}
+                  </button>
+                )}
+              </ButtonContainer>
+            </Section>
+            <Section>
+              <h2>Informações de contato</h2>
+              <InfoSection>
+                <InfoInputContainer>
+                  <p>
+                    Whatsapp:
+                    {whatsappField && (
+                      <button
+                        type="button"
+                        onClick={() => setWhatsappField(false)}
+                      >
+                        <MdArrowBack />
+                        <MdArrowBack />
+                      </button>
+                    )}
+                  </p>
+                  {!whatsappField ? (
+                    <button
+                      type="button"
+                      onClick={() => setWhatsappField(!whatsappField)}
+                    >
+                      Informar
+                    </button>
+                  ) : (
+                    <Input name="whatsapp" placeholder="Whatsapp" />
+                  )}
+                </InfoInputContainer>
+                <InfoInputContainer>
+                  <p>
+                    Telefone:
+                    {phoneField && (
+                      <button
+                        type="button"
+                        onClick={() => setPhoneField(false)}
+                      >
+                        <MdArrowBack />
+                        <MdArrowBack />
+                      </button>
+                    )}
+                  </p>
+                  {!phoneField ? (
+                    <button
+                      type="button"
+                      onClick={() => setPhoneField(!phoneField)}
+                    >
+                      Informar
+                    </button>
+                  ) : (
+                    <Input name="phone" placeholder="Telefone" />
+                  )}
+                </InfoInputContainer>
+                <InfoInputContainer>
+                  <p>
+                    email:
+                    {emailField && (
+                      <button
+                        type="button"
+                        onClick={() => setEmailField(false)}
+                      >
+                        <MdArrowBack />
+                        <MdArrowBack />
+                      </button>
+                    )}
+                  </p>
+                  {!emailField ? (
+                    <button
+                      type="button"
+                      onClick={() => setEmailField(!emailField)}
+                    >
+                      Informar
+                    </button>
+                  ) : (
+                    <Input name="email" placeholder="e-mail" />
+                  )}
+                </InfoInputContainer>
+              </InfoSection>
+              <InfoInputContainer>
+                <p>
+                  Endereço:
+                  {addressField && (
+                    <button
+                      type="button"
+                      onClick={() => setAddressField(false)}
+                    >
+                      <MdArrowBack size={24} />
+                      <MdArrowBack size={24} />
+                    </button>
+                  )}
+                </p>
+                {!addressField ? (
+                  <button
+                    type="button"
+                    onClick={() => setAddressField(!addressField)}
+                  >
+                    Informar
+                  </button>
+                ) : (
+                  <Input name="address" placeholder="Endereço" />
+                )}
+              </InfoInputContainer>
+            </Section>
+          </Body>
 
           <button type="submit">
             <h3>Salvar</h3>
           </button>
         </Container>
       </Form>
-    </WindowContainer>
+    </WindowUnFormattedContainer>
   );
 };
 

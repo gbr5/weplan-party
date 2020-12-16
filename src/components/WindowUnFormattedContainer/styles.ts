@@ -25,8 +25,9 @@ export const Container = styled.div`
   z-index: 10;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: stretch;
+  justify-content: stretch;
+  padding: 32px;
   background: var(--header-background-color);
   border-radius: 8px;
   gap: 16px;
@@ -48,7 +49,7 @@ export const Container = styled.div`
 
       &:hover {
         border-radius: 50%;
-        background: var(--red-color);
+        background: rgba(150, 70, 70, 0.3);
         font-weight: 600;
         border: 0.5px solid var(--title-color);
         opacity: 0.8;
@@ -59,7 +60,7 @@ export const Container = styled.div`
         transition: 0.5s;
 
         &:hover {
-          color: var(--primary-color);
+          color: rgba(255, 10, 5);
         }
       }
     }

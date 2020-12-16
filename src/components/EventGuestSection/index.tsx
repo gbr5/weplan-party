@@ -72,8 +72,8 @@ const EventGuestSection: React.FC<IProps> = ({
   const [wpGuestQuestionWindow, setWpGuestQuestionWindow] = useState(false);
   const [editGuestWindow, setEditGuestWindow] = useState(false);
   const [guestWindow, setGuestWindow] = useState(true);
-  const [addGuestWindow, setAddGuestWindow] = useState(false);
-  const [guestConfirmedWindow, uestConfirmedWindow] = useState(false);
+  const [addGuestWindow, setAddGuestWindow] = useState(true);
+  const [guestConfirmationWindow, setGuestConfirmationWindow] = useState(false);
   const [weplanUser, setWeplanUser] = useState(false);
   const [addGuestListWindow, setAddGuestListWindow] = useState(false);
   const [friendsWindow, setFriendsWindow] = useState(false);
@@ -81,6 +81,7 @@ const EventGuestSection: React.FC<IProps> = ({
 
   const handleIsGuestConfirmed = useCallback((props: boolean) => {
     setGuestConfirmed(props);
+    setGuestConfirmationWindow(false);
   }, []);
   const handleGuestWindow = useCallback(props => {
     setGuestWindow(props);
@@ -109,11 +110,18 @@ const EventGuestSection: React.FC<IProps> = ({
 
   const handleAddGuestWindow = useCallback(() => {
     closeAllWindows();
-    setAddGuestWindow(!addGuestWindow);
-  }, [addGuestWindow, closeAllWindows]);
-  const handleGuestConfirmedWindow = useCallback(() => {
-    uestConfirmedWindow(!guestConfirmedWindow);
-  }, [guestConfirmedWindow]);
+    setAddGuestWindow(true);
+    setWpGuestQuestionWindow(true);
+    setGuestConfirmationWindow(true);
+  }, [closeAllWindows]);
+
+  const closeAddGuestWindow = useCallback(() => {
+    closeAllWindows();
+    setAddGuestWindow(false);
+  }, [closeAllWindows]);
+  const handleGuestConfirmationWindow = useCallback(() => {
+    setGuestConfirmationWindow(!guestConfirmationWindow);
+  }, [guestConfirmationWindow]);
 
   const handleSelectFriend = useCallback((props: IFriendDTO) => {
     setSelectedFriend(props);
@@ -201,14 +209,14 @@ const EventGuestSection: React.FC<IProps> = ({
           guestConfirmed={guestConfirmed}
           openWPGuestQuestionWindow={() => setWpGuestQuestionWindow(true)}
           handleAddGuestListWindow={handleAddGuestListWindow}
-          handleGuestConfirmedWindow={handleGuestConfirmedWindow}
+          handleGuestConfirmedWindow={handleGuestConfirmationWindow}
           eventId={eventId}
-          handleCloseWindow={handleAddGuestWindow}
+          handleCloseWindow={closeAddGuestWindow}
           handleGetGuests={handleGetGuests}
           handleGuestAllocationWindow={handleGuestAllocationWindow}
           isOwner={isOwner}
           myAvailableNumberOfGuests={myAvailableNumberOfGuests}
-          onHandleCloseWindow={handleAddGuestWindow}
+          onHandleCloseWindow={closeAddGuestWindow}
           selectedFriend={selectedFriend}
         />
       )}
@@ -230,10 +238,10 @@ const EventGuestSection: React.FC<IProps> = ({
           onHandleCloseWindow={() => setEditGuestWindow(false)}
         />
       )}
-      {!!guestConfirmedWindow && (
+      {!!guestConfirmationWindow && (
         <BooleanQuestionWindow
           selectBooleanOption={handleIsGuestConfirmed}
-          onHandleCloseWindow={() => uestConfirmedWindow(false)}
+          onHandleCloseWindow={() => setGuestConfirmationWindow(false)}
           question="O convidado está confirmado?"
         />
       )}
