@@ -8,6 +8,7 @@ import AddEventGuestListWindow from '../AddEventGuestListWindow';
 
 import {
   Container,
+  GuestAllocationButton,
   NotHostGuest,
   Guest,
   BooleanNavigationButton,
@@ -237,6 +238,14 @@ const EventGuestSection: React.FC<IProps> = ({
         />
       )}
       <Container>
+        {isOwner && (
+          <GuestAllocationButton
+            type="button"
+            onClick={handleGuestAllocationWindow}
+          >
+            Editar Alocação de Convidados
+          </GuestAllocationButton>
+        )}
         <span>
           <BooleanNavigationButton
             booleanActiveButton={guestWindow}

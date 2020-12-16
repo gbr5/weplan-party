@@ -3,11 +3,11 @@ import styled, { keyframes } from 'styled-components';
 const appearFromTop = keyframes`
   0% {
     opacity: 0;
-    transform: translateY(-150px);
+    transform: translateY(-1050px);
   }
   90% {
-    opacity: 0.1;
-    transform: translateY(-50px);
+    opacity: 0.01;
+    transform: translateY(-500px);
   }
   100% {
     opacity: 1;
