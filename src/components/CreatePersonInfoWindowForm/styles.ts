@@ -5,6 +5,10 @@ const appearFromTop = keyframes`
     opacity: 0;
     transform: translateY(-150px);
   }
+  90% {
+    opacity: 0.1;
+    transform: translateY(-50px);
+  }
   100% {
     opacity: 1;
     transform: translateY(0px);
@@ -12,7 +16,7 @@ const appearFromTop = keyframes`
 `;
 
 export const Container = styled.div`
-  animation: ${appearFromTop} 1s;
+  animation: ${appearFromTop} 3s;
   position: fixed;
   z-index: 100;
   display: flex;

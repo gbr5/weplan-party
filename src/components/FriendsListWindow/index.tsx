@@ -18,7 +18,7 @@ interface IPropsDTO {
   handleSelectedFriend: Function;
 }
 
-const FriendsListDrawer: React.FC<IPropsDTO> = ({
+const FriendsListWindow: React.FC<IPropsDTO> = ({
   selectedFriend,
   friends,
   onHandleCloseWindow,
@@ -61,4 +61,4 @@ const FriendsListDrawer: React.FC<IPropsDTO> = ({
   );
 };
 
-export default FriendsListDrawer;
+export default FriendsListWindow;

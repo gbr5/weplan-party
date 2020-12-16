@@ -1,3 +1,4 @@
+import IGuestContactInfoDTO from './IGuestContactInfoDTO';
 import IUserDTO from './IUserDTO';
 import IWeplanGuestDTO from './IWeplanGuestDTO';
 
@@ -12,4 +13,5 @@ export default interface IEventGuestDTO {
   weplanUser: boolean;
   host: IUserDTO;
   weplanGuest: IWeplanGuestDTO;
+  guestContactInfos: IGuestContactInfoDTO[];
 }

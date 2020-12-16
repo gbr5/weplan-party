@@ -6,13 +6,13 @@ import { Container } from './styles';
 
 interface IProps {
   onHandleCloseWindow: MouseEventHandler;
-  handleWeplanUserQuestion: Function;
+  selectBooleanOption: Function;
   question: string;
 }
 
 const BooleanQuestionWindow: React.FC<IProps> = ({
   onHandleCloseWindow,
-  handleWeplanUserQuestion,
+  selectBooleanOption,
   question,
 }: IProps) => {
   return (
@@ -29,10 +29,10 @@ const BooleanQuestionWindow: React.FC<IProps> = ({
       <Container>
         <h1>{question}</h1>
         <div>
-          <button type="button" onClick={() => handleWeplanUserQuestion(true)}>
+          <button type="button" onClick={() => selectBooleanOption(true)}>
             Sim
           </button>
-          <button type="button" onClick={() => handleWeplanUserQuestion(false)}>
+          <button type="button" onClick={() => selectBooleanOption(false)}>
             Não
           </button>
         </div>

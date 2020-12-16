@@ -303,7 +303,7 @@ const EventSupplierSection: React.FC<IProps> = ({
       )}
       {!!isHiredDrawer && (
         <BooleanQuestionWindow
-          handleWeplanUserQuestion={handleIsHiredQuestion}
+          selectBooleanOption={handleIsHiredQuestion}
           onHandleCloseWindow={() => setIsHiredDrawer(false)}
           question="Fornecedor contratado?"
         />
