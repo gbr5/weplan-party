@@ -53,7 +53,7 @@ import IEventCheckListDTO from '../../dtos/IEventCheckListDTO';
 import EventSupplierSection from '../../components/EventSupplierSection';
 import AddMemberWindow from '../../components/AddMemberWindow';
 import AddOwnerWindow from '../../components/AddOwnerWindow';
-import FriendsListDrawer from '../../components/FriendsListDrawer';
+import FriendsListWindow from '../../components/FriendsListWindow';
 import IEventInfoDTO from '../../dtos/IEventInfoDTO';
 import EventInfoWindow from '../../components/EventInfoWindow';
 import MembersWindow from '../../components/MembersWindow';
@@ -408,12 +408,10 @@ const EventHostDashboard: React.FC = () => {
         setConfirmedGuests(
           response.data.filter(guest => guest.confirmed === true).length,
         );
-        setMyGuests(
-          response.data.filter(guest => guest.host.name === user.name),
-        );
+        setMyGuests(response.data.filter(guest => guest.host_id === user.id));
         setMyGuestsConfirmed(
           response.data.filter(
-            guest => guest.host.name === user.name && guest.confirmed === true,
+            guest => guest.host_id === user.id && guest.confirmed === true,
           ).length,
         );
       });
@@ -440,10 +438,21 @@ const EventHostDashboard: React.FC = () => {
     return availableGuestNumber;
   }, [totalGuestNumber, currentNumberOfGuests]);
   const myAvailableNumberOfGuests = useMemo(() => {
-    const availableGuestNumber =
-      Number(pageEvent.number_of_guests) - myGuests.length;
+    let myNumberOfGuests = 0;
+    if (isOwner) {
+      const meAsOwner = owners.find(
+        xOwner => xOwner.userEventOwner.id === user.id,
+      );
+      myNumberOfGuests = meAsOwner ? meAsOwner.number_of_guests : 0;
+    } else {
+      const meAsMember = members.find(
+        xMember => xMember.userEventMember.id === user.id,
+      );
+      myNumberOfGuests = meAsMember ? meAsMember.number_of_guests : 0;
+    }
+    const availableGuestNumber = Number(myNumberOfGuests) - myGuests.length;
     return availableGuestNumber;
-  }, [pageEvent, myGuests]);
+  }, [myGuests, owners, members, isOwner, user]);
 
   const handleGetSuppliers = useCallback(() => {
     try {
@@ -832,7 +841,7 @@ const EventHostDashboard: React.FC = () => {
         />
       )}
       {friendsWindow && (
-        <FriendsListDrawer
+        <FriendsListWindow
           selectedFriend={selectedFriend}
           friends={friends}
           handleSelectedFriend={(e: IFriendDTO) => handleSeletedFriend(e)}
@@ -1090,12 +1099,13 @@ const EventHostDashboard: React.FC = () => {
           {!!messagesSection && <MessageSection />}
           {!!guestsSection && (
             <EventGuestSection
-              selectedFriend={selectedFriend}
+              isOwner={isOwner}
+              handleGuestAllocationWindow={openGuestAlocationWindow}
               friends={friends}
               myGuestsConfirmed={myGuestsConfirmed}
               myAvailableNumberOfGuests={myAvailableNumberOfGuests}
               myGuests={myGuests}
-              pageEvent={pageEvent}
+              eventId={eventId}
               closeAllWindows={closeAllWindows}
               confirmedGuests={confirmedGuests}
               eventGuests={eventGuests}
