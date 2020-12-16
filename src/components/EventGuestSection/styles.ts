@@ -13,6 +13,23 @@ const appearFromTop = keyframes`
   }
 `;
 
+export const GuestAllocationButton = styled.button`
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--title-color);
+  border-radius: 8px;
+  transition: 0.5s;
+
+  &:hover {
+    opacity: 0.7;
+    background: var(--primary-color);
+    color: var(--letter-color-5);
+    box-shadow: var(--window-box-shadow);
+  }
+`;
+
 export const Container = styled.div`
   display: flex;
   flex-direction: column;

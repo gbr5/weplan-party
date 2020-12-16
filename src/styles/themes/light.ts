@@ -13,7 +13,7 @@ export default {
     title: 'rgb(255, 200, 55)',
     text: '#050115',
     letter1: '#FFF',
-    letter2: 'rgb(149, 152, 158)',
+    letter2: 'rgb(204, 204, 204)',
     letter3: 'rgb(179, 182, 178)',
     letter4: '#f9f9f9',
     letter5: 'rgb(20, 22, 25)',
