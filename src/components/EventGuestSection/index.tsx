@@ -230,7 +230,6 @@ const EventGuestSection: React.FC<IProps> = ({
       )}
       {editGuestWindow && (
         <EditGuestWindow
-          weplanUser={weplanUser}
           eventId={eventId}
           eventGuest={selectedGuest}
           handleCloseWindow={handleEditGuestWindow}

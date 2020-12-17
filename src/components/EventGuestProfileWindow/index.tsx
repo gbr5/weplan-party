@@ -16,9 +16,9 @@ const EventGuestProfileWindow: React.FC<IProps> = ({
   guest,
   onHandleCloseWindow,
 }: IProps) => {
-  const handleUpdateGuestConfirmation = useCallback(() => {
+  const handleUpdateGuestConfirmation = useCallback(async () => {
     try {
-      api.put(`/event-guests/confirmation/${guest.id}`);
+      await api.put(`/event-guests/confirmation/${guest.id}`);
     } catch (err) {
       throw new Error(err);
     }
