@@ -72,7 +72,7 @@ const EventGuestSection: React.FC<IProps> = ({
   const [wpGuestQuestionWindow, setWpGuestQuestionWindow] = useState(false);
   const [editGuestWindow, setEditGuestWindow] = useState(false);
   const [guestWindow, setGuestWindow] = useState(true);
-  const [addGuestWindow, setAddGuestWindow] = useState(true);
+  const [addGuestWindow, setAddGuestWindow] = useState(false);
   const [guestConfirmationWindow, setGuestConfirmationWindow] = useState(false);
   const [weplanUser, setWeplanUser] = useState(false);
   const [addGuestListWindow, setAddGuestListWindow] = useState(false);
@@ -232,7 +232,7 @@ const EventGuestSection: React.FC<IProps> = ({
         <EditGuestWindow
           weplanUser={weplanUser}
           eventId={eventId}
-          guest={selectedGuest}
+          eventGuest={selectedGuest}
           handleCloseWindow={handleEditGuestWindow}
           handleGetGuests={handleGetGuests}
           onHandleCloseWindow={() => setEditGuestWindow(false)}

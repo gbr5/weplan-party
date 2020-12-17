@@ -109,10 +109,10 @@ const EventHostDashboard: React.FC = () => {
   const [sidebar, setSidebar] = useState(false);
 
   const [latestActionsSection, setLatestActionsSection] = useState(false);
-  const [guestsSection, setGuestsSection] = useState(true);
+  const [guestsSection, setGuestsSection] = useState(false);
   const [financeSection, setFinanceSection] = useState(false);
   const [supplierSection, setSupplierSection] = useState(false);
-  const [checkListSection, setCheckListSection] = useState(false);
+  const [checkListSection, setCheckListSection] = useState(true);
   const [messagesSection, setMessagesSection] = useState(false);
   const [
     updateEventNumberOfGuestsWindow,
