@@ -24,9 +24,9 @@ const GuestInfoRow: React.FC<IProps> = ({
     setIsSelected(!isSelected);
   }, [isSelected]);
 
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = useCallback(async () => {
     try {
-      api.put(`/guest-contact-info/${guestContactInfo.id}`, {
+      await api.put(`/guest-contact-info/${guestContactInfo.id}`, {
         contact_info: updatedGuestContactInfo,
       });
 

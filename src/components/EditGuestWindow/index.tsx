@@ -293,9 +293,9 @@ const EditGuestWindow: React.FC<IProps> = ({
     }
   }, [guest, addToast, handleGetGuests, handleCloseWindow]);
 
-  const updateGuestConfirmation = useCallback(() => {
+  const updateGuestConfirmation = useCallback(async () => {
     try {
-      api.put(`/event-guests/confirmation/${guest.id}`);
+      await api.put(`/event-guests/confirmation/${guest.id}`);
       addToast({
         type: 'success',
         title: 'Convidado editado com sucesso!',
@@ -313,6 +313,27 @@ const EditGuestWindow: React.FC<IProps> = ({
       throw new Error(err);
     }
   }, [guest, handleGetGuests, addToast, updateGuest]);
+
+  const deleteWeplanGuestAssociation = useCallback(async () => {
+    try {
+      await api.delete(`/event/weplan-guests/${guest.weplanGuest.id}`);
+      addToast({
+        type: 'success',
+        title: 'Convidado editado com sucesso!',
+        description: 'As mudanças já foram atualizadas no seu evento.',
+      });
+
+      handleGetGuests();
+      updateGuest();
+    } catch (err) {
+      addToast({
+        type: 'error',
+        title: 'Erro ao excluir associação com usuário WePlan.',
+        description: 'Erro, tente novamente.',
+      });
+      throw new Error(err);
+    }
+  }, [guest, addToast, handleGetGuests, updateGuest]);
 
   return (
     <WindowUnFormattedContainer
@@ -383,7 +404,7 @@ const EditGuestWindow: React.FC<IProps> = ({
                 )}
               </ButtonContainer>
               {guest.weplanGuest && guest.weplanGuest.weplanUserGuest && (
-                <button type="button">
+                <button type="button" onClick={deleteWeplanGuestAssociation}>
                   Deletar usuário WePlan associado a convidado
                 </button>
               )}
