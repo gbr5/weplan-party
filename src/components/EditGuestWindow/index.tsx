@@ -1,23 +1,47 @@
-import React, { MouseEventHandler, useCallback, useRef } from 'react';
+import React, {
+  MouseEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
 
+import { MdArrowBack, MdFavorite } from 'react-icons/md';
 import Input from '../Input';
-import WindowContainer from '../WindowContainer';
+import WindowUnFormattedContainer from '../WindowUnFormattedContainer';
 
-import { Container } from './styles';
+import {
+  Container,
+  ButtonContainer,
+  Section,
+  InfoSection,
+  Header,
+  Body,
+  InputContainer,
+  InfoInputContainer,
+} from './styles';
 import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
 import getValidationErrors from '../../utils/getValidationErros';
 import IEventGuestDTO from '../../dtos/IEventGuestDTO';
+import IContactTypeDTO from '../../dtos/IContactTypeDTO';
+
+interface IFormDTO extends IEventGuestDTO {
+  whatsapp: string;
+  phone: string;
+  email: string;
+  address: string;
+}
 
 interface IProps {
   onHandleCloseWindow: MouseEventHandler;
   eventId: string;
   weplanUser: boolean;
-  guest: IEventGuestDTO;
+  eventGuest: IEventGuestDTO;
   handleCloseWindow: Function;
   handleGetGuests: Function;
 }
@@ -26,17 +50,137 @@ const EditGuestWindow: React.FC<IProps> = ({
   onHandleCloseWindow,
   eventId,
   weplanUser,
-  guest,
+  eventGuest,
   handleCloseWindow,
   handleGetGuests,
 }: IProps) => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
 
+  const [whatsappField, setWhatsappField] = useState(false);
+  const [phoneField, setPhoneField] = useState(false);
+  const [emailField, setEmailField] = useState(false);
+  const [addressField, setAddressField] = useState(false);
+
+  const [whatsappContactType, setWhatsappContactType] = useState<
+    IContactTypeDTO
+  >({} as IContactTypeDTO);
+  const [phoneContactType, setPhoneContactType] = useState<IContactTypeDTO>(
+    {} as IContactTypeDTO,
+  );
+  const [emailContactType, setEmailContactType] = useState<IContactTypeDTO>(
+    {} as IContactTypeDTO,
+  );
+  const [addressContactType, setAddressContactType] = useState<IContactTypeDTO>(
+    {} as IContactTypeDTO,
+  );
+
+  const getContactTypes = useCallback(() => {
+    try {
+      api.get<IContactTypeDTO[]>('/contact-types').then(response => {
+        response.data.map(type => {
+          type.name === 'Phone' && setPhoneContactType(type);
+          type.name === 'Whatsapp' && setWhatsappContactType(type);
+          type.name === 'Address' && setAddressContactType(type);
+          type.name === 'Email' && setEmailContactType(type);
+          return type;
+        });
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
+  }, []);
+
+  useEffect(() => {
+    getContactTypes();
+  }, [getContactTypes]);
+
+  const [guest, setGuest] = useState(eventGuest);
+
+  const [guestDefaultWhatsapp, setGuestDefaultWhatsapp] = useState('Whatsapp');
+  const [guestDefaultWhatsappId, setGuestDefaultWhatsappId] = useState('');
+  const [guestDefaultPhone, setGuestDefaultPhone] = useState('Telefone');
+  const [guestDefaultPhoneId, setGuestDefaultPhoneId] = useState('');
+  const [guestDefaultEmail, setGuestDefaultEmail] = useState('Email');
+  const [guestDefaultEmailId, setGuestDefaultEmailId] = useState('');
+  const [guestDefaultAddress, setGuestDefaultAddress] = useState('Endereço');
+  const [guestDefaultAddressId, setGuestDefaultAddressId] = useState('');
+
+  const updateGuest = useCallback(() => {
+    try {
+      api.get<IEventGuestDTO>(`/event-guests/${guest.id}`).then(response => {
+        setGuest(response.data);
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
+  }, [guest]);
+
+  useEffect(() => {
+    if (guest.guestContactInfos) {
+      guest.guestContactInfos.map(contact => {
+        contact.contactType.name === 'Whatsapp' &&
+          setGuestDefaultWhatsapp(contact.contact_info);
+        contact.contactType.name === 'Whatsapp' &&
+          setGuestDefaultWhatsappId(contact.id);
+        contact.contactType.name === 'Phone' &&
+          setGuestDefaultPhone(contact.contact_info);
+        contact.contactType.name === 'Phone' &&
+          setGuestDefaultPhoneId(contact.id);
+        contact.contactType.name === 'Email' &&
+          setGuestDefaultEmail(contact.contact_info);
+        contact.contactType.name === 'Email' &&
+          setGuestDefaultEmailId(contact.id);
+        contact.contactType.name === 'Address' &&
+          setGuestDefaultAddress(contact.contact_info);
+        contact.contactType.name === 'Address' &&
+          setGuestDefaultAddressId(contact.id);
+        return contact.contactType.id;
+      });
+    } else {
+      setGuestDefaultWhatsapp('Whatsapp');
+      setGuestDefaultPhone('Telefone');
+      setGuestDefaultEmail('Email');
+      setGuestDefaultAddress('Endereço');
+    }
+  }, [guest]);
+
   const handleEditGuest = useCallback(
-    async (data: IEventGuestDTO) => {
+    async (data: IFormDTO) => {
       try {
         formRef.current?.setErrors([]);
+
+        if (whatsappField) {
+          await api.put(`guest-contact-info/${guestDefaultWhatsappId}`, {
+            contact_info: data.whatsapp ? data.whatsapp : 'n/a',
+            contact_type_id: whatsappContactType.id,
+            guest_id: guest.id,
+          });
+        }
+
+        if (phoneField) {
+          await api.put(`guest-contact-info/${guestDefaultPhoneId}`, {
+            contact_info: data.phone ? data.phone : 'n/a',
+            contact_type_id: phoneContactType.id,
+            guest_id: guest.id,
+          });
+        }
+
+        if (emailField) {
+          await api.put(`guest-contact-info/${guestDefaultEmailId}`, {
+            contact_info: data.email ? data.email : 'n/a',
+            contact_type_id: emailContactType.id,
+            guest_id: guest.id,
+          });
+        }
+
+        if (addressField) {
+          await api.put(`guest-contact-info/${guestDefaultAddressId}`, {
+            contact_info: data.address ? data.address : 'n/a',
+            contact_type_id: addressContactType.id,
+            guest_id: guest.id,
+          });
+        }
 
         if (weplanUser) {
           const schema = Yup.object().shape({
@@ -79,7 +223,7 @@ const EditGuestWindow: React.FC<IProps> = ({
         });
 
         handleGetGuests();
-        handleCloseWindow();
+        updateGuest();
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const error = getValidationErrors(err);
@@ -94,13 +238,38 @@ const EditGuestWindow: React.FC<IProps> = ({
         });
       }
     },
-    [addToast, eventId, weplanUser, guest, handleGetGuests, handleCloseWindow],
+    [
+      addToast,
+      eventId,
+      weplanUser,
+      guest,
+      handleGetGuests,
+      addressContactType,
+      emailContactType,
+      phoneContactType,
+      whatsappContactType,
+      addressField,
+      emailField,
+      phoneField,
+      whatsappField,
+      guestDefaultAddressId,
+      guestDefaultEmailId,
+      guestDefaultPhoneId,
+      guestDefaultWhatsappId,
+      updateGuest,
+    ],
   );
 
   const handleDeleteGuest = useCallback(async () => {
     try {
-      await api.delete(`/events/guests/${guest.id}`);
-
+      if (guest.weplanGuest && guest.weplanGuest.id) {
+        Promise.all([
+          api.delete(`/event/weplan-guests/${guest.weplanGuest.id}`),
+          api.delete(`/events/guests/${guest.id}`),
+        ]);
+      } else {
+        await api.delete(`/events/guests/${guest.id}`);
+      }
       addToast({
         type: 'success',
         title: 'Convidado excluído com sucesso',
@@ -124,43 +293,211 @@ const EditGuestWindow: React.FC<IProps> = ({
     }
   }, [guest, addToast, handleGetGuests, handleCloseWindow]);
 
+  const updateGuestConfirmation = useCallback(() => {
+    try {
+      api.put(`/event-guests/confirmation/${guest.id}`);
+      addToast({
+        type: 'success',
+        title: 'Convidado editado com sucesso!',
+        description: 'As mudanças já foram atualizadas no seu evento.',
+      });
+
+      handleGetGuests();
+      updateGuest();
+    } catch (err) {
+      addToast({
+        type: 'error',
+        title: 'Erro ao excluir convidado',
+        description: 'Erro ao excluir o convidado, tente novamente.',
+      });
+      throw new Error(err);
+    }
+  }, [guest, handleGetGuests, addToast, updateGuest]);
+
   return (
-    <WindowContainer
+    <WindowUnFormattedContainer
       onHandleCloseWindow={onHandleCloseWindow}
       containerStyle={{
-        zIndex: 20,
+        zIndex: 15,
         top: '5%',
-        left: '20%',
+        left: '5%',
         height: '90%',
-        width: '60%',
+        width: '90%',
       }}
     >
       <Form ref={formRef} onSubmit={handleEditGuest}>
         <Container>
-          <h1>Editar Convidado</h1>
+          <Header>
+            <h1>
+              Formulário de Convidado | {guest.first_name} {guest.last_name}
+            </h1>
+          </Header>
+          <Body>
+            <Section>
+              <InputContainer>
+                <p>Nome:</p>
+                {!guest.weplanGuest ? (
+                  <Input
+                    defaultValue={guest.first_name}
+                    name="first_name"
+                    type="text"
+                  />
+                ) : (
+                  <h3>{guest.first_name}</h3>
+                )}
+              </InputContainer>
+              <InputContainer>
+                <p>Sobrenome:</p>
+                {!guest.weplanGuest ? (
+                  <Input
+                    defaultValue={guest.last_name}
+                    name="last_name"
+                    type="text"
+                  />
+                ) : (
+                  <h3>{guest.last_name}</h3>
+                )}
+              </InputContainer>
+              <InfoInputContainer>
+                <p>Descrição:</p>
+                <Input
+                  defaultValue={guest.description}
+                  name="description"
+                  type="text"
+                />
+              </InfoInputContainer>
 
-          {!guest.weplanUser && (
-            <>
-              <Input
-                defaultValue={guest.first_name}
-                name="first_name"
-                type="text"
-                placeholder="Nome"
-              />
-              <Input
-                defaultValue={guest.last_name}
-                name="last_name"
-                type="text"
-                placeholder="Sobrenome"
-              />
-            </>
-          )}
-          <Input
-            defaultValue={guest.description}
-            name="description"
-            type="text"
-            placeholder="Alguma descrição necessária?"
-          />
+              <ButtonContainer>
+                {!guest.confirmed ? (
+                  <button type="button" onClick={updateGuestConfirmation}>
+                    Não confirmado
+                  </button>
+                ) : (
+                  <button type="button" onClick={updateGuestConfirmation}>
+                    <MdFavorite />
+                    Confirmado!
+                  </button>
+                )}
+                {!guest.weplanGuest && !weplanUser && (
+                  <button type="button">Associar a um usuário WePlan ?</button>
+                )}
+              </ButtonContainer>
+              {guest.weplanGuest && guest.weplanGuest.weplanUserGuest && (
+                <button type="button">
+                  Deletar usuário WePlan associado a convidado
+                </button>
+              )}
+            </Section>
+            <Section>
+              <h2>Informações de contato</h2>
+              <InfoSection>
+                <InfoInputContainer>
+                  <p>
+                    Whatsapp:
+                    {whatsappField && (
+                      <button
+                        type="button"
+                        onClick={() => setWhatsappField(false)}
+                      >
+                        <MdArrowBack />
+                        <MdArrowBack />
+                      </button>
+                    )}
+                  </p>
+                  {!whatsappField ? (
+                    <button
+                      type="button"
+                      onClick={() => setWhatsappField(!whatsappField)}
+                    >
+                      {guestDefaultWhatsapp === 'n/a'
+                        ? 'Informar'
+                        : guestDefaultWhatsapp}
+                    </button>
+                  ) : (
+                    <Input name="whatsapp" placeholder={guestDefaultWhatsapp} />
+                  )}
+                </InfoInputContainer>
+                <InfoInputContainer>
+                  <p>
+                    Telefone:
+                    {phoneField && (
+                      <button
+                        type="button"
+                        onClick={() => setPhoneField(false)}
+                      >
+                        <MdArrowBack />
+                        <MdArrowBack />
+                      </button>
+                    )}
+                  </p>
+                  {!phoneField ? (
+                    <button
+                      type="button"
+                      onClick={() => setPhoneField(!phoneField)}
+                    >
+                      {guestDefaultPhone === 'n/a'
+                        ? 'Informar'
+                        : guestDefaultPhone}
+                    </button>
+                  ) : (
+                    <Input name="phone" placeholder={guestDefaultPhone} />
+                  )}
+                </InfoInputContainer>
+                <InfoInputContainer>
+                  <p>
+                    email:
+                    {emailField && (
+                      <button
+                        type="button"
+                        onClick={() => setEmailField(false)}
+                      >
+                        <MdArrowBack />
+                        <MdArrowBack />
+                      </button>
+                    )}
+                  </p>
+                  {!emailField ? (
+                    <button
+                      type="button"
+                      onClick={() => setEmailField(!emailField)}
+                    >
+                      {guestDefaultEmail === 'n/a'
+                        ? 'Informar'
+                        : guestDefaultEmail}
+                    </button>
+                  ) : (
+                    <Input name="email" placeholder={guestDefaultEmail} />
+                  )}
+                </InfoInputContainer>
+              </InfoSection>
+              <InfoInputContainer>
+                <p>
+                  Endereço:
+                  {addressField && (
+                    <button
+                      type="button"
+                      onClick={() => setAddressField(false)}
+                    >
+                      <MdArrowBack size={24} />
+                      <MdArrowBack size={24} />
+                    </button>
+                  )}
+                </p>
+                {!addressField ? (
+                  <button
+                    type="button"
+                    onClick={() => setAddressField(!addressField)}
+                  >
+                    {guestDefaultAddress === 'n/a'
+                      ? 'Informar'
+                      : guestDefaultAddress}
+                  </button>
+                ) : (
+                  <Input name="address" placeholder={guestDefaultAddress} />
+                )}
+              </InfoInputContainer>
+            </Section>
+          </Body>
 
           <button type="submit">
             <h3>Salvar</h3>
@@ -171,7 +508,7 @@ const EditGuestWindow: React.FC<IProps> = ({
           </button>
         </Container>
       </Form>
-    </WindowContainer>
+    </WindowUnFormattedContainer>
   );
 };
 
