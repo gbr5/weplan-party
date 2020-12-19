@@ -1,4 +1,5 @@
 import IPersonInfoDTO from './IPersonInfoDTO';
+import IUserContactDTO from './IUserContactDTO';
 
 interface ICompanyInfoDTO {
   id: string;
@@ -9,8 +10,10 @@ interface ICompanyInfoDTO {
 export default interface IUserDTO {
   id: string;
   name: string;
+  email: string;
   trimmed_name: string;
   avatar_url: string;
   personInfo: IPersonInfoDTO;
   companyInfo: ICompanyInfoDTO;
+  userContacts: IUserContactDTO[];
 }

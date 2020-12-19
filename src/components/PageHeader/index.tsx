@@ -42,6 +42,7 @@ import getValidationErrors from '../../utils/getValidationErros';
 
 import WindowContainer from '../WindowContainer';
 import MenuButton from '../MenuButton';
+import UserProfileManagementWindow from '../UserProfileManagementWindow';
 
 interface ICreateAppointment {
   subject: string;
@@ -81,7 +82,7 @@ const PageHeader: React.FC = ({ children }) => {
   const [appointmentTypeDrawer, setAppointmentTypeDrawer] = useState(false);
   const [appointmentType, setAppointmentType] = useState('');
   const [addAppointmentDrawer, setAddAppointmentDrawer] = useState(false);
-  const [helpWindow, setHelpWindow] = useState(false);
+  const [helpWindow, setHelpWindow] = useState(true);
   const [settingsWindow, setSettingsWindow] = useState(false);
 
   const { signOut, user } = useAuth();
@@ -661,18 +662,21 @@ const PageHeader: React.FC = ({ children }) => {
         </WindowContainer>
       )}
       {!!helpWindow && (
-        <WindowContainer
+        <UserProfileManagementWindow
           onHandleCloseWindow={() => setHelpWindow(false)}
-          containerStyle={{
-            top: '2%',
-            left: '5%',
-            height: '96%',
-            width: '90%',
-            zIndex: 15,
-          }}
-        >
-          <h1>Opções de ajuda</h1>
-        </WindowContainer>
+        />
+        // <WindowContainer
+        //   onHandleCloseWindow={() => setHelpWindow(false)}
+        //   containerStyle={{
+        //     top: '2%',
+        //     left: '5%',
+        //     height: '96%',
+        //     width: '90%',
+        //     zIndex: 15,
+        //   }}
+        // >
+        //   <h1>Opções de ajuda</h1>
+        // </WindowContainer>
       )}
       {!!settingsWindow && (
         <WindowContainer

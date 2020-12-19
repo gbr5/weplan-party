@@ -119,6 +119,41 @@ const SignUp: React.FC = () => {
         const response = await api.post('/users', validatedData);
         setUserId(response.data.id);
 
+        Promise.all([
+          api.post(`/profile/contact-info/add/${response.data.id}`, {
+            contact_info: 'n/a',
+            contact_type: 'Whatsapp',
+          }),
+          api.post(`/profile/contact-info/add/${response.data.id}`, {
+            contact_info: 'n/a',
+            contact_type: 'Phone',
+          }),
+          api.post(`/profile/contact-info/add/${response.data.id}`, {
+            contact_info: 'n/a',
+            contact_type: 'Email',
+          }),
+          api.post(`/profile/contact-info/add/${response.data.id}`, {
+            contact_info: 'n/a',
+            contact_type: 'Address',
+          }),
+          api.post(`/profile/contact-info/add/${response.data.id}`, {
+            contact_info: 'n/a',
+            contact_type: 'Instagram',
+          }),
+          api.post(`/profile/contact-info/add/${response.data.id}`, {
+            contact_info: 'n/a',
+            contact_type: 'Facebook',
+          }),
+          api.post(`/profile/contact-info/add/${response.data.id}`, {
+            contact_info: 'n/a',
+            contact_type: 'Linkedin',
+          }),
+          api.post(`/profile/contact-info/add/${response.data.id}`, {
+            contact_info: 'n/a',
+            contact_type: 'Website',
+          }),
+        ]);
+
         setOptions(false);
 
         addToast({
