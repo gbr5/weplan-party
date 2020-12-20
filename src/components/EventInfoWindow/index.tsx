@@ -66,6 +66,13 @@ const EventInfoWindow: React.FC<IProps> = ({
               </div>
             </div>
           </span>
+
+          <div>
+            <p>Traje: </p>
+            <h3>
+              {eventInfo && eventInfo.dress_code ? eventInfo.dress_code : ''}
+            </h3>
+          </div>
           <div>
             <p>Endereço: </p>
             <h3>{eventInfo ? eventInfo.address : ''}</h3>

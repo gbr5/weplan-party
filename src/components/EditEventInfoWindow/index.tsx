@@ -44,6 +44,7 @@ const EditEventInfoWindow: React.FC<IProps> = ({
           local_state: Yup.string(),
           city: Yup.string(),
           address: Yup.string(),
+          dress_code: Yup.string(),
         });
 
         await schema.validate(data, {
@@ -68,6 +69,7 @@ const EditEventInfoWindow: React.FC<IProps> = ({
             duration: data.duration,
             country: data.country,
             address: data.address,
+            dress_code: data.dress_code,
             budget: data.budget,
             description: 'Descrição',
           });
@@ -80,6 +82,7 @@ const EditEventInfoWindow: React.FC<IProps> = ({
             duration: data.duration,
             country: data.country,
             address: data.address,
+            dress_code: data.dress_code,
             budget: data.budget,
             description: 'Descrição',
           });
@@ -114,10 +117,10 @@ const EditEventInfoWindow: React.FC<IProps> = ({
       onHandleCloseWindow={onHandleCloseWindow}
       containerStyle={{
         zIndex: 20,
-        top: '15%',
-        left: '20%',
-        height: '70%',
-        width: '60%',
+        top: '5%',
+        left: '5%',
+        height: '90%',
+        width: '90%',
       }}
     >
       <Form ref={formRef} onSubmit={handleEditEventInfo}>
@@ -164,6 +167,14 @@ const EditEventInfoWindow: React.FC<IProps> = ({
                 placeholder="Cidade"
               />
             </div>
+            <Input
+              defaultValue={
+                eventInfo && eventInfo.dress_code ? eventInfo.dress_code : ''
+              }
+              name="dress_code"
+              type="text"
+              placeholder="Traje"
+            />
             <Input
               defaultValue={eventInfo ? eventInfo.address : ''}
               name="address"

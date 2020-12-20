@@ -48,12 +48,15 @@ const MenuButton: React.FC = () => {
 
   const { addToast } = useToast();
 
+  const [tipoDeEvento, setTipoDeEvento] = useState('Outros');
+
   const handleButtonDrawer = useCallback(() => {
     setButtonDrawer(!buttonDrawer);
   }, [buttonDrawer]);
 
   const handleCreateEventDrawer = useCallback(() => {
     setCreateEventDrawer(!createEventDrawer);
+    setEventTypeDrawer(true);
     setButtonDrawer(false);
   }, [createEventDrawer]);
 
@@ -69,6 +72,22 @@ const MenuButton: React.FC = () => {
   const handleEventTypeChange = useCallback(
     (option: string) => {
       setEventType(option);
+      option === 'Wedding' && setTipoDeEvento('Casamento');
+      option === 'Prom' && setTipoDeEvento('Formatura');
+      option === 'Birthday' && setTipoDeEvento('Aniversário');
+
+      option === 'Sweet_15' && setTipoDeEvento('15 Anos');
+      option === 'Sweet_16' && setTipoDeEvento('Sweet 16');
+      option === 'Wedding_Anniversary' && setTipoDeEvento('Bodas');
+
+      option === 'Corporate' && setTipoDeEvento('Corporativo');
+      option === 'Christmas' && setTipoDeEvento('Natal');
+      option === 'New_Year' && setTipoDeEvento('Ano Novo');
+
+      option === 'Baptism' && setTipoDeEvento('Batismo');
+      option === 'Hanukkah' && setTipoDeEvento('Hanukkah');
+      option === 'Others' && setTipoDeEvento('Outros');
+
       handleEventTypeDrawer();
     },
     [handleEventTypeDrawer, setEventType],
@@ -93,6 +112,7 @@ const MenuButton: React.FC = () => {
           local_state: Yup.string().required(),
           city: Yup.string().required(),
           address: Yup.string().required(),
+          dress_code: Yup.string().required(),
         });
 
         await schema.validate(data, {
@@ -109,6 +129,7 @@ const MenuButton: React.FC = () => {
             local_state: data.local_state,
             city: data.city,
             address: data.address,
+            dress_code: data.dress_code,
           }));
 
         addToast({
@@ -242,7 +263,7 @@ const MenuButton: React.FC = () => {
               </span>
 
               <button type="button" onClick={handleEventTypeDrawer}>
-                {eventType || 'Tipo de Evento'}
+                {tipoDeEvento || 'Selecionar tipo de Evento'}
               </button>
 
               <Input
@@ -283,6 +304,16 @@ const MenuButton: React.FC = () => {
             >
               Casamento
             </button>
+            <button type="button" onClick={() => handleEventTypeChange('Prom')}>
+              Formatura
+            </button>
+            <button
+              type="button"
+              onClick={() => handleEventTypeChange('Birthday')}
+            >
+              Aniversário
+            </button>
+
             <button
               type="button"
               onClick={() => handleEventTypeChange('Sweet_15')}
@@ -299,13 +330,45 @@ const MenuButton: React.FC = () => {
               type="button"
               onClick={() => handleEventTypeChange('Wedding_Anniversary')}
             >
-              Bodas
+              Aniversário de Casamento (Bodas)
             </button>
+
             <button
               type="button"
               onClick={() => handleEventTypeChange('Corporate')}
             >
               Corporativo
+            </button>
+            <button
+              type="button"
+              onClick={() => handleEventTypeChange('Christmas')}
+            >
+              Natal
+            </button>
+            <button
+              type="button"
+              onClick={() => handleEventTypeChange('New_Year')}
+            >
+              Reveillón
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleEventTypeChange('Baptism')}
+            >
+              Batismo
+            </button>
+            <button
+              type="button"
+              onClick={() => handleEventTypeChange('Hanukkah')}
+            >
+              Hanukkah
+            </button>
+            <button
+              type="button"
+              onClick={() => handleEventTypeChange('Others')}
+            >
+              Outros
             </button>
           </Menu>
         </EventTypeDrawer>
@@ -313,11 +376,6 @@ const MenuButton: React.FC = () => {
       {!!eventInfoDrawer && (
         <Form ref={formRef} onSubmit={handlePostEventInfo}>
           <EventInfoDrawer>
-            {/* <span>
-              <button type="button" onClick={handleEventInfoDrawer}>
-                <MdClose size={30} />
-              </button>
-            </span> */}
             <h1>Informações do evento</h1>
             <div>
               <div>
@@ -338,8 +396,9 @@ const MenuButton: React.FC = () => {
                 <Input name="country" type="text" placeholder="País" />
                 <Input name="local_state" type="text" placeholder="Estado" />
                 <Input name="city" type="text" placeholder="Cidade" />
-                <Input name="address" type="text" placeholder="Endereço" />
+                <Input name="dress_code" type="text" placeholder="Traje" />
               </div>
+              <Input name="address" type="text" placeholder="Endereço" />
             </div>
 
             <button type="submit">

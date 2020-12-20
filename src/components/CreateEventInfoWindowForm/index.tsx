@@ -38,6 +38,7 @@ const CreateEventInfoWindowForm: React.FC<IProps> = ({
           local_state: Yup.string().required(),
           city: Yup.string().required(),
           address: Yup.string().required(),
+          dress_code: Yup.string().required(),
         });
 
         await schema.validate(data, {
@@ -53,6 +54,7 @@ const CreateEventInfoWindowForm: React.FC<IProps> = ({
           local_state: data.local_state,
           city: data.city,
           address: data.address,
+          dress_code: data.dress_code,
         });
 
         getEventInfo();
@@ -103,8 +105,9 @@ const CreateEventInfoWindowForm: React.FC<IProps> = ({
             <Input name="country" type="text" placeholder="País" />
             <Input name="local_state" type="text" placeholder="Estado" />
             <Input name="city" type="text" placeholder="Cidade" />
-            <Input name="address" type="text" placeholder="Endereço" />
+            <Input name="dress_code" type="text" placeholder="Traje" />
           </div>
+          <Input name="address" type="text" placeholder="Endereço" />
         </div>
 
         <button type="submit">

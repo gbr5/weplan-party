@@ -4,10 +4,10 @@ import '../../styles/global';
 export const EventInfoForm = styled.div`
   position: fixed;
   z-index: 10;
-  top: 110px;
-  left: 400px;
-  width: 600px;
-  height: 450px;
+  top: 5%;
+  left: 5%;
+  width: 90%;
+  height: 90%;
   display: flex;
   flex-direction: column;
   align-items: center;
