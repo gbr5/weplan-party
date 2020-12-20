@@ -5,7 +5,7 @@ import WindowContainer from '../WindowContainer';
 
 import { Container, MembersContainer } from './styles';
 
-import avatar_placeholder from '../../assets/avatar_placeholder.jpg';
+import avatar_placeholder from '../../assets/WePlanLogo.svg';
 
 interface IProps {
   onHandleCloseWindow: MouseEventHandler;

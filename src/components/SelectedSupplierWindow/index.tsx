@@ -8,7 +8,7 @@ import {
   EditSelectedSupplierButton,
   DeleteButton,
 } from './styles';
-import avatar_placeholder from '../../assets/avatar_placeholder.jpg';
+import avatar_placeholder from '../../assets/WePlanLogo.svg';
 import WindowContainer from '../WindowContainer';
 
 import IEventSupplierDTO from '../../dtos/IEventSupplierDTO';

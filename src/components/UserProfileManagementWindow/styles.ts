@@ -1,8 +1,8 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const Container = styled.div`
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
   align-items: stretch;
   justify-content: stretch;
   transition: 0.25s;
@@ -37,7 +37,6 @@ export const Container = styled.div`
     }
   }
 `;
-
 export const Header = styled.div`
   display: flex;
   flex-direction: column;
@@ -102,7 +101,6 @@ export const ButtonContainer = styled.span`
     }
   }
 `;
-
 export const InputContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 5fr;
@@ -119,7 +117,6 @@ export const InputContainer = styled.div`
     letter-spacing: 0.8px;
   }
 `;
-
 export const InfoInputContainer = styled.div`
   margin: 8px auto;
   display: grid;
@@ -183,8 +180,9 @@ export const InfoInputContainer = styled.div`
     }
   }
 `;
-
 export const Section = styled.div`
+  border: 0.5px solid var(--title-color);
+  box-shadow: var(--window-box-shadow);
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -230,7 +228,6 @@ export const Section = styled.div`
     }
   }
 `;
-
 export const InfoSection = styled.div`
   display: grid;
   grid-template-columns: 2fr 2fr 3fr;
@@ -239,4 +236,62 @@ export const InfoSection = styled.div`
   transition: 0.25s;
   width: 100%;
   gap: 8px;
+`;
+export const MenuButtonContainer = styled.div`
+  background: var(--input-container-color);
+  border-radius: 4px;
+  padding: 8px;
+  width: 100%;
+
+  border: 2px solid var(--input-container-color);
+  color: var(--letter-color-5);
+  box-shadow: var(--box-shadow);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+interface IButtonProps {
+  isActive: boolean;
+}
+export const BooleanButton = styled.button<IButtonProps>`
+  font-size: 32px;
+  background: var(--letter-color-2);
+  color: var(--letter-color-5);
+  border-bottom: 0.5px solid var(--title-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-color);
+  opacity: 0.65;
+  transition: 0.5s;
+  border-radius: 4px;
+  width: 100%;
+
+  box-shadow: var(--box-shadow);
+
+  &:hover {
+    opacity: 0.8;
+    background: var(--primary-color);
+    color: var(--background-color);
+    box-shadow: var(--window-box-shadow);
+  }
+
+  ${props =>
+    props.isActive &&
+    css`
+      background: var(--primary-color);
+      color: var(--background-color);
+      opacity: 1;
+      transition: 0.5s;
+      border-bottom: 1px solid var(--title-color);
+      box-shadow: var(--window-box-shadow);
+
+      &:hover {
+        box-shadow: var(--box-shadow);
+        opacity: 0.8;
+        background: var(--background-color);
+        color: var(--primary-color);
+      }
+    `}
 `;
