@@ -2,6 +2,7 @@ import React, {
   MouseEventHandler,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -77,18 +78,6 @@ const AddGuestWindow: React.FC<IProps> = ({
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
 
-  const [weplanGuestDefaultAddress, setWeplanGuestDefaultAddress] = useState(
-    'Informar',
-  );
-  const [weplanGuestDefaultEmail, setWeplanGuestDefaultEmail] = useState(
-    'Informar',
-  );
-  const [weplanGuestDefaultWhatsapp, setWeplanGuestDefaultWhatsapp] = useState(
-    'Informar',
-  );
-  const [weplanGuestDefaultPhone, setWeplanGuestDefaultPhone] = useState(
-    'Informar',
-  );
   const [whatsappField, setWhatsappField] = useState(false);
   const [phoneField, setPhoneField] = useState(false);
   const [emailField, setEmailField] = useState(false);
@@ -131,6 +120,35 @@ const AddGuestWindow: React.FC<IProps> = ({
   useEffect(() => {
     getContactTypes();
   }, [getContactTypes]);
+
+  const weplanGuestDefaultWhatsapp = useMemo(() => {
+    const friend = selectedFriend && selectedFriend.friend;
+    const whats =
+      friend &&
+      friend.userContacts.find(contact => contact.contact_type === 'Whatsapp');
+    return whats ? whats.contact_info : 'Informar';
+  }, [selectedFriend]);
+  const weplanGuestDefaultPhone = useMemo(() => {
+    const friend = selectedFriend && selectedFriend.friend;
+    const phone =
+      friend &&
+      friend.userContacts.find(contact => contact.contact_type === 'Phone');
+    return phone ? phone.contact_info : 'Informar';
+  }, [selectedFriend]);
+  const weplanGuestDefaultEmail = useMemo(() => {
+    const friend = selectedFriend && selectedFriend.friend;
+    const email =
+      friend &&
+      friend.userContacts.find(contact => contact.contact_type === 'Email');
+    return email ? email.contact_info : 'Informar';
+  }, [selectedFriend]);
+  const weplanGuestDefaultAddress = useMemo(() => {
+    const friend = selectedFriend && selectedFriend.friend;
+    const address =
+      friend &&
+      friend.userContacts.find(contact => contact.contact_type === 'Address');
+    return address ? address.contact_info : 'Informar';
+  }, [selectedFriend]);
 
   const handleAddGuest = useCallback(
     async (data: ICreateGuest) => {
@@ -311,25 +329,6 @@ const AddGuestWindow: React.FC<IProps> = ({
   useEffect(() => {
     if (weplanUser) {
       setWeplanGuestContactInfoQuestion(true);
-      const friend = selectedFriend && selectedFriend.friend;
-      const whats =
-        friend &&
-        friend.userContacts.find(
-          contact => contact.contact_type === 'Whatsapp',
-        );
-      const phone =
-        friend &&
-        friend.userContacts.find(contact => contact.contact_type === 'Phone');
-      const email =
-        friend &&
-        friend.userContacts.find(contact => contact.contact_type === 'Email');
-      const address =
-        friend &&
-        friend.userContacts.find(contact => contact.contact_type === 'Address');
-      setWeplanGuestDefaultWhatsapp(whats ? whats.contact_info : 'Informar');
-      setWeplanGuestDefaultPhone(phone ? phone.contact_info : 'Informar');
-      setWeplanGuestDefaultEmail(email ? email.contact_info : 'Informar');
-      setWeplanGuestDefaultAddress(address ? address.contact_info : 'Informar');
     }
   }, [weplanUser, selectedFriend]);
 
