@@ -272,7 +272,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
             left: '30%',
             height: '50%',
             width: '40%',
-            zIndex: '1000',
+            zIndex: 14,
           }}
         >
           <h1>Criar grupo de contatos</h1>
@@ -296,7 +296,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
           left: '5%',
           height: '90%',
           width: '90%',
-          zIndex: '100',
+          zIndex: 10,
         }}
       >
         <Container>

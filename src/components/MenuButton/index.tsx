@@ -25,13 +25,6 @@ import WindowContainer from '../WindowContainer';
 import MainFriendsWindow from '../MainFriendsWindow';
 import ICreateEventInfoDTO from '../../dtos/ICreateEventInfoDTO';
 
-interface ICreateEventDTO {
-  name: string;
-  date: string;
-  event_type: string;
-  start_time: string;
-}
-
 interface IEvent {
   id: string;
   name: string;
@@ -54,7 +47,6 @@ const MenuButton: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
 
   const { addToast } = useToast();
-  // const history = useHistory();
 
   const handleButtonDrawer = useCallback(() => {
     setButtonDrawer(!buttonDrawer);
@@ -73,10 +65,6 @@ const MenuButton: React.FC = () => {
     setButtonDrawer(false);
     setFriendsWindow(true);
   }, []);
-
-  // const handleNavigateToSupplierDashboard = useCallback(() => {
-  //   history.push('/supplier-dashboard');
-  // }, [history]);
 
   const handleEventTypeChange = useCallback(
     (option: string) => {
