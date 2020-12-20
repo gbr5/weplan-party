@@ -29,13 +29,14 @@ export const ButtonContent = styled.div`
 
 export const EventTypeDrawer = styled.div`
   position: fixed;
-  bottom: 163px;
-  z-index: 50000;
-  left: 280px;
-  width: 248px;
-  height: 350px;
+  z-index: 50;
+  top: 20%;
+  left: 10%;
+  height: 60%;
+  width: 80%;
   background: var(--card-color);
-  border-radius: 4px 4px 20px 20px;
+  border-radius: 8px;
+  padding: 32px;
 
   margin: 0 auto;
   display: flex;
@@ -49,24 +50,31 @@ export const Logo = styled.h2`
 `;
 
 export const Menu = styled.div`
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   align-items: center;
   justify-content: center;
-  gap: 24px;
+  gap: 32px;
+  width: 100%;
+  height: 100%;
 
   button {
     background: var(--primary-color);
-    height: 40px;
+    height: 50%;
     border-radius: 8px;
-    width: 200px;
-    border: 0;
+    width: 100%;
+    border: none;
     font-size: 18px;
     font-weight: 500;
     color: var(--letter-color-5);
+    box-shadow: var(--box-shadow);
+    transition: 0.3s;
 
     &:hover {
       opacity: 0.8;
+      box-shadow: var(--window-box-shadow);
+      background: var(--secondary-color);
+      color: var(--primary-color);
     }
   }
 `;
@@ -109,11 +117,20 @@ export const CreateEventForm = styled.div`
 
     > button {
       height: 40px;
-      width: 90%;
+      width: 100%;
       border-radius: 4px;
       padding: 0 16px;
       border: none;
       margin: 16px;
+      color: var(--primary-color);
+      background: var(--secondary-color);
+      box-shadow: var(--window-box-shadow);
+
+      &:hover {
+        background: var(--primary-color);
+        color: var(--secondary-color);
+        box-shadow: var(--box-shadow);
+      }
     }
 
     span {
@@ -340,10 +357,10 @@ export const Calendar = styled.aside`
 export const EventInfoDrawer = styled.div`
   position: fixed;
   z-index: 10;
-  top: 110px;
-  left: 400px;
-  width: 600px;
-  height: 450px;
+  top: 5%;
+  left: 5%;
+  width: 90%;
+  height: 90%;
   display: flex;
   flex-direction: column;
   align-items: center;

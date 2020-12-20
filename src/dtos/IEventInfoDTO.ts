@@ -9,4 +9,5 @@ export default interface IEventInfoDTO {
   local_state: string;
   city: string;
   address: string;
+  dress_code?: string;
 }
