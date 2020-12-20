@@ -4,7 +4,7 @@ import { MouseEventHandler } from 'react-select';
 import { MdDelete } from 'react-icons/md';
 import { FiEdit3 } from 'react-icons/fi';
 import { Container, DeleteOwnerButton } from './styles';
-import avatar_placeholder from '../../assets/avatar_placeholder.jpg';
+import avatar_placeholder from '../../assets/WePlanLogo.svg';
 import { useAuth } from '../../hooks/auth';
 
 import WindowContainer from '../WindowContainer';

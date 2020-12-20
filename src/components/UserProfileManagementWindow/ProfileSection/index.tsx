@@ -5,7 +5,13 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { MdArrowBack, MdPerson, MdPhone, MdWeb } from 'react-icons/md';
+import {
+  MdArrowBack,
+  MdArrowUpward,
+  MdPerson,
+  MdPhone,
+  MdWeb,
+} from 'react-icons/md';
 import { FiMail, FiUser } from 'react-icons/fi';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
@@ -18,7 +24,12 @@ import instagramImg from '../../../assets/instagram.svg';
 import twitterImg from '../../../assets/twitter.svg';
 import linkedinImg from '../../../assets/linkedin.svg';
 
-import { Container, InfoSection, InfoInputContainer } from './styles';
+import {
+  Container,
+  AddressInfoInputContainer,
+  InfoSection,
+  InfoInputContainer,
+} from './styles';
 import { useToast } from '../../../hooks/toast';
 
 interface IFormData {
@@ -150,11 +161,6 @@ const ProfileSection: React.FC<IProps> = ({
   const updatePersonInfo = useCallback(
     async (first_name: string, last_name: string, person_id: string) => {
       try {
-        console.log({
-          first_name,
-          last_name,
-          person_id,
-        });
         await api.put('/person-info/edit', {
           first_name,
           last_name,
@@ -174,14 +180,10 @@ const ProfileSection: React.FC<IProps> = ({
         );
 
         if (contactType) {
-          await api.put(`person-info/contact-info/${userId}/${contact_type}`, {
+          await api.put(`/profile/contact-info/edit/${contactType.id}`, {
             contact_info,
           });
         } else {
-          console.log({
-            contact_info,
-            contact_type,
-          });
           await api.post(`/profile/contact-info/add/${userId}`, {
             contact_info,
             contact_type,
@@ -548,6 +550,13 @@ const ProfileSection: React.FC<IProps> = ({
             <p>
               <img src={instagramImg} alt={imgAlt} />
               Instagram:
+              {!instagramField &&
+                userDefaultInstagram !== 'n/a' &&
+                userDefaultInstagram !== 'Instagram' && (
+                  <a target="blank" href={userDefaultInstagram}>
+                    <MdArrowUpward size={32} />
+                  </a>
+                )}
               {instagramField && (
                 <button type="button" onClick={() => setInstagramField(false)}>
                   <MdArrowBack />
@@ -572,6 +581,13 @@ const ProfileSection: React.FC<IProps> = ({
             <p>
               <img src={facebookImg} alt={imgAlt} />
               Facebook:
+              {!facebookField &&
+                userDefaultFacebook !== 'n/a' &&
+                userDefaultFacebook !== 'Facebook' && (
+                  <a target="blank" href={userDefaultFacebook}>
+                    <MdArrowUpward size={32} />
+                  </a>
+                )}
               {facebookField && (
                 <button type="button" onClick={() => setFacebookField(false)}>
                   <MdArrowBack />
@@ -596,6 +612,13 @@ const ProfileSection: React.FC<IProps> = ({
             <p>
               <img src={linkedinImg} alt={imgAlt} />
               Linkedin:
+              {!linkedinField &&
+                userDefaultLinkedin !== 'n/a' &&
+                userDefaultLinkedin !== 'Linkedin' && (
+                  <a target="blank" href={userDefaultLinkedin}>
+                    <MdArrowUpward size={32} />
+                  </a>
+                )}
               {linkedinField && (
                 <button type="button" onClick={() => setLinkedinField(false)}>
                   <MdArrowBack />
@@ -613,13 +636,22 @@ const ProfileSection: React.FC<IProps> = ({
                   : userDefaultLinkedin}
               </button>
             ) : (
-              <Input name="linkedin" placeholder={userDefaultLinkedin} />
+              <Input name="Linkedin" placeholder={userDefaultLinkedin} />
             )}
           </InfoInputContainer>
+        </InfoSection>
+        <InfoSection>
           <InfoInputContainer>
             <p>
               <img src={twitterImg} alt={imgAlt} />
               Twitter:
+              {!twitterField &&
+                userDefaultTwitter !== 'n/a' &&
+                userDefaultTwitter !== 'Twitter' && (
+                  <a target="blank" href={userDefaultTwitter}>
+                    <MdArrowUpward size={32} />
+                  </a>
+                )}
               {twitterField && (
                 <button type="button" onClick={() => setTwitterField(false)}>
                   <MdArrowBack />
@@ -635,13 +667,20 @@ const ProfileSection: React.FC<IProps> = ({
                 {userDefaultTwitter === 'n/a' ? 'Informar' : userDefaultTwitter}
               </button>
             ) : (
-              <Input name="twitter" placeholder={userDefaultTwitter} />
+              <Input name="Twitter" placeholder={userDefaultTwitter} />
             )}
           </InfoInputContainer>
           <InfoInputContainer>
             <p>
               <MdWeb />
               Website:
+              {!websiteField &&
+                userDefaultWebsite !== 'n/a' &&
+                userDefaultWebsite !== 'Website' && (
+                  <a target="blank" href={userDefaultWebsite}>
+                    <MdArrowUpward size={32} />
+                  </a>
+                )}
               {websiteField && (
                 <button type="button" onClick={() => setWebsiteField(false)}>
                   <MdArrowBack />
@@ -657,11 +696,11 @@ const ProfileSection: React.FC<IProps> = ({
                 {userDefaultWebsite === 'n/a' ? 'Informar' : userDefaultWebsite}
               </button>
             ) : (
-              <Input name="website" placeholder={userDefaultWebsite} />
+              <Input name="Website" placeholder={userDefaultWebsite} />
             )}
           </InfoInputContainer>
         </InfoSection>
-        <InfoInputContainer>
+        <AddressInfoInputContainer>
           <p>
             Endereço:
             {addressField && (
@@ -679,9 +718,10 @@ const ProfileSection: React.FC<IProps> = ({
               {userDefaultAddress === 'n/a' ? 'Informar' : userDefaultAddress}
             </button>
           ) : (
-            <Input name="address" placeholder={userDefaultAddress} />
+            <Input name="Address" placeholder={userDefaultAddress} />
           )}
-        </InfoInputContainer>
+        </AddressInfoInputContainer>
+        <button type="submit">Salvar</button>
       </Container>
     </Form>
   );

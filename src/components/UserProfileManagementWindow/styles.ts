@@ -181,7 +181,8 @@ export const InfoInputContainer = styled.div`
   }
 `;
 export const Section = styled.div`
-  border: 1px solid white;
+  border: 0.5px solid var(--title-color);
+  box-shadow: var(--window-box-shadow);
   display: flex;
   flex-direction: column;
   align-items: stretch;

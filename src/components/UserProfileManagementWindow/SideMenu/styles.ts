@@ -23,10 +23,14 @@ export const Header = styled.div`
     color: var(--primary-color);
   }
 
-  > img {
-    height: 200px;
-    width: 200px;
-    border-bottom: 0.2px solid var(--title-color);
+  button {
+    background: transparent;
+    border: none;
+    > img {
+      height: 200px;
+      width: 200px;
+      border-bottom: 0.2px solid var(--title-color);
+    }
   }
 `;
 interface IButtonProps {

@@ -13,7 +13,7 @@ import DayPicker from 'react-day-picker';
 import * as Yup from 'yup';
 
 import { useHistory, Link } from 'react-router-dom';
-import { MdAdd, MdHelp, MdSchedule } from 'react-icons/md';
+import { MdAdd, MdPerson, MdSchedule } from 'react-icons/md';
 import { FiSettings, FiPower } from 'react-icons/fi';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
@@ -31,7 +31,7 @@ import {
 } from './styles';
 import { useToggleTheme } from '../../hooks/theme';
 
-import profileImg from '../../assets/avatar_placeholder.jpg';
+import profileImg from '../../assets/WePlanLogo.svg';
 import logo from '../../assets/weplan.svg';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
@@ -82,7 +82,7 @@ const PageHeader: React.FC = ({ children }) => {
   const [appointmentTypeDrawer, setAppointmentTypeDrawer] = useState(false);
   const [appointmentType, setAppointmentType] = useState('');
   const [addAppointmentDrawer, setAddAppointmentDrawer] = useState(false);
-  const [helpWindow, setHelpWindow] = useState(true);
+  const [profileWindow, setProfileWindow] = useState(false);
   const [settingsWindow, setSettingsWindow] = useState(false);
 
   const { signOut, user } = useAuth();
@@ -91,7 +91,7 @@ const PageHeader: React.FC = ({ children }) => {
 
   const closeAllWindows = useCallback(() => {
     setAppointmentsWindow(false);
-    setHelpWindow(false);
+    setProfileWindow(false);
     setSettingsWindow(false);
   }, []);
 
@@ -119,10 +119,10 @@ const PageHeader: React.FC = ({ children }) => {
     setAppointmentsWindow(true);
   }, [closeAllWindows]);
 
-  const handleHelpWindow = useCallback(() => {
+  const handleProfileWindow = useCallback(() => {
     closeAllWindows();
-    setHelpWindow(!helpWindow);
-  }, [closeAllWindows, helpWindow]);
+    setProfileWindow(!profileWindow);
+  }, [closeAllWindows, profileWindow]);
 
   const handleSettingsWindow = useCallback(() => {
     closeAllWindows();
@@ -354,6 +354,10 @@ const PageHeader: React.FC = ({ children }) => {
 
   const imageProfile = user.avatar_url ? user.avatar_url : profileImg;
 
+  const handleCloseProfileWindow = useCallback(() => {
+    setProfileWindow(false);
+  }, []);
+
   return (
     <>
       <Header>
@@ -376,8 +380,8 @@ const PageHeader: React.FC = ({ children }) => {
             <button type="button" onClick={handleAppointmentsWindow}>
               <MdSchedule size={30} />
             </button>
-            <button type="button" onClick={handleHelpWindow}>
-              <MdHelp size={30} />
+            <button type="button" onClick={handleProfileWindow}>
+              <MdPerson size={30} />
             </button>
             <button type="button" onClick={handleSettingsWindow}>
               <FiSettings size={30} />
@@ -661,22 +665,11 @@ const PageHeader: React.FC = ({ children }) => {
           </MyAppointments>
         </WindowContainer>
       )}
-      {!!helpWindow && (
+      {!!profileWindow && (
         <UserProfileManagementWindow
-          onHandleCloseWindow={() => setHelpWindow(false)}
+          handleCloseWindow={handleCloseProfileWindow}
+          onHandleCloseWindow={() => setProfileWindow(false)}
         />
-        // <WindowContainer
-        //   onHandleCloseWindow={() => setHelpWindow(false)}
-        //   containerStyle={{
-        //     top: '2%',
-        //     left: '5%',
-        //     height: '96%',
-        //     width: '90%',
-        //     zIndex: 15,
-        //   }}
-        // >
-        //   <h1>Opções de ajuda</h1>
-        // </WindowContainer>
       )}
       {!!settingsWindow && (
         <WindowContainer

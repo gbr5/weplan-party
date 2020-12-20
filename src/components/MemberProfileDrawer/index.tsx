@@ -4,7 +4,7 @@ import { MouseEventHandler } from 'react-select';
 import { MdDelete } from 'react-icons/md';
 import { FiEdit } from 'react-icons/fi';
 import { MemberDrawer, EditMemberButton, DeleteMemberButton } from './styles';
-import avatar_placeholder from '../../assets/avatar_placeholder.jpg';
+import avatar_placeholder from '../../assets/WePlanLogo.svg';
 import WindowContainer from '../WindowContainer';
 import IEventMemberDTO from '../../dtos/IEventMemberDTO';
 

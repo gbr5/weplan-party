@@ -15,10 +15,12 @@ import { Container, Section } from './styles';
 
 interface IProps {
   onHandleCloseWindow: MouseEventHandler;
+  handleCloseWindow: Function;
 }
 
 const UserProfileManagementWindow: React.FC<IProps> = ({
   onHandleCloseWindow,
+  handleCloseWindow,
 }: IProps) => {
   const { user } = useAuth();
 
@@ -56,7 +58,7 @@ const UserProfileManagementWindow: React.FC<IProps> = ({
     >
       <Container>
         <SideMenu
-          updateUser={updateUser}
+          handleCloseWindow={handleCloseWindow}
           user={updatedUser}
           handleSection={(e: string) => handleSection(e)}
           section={section}
