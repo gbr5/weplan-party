@@ -2,7 +2,7 @@ import styled, { keyframes } from 'styled-components';
 import { shade } from 'polished';
 import '../../styles/global';
 
-import signUpBackgroundImg from '../../assets/sign-up-background.png';
+import signUpBackgroundImg from '../../assets/lotus_flower-by-Daniel_Holtzhouse.jpeg';
 
 export const Container = styled.div`
   height: 100vh;
@@ -15,13 +15,27 @@ export const Content = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: transparent;
-  margin: 32px auto;
+  /* background: transparent;
+  margin: 32px auto; */
 
   place-content: center;
 
   width: 100%;
   max-width: 700px;
+`;
+
+export const LogoContainer = styled.div`
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 32px;
+
+  img {
+    height: 64px;
+  }
 `;
 
 const appearFromNothing = keyframes`
@@ -130,8 +144,11 @@ export const AnimationContainer = styled.div`
 `;
 
 export const Background = styled.div`
-  position: absolute;
-  /* top: 0; */
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
   margin: auto;
   z-index: -1;
   flex: 1;
@@ -172,6 +189,10 @@ export const QuestionTitle = styled.h2`
   align-items: center;
   justify-content: center;
   gap: 16px;
+
+  border-radius: 8px;
+
+  /* background: rgba(255, 100, 1, 0.5); */
 
   > strong {
     font-size: 40px;

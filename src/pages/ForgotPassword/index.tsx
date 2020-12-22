@@ -9,13 +9,20 @@ import { useToast } from '../../hooks/toast';
 
 import getValidationErrors from '../../utils/getValidationErros';
 
-import logoImg from '../../assets/logo.svg';
+import weplanLogo from '../../assets/WePlanLogo.svg';
 
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 
-import { Container, Content, AnimationContainer, Background } from './styles';
 import api from '../../services/api';
+
+import {
+  Container,
+  LogoContainer,
+  Content,
+  AnimationContainer,
+  Background,
+} from './styles';
 
 interface ForgotPasswordFormData {
   email: string;
@@ -78,8 +85,10 @@ const ForgotPassword: React.FC = () => {
     <Container>
       <Content>
         <AnimationContainer>
-          <img src={logoImg} alt="GoBarber" />
-
+          <LogoContainer>
+            <img src={weplanLogo} alt="WePlan - Party" />
+            <h1>WePlan</h1>
+          </LogoContainer>
           <Form ref={formRef} onSubmit={handleSubmit}>
             <h1>Recuperar senha</h1>
 
