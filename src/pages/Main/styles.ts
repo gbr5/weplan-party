@@ -1,7 +1,7 @@
 import styled, { keyframes } from 'styled-components';
 import '../../styles/global';
 
-import backImage from '../../assets/mainPageImage.jpeg';
+import backImage from '../../assets/lotus_flower-by-Daniel_Holtzhouse.jpeg';
 
 const appearFromLeft = keyframes`
   from {
@@ -44,7 +44,7 @@ export const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 20%;
+  gap: 10%;
 
   padding: 32px;
 
@@ -55,6 +55,8 @@ export const Container = styled.div`
     background: rgba(0, 0, 0, 0.8);
     height: 160px;
     width: 100%;
+
+    gap: 32px;
 
     border-radius: 8px;
 
@@ -167,6 +169,18 @@ export const AnimationContainer = styled.div`
       }
     }
   }
+
+  @media (max-width: 1200px) {
+    div {
+      flex-direction: column;
+      gap: 24px;
+
+      div {
+        height: 64px;
+        width: 400px;
+      }
+    }
+  }
 `;
 
 export const Slogan = styled.div`
@@ -176,6 +190,7 @@ export const Slogan = styled.div`
   background: rgba(0, 0, 0, 0.8);
   height: 100px;
   width: 600px;
+  margin-bottom: 32px;
 
   border-radius: 8px;
 
