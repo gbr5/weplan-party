@@ -1,4 +1,10 @@
-import React, { MouseEventHandler, useCallback, useRef, useState } from 'react';
+import React, {
+  MouseEventHandler,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import * as Yup from 'yup';
 import { FormHandles } from '@unform/core';
 import { FiCheckSquare, FiEdit3, FiSquare, FiUser } from 'react-icons/fi';
@@ -23,6 +29,8 @@ import IFriendDTO from '../../dtos/IFriendDTO';
 import IEventGuestDTO from '../../dtos/IEventGuestDTO';
 import AddGuestWindow from '../AddGuestWindow ';
 import EditGuestWindow from '../EditGuestWindow';
+import EventInvitationWindow from '../EventInvitationWindow';
+import IWeplanGuestDTO from '../../dtos/IWeplanGuestDTO';
 
 interface ICreateGuest {
   first_name: string;
@@ -69,6 +77,7 @@ const EventGuestSection: React.FC<IProps> = ({
   const [selectedFriend, setSelectedFriend] = useState<IFriendDTO>(
     {} as IFriendDTO,
   );
+  const [wpGuestInvitationWindow, setWpGuestInvitationWindow] = useState(false);
   const [wpGuestQuestionWindow, setWpGuestQuestionWindow] = useState(false);
   const [editGuestWindow, setEditGuestWindow] = useState(false);
   const [guestWindow, setGuestWindow] = useState(true);
@@ -184,8 +193,32 @@ const EventGuestSection: React.FC<IProps> = ({
   let myGuestCount = 0;
   const notHostMessage = 'Você não é o anfitrião deste convidado!';
 
+  const wpGuests = useMemo(() => {
+    const wpguests: IWeplanGuestDTO[] = [];
+    if (isOwner) {
+      eventGuests.map(guest => {
+        guest.weplanGuest !== null && wpguests.push(guest.weplanGuest);
+        return guest;
+      });
+      return wpguests;
+    }
+    myGuests.map(guest => {
+      guest.weplanGuest !== null && wpguests.push(guest.weplanGuest);
+      return guest;
+    });
+    return wpguests;
+  }, [eventGuests, myGuests, isOwner]);
+
   return (
     <>
+      {wpGuestInvitationWindow && (
+        <EventInvitationWindow
+          handleCloseWindow={() => setWpGuestInvitationWindow(false)}
+          handleGetGuests={handleGetGuests}
+          onHandleCloseWindow={() => setWpGuestInvitationWindow(false)}
+          wpGuests={wpGuests}
+        />
+      )}
       {!!friendsWindow && (
         <FriendsListWindow
           selectedFriend={selectedFriend}
@@ -246,7 +279,10 @@ const EventGuestSection: React.FC<IProps> = ({
       )}
       <Container>
         <span>
-          <GuestAllocationButton type="button">
+          <GuestAllocationButton
+            onClick={() => setWpGuestInvitationWindow(true)}
+            type="button"
+          >
             Convidar WP Users
           </GuestAllocationButton>
           {isOwner && (
