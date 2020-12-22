@@ -31,8 +31,8 @@ const AuthContext = createContext<IAuthContextData>({} as IAuthContextData);
 
 const AuthProvider: React.FC = ({ children }) => {
   const [data, setData] = useState<IAuthState>(() => {
-    const token = localStorage.getItem('@GoBarber:token');
-    const user = localStorage.getItem('@GoBarber:user');
+    const token = localStorage.getItem('@WePlan-Party:token');
+    const user = localStorage.getItem('@WePlan-Party:user');
 
     if (token && user) {
       api.defaults.headers.authorization = `Bearer ${token}`;
@@ -44,8 +44,8 @@ const AuthProvider: React.FC = ({ children }) => {
   });
 
   const signOut = useCallback(() => {
-    localStorage.removeItem('@GoBarber:token');
-    localStorage.removeItem('@GoBarber:user');
+    localStorage.removeItem('@WePlan-Party:token');
+    localStorage.removeItem('@WePlan-Party:user');
 
     setData({} as IAuthState);
   }, []);
@@ -58,8 +58,8 @@ const AuthProvider: React.FC = ({ children }) => {
 
     const { token, user } = response.data;
 
-    localStorage.setItem('@GoBarber:token', token);
-    localStorage.setItem('@GoBarber:user', JSON.stringify(user));
+    localStorage.setItem('@WePlan-Party:token', token);
+    localStorage.setItem('@WePlan-Party:user', JSON.stringify(user));
 
     api.defaults.headers.authorization = `Bearer ${token}`;
 
@@ -68,7 +68,7 @@ const AuthProvider: React.FC = ({ children }) => {
 
   const updateUser = useCallback(
     (updatedUser: IUser) => {
-      localStorage.setItem('@GoBarber:user', JSON.stringify(updatedUser));
+      localStorage.setItem('@WePlan-Party:user', JSON.stringify(updatedUser));
 
       setData({
         token: data.token,

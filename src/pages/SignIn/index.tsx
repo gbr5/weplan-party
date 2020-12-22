@@ -13,7 +13,15 @@ import getValidationErrors from '../../utils/getValidationErros';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 
-import { Container, Content, AnimationContainer, Background } from './styles';
+import weplanLogo from '../../assets/WePlanLogo.svg';
+
+import {
+  Container,
+  LogoContainer,
+  Content,
+  AnimationContainer,
+  Background,
+} from './styles';
 
 interface SignInFormData {
   email: string;
@@ -76,8 +84,10 @@ const SignIn: React.FC = () => {
     <Container>
       <Content>
         <AnimationContainer>
-          <h1>WePlan</h1>
-
+          <LogoContainer>
+            <img src={weplanLogo} alt="WePlan - Party" />
+            <h1>WePlan</h1>
+          </LogoContainer>
           <Form ref={formRef} onSubmit={handleSubmit}>
             <h1>Faça seu login</h1>
 
@@ -108,4 +118,5 @@ const SignIn: React.FC = () => {
     </Container>
   );
 };
+
 export default SignIn;

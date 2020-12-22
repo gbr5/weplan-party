@@ -245,14 +245,19 @@ const EventGuestSection: React.FC<IProps> = ({
         />
       )}
       <Container>
-        {isOwner && (
-          <GuestAllocationButton
-            type="button"
-            onClick={handleGuestAllocationWindow}
-          >
-            Editar Alocação de Convidados
+        <span>
+          <GuestAllocationButton type="button">
+            Convidar WP Users
           </GuestAllocationButton>
-        )}
+          {isOwner && (
+            <GuestAllocationButton
+              type="button"
+              onClick={handleGuestAllocationWindow}
+            >
+              Editar Alocação de Convidados
+            </GuestAllocationButton>
+          )}
+        </span>
         <span>
           <BooleanNavigationButton
             booleanActiveButton={guestWindow}

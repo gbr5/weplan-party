@@ -4,6 +4,7 @@ import { FiLogIn } from 'react-icons/fi';
 
 import door from '../../assets/door.svg';
 import logo from '../../assets/weplan.svg';
+import logoSVG from '../../assets/WePlanLogo.svg';
 
 import { Container, Content, AnimationContainer, Slogan } from './styles';
 
@@ -11,7 +12,8 @@ const Main: React.FC = () => {
   return (
     <Container>
       <span>
-        <img src={logo} alt="" />
+        <img src={logoSVG} alt="WePlan - Party" />
+        <img src={logo} alt="WePlan - Party" />
       </span>
       <Content>
         <AnimationContainer>

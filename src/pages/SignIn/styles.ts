@@ -2,7 +2,7 @@ import styled, { keyframes } from 'styled-components';
 import { shade } from 'polished';
 import '../../styles/global';
 
-import signInBackgroundImg from '../../assets/signInImage1.jpg';
+import signInBackgroundImg from '../../assets/lotus_flower-by-Daniel_Holtzhouse.jpeg';
 
 export const Container = styled.div`
   height: 100vh;
@@ -30,6 +30,20 @@ const appearFromLeft = keyframes`
   to {
     opacity: 1;
     transform: translateX(0);
+  }
+`;
+
+export const LogoContainer = styled.div`
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 32px;
+
+  img {
+    height: 64px;
   }
 `;
 
@@ -64,9 +78,16 @@ export const AnimationContainer = styled.div`
       margin-top: 24px;
       text-decoration: none;
       transition: color 0.15s;
+      border-radius: 4px;
+
+      background: rgba(255, 105, 1, 0.4);
+      box-shadow: var(--window-box-shadow);
 
       &:hover {
-        color: ${shade(0.2, '#f4ede8')};
+        /* color: ${shade(0.2, '#f4ede8')}; */
+        color: var(--title-color);
+        background: rgba(10, 10, 10, 0.4);
+        box-shadow: var(--box-shadow);
       }
     }
   }
@@ -94,6 +115,13 @@ export const AnimationContainer = styled.div`
 `;
 
 export const Background = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  margin: auto;
+  z-index: -1;
   flex: 1;
   background: url(${signInBackgroundImg}) no-repeat center;
   background-size: cover;

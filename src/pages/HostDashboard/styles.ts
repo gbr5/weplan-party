@@ -20,10 +20,23 @@ export const MiddlePage = styled.div`
 `;
 
 export const BottomPage = styled.div`
+  width: 100%;
   display: grid;
   grid-template-columns: 2fr 2fr;
   gap: 32px;
   height: 250px;
+
+  @media (max-width: 1200px) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    height: 250px;
+
+    margin-top: 160px;
+    margin-bottom: 32px;
+  }
 `;
 
 export const BottomSection = styled.div`
@@ -34,6 +47,7 @@ export const BottomSection = styled.div`
   flex: 1;
   align-items: center;
   height: 250px;
+  width: 100%;
 
   > div {
     border-bottom: 1px solid var(--letter-color-4);

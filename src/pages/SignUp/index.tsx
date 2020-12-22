@@ -14,12 +14,15 @@ import getValidationErrors from '../../utils/getValidationErros';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 
+import weplanLogo from '../../assets/WePlanLogo.svg';
+
 import {
   Container,
   Content,
   AnimationContainer,
   Background,
   QuestionTitle,
+  LogoContainer,
 } from './styles';
 
 interface SignUpForm {
@@ -180,10 +183,13 @@ const SignUp: React.FC = () => {
 
   return (
     <Container>
-      <Background />
       <Content>
         <AnimationContainer>
-          <h1>WePlan</h1>
+          <LogoContainer>
+            <img src={weplanLogo} alt="WePlan - Party" />
+            <h1>WePlan</h1>
+          </LogoContainer>
+
           {!!options && (
             <Form ref={formRef} onSubmit={handleSubmit}>
               <QuestionTitle>Faça seu cadastro</QuestionTitle>
@@ -248,6 +254,7 @@ const SignUp: React.FC = () => {
           </Link>
         </AnimationContainer>
       </Content>
+      <Background />
     </Container>
   );
 };
