@@ -63,6 +63,11 @@ export const Header = styled.div`
     }
   }
 `;
+
+export const SideMenu = styled.div`
+  display: flex;
+`;
+
 export const Body = styled.div`
   width: 100%;
   display: grid;
@@ -174,71 +179,29 @@ interface IBooleanProps {
   isActive: boolean;
 }
 
-export const InfoInputContainer = styled.div<IBooleanProps>`
-  margin: 8px auto;
-  display: grid;
-  grid-template-rows: 1fr 4fr;
+export const CategoryButton = styled.button<IBooleanProps>`
+  background: var(--secondary-color);
+  border: none;
+  margin: auto;
+  gap: 5px;
   width: 100%;
-  height: 88px;
-  gap: 8px;
+  height: 100%;
+  border-radius: 8px;
+  color: var(--letter-color-2);
+  transition: 0.5s;
+  box-shadow: var(--window-box-shadow);
 
-  button {
-    background: rgba(0, 0, 0, 0.5);
-    border: none;
-    margin: auto;
-    gap: 5px;
-    width: 100%;
-    height: 100%;
-    border-radius: 8px;
-    color: var(--letter-color-3);
-    transition: 0.5s;
-    box-shadow: var(--window-box-shadow);
-
-    &:hover {
-      box-shadow: var(--box-shadow);
-    }
-
-    img {
-      height: 64px;
-      width: 64px;
-      border-radius: 50%;
-      box-shadow: var(--box-shadow);
-    }
+  &:hover {
+    color: var(--letter-color-5);
+    background: var(--primary-color);
+    box-shadow: var(--box-shadow);
   }
-  p {
-    width: 100%;
-    display: flex;
-    text-align: center;
-    color: var(--title-color);
-    font-size: 16px;
-    font-weight: 500;
-    letter-spacing: 0.8px;
 
-    button {
-      background: transparent;
-      border: none;
-      margin: auto;
-      transition: 0.8s;
-      box-shadow: var(--box-shadow);
-
-      svg {
-        border-bottom: 0.2px solid rgba(0, 0, 0, 0.5);
-        box-shadow: var(--window-box-shadow);
-        border-radius: 16px;
-        transition: 0.8s;
-      }
-      &:hover {
-        color: var(--red-color);
-        width: 100%;
-        box-shadow: var(--window-box-shadow);
-
-        svg {
-          margin: auto 8%;
-          border-bottom: 0.5px solid var(--title-color);
-          box-shadow: var(--box-shadow);
-        }
-      }
-    }
+  img {
+    height: 64px;
+    width: 64px;
+    border-radius: 50%;
+    box-shadow: var(--box-shadow);
   }
 
   ${props =>
@@ -257,6 +220,7 @@ export const InfoInputContainer = styled.div<IBooleanProps>`
       &:hover {
         box-shadow: var(--window-box-shadow);
         background: rgba(0, 0, 0, 0.4);
+        color: var(--letter-color-2);
       }
     `}
 `;
