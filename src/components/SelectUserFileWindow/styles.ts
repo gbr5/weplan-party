@@ -53,7 +53,7 @@ export const Header = styled.div`
     color: var(--title-color);
   }
   p {
-    color: var(--letter-color-2);
+    color: var(--letter-color-5);
     font-size: 16px;
 
     strong {
@@ -137,7 +137,7 @@ export const FileButton = styled.button<IButtonProps>`
   width: 100%;
   height: 100%;
   border-radius: 8px;
-  color: var(--letter-color-2);
+  color: var(--letter-color-5);
   transition: 0.5s;
   box-shadow: var(--window-box-shadow);
 
@@ -170,7 +170,7 @@ export const FileButton = styled.button<IButtonProps>`
       &:hover {
         box-shadow: var(--window-box-shadow);
         background: rgba(0, 0, 0, 0.4);
-        color: var(--letter-color-2);
+        color: var(--letter-color-5);
       }
     `}
 `;
@@ -187,7 +187,7 @@ export const CategoryButton = styled.button<IBooleanProps>`
   width: 100%;
   height: 100%;
   border-radius: 8px;
-  color: var(--letter-color-2);
+  color: var(--letter-color-5);
   transition: 0.5s;
   box-shadow: var(--window-box-shadow);
 
@@ -220,7 +220,7 @@ export const CategoryButton = styled.button<IBooleanProps>`
       &:hover {
         box-shadow: var(--window-box-shadow);
         background: rgba(0, 0, 0, 0.4);
-        color: var(--letter-color-2);
+        color: var(--letter-color-5);
       }
     `}
 `;
