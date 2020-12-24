@@ -115,12 +115,12 @@ const EventInvitationWindow: React.FC<IProps> = ({
       try {
         Promise.all(
           selectedWPGuests.map(guest => {
-            return api.post('user/confirmations', {
+            return api.post('event/invitations', {
               sender_id: user.id,
               receiver_id: guest.id,
               title: data.title,
               message: data.message,
-              isConfirmed: false,
+              files: userFiles,
             });
           }),
         );
@@ -141,7 +141,14 @@ const EventInvitationWindow: React.FC<IProps> = ({
         throw new Error(err);
       }
     },
-    [addToast, handleCloseWindow, handleGetGuests, user, selectedWPGuests],
+    [
+      addToast,
+      handleCloseWindow,
+      handleGetGuests,
+      userFiles,
+      user,
+      selectedWPGuests,
+    ],
   );
 
   return (
