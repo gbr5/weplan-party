@@ -61,7 +61,6 @@ const EventInvitationWindow: React.FC<IProps> = ({
 
   const handleNewSelectedFile = useCallback(
     (props: IUserFileDTO) => {
-      console.log(props);
       const updatedSelectedFiles: IUserFileDTO[] = [];
       if (userFiles.length > 0) {
         const fileAlreadySelected = userFiles.map(file => {
@@ -72,13 +71,10 @@ const EventInvitationWindow: React.FC<IProps> = ({
           return undefined;
         });
 
-        console.log(updatedSelectedFiles);
         if (!fileAlreadySelected) {
           updatedSelectedFiles.push(props);
           setUserFiles(updatedSelectedFiles);
-          console.log('to aqui dentro');
         }
-        console.log(updatedSelectedFiles);
       } else {
         updatedSelectedFiles.push(props);
         setUserFiles(updatedSelectedFiles);

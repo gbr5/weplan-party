@@ -100,6 +100,7 @@ const SelectUserFileWindow: React.FC<IProps> = ({
     >
       <Container>
         <SideMenu>
+          <h2>Categoria</h2>
           {userFileCategories.map(category => {
             return (
               <CategoryButton
@@ -115,29 +116,34 @@ const SelectUserFileWindow: React.FC<IProps> = ({
           })}
         </SideMenu>
         <Section>
-          {selectedUserFileCategory &&
-            selectedUserFileCategory.categoryFiles &&
-            selectedUserFileCategory.categoryFiles.map(categoryFile => {
-              const { file } = categoryFile;
+          <h2>Arquivos por Categoria</h2>
+          <h3>{selectedUserFileCategory && selectedUserFileCategory.name}</h3>
+          <div>
+            {selectedUserFileCategory &&
+              selectedUserFileCategory.categoryFiles &&
+              selectedUserFileCategory.categoryFiles.map(categoryFile => {
+                const { file } = categoryFile;
 
-              return (
-                <FileButton
-                  isActive={selectedUserFile.id === file.id}
-                  onClick={() => setSelectedUserFile(file)}
-                  type="button"
-                  key={file.id}
-                >
-                  <strong>{file.file_name}</strong>
-                  <p>{file.description}</p>
-                </FileButton>
-              );
-            })}
+                return (
+                  <FileButton
+                    isActive={selectedUserFile.id === file.id}
+                    onClick={() => setSelectedUserFile(file)}
+                    type="button"
+                    key={file.id}
+                  >
+                    <strong>Nome: {file.file_name}</strong>
+                    <p>Descrição: {file.description}</p>
+                  </FileButton>
+                );
+              })}
+          </div>
+
+          {selectedUserFile && selectedUserFile.id && (
+            <button type="button" onClick={handleSelectUserFile}>
+              Selecionar
+            </button>
+          )}
         </Section>
-        {selectedUserFile && selectedUserFile.id && (
-          <button type="button" onClick={handleSelectUserFile}>
-            Selecionar
-          </button>
-        )}
       </Container>
     </WindowUnFormattedContainer>
   );
