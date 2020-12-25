@@ -1,13 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import 'react-day-picker/lib/style.css';
 
-import {
-  FiCheckSquare,
-  FiChevronRight,
-  FiSettings,
-  FiSquare,
-  FiStar,
-} from 'react-icons/fi';
+import { FiChevronRight, FiSettings, FiStar } from 'react-icons/fi';
 import { useHistory } from 'react-router-dom';
 import {
   Container,
@@ -33,6 +27,8 @@ import IShowEventDTO from '../../dtos/IShowEventDTO';
 import MyNextEventSection from '../../components/EventComponents/MyNextEventSection';
 import IPersonInfoDTO from '../../dtos/IPersonInfoDTO';
 import CreatePersonInfoWindowForm from '../../components/CreatePersonInfoWindowForm';
+import FriendsEventsSection from '../../components/MainDashboardBottomSection/FriendsEventsSection';
+import GuestToUserMessageWindow from '../../components/GuestToUserMessageWindow';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
@@ -40,9 +36,15 @@ const Dashboard: React.FC = () => {
   const history = useHistory();
 
   const [createPersonInfoWindow, setCreatePersonInfoWindow] = useState(false);
+  const [guestToUserMessageWindow, setGuestToUserMessageWindow] = useState(
+    false,
+  );
 
   const [eventsAsOwner, setEventsAsOwner] = useState<IEventOwnerDTO[]>([]);
   const [eventsAsMember, setEventsAsMember] = useState<IEventMemberDTO[]>([]);
+  const [selectedEventAsGuest, setSelectedEventAsGuest] = useState(
+    {} as IEventGuestDTO,
+  );
   const [eventsAsGuest, setEventsAsGuest] = useState<IEventGuestDTO[]>([]);
   const [personInfo, setPersonInfo] = useState<IPersonInfoDTO>(
     {} as IPersonInfoDTO,
@@ -129,6 +131,11 @@ const Dashboard: React.FC = () => {
     [history],
   );
 
+  const handleSelectedEventAsGuest = useCallback((props: IEventGuestDTO) => {
+    setSelectedEventAsGuest(props);
+    setGuestToUserMessageWindow(true);
+  }, []);
+
   const getEventsAsOwner = useCallback(() => {
     try {
       api.get<IEventOwnerDTO[]>('list/events/user-as-owner/').then(response => {
@@ -214,29 +221,6 @@ const Dashboard: React.FC = () => {
     setEventOwner(props);
   }, []);
 
-  const handleEditConfirmedGuest = useCallback(
-    async (props: IEventGuestDTO) => {
-      try {
-        await api.put(`events/weplan-user-guest/${props.id}`);
-
-        addToast({
-          type: 'success',
-          title: 'Convidado editado com sucesso',
-          description: 'As mudanças já foram atualizadas no seu evento.',
-        });
-        getEventsAsGuest();
-      } catch (err) {
-        addToast({
-          type: 'error',
-          title: 'Erro ao editar convidado',
-          description: 'Erro ao editar o convidado, tente novamente.',
-        });
-        throw new Error(err);
-      }
-    },
-    [addToast, getEventsAsGuest],
-  );
-
   return (
     <Container>
       <PageHeader />
@@ -244,6 +228,14 @@ const Dashboard: React.FC = () => {
         <CreatePersonInfoWindowForm
           getPersonInfo={getPersonInfo}
           handleCloseWindow={closeCreatePersonInfoWindow}
+        />
+      )}
+      {guestToUserMessageWindow && (
+        <GuestToUserMessageWindow
+          getEventsAsGuest={getEventsAsGuest}
+          handleCloseWindow={() => setGuestToUserMessageWindow(false)}
+          eventGuest={selectedEventAsGuest}
+          onHandleCloseWindow={() => setGuestToUserMessageWindow(false)}
         />
       )}
       {!!deleteEventWindow && (
@@ -399,35 +391,13 @@ const Dashboard: React.FC = () => {
               <ul>
                 {eventsAsGuest.map(event => (
                   <li key={event.id}>
-                    <button type="button">
-                      <h3>{event.weplanGuest.event.name}</h3>
-                    </button>
-                    <div>
-                      <span>
-                        {formatStringToDate(
-                          String(event.weplanGuest.event.date),
-                        )}
-                      </span>
-                      <span>
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteGuestEventWindow(event.id)}
-                        >
-                          <FiSettings size={20} />
-                        </button>
-                      </span>
-                      <p>Confirmado: </p>
-                      <button
-                        type="button"
-                        onClick={() => handleEditConfirmedGuest(event)}
-                      >
-                        {event.confirmed ? (
-                          <FiCheckSquare size={24} />
-                        ) : (
-                          <FiSquare size={24} />
-                        )}
-                      </button>
-                    </div>
+                    <FriendsEventsSection
+                      selectEventGuest={(e: IEventGuestDTO) =>
+                        handleSelectedEventAsGuest(e)
+                      }
+                      deleteEvent={handleDeleteGuestEventWindow}
+                      eventAsGuest={event}
+                    />
                   </li>
                 ))}
               </ul>
