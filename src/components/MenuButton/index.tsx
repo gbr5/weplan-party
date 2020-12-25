@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useRef } from 'react';
 
-import { MdClose, MdMenu } from 'react-icons/md';
+import { MdAttachFile, MdClose, MdMenu } from 'react-icons/md';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 import { Form } from '@unform/web';
@@ -24,6 +24,7 @@ import {
 import WindowContainer from '../WindowContainer';
 import MainFriendsWindow from '../MainFriendsWindow';
 import ICreateEventInfoDTO from '../../dtos/ICreateEventInfoDTO';
+import UploadFileWindow from '../UploadFileWindow';
 
 interface IEvent {
   id: string;
@@ -36,6 +37,7 @@ const MenuButton: React.FC = () => {
   const [friendsWindow, setFriendsWindow] = useState(false);
   const [createEventDrawer, setCreateEventDrawer] = useState(false);
   const [eventTypeDrawer, setEventTypeDrawer] = useState(false);
+  const [uploadFileWindow, setUploadFileWindow] = useState(false);
   const newDate = new Date();
   const [selectedDate, setSelectedDate] = useState(`${newDate}`);
   const [eventType, setEventType] = useState<string>();
@@ -223,17 +225,17 @@ const MenuButton: React.FC = () => {
           }}
         >
           <ButtonContent>
-            <Menu>
-              <button type="button" onClick={handleCreateEventDrawer}>
-                Criar Evento
-              </button>
-              {/* <button type="button" onClick={handleNavigateToFriends}>
-                Fotos
-              </button> */}
-              <button type="button" onClick={handleNavigateToFriends}>
-                Contatos
-              </button>
-              {/* {user.isSupplier && (
+            <button type="button" onClick={handleCreateEventDrawer}>
+              Criar Evento
+            </button>
+            <button type="button" onClick={() => setUploadFileWindow(true)}>
+              <MdAttachFile />
+              Arquivos
+            </button>
+            <button type="button" onClick={handleNavigateToFriends}>
+              Contatos
+            </button>
+            {/* {user.isSupplier && (
                 <button
                   type="button"
                   onClick={handleNavigateToSupplierDashboard}
@@ -241,7 +243,6 @@ const MenuButton: React.FC = () => {
                   Página de fornecedor
                 </button>
               )} */}
-            </Menu>
           </ButtonContent>
         </WindowContainer>
       )}
@@ -406,6 +407,12 @@ const MenuButton: React.FC = () => {
             </button>
           </EventInfoDrawer>
         </Form>
+      )}
+      {uploadFileWindow && (
+        <UploadFileWindow
+          handleCloseWindow={() => setUploadFileWindow(false)}
+          onHandleCloseWindow={() => setUploadFileWindow(false)}
+        />
       )}
     </>
   );
