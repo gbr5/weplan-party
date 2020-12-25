@@ -1,4 +1,5 @@
 import IEventDTO from './IEventDTO';
+import IUserConfirmationDTO from './IUserConfirmationDTO';
 import IUserDTO from './IUserDTO';
 
 export default interface IWeplanGuestDTO {
@@ -9,4 +10,5 @@ export default interface IWeplanGuestDTO {
   number_of_guests: number;
   event: IEventDTO;
   weplanUserGuest: IUserDTO;
+  userConfirmations: IUserConfirmationDTO[];
 }

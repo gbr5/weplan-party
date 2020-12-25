@@ -175,14 +175,15 @@ export const BottomSection = styled.div`
           border: none;
           transition: 0.25s;
           border-radius: 1%;
-
+          width: 100%;
+          /*
           &:hover {
             padding: 0 4px;
             width: 32px;
             color: var(--title-color);
             border-radius: 50%;
             background: rgba(0, 0, 0, 0.5);
-          }
+          } */
         }
 
         span {
