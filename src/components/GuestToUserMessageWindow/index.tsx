@@ -1,13 +1,14 @@
 import React, { memo, MouseEventHandler, useCallback, useMemo } from 'react';
 import { FiCheckSquare, FiSquare } from 'react-icons/fi';
 
+import { MdAttachFile } from 'react-icons/md';
 import IEventGuestDTO from '../../dtos/IEventGuestDTO';
 import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
 import WindowUnFormattedContainer from '../WindowUnFormattedContainer';
 import placeholder from '../../assets/WePlanLogo.svg';
 
-import { Container, SideMenu, Body, Message } from './styles';
+import { Container, SideMenu, Body, Message, DialogBox } from './styles';
 import formatStringToDate from '../../utils/formatDateToString';
 
 interface IPropsDTO {
@@ -47,12 +48,9 @@ const GuestToUserMessageWindow: React.FC<IPropsDTO> = ({
   }, [addToast, getEventsAsGuest, handleCloseWindow, eventGuest]);
 
   const avatar = useMemo(() => {
-    const xAvatar =
-      eventGuest.weplanGuest &&
-      eventGuest.weplanGuest.weplanUserGuest &&
-      eventGuest.weplanGuest.weplanUserGuest.avatar_url
-        ? eventGuest.weplanGuest.weplanUserGuest.avatar_url
-        : placeholder;
+    const xAvatar = eventGuest.host.avatar_url
+      ? eventGuest.host.avatar_url
+      : placeholder;
     return xAvatar;
   }, [eventGuest]);
 
@@ -61,10 +59,10 @@ const GuestToUserMessageWindow: React.FC<IPropsDTO> = ({
       onHandleCloseWindow={onHandleCloseWindow}
       containerStyle={{
         zIndex: 15,
-        top: '5%',
-        left: '5%',
-        height: '90%',
-        width: '90%',
+        top: '2%',
+        left: '2%',
+        height: '96%',
+        width: '96%',
       }}
     >
       <Container>
@@ -129,6 +127,7 @@ const GuestToUserMessageWindow: React.FC<IPropsDTO> = ({
                       return (
                         <a target="blank" href={file.file.file_url}>
                           {file.file.file_name}
+                          <MdAttachFile />
                         </a>
                       );
                     })}
@@ -139,6 +138,11 @@ const GuestToUserMessageWindow: React.FC<IPropsDTO> = ({
           })}
         </Body>
       </Container>
+      <DialogBox>
+        <h3>Mensagem:</h3>
+        <input type="text" />
+        <button type="button">Enviar</button>
+      </DialogBox>
     </WindowUnFormattedContainer>
   );
 };

@@ -1,11 +1,12 @@
 import styled, { css } from 'styled-components';
+import '../../styles/global';
 
 export const Container = styled.div`
   width: 100%;
   height: 100%;
 
   display: grid;
-  grid-template-columns: 1fr 4fr;
+  grid-template-columns: 1fr 3fr;
   justify-content: flex-end;
   align-items: center;
   gap: 32px;
@@ -48,16 +49,60 @@ export const SideMenu = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 5rem;
     background: transparent;
     border: none;
     border-radius: 8px;
     transition: 0.3s;
     box-shadow: var(--box-shadow);
+    padding: 4px;
+    gap: 4px;
+    background: rgba(250, 200, 4, 0.4);
 
     &:hover {
       box-shadow: var(--box-shadow-hover);
-      background-color: rgba(255, 125, 25, 0.2);
+      background-color: rgba(255, 125, 5, 0.6);
+    }
+  }
+`;
+
+export const DialogBox = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--letter-color-2);
+  padding: 16px;
+  align-items: flex-start;
+  justify-content: start;
+  border-radius: 8px;
+
+  h3 {
+    width: 100%;
+    font-size: 16px;
+    color: var(--letter-color-5);
+  }
+
+  input {
+    width: 100%;
+    height: 40px;
+    padding: 4px;
+    border-radius: 4px;
+    color: var(--letter-color-5);
+  }
+  button {
+    height: 40px;
+    background: var(--secondary-color);
+    color: var(--primary-color);
+    width: 100%;
+    border: none;
+    box-shadow: var(--window-box-shadow);
+    border-radius: 4px;
+    transition: 0.3s;
+
+    &:hover {
+      background: var(--primary-color);
+      box-shadow: var(--box-shadow);
+      color: var(--secondary-color);
     }
   }
 `;
@@ -67,16 +112,16 @@ export const Body = styled.div`
   height: 100%;
   display: block;
   gap: 16px;
-  margin-right: auto;
   background: var(--letter-color-2);
   padding: 16px;
   align-items: flex-start;
   justify-content: start;
   border-radius: 8px;
+  overflow-y: scroll;
 
   > h2 {
     text-align: left;
-    width: 200px;
+    width: 100%;
     font-size: 16px;
     color: var(--letter-color-4);
   }
@@ -87,7 +132,7 @@ interface IMessageProps {
 }
 
 export const Message = styled.div<IMessageProps>`
-  margin: auto 40px auto 0;
+  margin-right: 40px;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -144,10 +189,28 @@ export const Message = styled.div<IMessageProps>`
     }
   }
 
+  a {
+    padding: 4px;
+    background: rgba(56, 56, 56, 0.5);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: var(--title-color);
+    transition: 0.3s;
+    box-shadow: var(--window-box-shadow);
+
+    &:hover {
+      background: var(--primary-color);
+      color: var(--secondary-color);
+      box-shadow: var(--box-shadow);
+    }
+  }
   ${props =>
     props.isUser &&
     css`
-      margin: auto 0 auto 40px;
+      margin-left: 40px;
       background: rgba(255, 95, 50, 0.9);
     `}
 `;
