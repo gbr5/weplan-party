@@ -1,4 +1,10 @@
-import React, { memo, MouseEventHandler, useCallback, useMemo } from 'react';
+import React, {
+  memo,
+  MouseEventHandler,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
 import { FiCheckSquare, FiSquare } from 'react-icons/fi';
 
 import { MdAttachFile } from 'react-icons/md';
@@ -15,16 +21,17 @@ interface IPropsDTO {
   eventGuest: IEventGuestDTO;
   onHandleCloseWindow: MouseEventHandler;
   getEventsAsGuest: Function;
-  handleCloseWindow: Function;
 }
 
 const GuestToUserMessageWindow: React.FC<IPropsDTO> = ({
   eventGuest,
   onHandleCloseWindow,
   getEventsAsGuest,
-  handleCloseWindow,
 }: IPropsDTO) => {
   const { addToast } = useToast();
+
+  const [guestTitleMessage, setGuestTitleMessage] = useState('');
+  const [guestMessage, setGuestMessage] = useState('');
 
   const handleEditConfirmedGuest = useCallback(async () => {
     try {
@@ -36,7 +43,6 @@ const GuestToUserMessageWindow: React.FC<IPropsDTO> = ({
         description: 'As mudanças já foram atualizadas no seu evento.',
       });
       getEventsAsGuest();
-      handleCloseWindow();
     } catch (err) {
       addToast({
         type: 'error',
@@ -45,7 +51,32 @@ const GuestToUserMessageWindow: React.FC<IPropsDTO> = ({
       });
       throw new Error(err);
     }
-  }, [addToast, getEventsAsGuest, handleCloseWindow, eventGuest]);
+  }, [addToast, getEventsAsGuest, eventGuest]);
+
+  const sendMessage = useCallback(async () => {
+    try {
+      await api.post('user/confirmations', {
+        sender_id: eventGuest.weplanGuest.id,
+        receiver_id: eventGuest.host_id,
+        title: guestTitleMessage,
+        message: guestMessage,
+        isConfirmed: false,
+      });
+      getEventsAsGuest();
+      addToast({
+        type: 'success',
+        title: 'Mensagem enviada com sucesso.',
+        description: 'O anfitrião já pode visualizar a sua mensagem.',
+      });
+    } catch (err) {
+      addToast({
+        type: 'error',
+        title: 'Erro ao enviar mensagem',
+        description: 'Erro ao mensagem para o anfitrião, tente novamente.',
+      });
+      throw new Error(err);
+    }
+  }, [addToast, getEventsAsGuest, eventGuest, guestMessage, guestTitleMessage]);
 
   const avatar = useMemo(() => {
     const xAvatar = eventGuest.host.avatar_url
@@ -140,8 +171,21 @@ const GuestToUserMessageWindow: React.FC<IPropsDTO> = ({
       </Container>
       <DialogBox>
         <h3>Mensagem:</h3>
-        <input type="text" />
-        <button type="button">Enviar</button>
+        <input
+          type="text"
+          placeholder="Título"
+          onChange={e => setGuestTitleMessage(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Mensagem"
+          onChange={e => setGuestMessage(e.target.value)}
+        />
+        {guestTitleMessage !== '' && guestMessage !== '' && (
+          <button type="button" onClick={sendMessage}>
+            Enviar
+          </button>
+        )}
       </DialogBox>
     </WindowUnFormattedContainer>
   );

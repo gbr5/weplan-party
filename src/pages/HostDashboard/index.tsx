@@ -233,7 +233,6 @@ const Dashboard: React.FC = () => {
       {guestToUserMessageWindow && (
         <GuestToUserMessageWindow
           getEventsAsGuest={getEventsAsGuest}
-          handleCloseWindow={() => setGuestToUserMessageWindow(false)}
           eventGuest={selectedEventAsGuest}
           onHandleCloseWindow={() => setGuestToUserMessageWindow(false)}
         />

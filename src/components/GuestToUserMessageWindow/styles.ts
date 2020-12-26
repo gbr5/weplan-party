@@ -84,13 +84,13 @@ export const DialogBox = styled.div`
 
   input {
     width: 100%;
-    height: 40px;
+    height: 32px;
     padding: 4px;
     border-radius: 4px;
     color: var(--letter-color-5);
   }
   button {
-    height: 40px;
+    height: 32px;
     background: var(--secondary-color);
     color: var(--primary-color);
     width: 100%;
@@ -132,7 +132,7 @@ interface IMessageProps {
 }
 
 export const Message = styled.div<IMessageProps>`
-  margin-right: 40px;
+  margin-right: 32px;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -210,7 +210,7 @@ export const Message = styled.div<IMessageProps>`
   ${props =>
     props.isUser &&
     css`
-      margin-left: 40px;
+      margin-left: 32px;
       background: rgba(255, 95, 50, 0.9);
     `}
 `;
