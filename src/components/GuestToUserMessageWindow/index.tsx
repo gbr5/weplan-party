@@ -2,12 +2,14 @@ import React, {
   memo,
   MouseEventHandler,
   useCallback,
+  useEffect,
   useMemo,
   useState,
 } from 'react';
 import { FiCheckSquare, FiSquare } from 'react-icons/fi';
 
 import { MdAttachFile } from 'react-icons/md';
+import { differenceInHours } from 'date-fns';
 import IEventGuestDTO from '../../dtos/IEventGuestDTO';
 import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
@@ -16,6 +18,12 @@ import placeholder from '../../assets/WePlanLogo.svg';
 
 import { Container, SideMenu, Body, Message, DialogBox } from './styles';
 import formatStringToDate from '../../utils/formatDateToString';
+import IUserConfirmationDTO from '../../dtos/IUserConfirmationDTO';
+
+interface IWPGuestMessagesDTO {
+  wpGuestSentMessages: IUserConfirmationDTO[];
+  wpGuestReceivedMessages: IUserConfirmationDTO[];
+}
 
 interface IPropsDTO {
   eventGuest: IEventGuestDTO;
@@ -32,6 +40,63 @@ const GuestToUserMessageWindow: React.FC<IPropsDTO> = ({
 
   const [guestTitleMessage, setGuestTitleMessage] = useState('');
   const [guestMessage, setGuestMessage] = useState('');
+  const [messages, setMessages] = useState<IUserConfirmationDTO[]>([]);
+  const [updatedEventGuest, setUpdatedEventGuest] = useState(eventGuest);
+
+  const updateEventGuest = useCallback(() => {
+    try {
+      api
+        .get<IEventGuestDTO>(`event-guests/${eventGuest.id}`)
+        .then(response => {
+          setUpdatedEventGuest(response.data);
+        });
+    } catch (err) {
+      throw new Error(err);
+    }
+  }, [eventGuest]);
+
+  const sortByMessagesCreatedAt = useCallback(
+    (a: IUserConfirmationDTO, b: IUserConfirmationDTO) => {
+      if (
+        differenceInHours(new Date(a.created_at), new Date(b.created_at)) > 0
+      ) {
+        return 1;
+      }
+      if (
+        differenceInHours(new Date(a.created_at), new Date(b.created_at)) < 0
+      ) {
+        return -1;
+      }
+      return 0;
+    },
+    [],
+  );
+
+  const getMessages = useCallback(() => {
+    try {
+      api
+        .get<IWPGuestMessagesDTO>(
+          `weplan-guest-messages/${eventGuest.weplanGuest.id}`,
+        )
+        .then(response => {
+          const guestMessages: IUserConfirmationDTO[] = [];
+          response.data.wpGuestSentMessages.map(message =>
+            guestMessages.push(message),
+          );
+          response.data.wpGuestReceivedMessages.map(message =>
+            guestMessages.push(message),
+          );
+          const sortedMessages = guestMessages.sort(sortByMessagesCreatedAt);
+          setMessages(sortedMessages);
+        });
+    } catch (err) {
+      throw new Error(err);
+    }
+  }, [eventGuest, sortByMessagesCreatedAt]);
+
+  useEffect(() => {
+    getMessages();
+  }, [getMessages]);
 
   const handleEditConfirmedGuest = useCallback(async () => {
     try {
@@ -43,6 +108,7 @@ const GuestToUserMessageWindow: React.FC<IPropsDTO> = ({
         description: 'As mudanças já foram atualizadas no seu evento.',
       });
       getEventsAsGuest();
+      updateEventGuest();
     } catch (err) {
       addToast({
         type: 'error',
@@ -51,7 +117,7 @@ const GuestToUserMessageWindow: React.FC<IPropsDTO> = ({
       });
       throw new Error(err);
     }
-  }, [addToast, getEventsAsGuest, eventGuest]);
+  }, [addToast, getEventsAsGuest, updateEventGuest, eventGuest]);
 
   const sendMessage = useCallback(async () => {
     try {
@@ -63,6 +129,8 @@ const GuestToUserMessageWindow: React.FC<IPropsDTO> = ({
         isConfirmed: false,
       });
       getEventsAsGuest();
+      getMessages();
+      updateEventGuest();
       addToast({
         type: 'success',
         title: 'Mensagem enviada com sucesso.',
@@ -76,7 +144,15 @@ const GuestToUserMessageWindow: React.FC<IPropsDTO> = ({
       });
       throw new Error(err);
     }
-  }, [addToast, getEventsAsGuest, eventGuest, guestMessage, guestTitleMessage]);
+  }, [
+    addToast,
+    getMessages,
+    updateEventGuest,
+    getEventsAsGuest,
+    eventGuest,
+    guestMessage,
+    guestTitleMessage,
+  ]);
 
   const avatar = useMemo(() => {
     const xAvatar = eventGuest.host.avatar_url
@@ -99,28 +175,31 @@ const GuestToUserMessageWindow: React.FC<IPropsDTO> = ({
       <Container>
         <SideMenu>
           <img src={avatar} alt="WePlan User Avatar" />
-          <h1>@{eventGuest.host.trimmed_name}</h1>
+          <h1>@{updatedEventGuest.host.trimmed_name}</h1>
           <h2>
-            <strong>Anfitrião:</strong> {eventGuest.host.personInfo.first_name}{' '}
-            {eventGuest.host.personInfo.last_name}
+            <strong>Anfitrião:</strong>{' '}
+            {updatedEventGuest.host.personInfo.first_name}{' '}
+            {updatedEventGuest.host.personInfo.last_name}
           </h2>
           <h2>
-            <strong>Evento:</strong> {eventGuest.weplanGuest.event.name}
+            <strong>Evento:</strong> {updatedEventGuest.weplanGuest.event.name}
           </h2>
           <h2>
             <strong>Data:</strong>{' '}
-            {formatStringToDate(String(eventGuest.weplanGuest.event.date))}
+            {formatStringToDate(
+              String(updatedEventGuest.weplanGuest.event.date),
+            )}
           </h2>
           <h2>
             <strong>Traje:</strong>{' '}
-            {eventGuest.weplanGuest.event.eventInfo &&
-              eventGuest.weplanGuest.event.eventInfo.dress_code &&
-              eventGuest.weplanGuest.event.eventInfo.dress_code}
+            {updatedEventGuest.weplanGuest.event.eventInfo &&
+              updatedEventGuest.weplanGuest.event.eventInfo.dress_code &&
+              updatedEventGuest.weplanGuest.event.eventInfo.dress_code}
           </h2>
           <h2>
             <strong>RSVP:</strong>
             <button type="button" onClick={handleEditConfirmedGuest}>
-              {eventGuest.confirmed ? (
+              {updatedEventGuest.confirmed ? (
                 <>
                   <p>Confirmado</p>
                   <FiCheckSquare />
@@ -135,13 +214,16 @@ const GuestToUserMessageWindow: React.FC<IPropsDTO> = ({
           </h2>
         </SideMenu>
         <Body>
-          {eventGuest.weplanGuest.userConfirmations.map(conversation => {
+          {messages.map(conversation => {
             return (
               <Message
-                isUser={conversation.sender_id === eventGuest.weplanGuest.id}
+                isUser={
+                  conversation.sender_id === updatedEventGuest.weplanGuest.id
+                }
               >
-                {conversation.sender_id !== eventGuest.weplanGuest.id && (
-                  <h1>@{eventGuest.host.trimmed_name}</h1>
+                {conversation.sender_id !==
+                  updatedEventGuest.weplanGuest.id && (
+                  <h1>@{updatedEventGuest.host.trimmed_name}</h1>
                 )}
                 <h3>
                   <strong>Título: </strong>
@@ -151,7 +233,7 @@ const GuestToUserMessageWindow: React.FC<IPropsDTO> = ({
                   <strong>Mensagem: </strong>
                   {conversation.message}
                 </p>
-                {eventGuest.weplanGuest.userConfirmations.length > 0 && (
+                {updatedEventGuest.weplanGuest.userConfirmations.length > 0 && (
                   <div>
                     <h3>Arquivos</h3>
                     {conversation.userConfirmationFiles.map(file => {
