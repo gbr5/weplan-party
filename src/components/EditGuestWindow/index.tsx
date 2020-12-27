@@ -31,6 +31,7 @@ import IEventGuestDTO from '../../dtos/IEventGuestDTO';
 import IContactTypeDTO from '../../dtos/IContactTypeDTO';
 import IFriendDTO from '../../dtos/IFriendDTO';
 import SelectFriendWindow from '../SelectFriendWindow';
+import UserToGuestMessageWindow from '../UserToGuestMessageWindow';
 
 interface IFormDTO extends IEventGuestDTO {
   whatsapp: string;
@@ -97,6 +98,9 @@ const EditGuestWindow: React.FC<IProps> = ({
 
   const [guest, setGuest] = useState(eventGuest);
 
+  const [userToGuestMessageWindow, setUserToGuestMessageWindow] = useState(
+    false,
+  );
   const [selectFriendWindow, setSelectFriendWindow] = useState(false);
   const [guestDefaultWhatsapp, setGuestDefaultWhatsapp] = useState('Whatsapp');
   const [guestDefaultWhatsappId, setGuestDefaultWhatsappId] = useState('');
@@ -365,6 +369,13 @@ const EditGuestWindow: React.FC<IProps> = ({
 
   return (
     <>
+      {userToGuestMessageWindow && (
+        <UserToGuestMessageWindow
+          eventGuest={eventGuest}
+          getEventsAsGuest={handleGetGuests}
+          onHandleCloseWindow={() => setUserToGuestMessageWindow(false)}
+        />
+      )}
       {selectFriendWindow && (
         <SelectFriendWindow
           handleSelectedFriend={addWePlanUserToGuest}
@@ -450,6 +461,14 @@ const EditGuestWindow: React.FC<IProps> = ({
                 )}
               </Section>
               <Section>
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => setUserToGuestMessageWindow(true)}
+                  >
+                    Chat
+                  </button>
+                </div>
                 <h2>Informações de contato</h2>
                 <InfoSection>
                   <InfoInputContainer>
