@@ -31,7 +31,7 @@ interface IPropsDTO {
   getEventsAsGuest: Function;
 }
 
-const GuestToUserMessageWindow: React.FC<IPropsDTO> = ({
+const UserToGuestMessageWindow: React.FC<IPropsDTO> = ({
   eventGuest,
   onHandleCloseWindow,
   getEventsAsGuest,
@@ -122,8 +122,8 @@ const GuestToUserMessageWindow: React.FC<IPropsDTO> = ({
   const sendMessage = useCallback(async () => {
     try {
       await api.post('user/confirmations', {
-        sender_id: eventGuest.weplanGuest.id,
-        receiver_id: eventGuest.host_id,
+        sender_id: eventGuest.host_id,
+        receiver_id: eventGuest.weplanGuest.id,
         title: guestTitleMessage,
         message: guestMessage,
         isConfirmed: false,
@@ -134,13 +134,13 @@ const GuestToUserMessageWindow: React.FC<IPropsDTO> = ({
       addToast({
         type: 'success',
         title: 'Mensagem enviada com sucesso.',
-        description: 'O anfitrião já pode visualizar a sua mensagem.',
+        description: 'O convidado já pode visualizar a sua mensagem.',
       });
     } catch (err) {
       addToast({
         type: 'error',
         title: 'Erro ao enviar mensagem',
-        description: 'Erro ao mensagem para o anfitrião, tente novamente.',
+        description: 'Erro ao mensagem para o convidado, tente novamente.',
       });
       throw new Error(err);
     }
@@ -155,8 +155,8 @@ const GuestToUserMessageWindow: React.FC<IPropsDTO> = ({
   ]);
 
   const avatar = useMemo(() => {
-    const xAvatar = eventGuest.host.avatar_url
-      ? eventGuest.host.avatar_url
+    const xAvatar = eventGuest.weplanGuest.weplanUserGuest.avatar_url
+      ? eventGuest.weplanGuest.weplanUserGuest.avatar_url
       : placeholder;
     return xAvatar;
   }, [eventGuest]);
@@ -175,11 +175,14 @@ const GuestToUserMessageWindow: React.FC<IPropsDTO> = ({
       <Container>
         <SideMenu>
           <img src={avatar} alt="WePlan User Avatar" />
-          <h1>@{updatedEventGuest.host.trimmed_name}</h1>
+          <h1>@{updatedEventGuest.weplanGuest.weplanUserGuest.trimmed_name}</h1>
           <h2>
-            <strong>Anfitrião:</strong>{' '}
-            {updatedEventGuest.host.personInfo.first_name}{' '}
-            {updatedEventGuest.host.personInfo.last_name}
+            <strong>Convidado:</strong>{' '}
+            {
+              updatedEventGuest.weplanGuest.weplanUserGuest.personInfo
+                .first_name
+            }{' '}
+            {updatedEventGuest.weplanGuest.weplanUserGuest.personInfo.last_name}
           </h2>
           <h2>
             <strong>Evento:</strong> {updatedEventGuest.weplanGuest.event.name}
@@ -217,13 +220,13 @@ const GuestToUserMessageWindow: React.FC<IPropsDTO> = ({
           {messages.map(conversation => {
             return (
               <Message
-                isUser={
-                  conversation.sender_id === updatedEventGuest.weplanGuest.id
-                }
+                isUser={conversation.sender_id === updatedEventGuest.host_id}
               >
-                {conversation.sender_id !==
-                  updatedEventGuest.weplanGuest.id && (
-                  <h1>@{updatedEventGuest.host.trimmed_name}</h1>
+                {conversation.sender_id !== updatedEventGuest.host_id && (
+                  <h1>
+                    @
+                    {updatedEventGuest.weplanGuest.weplanUserGuest.trimmed_name}
+                  </h1>
                 )}
                 <h3>
                   <strong>Título: </strong>
@@ -273,4 +276,4 @@ const GuestToUserMessageWindow: React.FC<IPropsDTO> = ({
   );
 };
 
-export default memo(GuestToUserMessageWindow);
+export default memo(UserToGuestMessageWindow);
