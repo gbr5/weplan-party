@@ -3,21 +3,28 @@ import { Link } from 'react-router-dom';
 import { FiLogIn } from 'react-icons/fi';
 
 import door from '../../assets/door.svg';
-import logo from '../../assets/weplan.svg';
-import logoSVG from '../../assets/WePlanLogo.svg';
+import weplanLogo from '../../assets/WePlanLogo.svg';
 
-import { Container, Content, AnimationContainer, Slogan } from './styles';
+import {
+  Container,
+  LogoContainer,
+  Content,
+  AnimationContainer,
+  Background,
+  Slogan,
+  ButtonContainer,
+} from './styles';
 
 const Main: React.FC = () => {
   return (
     <Container>
-      <span>
-        <img src={logoSVG} alt="WePlan - Party" />
-        <img src={logo} alt="WePlan - Party" />
-      </span>
       <Content>
         <AnimationContainer>
-          <div>
+          <LogoContainer>
+            <img src={weplanLogo} alt="WePlan - Party" />
+            <h1>WePlan</h1>
+          </LogoContainer>
+          <ButtonContainer>
             <div>
               <Link to="/signup">
                 <FiLogIn />
@@ -30,15 +37,16 @@ const Main: React.FC = () => {
                 Login
               </Link>
             </div>
-          </div>
+          </ButtonContainer>
         </AnimationContainer>
+        <Slogan>
+          <h1>
+            <strong>Work SMART</strong> & <strong>Party HARD</strong>
+          </h1>
+        </Slogan>
       </Content>
 
-      <Slogan>
-        <h1>
-          Work <strong>SMART</strong> & Party <strong>HARD!</strong>
-        </h1>
-      </Slogan>
+      <Background />
     </Container>
   );
 };
