@@ -82,7 +82,7 @@ const SideMenu: React.FC<IProps> = ({ user }: IProps) => {
         throw new Error(err);
       }
     },
-    [updateUserInfo, user, userNameField, userEmailField],
+    [updateUserInfo, user, userNameField, userEmailField, addToast],
   );
   const avatar = useMemo(() => {
     return user.avatar_url ? user.avatar_url : AvatarPlaceholder;
