@@ -67,7 +67,18 @@ const SideMenu: React.FC<IProps> = ({ user }: IProps) => {
         if (!userNameField && userEmailField) {
           updateUserInfo(user.name, data.email);
         }
+
+        addToast({
+          type: 'success',
+          title: 'Atualização efetuada com sucesso',
+          description: 'As alterações já podem ser visualizadas',
+        });
       } catch (err) {
+        addToast({
+          type: 'error',
+          title: 'Erro ao atualizar informações de usuário.',
+          description: 'Tente novamente.',
+        });
         throw new Error(err);
       }
     },
