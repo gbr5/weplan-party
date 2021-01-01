@@ -8,10 +8,14 @@ export const Header = styled.header`
   z-index: 8;
 
   width: 100%;
-  padding: 16px 0;
+  padding: 4px 0;
 
   background: var(--header-background-color);
   box-shadow: var(--box-shadow);
+
+  @media (max-width: 1000px) {
+    padding: 4px 0;
+  }
 `;
 
 export const HeaderContent = styled.div`

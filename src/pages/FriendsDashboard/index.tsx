@@ -14,8 +14,6 @@ import {
 } from './styles';
 
 import PageHeader from '../../components/PageHeader';
-import MenuButton from '../../components/MenuButton';
-// import UserProfile from '../../components/UserProfile';
 
 const EventHostDashboard: React.FC = () => {
   const [userProfileWindow, setUserProfileWindow] = useState(false);
@@ -26,9 +24,7 @@ const EventHostDashboard: React.FC = () => {
 
   return (
     <Container>
-      <MenuButton />
       <PageHeader />
-      {/* {!!userProfileWindow && <UserProfile />} */}
       <Content>
         <UsersChat>
           <div>

@@ -25,15 +25,20 @@ import WindowContainer from '../WindowContainer';
 import MainFriendsWindow from '../MainFriendsWindow';
 import ICreateEventInfoDTO from '../../dtos/ICreateEventInfoDTO';
 import UploadFileWindow from '../UploadFileWindow';
+import MenuDrawer from './MenuDrawer';
 
+interface IProps {
+  signOut: Function;
+}
 interface IEvent {
   id: string;
   name: string;
   trimmed_name: string;
 }
 
-const MenuButton: React.FC = () => {
+const MenuButton: React.FC<IProps> = ({ signOut }: IProps) => {
   const [buttonDrawer, setButtonDrawer] = useState(false);
+  const [menuDrawer, setMenuDrawer] = useState(false);
   const [friendsWindow, setFriendsWindow] = useState(false);
   const [createEventDrawer, setCreateEventDrawer] = useState(false);
   const [eventTypeDrawer, setEventTypeDrawer] = useState(false);
@@ -51,10 +56,6 @@ const MenuButton: React.FC = () => {
   const { addToast } = useToast();
 
   const [tipoDeEvento, setTipoDeEvento] = useState('Outros');
-
-  const handleButtonDrawer = useCallback(() => {
-    setButtonDrawer(!buttonDrawer);
-  }, [buttonDrawer]);
 
   const handleCreateEventDrawer = useCallback(() => {
     setCreateEventDrawer(!createEventDrawer);
@@ -211,9 +212,18 @@ const MenuButton: React.FC = () => {
 
   return (
     <>
-      <Button type="button" onClick={handleButtonDrawer}>
+      {/* <Button type="button" onClick={handleButtonDrawer}> */}
+      <Button type="button" onClick={() => setMenuDrawer(!menuDrawer)}>
         <MdMenu size={24} />
       </Button>
+      {menuDrawer && (
+        <MenuDrawer
+          handleNavigateToFriends={handleNavigateToFriends}
+          handleCreateEventDrawer={handleCreateEventDrawer}
+          signOut={signOut}
+          handleUploadFileWindow={() => setUploadFileWindow(!uploadFileWindow)}
+        />
+      )}
       {!!buttonDrawer && (
         <WindowContainer
           onHandleCloseWindow={() => setButtonDrawer(false)}

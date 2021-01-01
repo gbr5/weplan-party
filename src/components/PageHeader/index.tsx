@@ -13,8 +13,7 @@ import DayPicker from 'react-day-picker';
 import * as Yup from 'yup';
 
 import { useHistory, Link } from 'react-router-dom';
-import { MdAdd, MdPerson, MdSchedule } from 'react-icons/md';
-import { FiSettings, FiPower } from 'react-icons/fi';
+import { MdAdd, MdPerson } from 'react-icons/md';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import {
@@ -114,20 +113,15 @@ const PageHeader: React.FC = ({ children }) => {
     setSelectedDate(day);
   }, []);
 
-  const handleAppointmentsWindow = useCallback(() => {
-    closeAllWindows();
-    setAppointmentsWindow(true);
-  }, [closeAllWindows]);
+  // const handleAppointmentsWindow = useCallback(() => {
+  //   closeAllWindows();
+  //   setAppointmentsWindow(true);
+  // }, [closeAllWindows]);
 
   const handleProfileWindow = useCallback(() => {
     closeAllWindows();
     setProfileWindow(!profileWindow);
   }, [closeAllWindows, profileWindow]);
-
-  const handleSettingsWindow = useCallback(() => {
-    closeAllWindows();
-    setSettingsWindow(!settingsWindow);
-  }, [closeAllWindows, settingsWindow]);
 
   const handleAppointmentTypeDrawer = useCallback(() => {
     setAppointmentTypeDrawer(!appointmentTypeDrawer);
@@ -363,7 +357,7 @@ const PageHeader: React.FC = ({ children }) => {
       <Header>
         <HeaderContent>
           <h1>
-            <MenuButton />
+            <MenuButton signOut={signOut} />
           </h1>
 
           <button type="button" onClick={handleNavigateToDashboard}>
@@ -377,17 +371,8 @@ const PageHeader: React.FC = ({ children }) => {
           </Profile>
           {children}
           <Menu>
-            <button type="button" onClick={handleAppointmentsWindow}>
-              <MdSchedule size={30} />
-            </button>
             <button type="button" onClick={handleProfileWindow}>
               <MdPerson size={30} />
-            </button>
-            <button type="button" onClick={handleSettingsWindow}>
-              <FiSettings size={30} />
-            </button>
-            <button type="button" onClick={signOut}>
-              <FiPower />
             </button>
           </Menu>
         </HeaderContent>
