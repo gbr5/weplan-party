@@ -75,7 +75,7 @@ export const Section = styled.div`
   @media (max-width: 800px) {
     display: flex;
     flex-direction: column;
-    gap: 2vh;
+    gap: 4vh;
     /* grid-template-rows: repeat(5, 1fr); */
   }
 `;
