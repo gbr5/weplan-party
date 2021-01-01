@@ -100,6 +100,10 @@ export const Container = styled.div`
     height: 100%;
     width: 100%;
     padding-bottom: 32px;
+    @media (max-width: 800px) {
+      display: flex;
+      flex-direction: column;
+    }
   }
 `;
 
