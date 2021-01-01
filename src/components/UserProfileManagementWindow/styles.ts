@@ -7,7 +7,16 @@ export const Container = styled.div`
   justify-content: stretch;
   transition: 0.25s;
   width: 100%;
-  gap: 16px;
+  gap: 2vh;
+
+  @media (max-width: 1000px) {
+    grid-template-columns: 1fr;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    overflow-y: scroll;
+  }
 
   > button {
     margin-top: 8px;

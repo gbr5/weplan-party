@@ -113,11 +113,6 @@ const PageHeader: React.FC = ({ children }) => {
     setSelectedDate(day);
   }, []);
 
-  // const handleAppointmentsWindow = useCallback(() => {
-  //   closeAllWindows();
-  //   setAppointmentsWindow(true);
-  // }, [closeAllWindows]);
-
   const handleProfileWindow = useCallback(() => {
     closeAllWindows();
     setProfileWindow(!profileWindow);
@@ -347,10 +342,6 @@ const PageHeader: React.FC = ({ children }) => {
   }, [handleGetAppointments]);
 
   const imageProfile = user.avatar_url ? user.avatar_url : profileImg;
-
-  const handleCloseProfileWindow = useCallback(() => {
-    setProfileWindow(false);
-  }, []);
 
   return (
     <>
@@ -652,7 +643,6 @@ const PageHeader: React.FC = ({ children }) => {
       )}
       {!!profileWindow && (
         <UserProfileManagementWindow
-          handleCloseWindow={handleCloseProfileWindow}
           onHandleCloseWindow={() => setProfileWindow(false)}
         />
       )}
