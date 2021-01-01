@@ -23,7 +23,7 @@ const appearFromTop = keyframes`
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 4vh;
   padding: 16px;
   background: var(--header-background-color);
   border-radius: 8px;
@@ -110,38 +110,30 @@ export const Container = styled.div`
 export const ListSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4vh;
   height: 100%;
 
   box-sizing: border-box;
   overflow-y: scroll;
   width: 100%;
 
-  > h3 {
-    margin: 8px auto 24px;
-    font-size: 18px;
-    color: var(--title-color);
-    border-bottom: 1px solid var(--primary-color);
-  }
-
-  > div {
-    border-bottom: 1px solid var(--letter-color-4);
-    padding-bottom: 8px;
-  }
-
   > ul {
     border-radius: 8px;
-    display: flex;
-    flex-direction: column;
+    display: block;
+    align-items: stretch;
+    justify-content: center;
     width: 100%;
     height: 100%;
-    gap: 8px;
+    gap: 4vh;
     /* background: var(--card-color); */
     box-shadow: var(--window-box-shadow);
 
     > li {
       display: flex;
       font-size: 16px;
+      height: 40px;
+      align-items: center;
+      justify-content: center;
 
       > strong {
         color: var(--letter-color-4);
@@ -149,17 +141,25 @@ export const ListSection = styled.div`
 
       > span {
         display: flex;
-        gap: 16px;
+        gap: 4vw;
         margin-left: auto;
+        align-items: center;
+        justify-content: center;
 
         > button {
-          width: 40px;
-          height: 40px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 32px;
+          height: 32px;
         }
         div {
           > button {
-            width: 40px;
-            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
           }
         }
       }
@@ -170,7 +170,7 @@ export const ListSection = styled.div`
 export const GroupMenu = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 4vh;
   height: 100%;
   width: 100%;
 

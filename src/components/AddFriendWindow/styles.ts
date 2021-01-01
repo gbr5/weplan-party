@@ -9,6 +9,10 @@ export const Container = styled.div`
   width: 100%;
   padding: 32px;
 
+  @media (max-width: 800px) {
+    padding: 4vw;
+  }
+
   h1 {
     font-size: 24px;
     color: var(--primary-color);

@@ -268,10 +268,10 @@ const MainFriendsWindow: React.FC<IProps> = ({
         <WindowContainer
           onHandleCloseWindow={() => handleAddFriendGroupWindow(false)}
           containerStyle={{
-            top: '25%',
-            left: '30%',
-            height: '50%',
-            width: '40%',
+            top: '0%',
+            left: '0%',
+            height: '100%',
+            width: '100%',
             zIndex: 14,
           }}
         >
@@ -348,7 +348,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
                                   handleAddFriendToGroupWindow(friend.friend.id)
                                 }
                               >
-                                <MdGroupAdd size={32} />
+                                <MdGroupAdd size={24} />
                               </button>
                             </div>
                             <button
@@ -359,7 +359,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
                                 )
                               }
                             >
-                              <FiTrash size={32} />
+                              <FiTrash size={24} />
                             </button>
                           </span>
                         </li>

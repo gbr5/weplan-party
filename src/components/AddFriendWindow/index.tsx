@@ -98,16 +98,19 @@ const AddFriendWindow: React.FC<IPropsDTO> = ({
       <WindowContainer
         onHandleCloseWindow={onHandleCloseWindow}
         containerStyle={{
-          top: '10%',
-          left: '25%',
-          height: '80%',
-          width: '50%',
+          top: '0%',
+          left: '0%',
+          height: '100%',
+          width: '100%',
           zIndex: 15,
         }}
       >
         <Container>
           <h1>Adicionar contato</h1>
-          <input onChange={e => handleGetUsers(e.target.value)} />
+          <input
+            onChange={e => handleGetUsers(e.target.value)}
+            placeholder="Pesquisar"
+          />
           <ul>
             {users.map(thisUser => (
               <li key={thisUser.id}>
