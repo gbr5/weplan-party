@@ -14,7 +14,7 @@ export const Content = styled.main`
 `;
 
 export const MiddlePage = styled.div`
-  margin-top: 132px;
+  margin-top: 12vh;
   display: flex;
   flex-direction: column;
 `;
@@ -31,11 +31,10 @@ export const BottomPage = styled.div`
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 32px;
+    gap: 4vh;
     height: 250px;
 
-    margin-top: 160px;
-    margin-bottom: 32px;
+    margin: 20vh auto;
   }
 `;
 

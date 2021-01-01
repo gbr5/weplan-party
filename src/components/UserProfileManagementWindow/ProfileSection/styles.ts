@@ -56,7 +56,16 @@ export const InputContainer = styled.div`
   align-items: center;
   justify-content: center;
   gap: 8px;
-
+  @media (max-width: 1000px) {
+    display: flex;
+    flex-direction: column;
+    /* display: grid;
+    grid-template-rows: repeat(11, 1fr); */
+    padding: 2vh;
+    align-items: stretch;
+    justify-content: stretch;
+    overflow-x: scroll;
+  }
   p {
     display: flex;
     align-items: center;
@@ -239,5 +248,17 @@ export const InfoSection = styled.div`
   justify-content: stretch;
   transition: 0.25s;
   width: 100%;
+  height: 100%;
   gap: 8px;
+
+  @media (max-width: 1000px) {
+    /* display: flex;
+    flex-direction: column; */
+    display: grid;
+    grid-template-rows: repeat(11, 1fr);
+    padding: 2vh;
+    align-items: stretch;
+    justify-content: stretch;
+    overflow-x: scroll;
+  }
 `;

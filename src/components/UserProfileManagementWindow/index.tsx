@@ -15,21 +15,14 @@ import { Container, Section } from './styles';
 
 interface IProps {
   onHandleCloseWindow: MouseEventHandler;
-  handleCloseWindow: Function;
 }
 
 const UserProfileManagementWindow: React.FC<IProps> = ({
   onHandleCloseWindow,
-  handleCloseWindow,
 }: IProps) => {
   const { user } = useAuth();
 
-  const [section, setSection] = useState('Profile');
   const [updatedUser, setUpdatedUser] = useState({} as IUserDTO);
-
-  const handleSection = useCallback((props: string) => {
-    setSection(props);
-  }, []);
 
   const updateUser = useCallback(() => {
     try {
@@ -57,22 +50,13 @@ const UserProfileManagementWindow: React.FC<IProps> = ({
       }}
     >
       <Container>
-        <SideMenu
-          handleCloseWindow={handleCloseWindow}
-          user={updatedUser}
-          handleSection={(e: string) => handleSection(e)}
-          section={section}
-        />
+        <SideMenu user={updatedUser} />
         <Section>
-          {section === 'Profile' ? (
-            <ProfileSection
-              userId={user.id}
-              updateUser={updateUser}
-              user={updatedUser}
-            />
-          ) : (
-            <h1>{section}</h1>
-          )}
+          <ProfileSection
+            userId={user.id}
+            updateUser={updateUser}
+            user={updatedUser}
+          />
         </Section>
       </Container>
     </WindowUnFormattedContainer>

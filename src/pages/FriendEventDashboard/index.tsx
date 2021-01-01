@@ -5,8 +5,6 @@ import 'react-day-picker/lib/style.css';
 import { Container, Content, FriendsEvents } from './styles';
 
 import PageHeader from '../../components/PageHeader';
-import MenuButton from '../../components/MenuButton';
-// import UserProfile from '../../components/UserProfile';
 
 const EventsDashboard: React.FC = () => {
   const [userProfileWindow, setUserProfileWindow] = useState(false);
@@ -21,9 +19,7 @@ const EventsDashboard: React.FC = () => {
         src="https://images.unsplash.com/photo-1496843916299-590492c751f4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"
         alt=""
       />
-      <MenuButton />
       <PageHeader />
-      {/* {!!userProfileWindow && <UserProfile />} */}
       <Content>
         <button type="button">CONFIRMAR PRESENÇA</button>
         <h1>Nome do Evento</h1>

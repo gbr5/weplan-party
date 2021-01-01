@@ -370,7 +370,7 @@ const SupplierPageHeader: React.FC<IPropsDTO> = ({
       <Header>
         <HeaderContent>
           <h1>
-            <MenuButton />
+            <MenuButton signOut={signOut} />
           </h1>
 
           <button type="button" onClick={handleNavigateToDashboard}>

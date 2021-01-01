@@ -5,13 +5,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {
-  MdArrowBack,
-  MdArrowUpward,
-  MdPerson,
-  MdPhone,
-  MdWeb,
-} from 'react-icons/md';
+import { MdArrowBack, MdArrowUpward, MdPhone, MdWeb } from 'react-icons/md';
 import { FiMail, FiUser } from 'react-icons/fi';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
@@ -359,7 +353,7 @@ const ProfileSection: React.FC<IProps> = ({
       <Container>
         <h2>Informações de contato</h2>
         <InfoSection>
-          <InfoInputContainer>
+          {/* <InfoInputContainer>
             <p>
               <MdPerson />
               Nome de Usuário:
@@ -402,9 +396,7 @@ const ProfileSection: React.FC<IProps> = ({
             ) : (
               <Input name="email" placeholder={user.email} />
             )}
-          </InfoInputContainer>
-        </InfoSection>
-        <InfoSection>
+          </InfoInputContainer> */}
           <InfoInputContainer>
             <p>
               <FiUser />
@@ -480,8 +472,6 @@ const ProfileSection: React.FC<IProps> = ({
               />
             )}
           </InfoInputContainer>
-        </InfoSection>
-        <InfoSection>
           <InfoInputContainer>
             <p>
               <img src={whatsappImg} alt={imgAlt} />
@@ -544,8 +534,6 @@ const ProfileSection: React.FC<IProps> = ({
               <Input name="Email" placeholder={userDefaultEmail} />
             )}
           </InfoInputContainer>
-        </InfoSection>
-        <InfoSection>
           <InfoInputContainer>
             <p>
               <img src={instagramImg} alt={imgAlt} />
@@ -639,8 +627,6 @@ const ProfileSection: React.FC<IProps> = ({
               <Input name="Linkedin" placeholder={userDefaultLinkedin} />
             )}
           </InfoInputContainer>
-        </InfoSection>
-        <InfoSection>
           <InfoInputContainer>
             <p>
               <img src={twitterImg} alt={imgAlt} />
