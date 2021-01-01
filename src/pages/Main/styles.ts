@@ -1,7 +1,82 @@
 import styled, { keyframes } from 'styled-components';
+import { shade } from 'polished';
 import '../../styles/global';
 
-import backImage from '../../assets/lotus_flower-by-Daniel_Holtzhouse.jpeg';
+import signInBackgroundImg from '../../assets/lotus_flower-by-Daniel_Holtzhouse.jpeg';
+
+export const Container = styled.div`
+  height: 100vh;
+
+  display: flex;
+  align-items: stretch;
+`;
+
+export const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.3);
+
+  place-content: center;
+
+  width: 100%;
+  height: 100%;
+  max-width: 700px;
+
+  gap: 80px;
+`;
+
+export const ButtonContainer = styled.div`
+  display: flex;
+  place-content: center;
+  gap: 8px;
+  height: 40px;
+
+  width: 100%;
+
+  div {
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: var(--secondary-color);
+    border-radius: 8px;
+    box-shadow: var(--window-box-shadow);
+    transition: 0.3s;
+    padding: 8px auto;
+    font-weight: 500;
+
+    a {
+      color: var(--primary-color);
+      text-decoration: none;
+      transition: 0.3s;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 8px;
+
+      svg {
+        color: var(--primary-color);
+      }
+    }
+
+    &:hover {
+      background: var(--primary-color);
+      box-shadow: var(--box-shadow);
+
+      a {
+        color: var(--secondary-color);
+        svg {
+          color: var(--secondary-color);
+        }
+      }
+    }
+  }
+`;
 
 const appearFromLeft = keyframes`
   from {
@@ -14,189 +89,117 @@ const appearFromLeft = keyframes`
   }
 `;
 
-const appearFromTop = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(-200px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
-
-const appearFromBottom = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(200px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
-
-export const Container = styled.div`
-  height: 100vh;
-  background: url(${backImage});
-  opacity: 0.8;
+export const Slogan = styled.div`
+  width: 100%;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10%;
+  text-align: center;
+  padding: 8px auto;
+  box-shadow: var(--box-shadow);
+  background: rgba(0, 0, 0, 0.2);
 
-  padding: 32px;
-
-  > span {
+  h1 {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.8);
-    height: 160px;
-    width: 100%;
+    flex-direction: column;
+    gap: 8px;
 
-    gap: 32px;
+    color: var(--primary-color);
 
-    border-radius: 8px;
-
-    > img {
-      height: 80px;
-      animation: ${appearFromTop} 0.5s;
-    }
+    text-shadow: var(--secondary-color);
   }
 `;
-
-export const Content = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  place-content: center;
-
+export const LogoContainer = styled.div`
   width: 100%;
-  max-width: 700px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 32px;
+
+  img {
+    height: 64px;
+  }
 `;
 
 export const AnimationContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 64px;
 
   place-content: center;
 
   animation: ${appearFromLeft} 0.5s;
 
-  > div {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 20%;
+  h1 {
+    color: var(--primary-color);
+    font-size: 80px;
+  }
 
-    > div {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0, 0, 0, 0.6);
-      height: 160px;
-      width: 500px;
-      gap: 40px;
-      transition: 0.25s;
+  form {
+    margin: 40px 0;
+    width: 340px;
+    text-align: center;
 
-      border-radius: 8px;
+    h1 {
+      color: var(--title-color);
+      margin-bottom: 24px;
+      font-size: 32px;
+    }
 
-      img {
-        width: 40px;
-        height: 40px;
-      }
+    a {
+      color: var(--letter-color-5);
+      display: block;
+      margin-top: 24px;
+      text-decoration: none;
+      transition: color 0.15s;
+      border-radius: 4px;
 
-      &:first-child {
-        background: rgba(150, 250, 100, 0.8);
-      }
-
-      &:nth-child(2) {
-        background: rgba(250, 150, 20, 0.8);
-      }
+      background: rgba(255, 105, 1, 0.4);
+      box-shadow: var(--window-box-shadow);
 
       &:hover {
-        border-radius: 50%;
-        background: rgba(0, 0, 0, 0.8);
-
-        &:first-child {
-          a {
-            color: var(--title-color);
-            svg {
-              color: rgba(250, 150, 20, 0.8);
-            }
-          }
-        }
-
-        &:nth-child(2) {
-          a {
-            color: var(--title-color);
-          }
-        }
-
-        > a {
-          color: var(--title-color);
-        }
-      }
-
-      a {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-        width: 100%;
-        color: var(--letter-color-5);
-        font-weight: 500;
-        display: block;
-        text-decoration: none;
-        transition: color 0.15s;
-        font-size: 40px;
-
-        display: flex;
-        align-items: center;
-
-        animation: ${appearFromBottom} 0.5s;
-
-        svg {
-          margin-right: 16px;
-        }
-        img {
-          margin-right: 16px;
-        }
+        /* color: ${shade(0.2, '#f4ede8')}; */
+        color: var(--title-color);
+        background: rgba(10, 10, 10, 0.4);
+        box-shadow: var(--box-shadow);
       }
     }
   }
 
-  @media (max-width: 1200px) {
-    div {
-      flex-direction: column;
-      gap: 24px;
+  > a {
+    color: var(--primary-color);
+    font-weight: 500;
+    display: block;
+    margin-top: 24px;
+    text-decoration: none;
+    transition: color 0.15s;
+    font-size: 24px;
 
-      div {
-        height: 64px;
-        width: 400px;
-      }
+    display: flex;
+    align-items: center;
+
+    svg {
+      margin-right: 16px;
+    }
+
+    &:hover {
+      color: ${shade(0.2, '#ff9000')};
     }
   }
 `;
 
-export const Slogan = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.8);
-  height: 100px;
-  width: 600px;
-  margin-bottom: 32px;
-
-  border-radius: 8px;
-
-  > h1 {
-    color: var(--primary-color);
-    font-size: 32px;
-    animation: ${appearFromTop} 0.5s;
-  }
+export const Background = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  margin: auto;
+  z-index: -1;
+  flex: 1;
+  background: url(${signInBackgroundImg}) no-repeat center;
+  background-size: cover;
 `;
