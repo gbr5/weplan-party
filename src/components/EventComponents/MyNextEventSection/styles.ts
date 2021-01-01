@@ -8,7 +8,7 @@ export const Container = styled.section`
   height: 220px;
   box-shadow: 1px 1px 10px 5px rgba(100, 90, 10, 0.2);
 
-  margin-bottom: 32px;
+  margin-bottom: 2vh;
   position: relative;
 
   > button {
@@ -30,7 +30,7 @@ export const Container = styled.section`
     font-size: 18px;
   }
 
-  @media (max-width: 800px) {
+  @media (max-width: 650px) {
     height: 100%;
 
     span {
@@ -59,7 +59,7 @@ export const MyNextEventTitle = styled.div`
     color: var(--title-color);
   }
 
-  @media (max-width: 800px) {
+  @media (max-width: 650px) {
     flex-direction: column;
   }
 `;
@@ -72,7 +72,7 @@ export const Section = styled.div`
   justify-content: center;
   margin: 0 auto;
 
-  @media (max-width: 800px) {
+  @media (max-width: 650px) {
     display: flex;
     flex-direction: column;
     gap: 4vh;
