@@ -26,15 +26,15 @@ export const BottomPage = styled.div`
   gap: 32px;
   height: 250px;
 
-  @media (max-width: 1200px) {
+  @media (max-width: 900px) {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4vh;
-    height: 250px;
+    gap: 2vh;
+    height: 100%;
 
-    margin: 20vh auto;
+    margin-bottom: 2vh;
   }
 `;
 

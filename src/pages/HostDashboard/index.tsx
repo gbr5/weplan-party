@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import 'react-day-picker/lib/style.css';
 
-import { FiChevronRight, FiSettings, FiStar } from 'react-icons/fi';
+import { FiSettings, FiStar } from 'react-icons/fi';
 import { useHistory } from 'react-router-dom';
 import {
   Container,
@@ -333,14 +333,14 @@ const Dashboard: React.FC = () => {
                                 </button>
                               )}
                             </span>
-                            <button
+                            {/* <button
                               type="button"
                               onClick={() =>
                                 handleMyEventDashboard(event.event)
                               }
                             >
                               <FiChevronRight size={24} />
-                            </button>
+                            </button> */}
                           </div>
                         </li>
                       );
@@ -368,14 +368,14 @@ const Dashboard: React.FC = () => {
                                 <FiSettings size={20} />
                               </button>
                             </span>
-                            <button
+                            {/* <button
                               type="button"
                               onClick={() =>
                                 handleMyEventDashboard(event.event)
                               }
                             >
                               <FiChevronRight size={24} />
-                            </button>
+                            </button> */}
                           </div>
                         </li>
                       );

@@ -8,7 +8,7 @@ export const Container = styled.section`
   height: 220px;
   box-shadow: 1px 1px 10px 5px rgba(100, 90, 10, 0.2);
 
-  margin-bottom: 32px;
+  margin-bottom: 2vh;
   position: relative;
 
   > button {
@@ -26,8 +26,17 @@ export const Container = styled.section`
     position: absolute;
     top: 24px;
     right: 24px;
-    color: var(--letter-color-2);
+    color: var(--primary-color);
     font-size: 18px;
+  }
+
+  @media (max-width: 650px) {
+    height: 100%;
+
+    span {
+      top: 4px;
+      right: 4px;
+    }
   }
 `;
 
@@ -49,6 +58,10 @@ export const MyNextEventTitle = styled.div`
     margin-left: 24px;
     color: var(--title-color);
   }
+
+  @media (max-width: 650px) {
+    flex-direction: column;
+  }
 `;
 
 export const Section = styled.div`
@@ -58,6 +71,13 @@ export const Section = styled.div`
   align-items: center;
   justify-content: center;
   margin: 0 auto;
+
+  @media (max-width: 650px) {
+    display: flex;
+    flex-direction: column;
+    gap: 4vh;
+    /* grid-template-rows: repeat(5, 1fr); */
+  }
 `;
 
 export const Fields = styled.div`

@@ -162,14 +162,14 @@ export const InfoInputContainer = styled.div`
   width: 100%;
   height: 88px;
   gap: 8px;
-  padding: 8px;
+  /* padding: 8px; */
 
   button {
     background: rgba(0, 0, 0, 0.5);
     border: none;
     margin: auto;
     gap: 5px;
-    width: 250px;
+    width: 100%;
     height: 100%;
     border-radius: 8px;
     color: var(--letter-color-3);
@@ -222,6 +222,7 @@ export const InfoInputContainer = styled.div`
       margin: auto;
       transition: 0.8s;
       box-shadow: var(--box-shadow);
+      width: 100%;
 
       svg {
         border-bottom: 0.2px solid rgba(0, 0, 0, 0.5);
