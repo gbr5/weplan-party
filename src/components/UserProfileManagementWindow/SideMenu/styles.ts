@@ -137,6 +137,22 @@ export const InfoSection = styled.div`
   transition: 0.25s;
   width: 100%;
   gap: 8px;
+
+  button {
+    height: 40px;
+    width: 100%;
+    background: var(--primary-color);
+    color: var(--secondary-color);
+    transition: 0.3s;
+    border: none;
+    box-shadow: var(--box-shadow);
+
+    &:hover {
+      color: var(--primary-color);
+      background: var(--secondary-color);
+      box-shadow: var(--window-box-shadow);
+    }
+  }
 `;
 
 export const InfoInputContainer = styled.div`
