@@ -27,8 +27,6 @@ import {
 import { useToast } from '../../../hooks/toast';
 
 interface IFormData {
-  name: string;
-  email: string;
   first_name: string;
   last_name: string;
   person_id: string;
@@ -56,9 +54,6 @@ const ProfileSection: React.FC<IProps> = ({
 }: IProps) => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
-
-  const [userNameField, setUserNameField] = useState(false);
-  const [userEmailField, setUserEmailField] = useState(false);
   const [personIdField, setPersonIdField] = useState(false);
   const [firstNameField, setFirstNameField] = useState(false);
   const [lastNameField, setLastNameField] = useState(false);
@@ -73,8 +68,6 @@ const ProfileSection: React.FC<IProps> = ({
   const [websiteField, setWebsiteField] = useState(false);
 
   const closeAllFields = useCallback(() => {
-    setUserNameField(false);
-    setUserEmailField(false);
     setFirstNameField(false);
     setLastNameField(false);
     setPersonIdField(false);
@@ -142,16 +135,6 @@ const ProfileSection: React.FC<IProps> = ({
     return `${user.avatar_url} - WePlan Party`;
   }, [user]);
 
-  const updateUserInfo = useCallback(async (name: string, email: string) => {
-    try {
-      await api.put('users/', {
-        name,
-        email,
-      });
-    } catch (err) {
-      throw new Error(err);
-    }
-  }, []);
   const updatePersonInfo = useCallback(
     async (first_name: string, last_name: string, person_id: string) => {
       try {
@@ -252,15 +235,6 @@ const ProfileSection: React.FC<IProps> = ({
   const handleSubmit = useCallback(
     async (data: IFormData) => {
       try {
-        userNameField &&
-          userEmailField &&
-          updateUserInfo(data.name, data.email);
-        userNameField &&
-          !userEmailField &&
-          updateUserInfo(data.name, user.email);
-        !userNameField &&
-          userEmailField &&
-          updateUserInfo(user.name, data.email);
         !user.personInfo && createPersonInfo(data);
         !user.userContacts && createUserContactInfos(data);
         firstNameField &&
@@ -324,15 +298,12 @@ const ProfileSection: React.FC<IProps> = ({
     [
       addToast,
       updateUser,
-      updateUserInfo,
       closeAllFields,
       user,
       updateUserContactInfo,
       updatePersonInfo,
       createPersonInfo,
       createUserContactInfos,
-      userNameField,
-      userEmailField,
       personIdField,
       firstNameField,
       lastNameField,
@@ -353,50 +324,6 @@ const ProfileSection: React.FC<IProps> = ({
       <Container>
         <h2>Informações de contato</h2>
         <InfoSection>
-          {/* <InfoInputContainer>
-            <p>
-              <MdPerson />
-              Nome de Usuário:
-              {userNameField && (
-                <button type="button" onClick={() => setUserNameField(false)}>
-                  <MdArrowBack />
-                  <MdArrowBack />
-                </button>
-              )}
-            </p>
-            {!userNameField ? (
-              <button
-                type="button"
-                onClick={() => setUserNameField(!userNameField)}
-              >
-                {user.name}
-              </button>
-            ) : (
-              <Input name="name" placeholder={user.name} />
-            )}
-          </InfoInputContainer>
-          <InfoInputContainer>
-            <p>
-              <FiMail />
-              Login (e-mail):
-              {userEmailField && (
-                <button type="button" onClick={() => setUserEmailField(false)}>
-                  <MdArrowBack />
-                  <MdArrowBack />
-                </button>
-              )}
-            </p>
-            {!userEmailField ? (
-              <button
-                type="button"
-                onClick={() => setUserEmailField(!userEmailField)}
-              >
-                {user.email}
-              </button>
-            ) : (
-              <Input name="email" placeholder={user.email} />
-            )}
-          </InfoInputContainer> */}
           <InfoInputContainer>
             <p>
               <FiUser />

@@ -1,6 +1,14 @@
-import React, { ChangeEvent, useCallback, useMemo, useState } from 'react';
-import { FiCamera, FiLock, FiMail } from 'react-icons/fi';
+import React, {
+  ChangeEvent,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { FiCamera, FiMail } from 'react-icons/fi';
 import { MdArrowBack, MdPerson } from 'react-icons/md';
+import { Form } from '@unform/web';
+import { FormHandles } from '@unform/core';
 
 import AvatarPlaceholder from '../../../assets/WePlanLogo.svg';
 
@@ -17,6 +25,10 @@ import { useAuth } from '../../../hooks/auth';
 import { useToast } from '../../../hooks/toast';
 import Input from '../../Input';
 
+interface IFormData {
+  name: string;
+  email: string;
+}
 interface IProps {
   user: IUserDTO;
 }
@@ -24,10 +36,54 @@ interface IProps {
 const SideMenu: React.FC<IProps> = ({ user }: IProps) => {
   const { updateUser } = useAuth();
   const { addToast } = useToast();
+  const formRef = useRef<FormHandles>(null);
 
   const [userNameField, setUserNameField] = useState(false);
   const [userEmailField, setUserEmailField] = useState(false);
+  const updateUserInfo = useCallback(
+    async (name: string, email: string) => {
+      try {
+        const updatedUser = await api.put('users/', {
+          name,
+          email,
+        });
+        updateUser(updatedUser.data);
+      } catch (err) {
+        throw new Error(err);
+      }
+    },
+    [updateUser],
+  );
 
+  const handleSubmit = useCallback(
+    (data: IFormData) => {
+      try {
+        if (userNameField && userEmailField) {
+          updateUserInfo(data.name, data.email);
+        }
+        if (userNameField && !userEmailField) {
+          updateUserInfo(data.name, user.email);
+        }
+        if (!userNameField && userEmailField) {
+          updateUserInfo(user.name, data.email);
+        }
+
+        addToast({
+          type: 'success',
+          title: 'Atualização efetuada com sucesso',
+          description: 'As alterações já podem ser visualizadas',
+        });
+      } catch (err) {
+        addToast({
+          type: 'error',
+          title: 'Erro ao atualizar informações de usuário.',
+          description: 'Tente novamente.',
+        });
+        throw new Error(err);
+      }
+    },
+    [updateUserInfo, user, userNameField, userEmailField, addToast],
+  );
   const avatar = useMemo(() => {
     return user.avatar_url ? user.avatar_url : AvatarPlaceholder;
   }, [user]);
@@ -64,86 +120,70 @@ const SideMenu: React.FC<IProps> = ({ user }: IProps) => {
   );
 
   return (
-    <Container>
-      <Header>
-        <AvatarInput>
-          <img src={avatar} alt={imgAlt} />
-          <label htmlFor="avatar">
-            <FiCamera />
-            <input type="file" id="avatar" onChange={handleAvatarChange} />
-          </label>
-        </AvatarInput>
-        <h2>{user.name}</h2>
-        <InfoSection>
-          <InfoInputContainer>
-            <p>
-              <MdPerson />
-              Nome de Usuário:
-              {userNameField && (
-                <button type="button" onClick={() => setUserNameField(false)}>
-                  <MdArrowBack />
-                  <MdArrowBack />
+    <Form onSubmit={handleSubmit} ref={formRef}>
+      <Container>
+        <Header>
+          <AvatarInput>
+            <img src={avatar} alt={imgAlt} />
+            <label htmlFor="avatar">
+              <FiCamera />
+              <input type="file" id="avatar" onChange={handleAvatarChange} />
+            </label>
+          </AvatarInput>
+          <h2>{user.name}</h2>
+          <InfoSection>
+            <InfoInputContainer>
+              <p>
+                <MdPerson />
+                Nome de Usuário:
+                {userNameField && (
+                  <button type="button" onClick={() => setUserNameField(false)}>
+                    <MdArrowBack />
+                    <MdArrowBack />
+                  </button>
+                )}
+              </p>
+              {!userNameField ? (
+                <button
+                  type="button"
+                  onClick={() => setUserNameField(!userNameField)}
+                >
+                  {user.name}
                 </button>
+              ) : (
+                <Input name="name" placeholder={user.name} />
               )}
-            </p>
-            {!userNameField ? (
-              <button
-                type="button"
-                onClick={() => setUserNameField(!userNameField)}
-              >
-                {user.name}
-              </button>
-            ) : (
-              <Input name="name" placeholder={user.name} />
-            )}
-          </InfoInputContainer>
-          <InfoInputContainer>
-            <p>
-              <FiMail />
-              Login (e-mail):
-              {userEmailField && (
-                <button type="button" onClick={() => setUserEmailField(false)}>
-                  <MdArrowBack />
-                  <MdArrowBack />
+            </InfoInputContainer>
+            <InfoInputContainer>
+              <p>
+                <FiMail />
+                Login (e-mail):
+                {userEmailField && (
+                  <button
+                    type="button"
+                    onClick={() => setUserEmailField(false)}
+                  >
+                    <MdArrowBack />
+                    <MdArrowBack />
+                  </button>
+                )}
+              </p>
+              {!userEmailField ? (
+                <button
+                  type="button"
+                  onClick={() => setUserEmailField(!userEmailField)}
+                >
+                  {user.email}
                 </button>
+              ) : (
+                <Input name="email" placeholder={user.email} />
               )}
-            </p>
-            {!userEmailField ? (
-              <button
-                type="button"
-                onClick={() => setUserEmailField(!userEmailField)}
-              >
-                {user.email}
-              </button>
-            ) : (
-              <Input name="email" placeholder={user.email} />
-            )}
-          </InfoInputContainer>
-          <InfoInputContainer>
-            <p>
-              <FiLock />
-              Senha:
-              {userEmailField && (
-                <button type="button" onClick={() => setUserEmailField(false)}>
-                  <MdArrowBack />
-                  <MdArrowBack />
-                </button>
-              )}
-            </p>
-            {!userEmailField ? (
-              <button
-                type="button"
-                onClick={() => setUserEmailField(!userEmailField)}
-              >
-                {user.email}
-              </button>
-            ) : (
-              <Input name="email" placeholder={user.email} />
-            )}
-          </InfoInputContainer>
-        </InfoSection>
-      </Header>
-    </Container>
+            </InfoInputContainer>
+            <button type="submit">Salvar</button>
+          </InfoSection>
+        </Header>
+      </Container>
+    </Form>
   );
 };
 

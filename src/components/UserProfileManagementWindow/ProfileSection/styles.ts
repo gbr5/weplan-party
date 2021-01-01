@@ -61,7 +61,7 @@ export const InputContainer = styled.div`
     flex-direction: column;
     /* display: grid;
     grid-template-rows: repeat(11, 1fr); */
-    padding: 2vh;
+    /* padding: 2vh; */
     align-items: stretch;
     justify-content: stretch;
     overflow-x: scroll;
@@ -249,14 +249,14 @@ export const InfoSection = styled.div`
   transition: 0.25s;
   width: 100%;
   height: 100%;
-  gap: 8px;
+  gap: 4vh;
 
   @media (max-width: 1000px) {
     /* display: flex;
     flex-direction: column; */
-    display: grid;
-    grid-template-rows: repeat(11, 1fr);
-    padding: 2vh;
+    display: block;
+    /* grid-template-rows: repeat(11, 1fr); */
+    /* padding: 2vh; */
     align-items: stretch;
     justify-content: stretch;
     overflow-x: scroll;
