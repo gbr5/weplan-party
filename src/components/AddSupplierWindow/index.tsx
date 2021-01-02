@@ -1,17 +1,19 @@
-import React, { MouseEventHandler, useCallback, useRef } from 'react';
+import React, { MouseEventHandler, useCallback, useRef, useState } from 'react';
 
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
 
 import Input from '../Input';
-import WindowContainer from '../WindowContainer';
 
-import { Container } from './styles';
+import { Container, InputContainer } from './styles';
 import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
 import getValidationErrors from '../../utils/getValidationErros';
 import ISupplierDTO from '../../dtos/ISupplierDTO';
+import WindowUnFormattedContainer from '../WindowUnFormattedContainer';
+import SuppliersListDrawer from '../SuppliersListDrawer';
+import SupplierServiceOrderFormWindow from '../SupplierServiceOrderFormWindow';
 
 interface ICreateSupplier {
   name: string;
@@ -23,13 +25,11 @@ interface IProps {
   eventId: string;
   isHiredMessage: string;
   supplierSubCategory: string;
-  selectedWeplanSupplier: ISupplierDTO;
+  supplierCategory: string;
   isHired: boolean;
   handleCloseWindow: Function;
-  weplanSupplier: boolean;
   handleCreateTransactionWindow: Function;
   handleIsHiredDrawer: Function;
-  handleSetWeplanSupplierListWindow: Function;
 }
 
 const AddSupplierWindow: React.FC<IProps> = ({
@@ -39,28 +39,45 @@ const AddSupplierWindow: React.FC<IProps> = ({
   supplierSubCategory,
   isHired,
   handleCloseWindow,
-  selectedWeplanSupplier,
-  weplanSupplier,
+  supplierCategory,
   handleCreateTransactionWindow,
   handleIsHiredDrawer,
-  handleSetWeplanSupplierListWindow,
 }: IProps) => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
 
+  const [weplanSupplier, setWePlanSupplier] = useState(false);
+  const [supplierServiceOrderWindow, setSupplierServiceOrderWindow] = useState(
+    false,
+  );
+  const [weplanSupplierListWindow, setWeplanSupplierListWindow] = useState(
+    false,
+  );
+  const [selectedWeplanSupplier, setSelectedWeplanSupplier] = useState<
+    ISupplierDTO
+  >({} as ISupplierDTO);
+
   const handleAddSupplier = useCallback(
     async (data: ICreateSupplier) => {
+      console.log(data);
       try {
         formRef.current?.setErrors([]);
 
         const schema = Yup.object().shape({
-          name: Yup.string().required(),
+          name: Yup.string(),
         });
         await schema.validate(data, {
           abortEarly: false,
         });
 
-        if (weplanSupplier) {
+        console.log(weplanSupplier, selectedWeplanSupplier, 'linha 64');
+
+        if (
+          weplanSupplier &&
+          selectedWeplanSupplier &&
+          selectedWeplanSupplier.userBySupplierCategory
+        ) {
+          console.log(weplanSupplier, selectedWeplanSupplier, 'linha 70');
           const newSupplier = await api.post(
             `events/event-suppliers/${eventId}`,
             {
@@ -75,6 +92,7 @@ const AddSupplierWindow: React.FC<IProps> = ({
             event_supplier_id: newSupplier.data.id,
           });
 
+          setSupplierServiceOrderWindow(true);
           addToast({
             type: 'success',
             title: `${data.name} adicionado com Sucesso`,
@@ -95,6 +113,7 @@ const AddSupplierWindow: React.FC<IProps> = ({
               weplanUser: weplanSupplier,
             },
           );
+          setSupplierServiceOrderWindow(true);
           addToast({
             type: 'success',
             title: `${data.name} adicionado com Sucesso`,
@@ -120,6 +139,7 @@ const AddSupplierWindow: React.FC<IProps> = ({
     },
     [
       isHired,
+      setSupplierServiceOrderWindow,
       addToast,
       supplierSubCategory,
       handleCreateTransactionWindow,
@@ -129,63 +149,99 @@ const AddSupplierWindow: React.FC<IProps> = ({
       handleCloseWindow,
     ],
   );
-
+  const handleSetSelectedWeplanSupplier = useCallback((props: ISupplierDTO) => {
+    console.log(props);
+    setSelectedWeplanSupplier(props);
+    setWePlanSupplier(true);
+    setWeplanSupplierListWindow(false);
+  }, []);
   return (
-    <WindowContainer
-      onHandleCloseWindow={onHandleCloseWindow}
-      containerStyle={{
-        zIndex: 15,
-        top: '20%',
-        left: '20%',
-        height: '60%',
-        width: '60%',
-      }}
-    >
-      <Form ref={formRef} onSubmit={handleAddSupplier}>
-        <Container>
-          <h1>Adicionar Fornecedor</h1>
+    <>
+      {supplierServiceOrderWindow && (
+        <SupplierServiceOrderFormWindow
+          event_id={eventId}
+          supplier_id={selectedWeplanSupplier.userBySupplierCategory.id}
+          handleCloseWindow={() => setSupplierServiceOrderWindow(false)}
+          onHandleCloseWindow={() => setSupplierServiceOrderWindow(false)}
+        />
+      )}
+      {weplanSupplierListWindow && (
+        <SuppliersListDrawer
+          category={supplierCategory}
+          sub_category={supplierSubCategory}
+          handleSelectedSupplier={(e: ISupplierDTO) =>
+            handleSetSelectedWeplanSupplier(e)
+          }
+          onHandleSuppliersListDrawer={() =>
+            setWeplanSupplierListWindow(!weplanSupplierListWindow)
+          }
+        />
+      )}
+      <WindowUnFormattedContainer
+        onHandleCloseWindow={onHandleCloseWindow}
+        containerStyle={{
+          zIndex: 15,
+          top: '5%',
+          left: '5%',
+          height: '90%',
+          width: '90%',
+        }}
+      >
+        <Form ref={formRef} onSubmit={handleAddSupplier}>
+          <Container>
+            <h1>Adicionar Fornecedor</h1>
 
-          {isHiredMessage === '' ? (
-            <button type="button" onClick={() => handleIsHiredDrawer(false)}>
-              Contratado?
-            </button>
-          ) : (
-            <h1>
-              <button type="button" onClick={() => handleIsHiredDrawer(true)}>
-                {isHiredMessage}
+            {isHiredMessage === '' ? (
+              <button type="button" onClick={() => handleIsHiredDrawer(false)}>
+                Contratado?
               </button>
-            </h1>
-          )}
+            ) : (
+              <h1>
+                <button type="button" onClick={() => handleIsHiredDrawer(true)}>
+                  {isHiredMessage}
+                </button>
+              </h1>
+            )}
 
-          {weplanSupplier ? (
-            <button
-              type="button"
-              onClick={() => handleSetWeplanSupplierListWindow(false)}
-            >
-              Fornecedor WePlan
-            </button>
-          ) : (
-            <h1>
+            {weplanSupplier ? (
               <button
                 type="button"
-                onClick={() => handleSetWeplanSupplierListWindow(true)}
+                onClick={() => setWeplanSupplierListWindow(false)}
               >
-                Forcecedor WePlan?
+                Fornecedor WePlan
               </button>
-            </h1>
-          )}
-          <Input
-            name="name"
-            type="text"
-            placeholder="Nome do fornecedor"
-            containerStyle={{ height: '40px' }}
-          />
-          <button type="submit">
-            <h3>Salvar</h3>
-          </button>
-        </Container>
-      </Form>
-    </WindowContainer>
+            ) : (
+              <h1>
+                <button
+                  type="button"
+                  onClick={() => setWeplanSupplierListWindow(true)}
+                >
+                  Forcecedor WePlan?
+                </button>
+              </h1>
+            )}
+            {weplanSupplier &&
+            selectedWeplanSupplier &&
+            selectedWeplanSupplier.userBySupplierCategory ? (
+              <h3>{selectedWeplanSupplier.userBySupplierCategory.name}</h3>
+            ) : (
+              <InputContainer>
+                <h3>Nome do Fornecedor</h3>
+                <Input
+                  name="name"
+                  type="text"
+                  placeholder="Nome do fornecedor"
+                  containerStyle={{ height: '40px' }}
+                />
+              </InputContainer>
+            )}
+            <button type="submit">
+              <h3>Salvar</h3>
+            </button>
+          </Container>
+        </Form>
+      </WindowUnFormattedContainer>
+    </>
   );
 };
 

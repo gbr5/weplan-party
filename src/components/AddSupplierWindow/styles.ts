@@ -3,14 +3,17 @@ import styled from 'styled-components';
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
-  gap: 32px;
+  gap: 8vh;
   width: 100%;
+  height: 100%;
+  padding-top: 10vh;
 
   > h1 {
     font-size: 24px;
     color: var(--title-color);
+    width: 100%;
 
     button {
       background: var(--primary-color);
@@ -23,9 +26,9 @@ export const Container = styled.div`
 
   > input {
     height: 40px;
-    width: 90%;
+    width: 100%;
     border-radius: 4px;
-    padding: 0 16px;
+    padding-left: 16px;
     border: none;
   }
 
@@ -35,5 +38,26 @@ export const Container = styled.div`
     height: 40px;
     width: 100%;
     border-radius: 4px;
+  }
+`;
+
+export const InputContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: 2vh;
+
+  h3 {
+    font-size: 16px;
+    color: var(--title-color);
+  }
+
+  > input {
+    height: 40px;
+    width: 100%;
+    border-radius: 4px;
+    padding-left: 16px;
+    border: none;
   }
 `;
