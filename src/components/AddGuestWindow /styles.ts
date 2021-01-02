@@ -7,6 +7,7 @@ export const Container = styled.div`
   justify-content: stretch;
   transition: 0.25s;
   width: 100%;
+  height: 100%;
   gap: 16px;
 
   > button {
@@ -65,9 +66,14 @@ export const Header = styled.div`
 `;
 export const Body = styled.div`
   width: 100%;
+  height: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 32px;
+
+  @media (max-width: 900px) {
+    display: block;
+  }
 `;
 export const ButtonContainer = styled.span`
   width: 100%;
@@ -94,6 +100,11 @@ export const ButtonContainer = styled.span`
 
     font-weight: 500;
     font-size: 20px;
+
+    @media (max-width: 600px) {
+      font-weight: 400;
+      font-size: 16px;
+    }
 
     &:hover {
       color: var(--primary-color);

@@ -138,7 +138,7 @@ const GuestAlocationWindow: React.FC<IProps> = ({
             </div>
           </div>
           <button type="button" onClick={handleUpdateEventNumberOfGuests}>
-            Atualizar o número de convidados do evento
+            Atualizar convidados do evento
           </button>
         </SubTitle>
         <Body>

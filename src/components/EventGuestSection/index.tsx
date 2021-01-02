@@ -290,7 +290,7 @@ const EventGuestSection: React.FC<IProps> = ({
               type="button"
               onClick={handleGuestAllocationWindow}
             >
-              Editar Alocação de Convidados
+              Alocação de Convidados
             </GuestAllocationButton>
           )}
         </span>
