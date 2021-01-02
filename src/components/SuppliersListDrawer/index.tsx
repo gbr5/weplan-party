@@ -44,6 +44,7 @@ const SuppliersListDrawer: React.FC<IPropsDTO> = ({
   useEffect(() => {
     getSuppliers();
   }, [getSuppliers]);
+  console.log(supplier);
 
   return (
     <WindowContainer
