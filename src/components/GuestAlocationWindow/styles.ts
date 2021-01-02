@@ -9,6 +9,10 @@ export const Container = styled.div`
   width: 100%;
   box-sizing: border-box;
   text-align: center;
+
+  @media (max-width: 1000px) {
+    overflow-y: scroll;
+  }
   > h1 {
     font-size: 32px;
     color: var(--title-color);
@@ -62,7 +66,10 @@ export const SubTitle = styled.div`
     gap: 8px;
     align-items: center;
     justify-content: center;
-
+    @media (max-width: 1000px) {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+    }
     div {
       width: 100%;
       display: flex;
