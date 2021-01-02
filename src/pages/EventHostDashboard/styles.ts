@@ -30,6 +30,8 @@ export const Container = styled.div`
   height: 100%;
   display: flex;
   animation: ${appearFromTop} 0.5s;
+
+  margin-bottom: 4vh;
 `;
 
 export const EventPageContent = styled.main`
@@ -39,6 +41,11 @@ export const EventPageContent = styled.main`
   padding: 0 80px;
   gap: 80px;
   animation: ${appearFromTop} 0.5s;
+
+  @media (max-width: 1000px) {
+    padding: 0 2vw;
+    gap: 0;
+  }
 
   > button {
     z-index: 5;
@@ -71,6 +78,9 @@ export const EventPageContent = styled.main`
       color: var(--letter-color-4);
       animation: ${appearFromLeft} 0.5s;
 
+      @media (max-width: 1000px) {
+        left: 70%;
+      }
       &:hover {
         color: var(--primary-color);
       }
@@ -94,6 +104,10 @@ export const SideBar = styled.div`
   flex-direction: column;
 
   animation: ${appearFromLeft} 0.5s;
+
+  @media (max-width: 1000px) {
+    width: 70%;
+  }
 
   > button {
     width: 100%;
@@ -195,13 +209,12 @@ export const Main = styled.div`
   width: 100%;
   flex-direction: column;
   margin-top: 150px;
-  margin-bottom: 32px;
   position: relative;
 
   > button {
     z-index: 5;
     position: fixed;
-    top: 90px;
+    top: 5vh;
     left: 47.7%;
     background: transparent;
     border: none;
@@ -221,7 +234,7 @@ export const Main = styled.div`
     > button {
       z-index: 5;
       position: absolute;
-      top: 105px;
+      top: 4vh;
       left: 47.5%;
       background: transparent;
       border: none;
@@ -244,17 +257,24 @@ export const FirstRow = styled.div`
   position: absolute;
   top: -100px;
   width: 100%;
-  height: 90px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 10px;
   position: relative;
   gap: 80px;
-  margin: 100px auto 0px;
+  margin-top: 2vh;
 
   animation: ${appearFromTop} 0.5s;
 
+  @media (max-width: 1000px) {
+    overflow-x: scroll;
+    display: inline-flexbox;
+    width: 100%;
+    border-radius: 0;
+    align-items: stretch;
+    justify-content: center;
+  }
   div {
     display: flex;
     width: 130px;
@@ -264,6 +284,10 @@ export const FirstRow = styled.div`
     border-radius: 50%;
     align-items: center;
     justify-content: center;
+
+    /* @media (max-width: 1000px) {
+      border-radius: 8px;
+    } */
 
     &:hover {
       opacity: 0.7;

@@ -710,7 +710,7 @@ const EventHostDashboard: React.FC = () => {
   return (
     <Container>
       <PageHeader>
-        {isOwner ? (
+        {/* {isOwner ? (
           <span>
             <button type="button" onClick={handleEditEventNameDrawer}>
               <h5>
@@ -725,7 +725,7 @@ const EventHostDashboard: React.FC = () => {
               <h5>{eventName}</h5>
             </button>
           </span>
-        )}
+        )} */}
       </PageHeader>
       {!!createEventInfoWindowForm && (
         <CreateEventInfoWindowForm
@@ -892,6 +892,22 @@ const EventHostDashboard: React.FC = () => {
 
         {sidebar && (
           <SideBar>
+            {isOwner ? (
+              <span>
+                <button type="button" onClick={handleEditEventNameDrawer}>
+                  <h5>
+                    {eventName}
+                    <FiEdit3 size={16} />
+                  </h5>
+                </button>
+              </span>
+            ) : (
+              <span>
+                <button type="button">
+                  <h5>{eventName}</h5>
+                </button>
+              </span>
+            )}
             {isOwner && (
               <button type="button" onClick={openGuestAlocationWindow}>
                 <h1>
