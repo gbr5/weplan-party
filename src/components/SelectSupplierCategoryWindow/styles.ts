@@ -1,10 +1,11 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
-  display: grid;
-  grid-template-rows: 1fr 5fr;
-  gap: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4vh;
   width: 100%;
+  height: 100%;
 
   span {
     position: relative;
@@ -12,6 +13,7 @@ export const Container = styled.div`
     align-items: center;
     justify-content: center;
     width: 100%;
+    height: 100%;
 
     > h1 {
       position: absolute;
@@ -46,21 +48,39 @@ export const SuppliersContainer = styled.div`
   grid-template-columns: 1fr 1fr 1fr;
   padding: 32px;
   width: 100%;
+  height: 100%;
   gap: 32px;
   overflow-y: scroll;
+
+  @media (max-width: 900px) {
+    display: block;
+    overflow-y: scroll;
+  }
 
   button {
     display: flex;
     align-items: center;
     justify-content: flex-start;
+    border: none;
     border-radius: 8px;
-    background: var(--letter-color-3);
-    height: 100px;
+    background: var(--primary-color);
+    height: 64px;
+    width: 100%;
     padding: 32px auto;
     gap: 16px;
     box-shadow: 2px 2px 6px 2px rgba(0, 0, 0, 0.2);
     transition: 0.25s;
 
+    @media (max-width: 900px) {
+      margin: 2vh auto;
+      padding: 8px;
+      /* font-size:  */
+    }
+
+    &:hover {
+      background: var(--secondary-color);
+      color: var(--primary-color);
+    }
     > img {
       margin-left: 14px;
       height: 80px;
