@@ -59,6 +59,10 @@ export const CheckListFunnel = styled.div`
   grid-template-columns: 1fr 1fr 1fr;
   gap: 32px;
 
+  @media (max-width: 1000px) {
+    overflow-x: scroll;
+  }
+
   > div {
     text-align: center;
     display: flex;
@@ -67,6 +71,7 @@ export const CheckListFunnel = styled.div`
     justify-content: center;
     gap: 16px;
     width: 100%;
+    min-width: 280px;
 
     > h1 {
       font-size: 24px;
