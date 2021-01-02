@@ -105,6 +105,10 @@ export const Container = styled.div`
     background: var(--header-background-color);
     border-radius: 8px;
     overflow-y: scroll;
+
+    @media (max-width: 1000px) {
+      display: block;
+    }
   }
 `;
 
