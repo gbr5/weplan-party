@@ -9,7 +9,7 @@ import {
   MdLocalDining,
   MdLocalFlorist,
 } from 'react-icons/md';
-import WindowContainer from '../WindowContainer';
+import WindowUnFormattedContainer from '../WindowUnFormattedContainer';
 
 import { Container, SuppliersContainer } from './styles';
 
@@ -23,7 +23,7 @@ const SelectSupplierCategoryWindow: React.FC<IProps> = ({
   handleSetSupplierCategory,
 }: IProps) => {
   return (
-    <WindowContainer
+    <WindowUnFormattedContainer
       onHandleCloseWindow={onHandleCloseWindow}
       containerStyle={{
         zIndex: 18,
@@ -33,57 +33,57 @@ const SelectSupplierCategoryWindow: React.FC<IProps> = ({
         width: '90%',
       }}
     >
-      <h1>Categoria de Fornecedores</h1>
       <Container>
+        <h1>Categoria de Fornecedores</h1>
         <SuppliersContainer>
           <button
             type="button"
             onClick={() => handleSetSupplierCategory('Planning')}
           >
             <MdFolderSpecial size={50} />
-            <h1>Planejamento</h1>
+            Planejamento
           </button>
           <button
             type="button"
             onClick={() => handleSetSupplierCategory('Event_Desing')}
           >
             <MdLocalFlorist size={50} />
-            <h1>Decoração</h1>
+            Decoração
           </button>
           <button
             type="button"
             onClick={() => handleSetSupplierCategory('Venue')}
           >
             <FiHome size={50} />
-            <h1>Espaços e Igrejas</h1>
+            Espaços e Igrejas
           </button>
           <button
             type="button"
             onClick={() => handleSetSupplierCategory('Catering')}
           >
             <MdLocalDining size={50} />
-            <h1>Buffet, lanches e Doces</h1>
+            Buffet, lanches e Doces
           </button>
           <button
             type="button"
             onClick={() => handleSetSupplierCategory('Film_And_Photography')}
           >
             <MdLinkedCamera size={50} />
-            <h1>Fotos e Filmes</h1>
+            Fotos e Filmes
           </button>
           <button
             type="button"
             onClick={() => handleSetSupplierCategory('Entertainment_Artists')}
           >
             <FiMusic size={50} />
-            <h1>Artistas e Entretenimento</h1>
+            Artistas e Entretenimento
           </button>
           <button
             type="button"
             onClick={() => handleSetSupplierCategory('Bartenders_And_Drinks')}
           >
             <MdLocalBar size={50} />
-            <h1>Bar e Bebidas</h1>
+            Bar e Bebidas
           </button>
           <button
             type="button"
@@ -92,18 +92,18 @@ const SelectSupplierCategoryWindow: React.FC<IProps> = ({
             }
           >
             <MdBuild size={50} />
-            <h1>Estruturas, Cênica e Boate</h1>
+            Estruturas, Cênica e Boate
           </button>
           <button
             type="button"
             onClick={() => handleSetSupplierCategory('Others')}
           >
             <FiHelpCircle size={50} />
-            <h1>Outros</h1>
+            Outros
           </button>
         </SuppliersContainer>
       </Container>
-    </WindowContainer>
+    </WindowUnFormattedContainer>
   );
 };
 

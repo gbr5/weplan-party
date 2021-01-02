@@ -42,7 +42,7 @@ export const Container = styled.div`
 
     > span {
       position: absolute;
-      top: 54px;
+      top: 0px;
       right: 24px;
 
       > button {
@@ -68,7 +68,7 @@ export const Container = styled.div`
         }
 
         > svg {
-          color: var(--card-color);
+          color: var(--primary-color);
           border-radius: 50%;
         }
       }
@@ -87,6 +87,10 @@ export const Container = styled.div`
     background: var(--header-background-color);
     border-radius: 8px;
     overflow-y: scroll;
+
+    @media (max-width: 1000px) {
+      display: block;
+    }
   }
 `;
 
@@ -105,6 +109,10 @@ export const BooleanNavigationButton = styled.button<ButtonProps>`
   opacity: 0.65;
   transition: 0.5s;
   border-radius: 0;
+
+  @media (max-width: 1000px) {
+    font-size: 24px;
+  }
 
   &:hover {
     color: var(--text-color);
@@ -253,6 +261,9 @@ export const Supplier = styled.div`
   border-radius: 4px;
   transition: 0.25s;
 
+  @media (max-width: 1000px) {
+    margin-bottom: 2vh;
+  }
   &:last-child {
     margin-bottom: 16px;
   }

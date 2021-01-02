@@ -27,8 +27,8 @@ const SelectSupplierSubCategoryWindow: React.FC<IProps> = ({
         width: '90%',
       }}
     >
-      <h1>Sub-Categoria de Fornecedores</h1>
       <Container>
+        <h1>Sub-Categoria de Fornecedores</h1>
         <SuppliersContainer>
           {supplierSubCategories.map(subCategory => (
             <button
@@ -36,7 +36,7 @@ const SelectSupplierSubCategoryWindow: React.FC<IProps> = ({
               type="button"
               onClick={() => handleAddSupplierDrawer(subCategory.sub_category)}
             >
-              <h1>{subCategory.sub_category}</h1>
+              {subCategory.sub_category}
             </button>
           ))}
         </SuppliersContainer>

@@ -313,6 +313,7 @@ const EventGuestSection: React.FC<IProps> = ({
 
           <span>
             <button type="button" onClick={handleAddGuestWindow}>
+              Adicionar Convidado
               <MdPersonAdd size={30} />
             </button>
           </span>

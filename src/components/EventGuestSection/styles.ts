@@ -22,6 +22,10 @@ export const GuestAllocationButton = styled.button`
   border-radius: 8px;
   transition: 0.5s;
 
+  @media (max-width: 1000px) {
+    font-size: 20px;
+  }
+
   &:hover {
     opacity: 0.7;
     background: var(--primary-color);
@@ -60,11 +64,14 @@ export const Container = styled.div`
 
     > span {
       position: absolute;
-      top: 54px;
-      right: 24px;
+      top: -48px;
+      right: 47.8%;
+      @media (max-width: 600px) {
+        right: 45%;
+      }
 
       > button {
-        font-size: 32px;
+        font-size: 16px;
         background: transparent;
         border: none;
         display: flex;
@@ -73,6 +80,7 @@ export const Container = styled.div`
         transition: 0.5s;
         width: 40px;
         height: 40px;
+        color: var(--primary-color);
 
         &:hover {
           color: var(--title-color);
@@ -86,7 +94,7 @@ export const Container = styled.div`
         }
 
         > svg {
-          color: var(--card-color);
+          color: var(--primary-color);
           border-radius: 50%;
         }
       }
@@ -157,6 +165,9 @@ export const BooleanNavigationButton = styled.button<ButtonProps>`
   opacity: 0.65;
   transition: 0.5s;
   border-radius: 0;
+  @media (max-width: 1000px) {
+    font-size: 24px;
+  }
 
   &:hover {
     color: var(--text-color);
@@ -194,6 +205,9 @@ export const Guest = styled.div`
   background: var(--background-color);
   border-radius: 4px;
   transition: 0.25s;
+  @media (max-width: 1000px) {
+    margin-bottom: 2vh;
+  }
 
   &:last-child {
     margin-bottom: 16px;
