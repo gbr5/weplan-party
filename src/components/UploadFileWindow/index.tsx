@@ -147,10 +147,10 @@ const UploadFileWindow: React.FC<IProps> = ({
       onHandleCloseWindow={onHandleCloseWindow}
       containerStyle={{
         zIndex: 15,
-        top: '5%',
-        left: '5%',
-        height: '90%',
-        width: '90%',
+        top: '0%',
+        left: '0%',
+        height: '100%',
+        width: '100%',
       }}
     >
       <Container>
@@ -160,7 +160,7 @@ const UploadFileWindow: React.FC<IProps> = ({
         <Body>
           {selectUserFileCategoryWindow && (
             <>
-              <h1>Selecione a categoria do arquivo</h1>
+              <h3>Selecione a categoria do arquivo</h3>
               <div>
                 {userFileCategories.map(category => {
                   const isActive = selectedUserFileCategories.find(
@@ -177,31 +177,35 @@ const UploadFileWindow: React.FC<IProps> = ({
                     </FileButton>
                   );
                 })}
+                {selectedUserFileCategories.length > 0 && (
+                  <FileButton
+                    isActive
+                    type="button"
+                    onClick={continueToFileName}
+                  >
+                    Pŕoximo
+                  </FileButton>
+                )}
               </div>
-              {selectedUserFileCategories.length > 0 && (
-                <button type="button" onClick={continueToFileName}>
-                  Pŕoximo
-                </button>
-              )}
             </>
           )}
           {selectUserFileNameWindow && (
             <>
-              <h1>Insira o nome do arquivo.</h1>
+              <h3>Insira o nome do arquivo.</h3>
               <input
                 type="text"
                 onChange={e => setUserFileName(e.target.value)}
               />
               {userFileName !== '' && (
-                <button type="button" onClick={selectUserFileName}>
+                <FileButton isActive type="button" onClick={selectUserFileName}>
                   Próximo
-                </button>
+                </FileButton>
               )}
             </>
           )}
           {uploadUserFileWindow && (
             <>
-              <h1>Clique no clipse e selecione o arquivo</h1>
+              <h3>Clique no clipse e selecione o arquivo</h3>
               <label htmlFor="url">
                 <MdAttachFile />
                 <input type="file" id="url" onChange={uploadUserFile} />

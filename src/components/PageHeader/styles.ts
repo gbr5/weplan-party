@@ -124,8 +124,8 @@ export const Menu = styled.div`
     font-size: 18px;
     font-weight: 500;
     color: var(--letter-color-1);
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -133,6 +133,18 @@ export const Menu = styled.div`
     border: 1px solid var(--primary-color);
     box-shadow: var(--box-shadow);
     border-radius: 50%;
+
+    img {
+      width: 40px;
+      border-radius: 50%;
+      height: 40px;
+      box-shadow: var(--box-shadow);
+      transition: 0.3s;
+
+      &:hover {
+        box-shadow: var(--window-box-shadow);
+      }
+    }
 
     svg {
       color: var(--primary-color);

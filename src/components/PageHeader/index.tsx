@@ -12,14 +12,13 @@ import 'react-day-picker/lib/style.css';
 import DayPicker from 'react-day-picker';
 import * as Yup from 'yup';
 
-import { useHistory, Link } from 'react-router-dom';
-import { MdAdd, MdPerson } from 'react-icons/md';
+import { useHistory } from 'react-router-dom';
+import { MdAdd } from 'react-icons/md';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import {
   Header,
   HeaderContent,
-  Profile,
   Menu,
   AppointmentTypeDrawer,
   Calendar,
@@ -355,15 +354,16 @@ const PageHeader: React.FC = ({ children }) => {
             <img src={logo} alt="WePlan" />
           </button>
 
-          <Profile>
+          {/* <Profile>
             <Link to="/profile">
-              <img src={imageProfile} alt="oi" />
+              <img src={imageProfile} alt={user.name} />
             </Link>
-          </Profile>
+          </Profile> */}
           {children}
           <Menu>
             <button type="button" onClick={handleProfileWindow}>
-              <MdPerson size={30} />
+              <img src={imageProfile} alt={user.name} />
+              {/* <MdPerson size={30} /> */}
             </button>
           </Menu>
         </HeaderContent>

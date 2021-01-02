@@ -149,7 +149,7 @@ export const AddMemberDrawer = styled.div`
     background: var(--primary-color);
     border: none;
     height: 40px;
-    width: 91.5%;
+    width: 100%;
     border-radius: 4px;
   }
 `;

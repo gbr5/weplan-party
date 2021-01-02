@@ -63,12 +63,31 @@ export const Header = styled.div`
     }
   }
 `;
+
 export const Body = styled.div`
   width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
+  display: block;
+
+  div {
+    display: block;
+    align-items: stretch;
+    justify-content: center;
+    gap: 4vh;
+
+    width: 100%;
+    height: 100%;
+
+    overflow-y: scroll;
+  }
+
+  input {
+    width: 100%;
+    height: 40px;
+    padding-left: 16px;
+    color: var(--letter-color-5);
+  }
 `;
+
 export const ButtonContainer = styled.span`
   width: 100%;
   display: grid;
@@ -128,9 +147,8 @@ export const FileButton = styled.button<IButtonProps>`
   background: var(--secondary-color);
   border: none;
   margin: auto;
-  gap: 5px;
   width: 100%;
-  height: 100%;
+  height: 40px;
   border-radius: 8px;
   color: var(--letter-color-2);
   transition: 0.5s;
