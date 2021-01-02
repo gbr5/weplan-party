@@ -21,6 +21,11 @@ export const FriendsList = styled.div`
   overflow-y: scroll;
   width: 100%;
   height: 100%;
+
+  @media (max-width: 1000px) {
+    display: block;
+    overflow-y: scroll;
+  }
 `;
 
 export const SaveButton = styled.div`

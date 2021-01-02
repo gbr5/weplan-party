@@ -354,6 +354,7 @@ const AddGuestWindow: React.FC<IProps> = ({
           left: '5%',
           height: '90%',
           width: '90%',
+          overflowY: 'scroll',
         }}
       >
         <Form ref={formRef} onSubmit={handleAddGuest}>
@@ -366,12 +367,12 @@ const AddGuestWindow: React.FC<IProps> = ({
               </p>
               <ButtonContainer>
                 <button type="button" onClick={handleAddGuestListWindow}>
-                  Adicionar lista de convidados
+                  Lista de convidados
                   <MdGroupAdd size={24} />
                 </button>
                 {isOwner && (
                   <button type="button" onClick={handleGuestAllocationWindow}>
-                    Editar alocação de convidados
+                    Alocação de convidados
                   </button>
                 )}
               </ButtonContainer>

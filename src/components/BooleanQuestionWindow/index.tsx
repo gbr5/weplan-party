@@ -21,9 +21,9 @@ const BooleanQuestionWindow: React.FC<IProps> = ({
       containerStyle={{
         zIndex: 40,
         top: '5%',
-        left: '20%',
+        left: '5%',
         height: '90%',
-        width: '60%',
+        width: '90%',
       }}
     >
       <Container>
