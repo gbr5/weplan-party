@@ -390,7 +390,15 @@ export const EventInfoDrawer = styled.div`
   border-radius: 8px;
   box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
   padding: 32px;
-  gap: 16px;
+  gap: 4vh;
+
+  @media (max-width: 600px) {
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+  }
 
   span {
     position: absolute;
@@ -414,7 +422,13 @@ export const EventInfoDrawer = styled.div`
   div {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 24px;
+    gap: 4vh;
+
+    @media (max-width: 600px) {
+      display: block;
+      align-items: stretch;
+      justify-content: center;
+    }
 
     > div {
       display: flex;
@@ -434,7 +448,7 @@ export const EventInfoDrawer = styled.div`
     background: var(--primary-color);
     border: none;
     height: 40px;
-    width: 91.5%;
+    width: 100%;
     border-radius: 4px;
   }
 `;
