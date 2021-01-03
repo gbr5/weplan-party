@@ -4,7 +4,7 @@ import '../../styles/global';
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
   background: var(--header-background-color);
   border-radius: 8px;
@@ -20,6 +20,7 @@ export const Container = styled.div`
   }
 
   > button {
+    margin: 2vh 0;
     height: 40px;
     width: 100%;
     border-radius: 4px;
