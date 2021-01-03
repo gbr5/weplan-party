@@ -76,6 +76,9 @@ const CreateEventWindow: React.FC<IProps> = ({
     selectedDate,
   ]);
 
+  const nowHour = newDate.getHours();
+  const nowDate = `${newDate.getDate}/${newDate.getMonth}/${newDate.getFullYear}`;
+
   return (
     <WindowUnFormattedContainer
       onHandleCloseWindow={onHandleCloseWindow}
@@ -104,12 +107,14 @@ const CreateEventWindow: React.FC<IProps> = ({
           <Input
             type="time"
             name="event_time"
+            defaultValue={nowHour}
             onChange={e => setEventStartTime(e.target.value)}
           />
 
           <Input
             type="date"
             name="date"
+            defaultValue={nowDate}
             onChange={e => setSelectedDate(e.target.value)}
           />
 
