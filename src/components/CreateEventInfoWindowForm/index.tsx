@@ -31,7 +31,7 @@ const CreateEventInfoWindowForm: React.FC<IProps> = ({
 
         const schema = Yup.object().shape({
           number_of_guests: Yup.string().required('Nome é obrigatório'),
-          duration: Yup.number().required('Sobrenome é obrigatório'),
+          duration: Yup.string(),
           budget: Yup.number().required(''),
           description: Yup.string().required(),
           country: Yup.string().required(),
@@ -45,9 +45,12 @@ const CreateEventInfoWindowForm: React.FC<IProps> = ({
           abortEarly: false,
         });
 
+        const hours = Number(data.duration.split(':')[0]) * 60;
+        const minutes = Number(data.duration.split(':')[0]);
+
         await api.post(`events/${eventId}/event-info`, {
           number_of_guests: data.number_of_guests,
-          duration: data.duration,
+          duration: hours + minutes,
           budget: data.budget,
           description: data.description,
           country: data.country,

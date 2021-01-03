@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useRef } from 'react';
 
-import { MdAttachFile, MdClose, MdMenu } from 'react-icons/md';
+import { MdMenu } from 'react-icons/md';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 import { Form } from '@unform/web';
@@ -13,19 +13,13 @@ import getValidationErrors from '../../utils/getValidationErros';
 
 import Input from '../Input';
 
-import {
-  Button,
-  ButtonContent,
-  Menu,
-  CreateEventForm,
-  EventTypeDrawer,
-  EventInfoDrawer,
-} from './styles';
-import WindowContainer from '../WindowContainer';
+import { Button, EventInfoDrawer } from './styles';
 import MainFriendsWindow from '../MainFriendsWindow';
 import ICreateEventInfoDTO from '../../dtos/ICreateEventInfoDTO';
 import UploadFileWindow from '../UploadFileWindow';
 import MenuDrawer from './MenuDrawer';
+import EventTypeWindow from '../EventTypeWindow';
+import CreateEventWindow from '../CreateEventWindow';
 
 interface IProps {
   signOut: Function;
@@ -37,19 +31,15 @@ interface IEvent {
 }
 
 const MenuButton: React.FC<IProps> = ({ signOut }: IProps) => {
-  const [buttonDrawer, setButtonDrawer] = useState(false);
   const [menuDrawer, setMenuDrawer] = useState(false);
   const [friendsWindow, setFriendsWindow] = useState(false);
   const [createEventDrawer, setCreateEventDrawer] = useState(false);
   const [eventTypeDrawer, setEventTypeDrawer] = useState(false);
   const [uploadFileWindow, setUploadFileWindow] = useState(false);
-  const newDate = new Date();
-  const [selectedDate, setSelectedDate] = useState(`${newDate}`);
   const [eventType, setEventType] = useState<string>();
   const [eventInfoDrawer, setEventInfoDrawer] = useState(false);
   const [myEvents, setMyEvents] = useState<IEvent[]>([]);
   const [eventName, setEventName] = useState('');
-  const [eventStartTime, setEventStartTime] = useState('');
 
   const formRef = useRef<FormHandles>(null);
 
@@ -60,7 +50,6 @@ const MenuButton: React.FC<IProps> = ({ signOut }: IProps) => {
   const handleCreateEventDrawer = useCallback(() => {
     setCreateEventDrawer(!createEventDrawer);
     setEventTypeDrawer(true);
-    setButtonDrawer(false);
   }, [createEventDrawer]);
 
   const handleEventTypeDrawer = useCallback(() => {
@@ -68,7 +57,6 @@ const MenuButton: React.FC<IProps> = ({ signOut }: IProps) => {
   }, [eventTypeDrawer]);
 
   const handleNavigateToFriends = useCallback(() => {
-    setButtonDrawer(false);
     setFriendsWindow(true);
   }, []);
 
@@ -97,6 +85,7 @@ const MenuButton: React.FC<IProps> = ({ signOut }: IProps) => {
   );
 
   const handleEventInfoDrawer = useCallback(() => {
+    setCreateEventDrawer(false);
     setEventInfoDrawer(!eventInfoDrawer);
   }, [eventInfoDrawer]);
 
@@ -108,7 +97,7 @@ const MenuButton: React.FC<IProps> = ({ signOut }: IProps) => {
 
         const schema = Yup.object().shape({
           number_of_guests: Yup.string().required('Nome é obrigatório'),
-          duration: Yup.number().required('Sobrenome é obrigatório'),
+          duration: Yup.string(),
           budget: Yup.number().required(''),
           description: Yup.string().required(),
           country: Yup.string().required(),
@@ -122,10 +111,12 @@ const MenuButton: React.FC<IProps> = ({ signOut }: IProps) => {
           abortEarly: false,
         });
 
+        const hours = Number(data.duration.split(':')[0]) * 60;
+        const minutes = Number(data.duration.split(':')[0]);
         new_event &&
           (await api.post(`events/${new_event.id}/event-info`, {
             number_of_guests: data.number_of_guests,
-            duration: data.duration,
+            duration: hours + minutes,
             budget: data.budget,
             description: data.description,
             country: data.country,
@@ -164,52 +155,6 @@ const MenuButton: React.FC<IProps> = ({ signOut }: IProps) => {
     handleEventInfoDrawer();
   }, [handleEventInfoDrawer]);
 
-  const handleCreateEvent = useCallback(async () => {
-    try {
-      const date = new Date(selectedDate);
-      const eventHour = eventStartTime.split(':');
-
-      date.setHours(Number(eventHour[0]));
-      date.setMinutes(Number(eventHour[1]));
-
-      const event = await api.post<IEvent>('/events', {
-        name: eventName,
-        date,
-        event_type: eventType,
-      });
-      setEventName(event.data.name);
-      addToast({
-        type: 'success',
-        title: 'Evento Criado com Sucesso',
-        description: 'Você já pode começar a planejar o seu evento.',
-      });
-      handleGetMyEvents();
-      handleCreateEventDrawer();
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const error = getValidationErrors(err);
-
-        formRef.current?.setErrors(error);
-      }
-
-      addToast({
-        type: 'error',
-        title: 'Erro ao criar evento',
-        description: 'Erro  ao criar o evento, tente novamente.',
-      });
-    }
-  }, [
-    addToast,
-    selectedDate,
-    handleCreateEventDrawer,
-    eventType,
-    eventStartTime,
-    eventName,
-    handleGetMyEvents,
-  ]);
-
-  const inputHeight = { height: '40px' };
-
   return (
     <>
       {/* <Button type="button" onClick={handleButtonDrawer}> */}
@@ -224,165 +169,27 @@ const MenuButton: React.FC<IProps> = ({ signOut }: IProps) => {
           handleUploadFileWindow={() => setUploadFileWindow(!uploadFileWindow)}
         />
       )}
-      {!!buttonDrawer && (
-        <WindowContainer
-          onHandleCloseWindow={() => setButtonDrawer(false)}
-          containerStyle={{
-            top: '100px',
-            left: '8px',
-            height: '350px',
-            width: '248px',
-          }}
-        >
-          <ButtonContent>
-            <button type="button" onClick={handleCreateEventDrawer}>
-              Criar Evento
-            </button>
-            <button type="button" onClick={() => setUploadFileWindow(true)}>
-              <MdAttachFile />
-              Arquivos
-            </button>
-            <button type="button" onClick={handleNavigateToFriends}>
-              Contatos
-            </button>
-            {/* {user.isSupplier && (
-                <button
-                  type="button"
-                  onClick={handleNavigateToSupplierDashboard}
-                >
-                  Página de fornecedor
-                </button>
-              )} */}
-          </ButtonContent>
-        </WindowContainer>
-      )}
       {!!friendsWindow && (
         <MainFriendsWindow
           onHandleCloseWindow={() => setFriendsWindow(false)}
         />
       )}
       {!!createEventDrawer && (
-        <Form ref={formRef} onSubmit={handleCreateEvent}>
-          <CreateEventForm>
-            <h1>Crie seu evento</h1>
-
-            <div>
-              <span>
-                <button type="button" onClick={handleCreateEventDrawer}>
-                  <MdClose size={30} />
-                </button>
-              </span>
-
-              <button type="button" onClick={handleEventTypeDrawer}>
-                {tipoDeEvento || 'Selecionar tipo de Evento'}
-              </button>
-
-              <Input
-                containerStyle={inputHeight}
-                type="text"
-                placeholder="Nome do evento"
-                name="name"
-                onChange={e => setEventName(e.target.value)}
-              />
-
-              <Input
-                containerStyle={inputHeight}
-                type="time"
-                name="event_time"
-                onChange={e => setEventStartTime(e.target.value)}
-              />
-
-              <Input
-                containerStyle={inputHeight}
-                type="date"
-                name="date"
-                onChange={e => setSelectedDate(e.target.value)}
-              />
-            </div>
-
-            <button type="submit">
-              <h3>Criar</h3>
-            </button>
-          </CreateEventForm>
-        </Form>
+        <CreateEventWindow
+          eventType={eventType}
+          handleEventInfoDrawer={handleEventInfoDrawer}
+          handleEventTypeDrawer={handleEventTypeDrawer}
+          handleGetMyEvents={handleGetMyEvents}
+          onHandleCloseWindow={() => setCreateEventDrawer(false)}
+          tipoDeEvento={tipoDeEvento}
+          handleSetEventName={(e: string) => setEventName(e)}
+        />
       )}
       {!!eventTypeDrawer && (
-        <EventTypeDrawer>
-          <Menu>
-            <button
-              type="button"
-              onClick={() => handleEventTypeChange('Wedding')}
-            >
-              Casamento
-            </button>
-            <button type="button" onClick={() => handleEventTypeChange('Prom')}>
-              Formatura
-            </button>
-            <button
-              type="button"
-              onClick={() => handleEventTypeChange('Birthday')}
-            >
-              Aniversário
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleEventTypeChange('Sweet_15')}
-            >
-              15 Anos
-            </button>
-            <button
-              type="button"
-              onClick={() => handleEventTypeChange('Sweet_16')}
-            >
-              Sweet 16
-            </button>
-            <button
-              type="button"
-              onClick={() => handleEventTypeChange('Wedding_Anniversary')}
-            >
-              Aniversário de Casamento (Bodas)
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleEventTypeChange('Corporate')}
-            >
-              Corporativo
-            </button>
-            <button
-              type="button"
-              onClick={() => handleEventTypeChange('Christmas')}
-            >
-              Natal
-            </button>
-            <button
-              type="button"
-              onClick={() => handleEventTypeChange('New_Year')}
-            >
-              Reveillón
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleEventTypeChange('Baptism')}
-            >
-              Batismo
-            </button>
-            <button
-              type="button"
-              onClick={() => handleEventTypeChange('Hanukkah')}
-            >
-              Hanukkah
-            </button>
-            <button
-              type="button"
-              onClick={() => handleEventTypeChange('Others')}
-            >
-              Outros
-            </button>
-          </Menu>
-        </EventTypeDrawer>
+        <EventTypeWindow
+          onHandleCloseWindow={() => setEventTypeDrawer(false)}
+          selectEventType={(e: string) => handleEventTypeChange(e)}
+        />
       )}
       {!!eventInfoDrawer && (
         <Form ref={formRef} onSubmit={handlePostEventInfo}>

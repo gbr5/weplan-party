@@ -77,6 +77,10 @@ const CreatePersonInfoWindowForm: React.FC<IProps> = ({
     },
     [addToast, getPersonInfo, handleCloseWindow, user],
   );
+  const containerStyles = {
+    width: '100%',
+    height: '40px',
+  };
 
   return (
     <Container>
@@ -87,18 +91,26 @@ const CreatePersonInfoWindowForm: React.FC<IProps> = ({
         </QuestionTitle>
 
         <Input
+          containerStyle={containerStyles}
           name="first_name"
           icon={FiUser}
           type="text"
           placeholder="Prénome"
         />
         <Input
+          containerStyle={containerStyles}
           name="last_name"
           icon={FiUser}
           type="text"
           placeholder="Sobrenome"
         />
-        <Input name="person_id" icon={FiUser} type="text" placeholder="CPF" />
+        <Input
+          containerStyle={containerStyles}
+          name="person_id"
+          icon={FiUser}
+          type="text"
+          placeholder="CPF"
+        />
 
         <Button type="submit">Cadastrar</Button>
       </Form>
