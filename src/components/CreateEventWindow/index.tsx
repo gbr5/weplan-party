@@ -105,7 +105,7 @@ const CreateEventWindow: React.FC<IProps> = ({
             type="time"
             name="event_time"
             containerStyle={{
-              minHeight: '2.375rem',
+              minHeight: '2.5rem',
             }}
             onChange={e => setEventStartTime(e.target.value)}
           />
@@ -114,7 +114,7 @@ const CreateEventWindow: React.FC<IProps> = ({
             type="date"
             name="date"
             containerStyle={{
-              minHeight: '2.375rem',
+              minHeight: '2.5rem',
             }}
             onChange={e => setSelectedDate(e.target.value)}
           />
