@@ -1,7 +1,6 @@
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import React, { MouseEventHandler, useCallback, useRef, useState } from 'react';
-import { MdClose } from 'react-icons/md';
 import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
 import Input from '../Input';
@@ -76,7 +75,7 @@ const CreateEventWindow: React.FC<IProps> = ({
     handleGetMyEvents,
     selectedDate,
   ]);
-  const inputHeight = { height: '40px' };
+  const inputHeight = { height: '40px', width: '100%' };
 
   return (
     <WindowUnFormattedContainer
@@ -89,49 +88,40 @@ const CreateEventWindow: React.FC<IProps> = ({
         width: '100%',
       }}
     >
-      <Container>
-        <Form ref={formRef} onSubmit={handleCreateEvent}>
+      <Form ref={formRef} onSubmit={handleCreateEvent}>
+        <Container>
           <h1>Crie seu evento</h1>
 
-          <div>
-            <span>
-              <button type="button" onClick={onHandleCloseWindow}>
-                <MdClose size={30} />
-              </button>
-            </span>
+          <button type="button" onClick={() => handleEventTypeDrawer()}>
+            {tipoDeEvento || 'Selecionar tipo de Evento'}
+          </button>
+          <Input
+            containerStyle={inputHeight}
+            type="text"
+            placeholder="Nome do evento"
+            name="name"
+            onChange={e => setEventName(e.target.value)}
+          />
 
-            <button type="button" onClick={() => handleEventTypeDrawer()}>
-              {tipoDeEvento || 'Selecionar tipo de Evento'}
-            </button>
+          <Input
+            containerStyle={inputHeight}
+            type="time"
+            name="event_time"
+            onChange={e => setEventStartTime(e.target.value)}
+          />
 
-            <Input
-              containerStyle={inputHeight}
-              type="text"
-              placeholder="Nome do evento"
-              name="name"
-              onChange={e => setEventName(e.target.value)}
-            />
-
-            <Input
-              containerStyle={inputHeight}
-              type="time"
-              name="event_time"
-              onChange={e => setEventStartTime(e.target.value)}
-            />
-
-            <Input
-              containerStyle={inputHeight}
-              type="date"
-              name="date"
-              onChange={e => setSelectedDate(e.target.value)}
-            />
-          </div>
+          <Input
+            containerStyle={inputHeight}
+            type="date"
+            name="date"
+            onChange={e => setSelectedDate(e.target.value)}
+          />
 
           <button type="submit">
             <h3>Criar</h3>
           </button>
-        </Form>
-      </Container>
+        </Container>
+      </Form>
     </WindowUnFormattedContainer>
   );
 };
