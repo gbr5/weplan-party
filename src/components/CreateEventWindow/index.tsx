@@ -75,7 +75,6 @@ const CreateEventWindow: React.FC<IProps> = ({
     handleGetMyEvents,
     selectedDate,
   ]);
-  const inputHeight = { height: '40px', width: '100%' };
 
   return (
     <WindowUnFormattedContainer
@@ -96,7 +95,6 @@ const CreateEventWindow: React.FC<IProps> = ({
             {tipoDeEvento || 'Selecionar tipo de Evento'}
           </button>
           <Input
-            containerStyle={inputHeight}
             type="text"
             placeholder="Nome do evento"
             name="name"
@@ -104,14 +102,12 @@ const CreateEventWindow: React.FC<IProps> = ({
           />
 
           <Input
-            containerStyle={inputHeight}
             type="time"
             name="event_time"
             onChange={e => setEventStartTime(e.target.value)}
           />
 
           <Input
-            containerStyle={inputHeight}
             type="date"
             name="date"
             onChange={e => setSelectedDate(e.target.value)}
