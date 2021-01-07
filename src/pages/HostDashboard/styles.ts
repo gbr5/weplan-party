@@ -7,14 +7,18 @@ export const Container = styled.div`
 
 export const Content = styled.main`
   position: relative;
-  max-width: 90%;
-  margin: 0 auto;
+  max-width: 100%;
+  margin: 0 4vh;
   display: flex;
   flex-direction: column;
+
+  @media (max-width: 800px) {
+    margin: 0 1vh;
+  }
 `;
 
 export const MiddlePage = styled.div`
-  margin-top: 12vh;
+  margin-top: 10vh;
   display: flex;
   flex-direction: column;
 `;
@@ -22,12 +26,12 @@ export const MiddlePage = styled.div`
 export const BottomPage = styled.div`
   width: 100%;
   display: grid;
-  grid-template-columns: 2fr 2fr;
-  gap: 32px;
-  height: 250px;
+  grid-template-columns: 1fr 1fr;
+  gap: 4vh;
+  height: 100%;
 
-  @media (max-width: 900px) {
-    display: flex;
+  @media (max-width: 1100px) {
+    display: block;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -40,18 +44,22 @@ export const BottomPage = styled.div`
 
 export const BottomSection = styled.div`
   background: var(--header-background-color);
-  padding: 24px;
+  padding: 2vw 2vh;
   border-radius: 8px;
   box-shadow: 1px 1px 5px 4px rgba(50, 50, 50, 0.2);
   flex: 1;
   align-items: center;
-  height: 250px;
+  height: 40vh;
   width: 100%;
+
+  @media (max-width: 1100px) {
+    margin: 2vh auto;
+  }
 
   > div {
     border-bottom: 1px solid var(--letter-color-4);
     display: flex;
-    gap: 16px;
+    gap: 2vw;
     margin-bottom: 12px;
     padding-bottom: 16px;
 
@@ -76,7 +84,7 @@ export const BottomSection = styled.div`
 
   ul {
     overflow-y: scroll;
-    height: 150px;
+    height: 85%;
 
     li + li {
       padding-top: 14px;
@@ -123,6 +131,10 @@ export const BottomSection = styled.div`
 
         h3 {
           color: var(--letter-color-4);
+
+          @media (max-width: 800px) {
+            font-size: 12px;
+          }
         }
       }
 
@@ -239,4 +251,14 @@ export const BooleanNavigationButton = styled.button<ButtonProps>`
       opacity: 1;
       transition: 0.25s;
     `}
+`;
+
+export const DateSection = styled.div`
+  width: 150px;
+  color: var(--primary-color);
+
+  @media (max-width: 800px) {
+    width: 50px;
+    font-size: 12px;
+  }
 `;

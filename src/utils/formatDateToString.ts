@@ -1,8 +1,14 @@
 export default function formatDateToString(date: string): string {
   const newDate = new Date(date);
   let year = newDate.getFullYear();
-  const hours = newDate.getHours();
-  const minutes = newDate.getMinutes();
+  const hours =
+    String(newDate.getHours()).length === 1
+      ? `0${newDate.getHours()}`
+      : String(newDate.getHours());
+  const minutes =
+    String(newDate.getMinutes()).length === 1
+      ? `0${newDate.getMinutes()}`
+      : String(newDate.getMinutes());
   let month;
   month =
     newDate.getMonth() < 9

@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from 'react';
-import formatDateToString from '../../../utils/formatDateToString';
 import WindowUnFormattedContainer from '../../WindowUnFormattedContainer';
 
 import {
@@ -67,22 +66,43 @@ const SelectEventDatesWindow: React.FC<IProps> = ({
       }}
     >
       <Container>
-        <h2>Selecione os meses de interesse</h2>
+        <h2>Selecione as datas de interesse</h2>
         <MonthContainer>
           {selectedPossibleEventDates.length > 0 &&
             selectedPossibleEventDates.map(date => {
               const isActive = selectedEventDates.find(xDate => xDate === date);
-              const milliseconds = date.getMilliseconds();
-              const seconds = date.getSeconds();
-              const key = `${date}-${seconds}-${milliseconds}`;
+              const weekDay = date.getDay();
+              let day = '';
+              if (weekDay === 0) {
+                day = 'Domingo';
+              } else if (weekDay === 1) {
+                day = 'Segunda';
+              } else if (weekDay === 2) {
+                day = 'Terça';
+              } else if (weekDay === 3) {
+                day = 'Quarta';
+              } else if (weekDay === 4) {
+                day = 'Quinta';
+              } else if (weekDay === 5) {
+                day = 'Sexta';
+              } else if (weekDay === 6) {
+                day = 'Sábado';
+              }
+              const mDay = String(date.getDate());
+              const month = String(date.getMonth() + 1);
+              const formattedDate = `${day} - ${
+                mDay.length === 1 ? `0${mDay}` : mDay
+              }/${
+                month.length === 1 ? `0${month}` : month
+              }/${date.getFullYear()}`;
               return (
                 <BooleanButton
-                  key={key}
+                  key={formattedDate}
                   isActive={!!isActive}
                   type="button"
                   onClick={() => handleSelectedDates(date)}
                 >
-                  {formatDateToString(String(date))}
+                  {formattedDate}
                 </BooleanButton>
               );
             })}

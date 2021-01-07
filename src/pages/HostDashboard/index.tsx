@@ -10,6 +10,7 @@ import {
   BottomSection,
   MiddlePage,
   BooleanNavigationButton,
+  DateSection,
 } from './styles';
 
 import PageHeader from '../../components/PageHeader';
@@ -307,9 +308,9 @@ const Dashboard: React.FC = () => {
                           )}
 
                           <div>
-                            <span>
+                            <DateSection>
                               {formatStringToDate(String(event.event.date))}
-                            </span>
+                            </DateSection>
                             <span>
                               {event.event.user_id === user.id ? (
                                 <button
@@ -355,9 +356,9 @@ const Dashboard: React.FC = () => {
                             <h3>{event.userEventMember.name}</h3>
                           </button>
                           <div>
-                            <span>
+                            <DateSection>
                               {formatStringToDate(String(event.event.date))}
-                            </span>
+                            </DateSection>
                             <span>
                               <button
                                 type="button"

@@ -27,6 +27,11 @@ export const MonthContainer = styled.div`
   justify-content: center;
   width: 100%;
   gap: 4vh;
+  overflow-y: scroll;
+
+  @media (max-width: 1000px) {
+    display: block;
+  }
 `;
 
 export const PreviousButton = styled.button`
@@ -37,18 +42,18 @@ export const PreviousButton = styled.button`
   height: 40px;
 
   &:hover {
-    opacity: 0.8;
+    opacity: 0.6;
   }
 `;
 export const NextButton = styled.button`
-  width: 100%;
   background: rgba(105, 205, 105);
+  width: 100%;
   border: none;
   border-radius: 4px;
   height: 40px;
 
   &:hover {
-    opacity: 0.8;
+    opacity: 0.6;
   }
 `;
 
@@ -69,6 +74,10 @@ export const BooleanButton = styled.button<IButtonProps>`
   border-radius: 4px;
   width: 100%;
   height: 40px;
+
+  @media (max-width: 1000px) {
+    margin-top: 4vh;
+  }
 
   box-shadow: var(--box-shadow);
 
