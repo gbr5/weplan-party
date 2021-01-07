@@ -11,6 +11,10 @@ export const Content = styled.main`
   margin: 0 4vh;
   display: flex;
   flex-direction: column;
+
+  @media (max-width: 800px) {
+    margin: 0 1vh;
+  }
 `;
 
 export const MiddlePage = styled.div`
@@ -55,7 +59,7 @@ export const BottomSection = styled.div`
   > div {
     border-bottom: 1px solid var(--letter-color-4);
     display: flex;
-    gap: 16px;
+    gap: 2vw;
     margin-bottom: 12px;
     padding-bottom: 16px;
 
@@ -127,6 +131,10 @@ export const BottomSection = styled.div`
 
         h3 {
           color: var(--letter-color-4);
+
+          @media (max-width: 800px) {
+            font-size: 12px;
+          }
         }
       }
 
@@ -248,4 +256,9 @@ export const BooleanNavigationButton = styled.button<ButtonProps>`
 export const DateSection = styled.div`
   width: 150px;
   color: var(--primary-color);
+
+  @media (max-width: 800px) {
+    width: 50px;
+    font-size: 12px;
+  }
 `;
