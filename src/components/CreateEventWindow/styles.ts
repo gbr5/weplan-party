@@ -47,13 +47,25 @@ export const Container = styled.div`
 
 export const PreviousButton = styled.button`
   background: rgba(255, 95, 95);
+  width: 100%;
   border: none;
-  border-radius: 8px;
+  border-radius: 4px;
+  height: 40px;
+
+  &:hover {
+    opacity: 0.6;
+  }
 `;
 export const NextButton = styled.button`
   background: rgba(105, 205, 105);
+  width: 100%;
   border: none;
-  border-radius: 8px;
+  border-radius: 4px;
+  height: 40px;
+
+  &:hover {
+    opacity: 0.6;
+  }
 `;
 
 interface IButtonProps {
