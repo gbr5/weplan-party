@@ -30,6 +30,8 @@ import IPersonInfoDTO from '../../dtos/IPersonInfoDTO';
 import CreatePersonInfoWindowForm from '../../components/CreatePersonInfoWindowForm';
 import FriendsEventsSection from '../../components/MainDashboardBottomSection/FriendsEventsSection';
 import GuestToUserMessageWindow from '../../components/GuestToUserMessageWindow';
+import WindowUnFormattedContainer from '../../components/WindowUnFormattedContainer';
+import BooleanQuestionWindow from '../../components/BooleanQuestionWindow';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
@@ -222,6 +224,14 @@ const Dashboard: React.FC = () => {
     setEventOwner(props);
   }, []);
 
+  const handleDeleteEventQuestion = useCallback((e: string) => {
+    if (e === 'false') {
+      setDeleteEventWindow(false);
+    } else {
+      handleDeleteEvent(e);
+    }
+  }, []);
+
   return (
     <Container>
       <PageHeader />
@@ -239,29 +249,11 @@ const Dashboard: React.FC = () => {
         />
       )}
       {!!deleteEventWindow && (
-        <WindowContainer
-          containerStyle={{
-            top: '25%',
-            left: '35%',
-            height: '25%',
-            width: '30%',
-            zIndex: 40,
-          }}
+        <BooleanQuestionWindow
           onHandleCloseWindow={() => setDeleteEventWindow(false)}
-        >
-          <h1>Tem certeza de que deseja deletar o evento?</h1>
-          <div>
-            <button type="button" onClick={() => setDeleteEventWindow(false)}>
-              Não
-            </button>
-            <button
-              type="button"
-              onClick={() => handleDeleteEvent(eventToDelete)}
-            >
-              Sim
-            </button>
-          </div>
-        </WindowContainer>
+          question="Tem certeza de que deseja deletar o evento?"
+          selectBooleanOption={() => handleDeleteEventQuestion(eventToDelete)}
+        />
       )}
       <Content>
         <MiddlePage>
@@ -383,7 +375,6 @@ const Dashboard: React.FC = () => {
                     })}
               </ul>
             </BottomSection>
-
             <BottomSection>
               <div>
                 <strong>Festas de Amigos</strong>
