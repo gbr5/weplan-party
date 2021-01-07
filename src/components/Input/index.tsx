@@ -4,21 +4,34 @@ import React, {
   useRef,
   useState,
   useCallback,
+  FormEvent,
 } from 'react';
 import { IconBaseProps } from 'react-icons';
 import { FiAlertCircle } from 'react-icons/fi';
 import { useField } from '@unform/core';
+import {
+  cep,
+  brlID,
+  currency,
+  brlDateFormat,
+  hour,
+  minute,
+} from '../../utils/masks';
 
-import { Container, Error } from './styles';
+import { Container, Error, Prefix } from './styles';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string;
   containerStyle?: object;
   icon?: React.ComponentType<IconBaseProps>;
+  mask?: 'cep' | 'currency' | 'brlID' | 'brlDateFormat' | 'hour' | 'minute';
+  prefix?: string;
 }
 
 const Input: React.FC<InputProps> = ({
   name,
+  mask,
+  prefix,
   containerStyle = {},
   icon: Icon,
   ...rest
@@ -40,6 +53,20 @@ const Input: React.FC<InputProps> = ({
     setIsFocused(true);
   }, []);
 
+  const handleKeyUp = useCallback(
+    (e: React.FormEvent<HTMLInputElement>) => {
+      if (mask) {
+        mask === 'cep' && cep(e);
+        mask === 'brlID' && brlID(e);
+        mask === 'currency' && currency(e);
+        mask === 'brlDateFormat' && brlDateFormat(e);
+        mask === 'hour' && hour(e);
+        mask === 'minute' && minute(e);
+      }
+    },
+    [mask],
+  );
+
   useEffect(() => {
     registerField({
       name: fieldName,
@@ -55,8 +82,10 @@ const Input: React.FC<InputProps> = ({
       isFilled={isFilled}
       isFocused={isFocused}
     >
+      {prefix && <Prefix>{prefix}</Prefix>}
       {Icon && <Icon size={20} />}
       <input
+        onKeyUp={(e: FormEvent<HTMLInputElement>) => handleKeyUp(e)}
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}
         defaultValue={defaultValue}
