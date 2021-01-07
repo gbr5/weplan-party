@@ -89,3 +89,11 @@ export const Error = styled(Tooltip)`
     }
   }
 `;
+
+export const Prefix = styled.span`
+  padding: 6px 12px;
+  font-size: 14px;
+  color: #555;
+  background: #eee;
+  border: 1px solid #ccc;
+`;

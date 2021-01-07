@@ -1,6 +1,8 @@
-export default function formatStringToDate(date: string): string {
+export default function formatDateToString(date: string): string {
   const newDate = new Date(date);
   let year = newDate.getFullYear();
+  const hours = newDate.getHours();
+  const minutes = newDate.getMinutes();
   let month;
   month =
     newDate.getMonth() < 9
@@ -19,6 +21,6 @@ export default function formatStringToDate(date: string): string {
         : newDate.getDate() + 1;
   }
 
-  const formattedDate = `${day}/${month}/${year}`;
+  const formattedDate = `${hours}:${minutes} - ${day}/${month}/${year}`;
   return formattedDate;
 }

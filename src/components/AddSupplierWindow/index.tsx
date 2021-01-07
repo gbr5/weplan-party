@@ -59,7 +59,6 @@ const AddSupplierWindow: React.FC<IProps> = ({
 
   const handleAddSupplier = useCallback(
     async (data: ICreateSupplier) => {
-      console.log(data);
       try {
         formRef.current?.setErrors([]);
 
@@ -70,14 +69,11 @@ const AddSupplierWindow: React.FC<IProps> = ({
           abortEarly: false,
         });
 
-        console.log(weplanSupplier, selectedWeplanSupplier, 'linha 64');
-
         if (
           weplanSupplier &&
           selectedWeplanSupplier &&
           selectedWeplanSupplier.userBySupplierCategory
         ) {
-          console.log(weplanSupplier, selectedWeplanSupplier, 'linha 70');
           const newSupplier = await api.post(
             `events/event-suppliers/${eventId}`,
             {
@@ -150,7 +146,6 @@ const AddSupplierWindow: React.FC<IProps> = ({
     ],
   );
   const handleSetSelectedWeplanSupplier = useCallback((props: ISupplierDTO) => {
-    console.log(props);
     setSelectedWeplanSupplier(props);
     setWePlanSupplier(true);
     setWeplanSupplierListWindow(false);

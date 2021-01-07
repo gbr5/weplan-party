@@ -107,7 +107,7 @@ const CreatePersonInfoWindowForm: React.FC<IProps> = ({
         <Input
           containerStyle={containerStyles}
           name="person_id"
-          icon={FiUser}
+          mask="brlID"
           type="text"
           placeholder="CPF"
         />
