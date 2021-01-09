@@ -112,7 +112,7 @@ const MenuButton: React.FC<IProps> = ({ signOut }: IProps) => {
         });
 
         const hours = Number(data.duration.split(':')[0]) * 60;
-        const minutes = Number(data.duration.split(':')[0]);
+        const minutes = Number(data.duration.split(':')[1]);
         new_event &&
           (await api.post(`events/${new_event.id}/event-info`, {
             number_of_guests: data.number_of_guests,
@@ -157,7 +157,6 @@ const MenuButton: React.FC<IProps> = ({ signOut }: IProps) => {
 
   return (
     <>
-      {/* <Button type="button" onClick={handleButtonDrawer}> */}
       <Button type="button" onClick={() => setMenuDrawer(!menuDrawer)}>
         <MdMenu size={24} />
       </Button>
