@@ -196,25 +196,34 @@ const MenuButton: React.FC<IProps> = ({ signOut }: IProps) => {
             <h1>Informações do evento</h1>
             <div>
               <div>
+                <p>Duração (em minutos)</p>
                 <Input
                   name="duration"
                   type="time"
                   placeholder="Duração (em horas)"
                 />
+                <p>Número de Convidados</p>
                 <Input
                   name="number_of_guests"
                   type="number"
                   placeholder="Número de convidados"
                 />
+                <p>Orçamento</p>
                 <Input name="budget" type="number" placeholder="Orçamento" />
+                <p>Descrição</p>
                 <Input name="description" type="text" placeholder="Descrição" />
               </div>
               <div>
+                <p>País</p>
                 <Input name="country" type="text" placeholder="País" />
+                <p>Estado</p>
                 <Input name="local_state" type="text" placeholder="Estado" />
+                <p>Cidade</p>
                 <Input name="city" type="text" placeholder="Cidade" />
+                <p>Traje</p>
                 <Input name="dress_code" type="text" placeholder="Traje" />
               </div>
+              <p>Endereço</p>
               <Input name="address" type="text" placeholder="Endereço" />
             </div>
 
