@@ -13,7 +13,12 @@ import SelectMonthWindow from './SelectMonthWindow';
 import SelectWeekDayWindow from './SelectWeekDayWindow';
 import SelectYearWindow from './SelectYearWindow';
 
-import { Container, PreviousButton, NextButton } from './styles';
+import {
+  Container,
+  PreviousButton,
+  NextButton,
+  ButtonContainer,
+} from './styles';
 
 interface IProps {
   handleGetMyEvents: Function;
@@ -341,11 +346,6 @@ const CreateEventWindow: React.FC<IProps> = ({
                   name="date"
                   onChange={e => setSelectedDate(e.target.value)}
                 />
-                <div>
-                  <PreviousButton type="button" onClick={() => setXStep('1')}>
-                    Anterior
-                  </PreviousButton>
-                </div>
               </>
             )}
             {xStep === '7' && (
@@ -358,9 +358,15 @@ const CreateEventWindow: React.FC<IProps> = ({
             )}
 
             {createButton && (
-              <NextButton type="submit">
-                <h3>Criar</h3>
-              </NextButton>
+              <ButtonContainer>
+                <PreviousButton type="button" onClick={() => setXStep('1')}>
+                  Anterior
+                </PreviousButton>
+
+                <NextButton type="submit">
+                  <h3>Criar</h3>
+                </NextButton>
+              </ButtonContainer>
             )}
           </Container>
         </Form>
