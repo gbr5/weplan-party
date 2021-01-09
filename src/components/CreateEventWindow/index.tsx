@@ -345,12 +345,6 @@ const CreateEventWindow: React.FC<IProps> = ({
                   <PreviousButton type="button" onClick={() => setXStep('1')}>
                     Anterior
                   </PreviousButton>
-                  <NextButton
-                    type="button"
-                    onClick={() => handleSelectedDates()}
-                  >
-                    Próximo
-                  </NextButton>
                 </div>
               </>
             )}

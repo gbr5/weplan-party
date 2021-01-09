@@ -196,7 +196,7 @@ const MenuButton: React.FC<IProps> = ({ signOut }: IProps) => {
             <h1>Informações do evento</h1>
             <div>
               <div>
-                <p>Duração (em minutos)</p>
+                <p>Duração (em horas)</p>
                 <Input
                   name="duration"
                   type="time"
