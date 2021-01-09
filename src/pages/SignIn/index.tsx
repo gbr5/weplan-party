@@ -94,7 +94,8 @@ const SignIn: React.FC = () => {
             <Input
               name="email"
               icon={FiMail}
-              type="text"
+              type="email"
+              inputMode="email"
               placeholder="E-mail"
             />
             <Input
