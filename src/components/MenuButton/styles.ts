@@ -430,7 +430,7 @@ export const EventInfoDrawer = styled.div`
       display: block;
       align-items: stretch;
       justify-content: center;
-      /* margin: 2vh auto; */
+      margin: 2vh auto;
     }
 
     > div {
