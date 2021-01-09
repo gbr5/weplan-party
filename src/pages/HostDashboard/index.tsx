@@ -20,7 +20,6 @@ import IEventDTO from '../../dtos/IEventDTO';
 import formatStringToDate from '../../utils/formatDateToString';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
-import WindowContainer from '../../components/WindowContainer';
 import IEventOwnerDTO from '../../dtos/IEventOwnerDTO';
 import IEventMemberDTO from '../../dtos/IEventMemberDTO';
 import IEventGuestDTO from '../../dtos/IEventGuestDTO';
@@ -30,7 +29,6 @@ import IPersonInfoDTO from '../../dtos/IPersonInfoDTO';
 import CreatePersonInfoWindowForm from '../../components/CreatePersonInfoWindowForm';
 import FriendsEventsSection from '../../components/MainDashboardBottomSection/FriendsEventsSection';
 import GuestToUserMessageWindow from '../../components/GuestToUserMessageWindow';
-import WindowUnFormattedContainer from '../../components/WindowUnFormattedContainer';
 import BooleanQuestionWindow from '../../components/BooleanQuestionWindow';
 
 const Dashboard: React.FC = () => {
@@ -224,13 +222,16 @@ const Dashboard: React.FC = () => {
     setEventOwner(props);
   }, []);
 
-  const handleDeleteEventQuestion = useCallback((e: string) => {
-    if (e === 'false') {
-      setDeleteEventWindow(false);
-    } else {
-      handleDeleteEvent(e);
-    }
-  }, []);
+  const handleDeleteEventQuestion = useCallback(
+    (e: string) => {
+      if (e === 'false') {
+        setDeleteEventWindow(false);
+      } else {
+        handleDeleteEvent(e);
+      }
+    },
+    [handleDeleteEvent],
+  );
 
   return (
     <Container>
