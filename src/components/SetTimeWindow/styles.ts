@@ -34,6 +34,14 @@ export const Container = styled.div`
   }
 `;
 
+export const RollContainer = styled.div`
+  display: flex;
+  width: 100%;
+  align-items: stretch;
+  justify-content: center;
+  gap: 4vh;
+`;
+
 export const Roll = styled.div`
   display: flex;
   width: 100%;
