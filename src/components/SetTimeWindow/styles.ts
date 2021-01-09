@@ -37,16 +37,15 @@ export const Container = styled.div`
 export const RollContainer = styled.div`
   display: flex;
   width: 100%;
-  align-items: stretch;
+  align-items: center;
   justify-content: center;
-  gap: 4vh;
-`;
+  gap: 4vw;
 
-export const Roll = styled.div`
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: center;
-  gap: 4vh;
+  div {
+    margin: auto 0;
+
+    input {
+      text-align: center;
+    }
+  }
 `;
