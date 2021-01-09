@@ -438,6 +438,10 @@ export const EventInfoDrawer = styled.div`
       flex-direction: column;
       gap: 16px;
 
+      p {
+        font-size: 14px;
+      }
+
       > input {
         height: 40px;
         width: 100%;
