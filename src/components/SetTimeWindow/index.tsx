@@ -4,7 +4,7 @@ import React, { useCallback, useRef } from 'react';
 import Input from '../Input';
 import WindowUnFormattedContainer from '../WindowUnFormattedContainer';
 
-import { Container, Roll } from './styles';
+import { Container, Roll, RollContainer } from './styles';
 
 interface IProps {
   setTime: Function;
@@ -46,14 +46,21 @@ const SetTimeWindow: React.FC<IProps> = ({
       <Form ref={formRef} onSubmit={handleSubmit}>
         <Container>
           <h2>{message}</h2>
-          <Roll>
-            <h3>Hora</h3>
-            <Input mask="hour" name="hour" type="text" />
-          </Roll>
-          <Roll>
-            <h3>Minutos</h3>
-            <Input mask="minute" name="minutes" type="text" />
-          </Roll>
+          <RollContainer>
+            <Roll>
+              <h3>Hora</h3>
+              <Input mask="hour" placeholder="00" name="hour" type="text" />
+            </Roll>
+            <Roll>
+              <h3>Minutos</h3>
+              <Input
+                mask="minute"
+                placeholder="00"
+                name="minutes"
+                type="text"
+              />
+            </Roll>
+          </RollContainer>
           <button type="submit">Salvar</button>
         </Container>
       </Form>
