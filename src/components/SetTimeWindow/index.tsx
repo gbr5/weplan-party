@@ -49,11 +49,18 @@ const SetTimeWindow: React.FC<IProps> = ({
           <RollContainer>
             <Roll>
               <h3>Hora</h3>
-              <Input mask="hour" placeholder="00" name="hour" type="text" />
+              <Input
+                mask="hour"
+                pattern="\d*"
+                placeholder="00"
+                name="hour"
+                type="text"
+              />
             </Roll>
             <Roll>
               <h3>Minutos</h3>
               <Input
+                pattern="\d*"
                 mask="minute"
                 placeholder="00"
                 name="minutes"
