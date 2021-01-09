@@ -198,7 +198,8 @@ const SignUp: React.FC = () => {
               <Input
                 name="email"
                 icon={FiMail}
-                type="text"
+                type="email"
+                inputMode="email"
                 placeholder="E-mail"
               />
               <Input
@@ -230,6 +231,7 @@ const SignUp: React.FC = () => {
                 icon={FiUser}
                 type="text"
                 placeholder="Prénome"
+                autoCapitalize="false"
               />
               <Input
                 name="last_name"

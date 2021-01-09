@@ -340,6 +340,14 @@ const PageHeader: React.FC = ({ children }) => {
     handleGetAppointments();
   }, [handleGetAppointments]);
 
+  useEffect(() => {
+    if (!user) {
+      signOut();
+    } else if (!user.id) {
+      signOut();
+    }
+  }, [signOut, user]);
+
   const imageProfile = user.avatar_url ? user.avatar_url : profileImg;
 
   return (

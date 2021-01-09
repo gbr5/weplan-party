@@ -393,6 +393,7 @@ export const EventInfoDrawer = styled.div`
   gap: 4vh;
 
   @media (max-width: 600px) {
+    display: block;
     top: 0%;
     left: 0%;
     width: 100%;
@@ -423,23 +424,30 @@ export const EventInfoDrawer = styled.div`
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 4vh;
+    width: 100%;
 
     @media (max-width: 600px) {
       display: block;
       align-items: stretch;
       justify-content: center;
+      /* margin: 2vh auto; */
     }
 
     > div {
       display: flex;
       flex-direction: column;
       gap: 16px;
+
       > input {
         height: 40px;
         width: 100%;
         border-radius: 4px;
         padding: 0 16px;
         border: none;
+
+        @media (max-width: 600px) {
+          margin: 2vh auto;
+        }
       }
     }
   }
