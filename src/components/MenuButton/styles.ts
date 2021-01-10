@@ -425,6 +425,9 @@ export const EventInfoDrawer = styled.div`
     grid-template-columns: 1fr 1fr;
     gap: 4vh;
     width: 100%;
+    p {
+      font-size: 14px;
+    }
 
     @media (max-width: 600px) {
       display: block;
