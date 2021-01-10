@@ -13,6 +13,7 @@ const apearFromLeft = keyframes`
 
 export const Container = styled.div`
   position: fixed;
+  z-index: 5;
 
   top: 8.5vh;
   left: 0;

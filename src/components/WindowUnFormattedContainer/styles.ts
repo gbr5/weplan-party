@@ -35,6 +35,11 @@ export const Container = styled.div`
   width: 100%;
   animation: ${appearFromTop} 0.5s;
 
+  @media (max-width: 1000px) {
+    overflow-y: scroll;
+    display: block;
+  }
+
   header {
     position: absolute;
     top: 16px;
