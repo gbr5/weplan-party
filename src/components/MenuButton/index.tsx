@@ -20,6 +20,7 @@ import UploadFileWindow from '../UploadFileWindow';
 import MenuDrawer from './MenuDrawer';
 import EventTypeWindow from '../EventTypeWindow';
 import CreateEventWindow from '../CreateEventWindow';
+import Backdrop from '../Backdrop';
 
 interface IProps {
   signOut: Function;
@@ -40,6 +41,17 @@ const MenuButton: React.FC<IProps> = ({ signOut }: IProps) => {
   const [eventInfoDrawer, setEventInfoDrawer] = useState(false);
   const [myEvents, setMyEvents] = useState<IEvent[]>([]);
   const [eventName, setEventName] = useState('');
+  const [backdrop, setBackdrop] = useState(false);
+
+  const closeAll = useCallback(() => {
+    setMenuDrawer(false);
+    setFriendsWindow(false);
+    setCreateEventDrawer(false);
+    setEventInfoDrawer(false);
+    setEventTypeDrawer(false);
+    setUploadFileWindow(false);
+    setBackdrop(false);
+  }, []);
 
   const formRef = useRef<FormHandles>(null);
 
@@ -47,16 +59,18 @@ const MenuButton: React.FC<IProps> = ({ signOut }: IProps) => {
 
   const [tipoDeEvento, setTipoDeEvento] = useState('Outros');
 
-  const handleCreateEventDrawer = useCallback(() => {
-    setCreateEventDrawer(!createEventDrawer);
+  const openCreateEventDrawer = useCallback(() => {
+    setBackdrop(true);
+    setCreateEventDrawer(true);
     setEventTypeDrawer(true);
-  }, [createEventDrawer]);
+  }, []);
 
   const handleEventTypeDrawer = useCallback(() => {
     setEventTypeDrawer(!eventTypeDrawer);
   }, [eventTypeDrawer]);
 
   const handleNavigateToFriends = useCallback(() => {
+    setBackdrop(true);
     setFriendsWindow(true);
   }, []);
 
@@ -155,23 +169,28 @@ const MenuButton: React.FC<IProps> = ({ signOut }: IProps) => {
     handleEventInfoDrawer();
   }, [handleEventInfoDrawer]);
 
+  const handleMenuDrawer = useCallback(() => {
+    closeAll();
+    setMenuDrawer(!menuDrawer);
+    setBackdrop(!menuDrawer);
+  }, [menuDrawer, closeAll]);
+
   return (
     <>
-      <Button type="button" onClick={() => setMenuDrawer(!menuDrawer)}>
+      <Button type="button" onClick={() => handleMenuDrawer()}>
         <MdMenu size={24} />
       </Button>
       {menuDrawer && (
         <MenuDrawer
           handleNavigateToFriends={handleNavigateToFriends}
-          handleCreateEventDrawer={handleCreateEventDrawer}
+          handleCreateEventDrawer={openCreateEventDrawer}
           signOut={signOut}
           handleUploadFileWindow={() => setUploadFileWindow(!uploadFileWindow)}
         />
       )}
+      {backdrop && <Backdrop onClick={() => closeAll()} />}
       {!!friendsWindow && (
-        <MainFriendsWindow
-          onHandleCloseWindow={() => setFriendsWindow(false)}
-        />
+        <MainFriendsWindow onHandleCloseWindow={() => closeAll()} />
       )}
       {!!createEventDrawer && (
         <CreateEventWindow
@@ -179,14 +198,14 @@ const MenuButton: React.FC<IProps> = ({ signOut }: IProps) => {
           handleEventInfoDrawer={handleEventInfoDrawer}
           handleEventTypeDrawer={handleEventTypeDrawer}
           handleGetMyEvents={handleGetMyEvents}
-          onHandleCloseWindow={() => setCreateEventDrawer(false)}
+          onHandleCloseWindow={() => closeAll()}
           tipoDeEvento={tipoDeEvento}
           handleSetEventName={(e: string) => setEventName(e)}
         />
       )}
       {!!eventTypeDrawer && (
         <EventTypeWindow
-          onHandleCloseWindow={() => setEventTypeDrawer(false)}
+          onHandleCloseWindow={() => closeAll()}
           selectEventType={(e: string) => handleEventTypeChange(e)}
         />
       )}
@@ -235,8 +254,8 @@ const MenuButton: React.FC<IProps> = ({ signOut }: IProps) => {
       )}
       {uploadFileWindow && (
         <UploadFileWindow
-          handleCloseWindow={() => setUploadFileWindow(false)}
-          onHandleCloseWindow={() => setUploadFileWindow(false)}
+          handleCloseWindow={() => closeAll()}
+          onHandleCloseWindow={() => closeAll()}
         />
       )}
     </>

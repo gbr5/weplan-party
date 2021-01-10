@@ -2,22 +2,18 @@ import styled from 'styled-components';
 import '../../styles/global';
 
 export const EventInfoForm = styled.div`
-  position: fixed;
-  z-index: 10;
-  top: 5%;
-  left: 5%;
-  width: 90%;
-  height: 90%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 16px auto;
   background: var(--header-background-color);
   border-radius: 8px;
-  box-shadow: 2px 2px 15px 8px rgba(255, 150, 10, 0.3);
   padding: 32px;
   gap: 16px;
+
+  @media (max-width: 1000px) {
+    display: block;
+  }
 
   span {
     position: absolute;
@@ -43,10 +39,19 @@ export const EventInfoForm = styled.div`
     grid-template-columns: 1fr 1fr;
     gap: 24px;
 
+    @media (max-width: 1000px) {
+      display: block;
+      margin: 4vh auto;
+    }
+
     > div {
       display: flex;
       flex-direction: column;
       gap: 16px;
+
+      @media (max-width: 1000px) {
+        margin: 2vh auto;
+      }
       > input {
         height: 40px;
         width: 100%;

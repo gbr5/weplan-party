@@ -9,6 +9,7 @@ import ICreateEventInfoDTO from '../../dtos/ICreateEventInfoDTO';
 import api from '../../services/api';
 import { useToast } from '../../hooks/toast';
 import getValidationErrors from '../../utils/getValidationErros';
+import WindowUnFormattedContainer from '../WindowUnFormattedContainer';
 
 interface IProps {
   eventId: string;
@@ -86,38 +87,49 @@ const CreateEventInfoWindowForm: React.FC<IProps> = ({
   );
 
   return (
-    <Form ref={formRef} onSubmit={handlePostEventInfo}>
-      <EventInfoForm>
-        <h1>Informações do evento</h1>
-        <div>
+    <WindowUnFormattedContainer
+      onHandleCloseWindow={() => handleCloseWindow()}
+      containerStyle={{
+        zIndex: 15,
+        top: '5%',
+        left: '5%',
+        height: '90%',
+        width: '90%',
+      }}
+    >
+      <Form ref={formRef} onSubmit={handlePostEventInfo}>
+        <EventInfoForm>
+          <h1>Informações do evento</h1>
           <div>
-            <Input
-              name="duration"
-              type="number"
-              placeholder="Duração (em horas)"
-            />
-            <Input
-              name="number_of_guests"
-              type="number"
-              placeholder="Número de convidados"
-            />
-            <Input name="budget" type="number" placeholder="Orçamento" />
-            <Input name="description" type="text" placeholder="Descrição" />
+            <div>
+              <Input
+                name="duration"
+                type="number"
+                placeholder="Duração (em horas)"
+              />
+              <Input
+                name="number_of_guests"
+                type="number"
+                placeholder="Número de convidados"
+              />
+              <Input name="budget" type="number" placeholder="Orçamento" />
+              <Input name="description" type="text" placeholder="Descrição" />
+            </div>
+            <div>
+              <Input name="country" type="text" placeholder="País" />
+              <Input name="local_state" type="text" placeholder="Estado" />
+              <Input name="city" type="text" placeholder="Cidade" />
+              <Input name="dress_code" type="text" placeholder="Traje" />
+            </div>
+            <Input name="address" type="text" placeholder="Endereço" />
           </div>
-          <div>
-            <Input name="country" type="text" placeholder="País" />
-            <Input name="local_state" type="text" placeholder="Estado" />
-            <Input name="city" type="text" placeholder="Cidade" />
-            <Input name="dress_code" type="text" placeholder="Traje" />
-          </div>
-          <Input name="address" type="text" placeholder="Endereço" />
-        </div>
 
-        <button type="submit">
-          <h3>Salvar</h3>
-        </button>
-      </EventInfoForm>
-    </Form>
+          <button type="submit">
+            <h3>Salvar</h3>
+          </button>
+        </EventInfoForm>
+      </Form>
+    </WindowUnFormattedContainer>
   );
 };
 

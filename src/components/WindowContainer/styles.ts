@@ -33,6 +33,11 @@ export const Container = styled.div`
   box-shadow: var(--window-box-shadow);
   padding: 32px;
 
+  @media (max-width: 1000px) {
+    overflow-y: scroll;
+    display: block;
+  }
+
   animation: ${appearFromTop} 0.5s;
 
   > form {
