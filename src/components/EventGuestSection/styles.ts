@@ -53,7 +53,7 @@ export const Container = styled.div`
   }
 
   > span {
-    width: 80%;
+    width: 100%;
     margin: 0 auto;
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -64,27 +64,33 @@ export const Container = styled.div`
 
     > span {
       position: absolute;
+      width: 100%;
       top: -48px;
-      right: 47.8%;
+      /* right: 47.8%; */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /*
       @media (max-width: 600px) {
         right: 45%;
-      }
+      } */
 
       > button {
+        width: 100%;
         font-size: 16px;
         background: transparent;
         border: none;
         display: flex;
         align-items: center;
         justify-content: center;
+        gap: 4vh;
         transition: 0.5s;
-        width: 40px;
         height: 40px;
         color: var(--primary-color);
 
         &:hover {
           color: var(--title-color);
-          border-radius: 50%;
+          /* border-radius: 50%; */
           background: var(--header-background-color);
           box-shadow: 0px 0px 6px 6px rgba(255, 150, 10, 0.3);
 
@@ -95,7 +101,7 @@ export const Container = styled.div`
 
         > svg {
           color: var(--primary-color);
-          border-radius: 50%;
+          /* border-radius: 50%; */
         }
       }
     }
