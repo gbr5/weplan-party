@@ -40,7 +40,7 @@ export const Container = styled.div`
     height: 91vh;
     top: 9vh;
 
-    gap: 2vh;
+    gap: 4vh;
 
     overflow-y: scroll;
   }
