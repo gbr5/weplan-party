@@ -21,7 +21,7 @@ export const Container = styled.div`
   height: 91.5vh;
   width: 30vw;
 
-  display: flex;
+  display: block;
   flex-direction: column;
   /* gap: 16px; */
   gap: 4vh;
@@ -39,6 +39,8 @@ export const Container = styled.div`
     top: 9vh;
 
     gap: 4vh;
+
+    overflow-y: scroll;
   }
 `;
 

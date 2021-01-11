@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
-  display: flex;
+  display: block;
   flex: column;
   align-items: center;
   justify-content: center;
@@ -12,4 +12,5 @@ export const Container = styled.div`
   padding: 16px;
 
   background: var(--card-color);
+  overflow-y: scroll;
 `;
