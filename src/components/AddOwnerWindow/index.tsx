@@ -98,10 +98,10 @@ const AddOwnerWindow: React.FC<IProps> = ({
       onHandleCloseWindow={onHandleCloseWindow}
       containerStyle={{
         zIndex: 15,
-        top: '20%',
-        left: '20%',
-        height: '60%',
-        width: '60%',
+        top: '0%',
+        left: '0%',
+        height: '100%',
+        width: '100%',
       }}
     >
       <Form ref={formRef} onSubmit={handleAddOwner}>

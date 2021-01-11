@@ -107,6 +107,7 @@ export const SideBar = styled.div`
 
   @media (max-width: 1000px) {
     width: 70%;
+    overflow-y: scroll;
   }
 
   > button {

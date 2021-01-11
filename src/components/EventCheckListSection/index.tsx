@@ -330,10 +330,10 @@ const EventCheckListSection: React.FC<IProps> = ({
           onHandleCloseWindow={() => setAddCheckListDrawer(false)}
           containerStyle={{
             zIndex: 15,
-            top: '10%',
-            left: '20%',
-            height: '80%',
-            width: '60%',
+            top: '0%',
+            left: '0%',
+            height: '100%',
+            width: '100%',
           }}
         >
           <Form ref={formRef} onSubmit={handleAddCheckListTask}>

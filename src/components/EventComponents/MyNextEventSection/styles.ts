@@ -30,7 +30,7 @@ export const Container = styled.section`
     font-size: 18px;
   }
 
-  @media (max-width: 650px) {
+  @media (max-width: 1000px) {
     height: 100%;
 
     span {
@@ -59,7 +59,7 @@ export const MyNextEventTitle = styled.div`
     color: var(--title-color);
   }
 
-  @media (max-width: 650px) {
+  @media (max-width: 1000px) {
     flex-direction: column;
   }
 `;
@@ -72,7 +72,7 @@ export const Section = styled.div`
   justify-content: center;
   margin: 0 auto;
 
-  @media (max-width: 650px) {
+  @media (max-width: 1000px) {
     display: flex;
     flex-direction: column;
     gap: 4vh;

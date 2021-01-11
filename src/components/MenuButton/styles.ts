@@ -392,7 +392,7 @@ export const EventInfoDrawer = styled.div`
   padding: 32px;
   gap: 4vh;
 
-  @media (max-width: 600px) {
+  @media (max-width: 1000px) {
     display: block;
     top: 0%;
     left: 0%;
@@ -429,7 +429,7 @@ export const EventInfoDrawer = styled.div`
       font-size: 14px;
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 1000px) {
       display: block;
       align-items: stretch;
       justify-content: center;
@@ -452,7 +452,7 @@ export const EventInfoDrawer = styled.div`
         padding: 0 16px;
         border: none;
 
-        @media (max-width: 600px) {
+        @media (max-width: 1000px) {
           margin: 2vh auto;
         }
       }

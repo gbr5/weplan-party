@@ -33,10 +33,10 @@ const SelectedSupplierWindow: React.FC<IPropsDTO> = ({
       onHandleCloseWindow={onHandleSelectedSupplierDrawer}
       containerStyle={{
         zIndex: 15,
-        top: '20%',
-        left: '20%',
-        height: '60%',
-        width: '60%',
+        top: '0%',
+        left: '0%',
+        height: '100%',
+        width: '100%',
       }}
     >
       <SelectedSupplierDrawer>

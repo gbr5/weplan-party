@@ -71,7 +71,7 @@ export const Body = styled.div`
   grid-template-columns: 1fr 1fr;
   gap: 32px;
 
-  @media (max-width: 900px) {
+  @media (max-width: 1000px) {
     display: block;
   }
 `;
@@ -101,7 +101,7 @@ export const ButtonContainer = styled.span`
     font-weight: 500;
     font-size: 20px;
 
-    @media (max-width: 600px) {
+    @media (max-width: 1000px) {
       font-weight: 400;
       font-size: 16px;
     }

@@ -12,7 +12,7 @@ export const Content = styled.main`
   display: flex;
   flex-direction: column;
 
-  @media (max-width: 800px) {
+  @media (max-width: 1000px) {
     margin: 0 1vh;
   }
 `;
@@ -132,7 +132,7 @@ export const BottomSection = styled.div`
         h3 {
           color: var(--letter-color-4);
 
-          @media (max-width: 800px) {
+          @media (max-width: 1000px) {
             font-size: 12px;
           }
         }
@@ -257,7 +257,7 @@ export const DateSection = styled.div`
   width: 150px;
   color: var(--primary-color);
 
-  @media (max-width: 800px) {
+  @media (max-width: 1000px) {
     width: 50px;
     font-size: 12px;
   }

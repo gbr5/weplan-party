@@ -100,7 +100,7 @@ export const Container = styled.div`
     height: 100%;
     width: 100%;
     padding-bottom: 32px;
-    @media (max-width: 800px) {
+    @media (max-width: 1000px) {
       display: flex;
       flex-direction: column;
     }

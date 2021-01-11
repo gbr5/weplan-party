@@ -10,7 +10,7 @@ export const Container = styled.div`
   width: 100%;
   height: 100%;
 
-  @media (max-width: 800px) {
+  @media (max-width: 1000px) {
     grid-template-columns: repeat(2, 1fr);
     overflow-y: scroll;
   }
