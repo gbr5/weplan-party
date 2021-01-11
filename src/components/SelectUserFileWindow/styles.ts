@@ -9,6 +9,11 @@ export const Container = styled.div`
   width: 100%;
   gap: 16px;
 
+  @media (max-width: 1000px) {
+    display: flex;
+    flex-direction: column;
+  }
+
   > button {
     margin-top: 8px;
     width: 100%;
@@ -41,7 +46,18 @@ export const Container = styled.div`
 export const SideMenu = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 4vh;
+
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: 4vh;
+
+    @media (max-width: 1000px) {
+      flex-direction: row;
+      overflow-x: scroll;
+    }
+  }
 `;
 
 interface IButtonProps {
@@ -53,8 +69,8 @@ export const FileButton = styled.button<IButtonProps>`
   border: none;
   margin: auto;
   gap: 5px;
-  width: 100%;
-  height: 100%;
+  width: 150px;
+  height: 40px;
   border-radius: 8px;
   color: var(--letter-color-5);
   transition: 0.5s;
@@ -104,11 +120,17 @@ export const CategoryButton = styled.button<IBooleanProps>`
   margin: auto;
   gap: 5px;
   width: 100%;
-  height: 100%;
+  height: 40px;
   border-radius: 8px;
   color: var(--letter-color-5);
   transition: 0.5s;
   box-shadow: var(--window-box-shadow);
+
+  @media (max-width: 1000px) {
+    width: 150px;
+    height: 40px;
+    text-align: center;
+  }
 
   &:hover {
     color: var(--letter-color-5);

@@ -92,28 +92,30 @@ const SelectUserFileWindow: React.FC<IProps> = ({
       onHandleCloseWindow={onHandleCloseWindow}
       containerStyle={{
         zIndex: 20,
-        top: '5%',
-        left: '5%',
-        height: '90%',
-        width: '90%',
+        top: '0%',
+        left: '0%',
+        height: '100%',
+        width: '100%',
       }}
     >
       <Container>
         <SideMenu>
-          <h2>Categoria</h2>
-          {userFileCategories.map(category => {
-            return (
-              <CategoryButton
-                key={category.id}
-                isActive={selectedUserFileCategory.id === category.id}
-                onClick={() => handleSelectUserFileCategory(category)}
-                type="button"
-                style={{ background: `${category.color}` }}
-              >
-                {category.name}
-              </CategoryButton>
-            );
-          })}
+          <h2>Categorias</h2>
+          <div>
+            {userFileCategories.map(category => {
+              return (
+                <CategoryButton
+                  key={category.id}
+                  isActive={selectedUserFileCategory.id === category.id}
+                  onClick={() => handleSelectUserFileCategory(category)}
+                  type="button"
+                  style={{ background: `${category.color}` }}
+                >
+                  {category.name}
+                </CategoryButton>
+              );
+            })}
+          </div>
         </SideMenu>
         <Section>
           <h2>Arquivos por Categoria</h2>

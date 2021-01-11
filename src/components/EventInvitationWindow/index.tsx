@@ -165,10 +165,10 @@ const EventInvitationWindow: React.FC<IProps> = ({
         onHandleCloseWindow={onHandleCloseWindow}
         containerStyle={{
           zIndex: 15,
-          top: '5%',
-          left: '5%',
-          height: '90%',
-          width: '90%',
+          top: '0%',
+          left: '0%',
+          height: '100%',
+          width: '100%',
         }}
       >
         <Form ref={formRef} onSubmit={handleSendInvitationsToSelectedWPGuests}>
