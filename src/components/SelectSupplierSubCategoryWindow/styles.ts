@@ -52,7 +52,7 @@ export const SuppliersContainer = styled.div`
   gap: 32px;
   overflow-y: scroll;
 
-  @media (max-width: 900px) {
+  @media (max-width: 1000px) {
     display: block;
     overflow-y: scroll;
   }
@@ -71,7 +71,7 @@ export const SuppliersContainer = styled.div`
     box-shadow: 2px 2px 6px 2px rgba(0, 0, 0, 0.2);
     transition: 0.25s;
 
-    @media (max-width: 900px) {
+    @media (max-width: 1000px) {
       margin: 2vh auto;
       padding: 8px;
       /* font-size:  */
