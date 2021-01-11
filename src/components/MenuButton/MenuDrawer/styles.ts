@@ -26,19 +26,23 @@ export const Container = styled.div`
   /* gap: 16px; */
   gap: 4vh;
 
-  align-items: left;
+  align-items: center;
   justify-content: center;
+  text-align: left;
 
   animation: ${apearFromLeft} 0.8s;
 
   background: var(--letter-color-2);
 
   @media (max-width: 1000px) {
+    /* display: block; */
     width: 90vw;
     height: 91vh;
     top: 9vh;
 
-    gap: 4vh;
+    gap: 2vh;
+
+    overflow-y: scroll;
   }
 `;
 
@@ -48,9 +52,10 @@ export const MenuItemContainer = styled.div`
   width: 100%;
   height: 40px;
 
-  align-items: stretch;
+  align-items: center;
   justify-content: center;
   box-shadow: var(--box-shadow);
+  text-align: left;
 
   &:hover {
     color: var(--title-color);
@@ -71,6 +76,13 @@ export const MenuItemContainer = styled.div`
     background: transparent;
     border: none;
     height: 40px;
+    gap: 2vw;
+    text-align: left;
+
+    h3 {
+      text-align: left;
+      font-size: 20px;
+    }
   }
 `;
 
@@ -81,13 +93,14 @@ export const ToggleButton = styled.div`
   justify-content: center;
 
   strong {
-    font-size: 20px;
+    font-size: 16px;
+    color: var(--letter-color-5);
   }
 `;
 
 export const LogoutButton = styled.button`
   background: transparent;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 500;
   color: var(--letter-color-5);
   width: 100%;

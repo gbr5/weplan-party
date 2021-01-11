@@ -17,15 +17,29 @@ export const Container = styled.div`
 
     > h1 {
       width: 100%;
-      font-size: 24px;
+      font-size: 18px;
       font-weight: 500;
       color: var(--background-color);
+
+      @media (max-width: 1000px) {
+        font-size: 14px;
+      }
     }
     > h2 {
       width: 100%;
-      font-size: 20px;
+      font-size: 16px;
       color: var(--letter-color-4);
+
+      @media (max-width: 1000px) {
+        font-size: 14px;
+      }
     }
+  }
+
+  div {
+    display: flex;
+    width: 100%;
+    gap: 2vw;
   }
 
   button {

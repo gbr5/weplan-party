@@ -12,6 +12,10 @@ export const Container = styled.div`
 
   @media (max-width: 1000px) {
     overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
   }
   > h1 {
     font-size: 32px;
@@ -19,6 +23,11 @@ export const Container = styled.div`
     width: 100%;
     padding-bottom: 5px;
     border-bottom: 1px solid var(--primary-color);
+
+    @media (max-width: 1000px) {
+      font-size: 24px;
+      padding-bottom: 0px;
+    }
   }
 `;
 
@@ -52,6 +61,10 @@ export const SubTitle = styled.div`
 
     transition: 0.3s;
 
+    @media (max-width: 1000px) {
+      font-size: 16px;
+    }
+
     &:hover {
       background: var(--background-color);
       color: var(--primary-color);
@@ -67,8 +80,7 @@ export const SubTitle = styled.div`
     align-items: center;
     justify-content: center;
     @media (max-width: 1000px) {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      display: block;
     }
     div {
       width: 100%;
@@ -77,16 +89,31 @@ export const SubTitle = styled.div`
       align-items: center;
       justify-content: center;
 
+      @media (max-width: 1000px) {
+        display: grid;
+        grid-template-columns: 4fr 1fr;
+        margin: 2vh;
+      }
+
       h3 {
         width: 100%;
         font-size: 16px;
         color: var(--primary-color);
+
+        @media (max-width: 1000px) {
+          font-size: 14px;
+          text-align: left;
+        }
       }
       strong {
         width: 100%;
         font-size: 24px;
         font-weight: 500;
         color: var(--title-color);
+
+        @media (max-width: 1000px) {
+          font-size: 14px;
+        }
       }
     }
   }
