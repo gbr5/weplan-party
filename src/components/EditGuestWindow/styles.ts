@@ -7,6 +7,7 @@ export const Container = styled.div`
   justify-content: stretch;
   transition: 0.25s;
   width: 100%;
+  height: 100%;
   gap: 16px;
 
   > button {
@@ -51,6 +52,10 @@ export const Header = styled.div`
   > h1 {
     font-size: 32px;
     color: var(--title-color);
+
+    @media (max-width: 1000px) {
+      font-size: 24px;
+    }
   }
   p {
     color: var(--letter-color-2);
@@ -65,9 +70,14 @@ export const Header = styled.div`
 `;
 export const Body = styled.div`
   width: 100%;
+  height: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 32px;
+
+  @media (max-width: 1000px) {
+    display: block;
+  }
 `;
 export const ButtonContainer = styled.span`
   width: 100%;
@@ -94,6 +104,11 @@ export const ButtonContainer = styled.span`
 
     font-weight: 500;
     font-size: 20px;
+
+    @media (max-width: 1000px) {
+      font-weight: 400;
+      font-size: 16px;
+    }
 
     &:hover {
       color: var(--primary-color);
@@ -206,7 +221,6 @@ export const Section = styled.div`
     margin-top: 8px;
     width: 100%;
     display: flex;
-    gap: 24px;
     align-items: center;
     justify-content: center;
     background: transparent;
@@ -222,6 +236,10 @@ export const Section = styled.div`
 
     font-weight: 500;
     font-size: 20px;
+
+    @media (max-width: 1000px) {
+      font-size: 16px;
+    }
 
     &:hover {
       color: var(--primary-color);
