@@ -35,7 +35,6 @@ import getValidationErrors from '../../utils/getValidationErros';
 import { useAuth } from '../../hooks/auth';
 import MemberProfileDrawer from '../../components/MemberProfileDrawer';
 import OwnerProfileDrawer from '../../components/OwnerProfileDrawer';
-import WindowContainer from '../../components/WindowContainer';
 import EventFinanceSection from '../../components/EventFinanceSection';
 import { numberFormat } from '../../utils/numberFormat';
 import IEventDTO from '../../dtos/IEventDTO';
@@ -65,6 +64,7 @@ import CreateEventInfoWindowForm from '../../components/CreateEventInfoWindowFor
 import UpdateEventNumberOfGuestsWindow from '../../components/UpdateEventNumberOfGuestsWindow';
 import GuestAlocationWindow from '../../components/GuestAlocationWindow';
 import IEventGuestDTO from '../../dtos/IEventGuestDTO';
+import WindowUnFormattedContainer from '../../components/WindowUnFormattedContainer';
 
 interface IUserInfoDTO {
   id: string;
@@ -1071,14 +1071,14 @@ const EventHostDashboard: React.FC = () => {
             </FirstRow>
           )}
           {!!budgetDrawer && (
-            <WindowContainer
+            <WindowUnFormattedContainer
               onHandleCloseWindow={() => setBudgetDrawer(false)}
               containerStyle={{
                 zIndex: 10,
-                top: '30%',
-                left: '40%',
-                height: '40%',
-                width: '30%',
+                top: '29vh',
+                left: '5%',
+                height: '42vh',
+                width: '90%',
               }}
             >
               <Form ref={formRef} onSubmit={handleEditBudget}>
@@ -1099,7 +1099,7 @@ const EventHostDashboard: React.FC = () => {
                   </span>
                 </BudgetDrawer>
               </Form>
-            </WindowContainer>
+            </WindowUnFormattedContainer>
           )}
           {!!latestActionsSection && <LatestNewsSection />}
           {!!supplierSection && (

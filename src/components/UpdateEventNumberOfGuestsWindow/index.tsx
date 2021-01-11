@@ -5,7 +5,7 @@ import { Form } from '@unform/web';
 import * as Yup from 'yup';
 
 import Input from '../Input';
-import WindowContainer from '../WindowContainer';
+import WindowUnFormattedContainer from '../WindowUnFormattedContainer';
 
 import { Container } from './styles';
 import { useToast } from '../../hooks/toast';
@@ -92,33 +92,31 @@ const UpdateEventNumberOfGuestsWindow: React.FC<IProps> = ({
   );
 
   return (
-    <WindowContainer
+    <WindowUnFormattedContainer
       onHandleCloseWindow={onHandleCloseWindow}
       containerStyle={{
         zIndex: 40,
-        top: '15%',
-        left: '20%',
-        height: '70%',
-        width: '60%',
+        top: '5%',
+        left: '5%',
+        height: '90%',
+        width: '90%',
       }}
     >
       <Form ref={formRef} onSubmit={handleEditEventInfo}>
         <Container>
-          <h1>Editar informações do evento</h1>
-          <div>
-            <Input
-              defaultValue={eventInfo ? eventInfo.number_of_guests : ''}
-              name="number_of_guests"
-              type="number"
-              placeholder="Número de convidados"
-            />
-          </div>
+          <h1>Número de convidados do evento</h1>
+          <Input
+            defaultValue={eventInfo ? eventInfo.number_of_guests : ''}
+            name="number_of_guests"
+            type="number"
+            placeholder="Número de convidados"
+          />
           <button type="submit">
             <h3>Salvar</h3>
           </button>
         </Container>
       </Form>
-    </WindowContainer>
+    </WindowUnFormattedContainer>
   );
 };
 

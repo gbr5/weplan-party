@@ -11,24 +11,9 @@ export const Container = styled.div`
   > h1 {
     font-size: 24px;
     color: var(--title-color);
-  }
 
-  div {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-
-    > div {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      > input {
-        height: 40px;
-        width: 100%;
-        border-radius: 4px;
-        padding: 0 16px;
-        border: none;
-      }
+    @media (max-width: 1000px) {
+      font-size: 18px;
     }
   }
 

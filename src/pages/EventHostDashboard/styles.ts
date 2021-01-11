@@ -325,6 +325,7 @@ export const BudgetDrawer = styled.div`
   text-align: left;
   padding: 8px;
   width: 100%;
+  height: 100%;
 
   > span {
     background-color: rgba(255, 144, 0, 0.05);
