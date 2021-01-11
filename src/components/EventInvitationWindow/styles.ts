@@ -67,7 +67,11 @@ export const Body = styled.div`
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 32px;
+  gap: 4vh;
+
+  @media (max-width: 1000px) {
+    display: block;
+  }
 `;
 export const ButtonContainer = styled.span`
   width: 100%;
@@ -176,11 +180,10 @@ interface IBooleanProps {
 
 export const InfoInputContainer = styled.div<IBooleanProps>`
   margin: 8px auto;
-  display: grid;
-  grid-template-rows: 1fr 4fr;
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  height: 88px;
-  gap: 8px;
+  gap: 2vw;
 
   button {
     background: rgba(0, 0, 0, 0.5);
@@ -193,6 +196,11 @@ export const InfoInputContainer = styled.div<IBooleanProps>`
     color: var(--letter-color-3);
     transition: 0.5s;
     box-shadow: var(--window-box-shadow);
+
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    gap: 2vw;
 
     &:hover {
       box-shadow: var(--box-shadow);
@@ -309,11 +317,14 @@ export const Section = styled.div`
 `;
 
 export const InfoSection = styled.div`
-  display: grid;
-  grid-template-columns: 2fr 2fr 3fr;
+  display: flex;
   align-items: stretch;
   justify-content: stretch;
   transition: 0.25s;
   width: 100%;
   gap: 8px;
+
+  @media (max-width: 1000px) {
+    display: block;
+  }
 `;
