@@ -6,10 +6,20 @@ import WindowUnFormattedContainer from '../WindowUnFormattedContainer';
 
 import { Container, RollContainer } from './styles';
 
+interface IContainerStyleDTO {
+  zIndex: number;
+  top: string;
+  left: string;
+  height: string;
+  width: string;
+  position?: string;
+}
+
 interface IProps {
   setTime: Function;
   closeWindow: Function;
   message: string;
+  containerStyle: IContainerStyleDTO;
 }
 
 interface IFormData {
@@ -21,6 +31,7 @@ const SetTimeWindow: React.FC<IProps> = ({
   setTime,
   message,
   closeWindow,
+  containerStyle,
 }: IProps) => {
   const formRef = useRef<FormHandles>(null);
 
@@ -35,13 +46,7 @@ const SetTimeWindow: React.FC<IProps> = ({
   return (
     <WindowUnFormattedContainer
       onHandleCloseWindow={() => closeWindow()}
-      containerStyle={{
-        zIndex: 20,
-        top: '0',
-        left: '0',
-        height: '100%',
-        width: '100%',
-      }}
+      containerStyle={containerStyle}
     >
       <Form ref={formRef} onSubmit={handleSubmit}>
         <Container>

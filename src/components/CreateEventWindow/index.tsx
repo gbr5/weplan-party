@@ -178,12 +178,12 @@ const CreateEventWindow: React.FC<IProps> = ({
         setEventName(event.data.name);
         handleSetEventName(event.data.name);
       }
+      handleGetMyEvents();
       addToast({
         type: 'success',
         title: 'Evento Criado com Sucesso',
         description: 'Você já pode começar a planejar o seu evento.',
       });
-      handleGetMyEvents();
       handleEventInfoDrawer();
     } catch (err) {
       addToast({
@@ -273,6 +273,13 @@ const CreateEventWindow: React.FC<IProps> = ({
     <>
       {eventStartTimeWindow && (
         <SetTimeWindow
+          containerStyle={{
+            zIndex: 20,
+            top: '0',
+            left: '0',
+            height: '100%',
+            width: '100%',
+          }}
           closeWindow={() => closeStartTimeWindow()}
           setTime={setTime}
           message="Defina o horário de início do seu evento. (Você pode alterar posteriormente)"

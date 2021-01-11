@@ -125,6 +125,7 @@ const EventGuestSection: React.FC<IProps> = ({
   }, [closeAllWindows]);
 
   const closeAddGuestWindow = useCallback(() => {
+    setSelectedFriend({} as IFriendDTO);
     closeAllWindows();
     setAddGuestWindow(false);
   }, [closeAllWindows]);
@@ -249,7 +250,6 @@ const EventGuestSection: React.FC<IProps> = ({
           handleGuestAllocationWindow={handleGuestAllocationWindow}
           isOwner={isOwner}
           myAvailableNumberOfGuests={myAvailableNumberOfGuests}
-          onHandleCloseWindow={closeAddGuestWindow}
           selectedFriend={selectedFriend}
         />
       )}
