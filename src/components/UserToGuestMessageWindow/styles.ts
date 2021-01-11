@@ -9,9 +9,13 @@ export const Container = styled.div`
   grid-template-columns: 1fr 3fr;
   justify-content: flex-end;
   align-items: center;
-  gap: 32px;
+  gap: 4vh;
 
   box-sizing: border-box;
+
+  @media (max-width: 1000px) {
+    display: block;
+  }
 `;
 
 export const SideMenu = styled.div`
@@ -27,6 +31,7 @@ export const SideMenu = styled.div`
   img {
     height: 160px;
     width: 100%;
+    max-width: 160px;
     border-radius: 8px;
     box-shadow: var(--box-shadow);
   }

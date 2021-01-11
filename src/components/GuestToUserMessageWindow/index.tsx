@@ -166,10 +166,11 @@ const GuestToUserMessageWindow: React.FC<IPropsDTO> = ({
       onHandleCloseWindow={onHandleCloseWindow}
       containerStyle={{
         zIndex: 25,
-        top: '2%',
-        left: '2%',
-        height: '96%',
-        width: '96%',
+        top: '0%',
+        left: '0%',
+        height: '100%',
+        width: '100%',
+        display: 'block',
       }}
     >
       <Container>
