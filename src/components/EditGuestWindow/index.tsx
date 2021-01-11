@@ -395,9 +395,7 @@ const EditGuestWindow: React.FC<IProps> = ({
         <Form ref={formRef} onSubmit={handleEditGuest}>
           <Container>
             <Header>
-              <h1>
-                Formulário de Convidado | {guest.first_name} {guest.last_name}
-              </h1>
+              <h1>Perfil do Convidado</h1>
             </Header>
             <Body>
               <Section>
@@ -461,14 +459,12 @@ const EditGuestWindow: React.FC<IProps> = ({
                 )}
               </Section>
               <Section>
-                <div>
-                  <button
-                    type="button"
-                    onClick={() => setUserToGuestMessageWindow(true)}
-                  >
-                    Chat
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setUserToGuestMessageWindow(true)}
+                >
+                  Chat
+                </button>
                 <h2>Informações de contato</h2>
                 <InfoSection>
                   <InfoInputContainer>
