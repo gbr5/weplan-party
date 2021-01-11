@@ -45,7 +45,6 @@ interface ICreateGuest {
 }
 
 interface IProps {
-  onHandleCloseWindow: MouseEventHandler;
   eventId: string;
   weplanUser: boolean;
   isOwner: boolean;
@@ -61,7 +60,6 @@ interface IProps {
 }
 
 const AddGuestWindow: React.FC<IProps> = ({
-  onHandleCloseWindow,
   eventId,
   weplanUser,
   isOwner,
@@ -347,7 +345,7 @@ const AddGuestWindow: React.FC<IProps> = ({
         />
       )}
       <WindowUnFormattedContainer
-        onHandleCloseWindow={onHandleCloseWindow}
+        onHandleCloseWindow={() => handleCloseWindow()}
         containerStyle={{
           zIndex: 15,
           top: '5%',

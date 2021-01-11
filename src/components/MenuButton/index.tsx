@@ -166,8 +166,7 @@ const MenuButton: React.FC<IProps> = ({ signOut }: IProps) => {
   const handleGetMyEvents = useCallback(async () => {
     const response = await api.get('events');
     setMyEvents(response.data);
-    handleEventInfoDrawer();
-  }, [handleEventInfoDrawer]);
+  }, []);
 
   const handleMenuDrawer = useCallback(() => {
     closeAll();

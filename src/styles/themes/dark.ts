@@ -2,6 +2,7 @@ export default {
   title: 'dark',
 
   colors: {
+    weplan: 'rgba(255, 153, 0, 1)',
     primary: 'rgba(255, 153, 0, 1)',
     secondary: '#0B3954',
 
