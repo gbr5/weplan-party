@@ -10,23 +10,15 @@ import {
   FiChevronRight,
   FiChevronDown,
   FiChevronUp,
-  FiEdit3,
   FiChevronLeft,
-  FiEdit,
 } from 'react-icons/fi';
-import { MdGroupAdd, MdPersonAdd } from 'react-icons/md';
 import { useLocation } from 'react-router-dom';
 import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
-import {
-  Container,
-  EventPageContent,
-  FirstRow,
-  SideBar,
-  Main,
-  BudgetDrawer,
-} from './styles';
+import { Container, EventPageContent, Main, BudgetDrawer } from './styles';
 import PageHeader from '../../components/PageHeader';
+import FirstRow from '../../components/EventHostComponents/FirstRow';
+import SideMenu from '../../components/EventHostComponents/SideMenu';
 
 import api from '../../services/api';
 import Input from '../../components/Input';
@@ -36,7 +28,6 @@ import { useAuth } from '../../hooks/auth';
 import MemberProfileDrawer from '../../components/MemberProfileDrawer';
 import OwnerProfileDrawer from '../../components/OwnerProfileDrawer';
 import EventFinanceSection from '../../components/EventFinanceSection';
-import { numberFormat } from '../../utils/numberFormat';
 import IEventDTO from '../../dtos/IEventDTO';
 import IFriendDTO from '../../dtos/IFriendDTO';
 
@@ -468,15 +459,6 @@ const EventHostDashboard: React.FC = () => {
     }
   }, [pageEvent]);
 
-  const guestAlocatedPercentage = useMemo(() => {
-    const cNumberOfGuests = currentNumberOfGuests && 0;
-    const eNumberOfGuests = eventInfo ? eventInfo.number_of_guests : 0;
-    if (eNumberOfGuests === 0) {
-      return 100;
-    }
-    return Number(cNumberOfGuests) / Number(eNumberOfGuests);
-  }, [currentNumberOfGuests, eventInfo]);
-
   const handleCloseAddPlannerWindow = useCallback(() => {
     setSelectedSupplier({} as IEventSupplierDTO);
     setAddPlannerDrawer(false);
@@ -891,120 +873,25 @@ const EventHostDashboard: React.FC = () => {
         )}
 
         {sidebar && (
-          <SideBar>
-            {isOwner ? (
-              <span>
-                <button type="button" onClick={handleEditEventNameDrawer}>
-                  <h5>
-                    {eventName}
-                    <FiEdit3 size={16} />
-                  </h5>
-                </button>
-              </span>
-            ) : (
-              <span>
-                <button type="button">
-                  <h5>{eventName}</h5>
-                </button>
-              </span>
-            )}
-            {isOwner && (
-              <button type="button" onClick={openGuestAlocationWindow}>
-                <h1>
-                  Alocação de Convidados:
-                  {guestAlocatedPercentage}%
-                </h1>
-                <MdGroupAdd size={24} />
-              </button>
-            )}
-
-            {isOwner ? (
-              <button type="button" onClick={handleAddOwnerDrawer}>
-                <h1>Anfitriões: {numberOfOwners}</h1>
-                <MdPersonAdd size={24} />
-              </button>
-            ) : (
-              <button type="button">
-                <h1>Anfitriões: {numberOfOwners}</h1>
-              </button>
-            )}
-
-            {owners.length > 4 ? (
-              <span style={{ overflowY: 'scroll', height: '200px' }}>
-                {owners.map(eventOwner => (
-                  <button
-                    key={eventOwner.id}
-                    type="button"
-                    onClick={() => handleOwnerProfileWindow(eventOwner)}
-                  >
-                    <h2>{eventOwner.userEventOwner.name}</h2>
-                  </button>
-                ))}
-              </span>
-            ) : (
-              <span>
-                {owners.map(eventOwner => (
-                  <button
-                    key={eventOwner.id}
-                    type="button"
-                    onClick={() => handleOwnerProfileWindow(eventOwner)}
-                  >
-                    <h2>{eventOwner.userEventOwner.name}</h2>
-                  </button>
-                ))}
-              </span>
-            )}
-
-            {isOwner ? (
-              <button type="button" onClick={handleSelectFriendAsMember}>
-                <h1>Membros: {numberOfMembers}</h1>
-                <MdPersonAdd size={24} />
-              </button>
-            ) : (
-              <button type="button">
-                <h1>Membros: {numberOfMembers}</h1>
-              </button>
-            )}
-
-            <span>
-              <button type="button" onClick={handleMembersWindow}>
-                <h2>Visualizar</h2>
-              </button>
-            </span>
-            {isOwner ? (
-              <button type="button" onClick={handleAddPlannerDrawer}>
-                <h1>Cerimonialistas: {numberOfPlanners}</h1>
-                <MdPersonAdd size={24} />
-              </button>
-            ) : (
-              <button type="button">
-                <h1>Cerimonialistas: {numberOfPlanners}</h1>
-              </button>
-            )}
-            {planners.map(planner => (
-              <span key={planner.id}>
-                {isOwner ? (
-                  <button type="button">
-                    <h2>{planner.name}</h2>
-                    <FiEdit size={24} />
-                  </button>
-                ) : (
-                  <button type="button">
-                    <h2>{planner.name}</h2>
-                  </button>
-                )}
-              </span>
-            ))}
-            <button type="button" onClick={handleEventInfoWindow}>
-              Informações do Evento
-            </button>
-            <button type="button" onClick={handleLatestActionsSection}>
-              Últimas Atualizações
-            </button>
-            <button type="button" onClick={handleMessagesSection}>
-              Mensagens
-            </button>
-          </SideBar>
+          <SideMenu
+            eventName={eventName}
+            handleAddOwnerDrawer={handleAddOwnerDrawer}
+            handleAddPlannerDrawer={handleAddPlannerDrawer}
+            handleEditEventNameDrawer={handleEditEventNameDrawer}
+            handleEventInfoWindow={handleEventInfoWindow}
+            handleLatestActionsSection={handleLatestActionsSection}
+            handleMembersWindow={handleMembersWindow}
+            handleMessagesSection={handleMessagesSection}
+            handleOwnerProfileWindow={handleOwnerProfileWindow}
+            handleSelectFriendAsMember={handleSelectFriendAsMember}
+            isOwner={isOwner}
+            numberOfMembers={numberOfMembers}
+            numberOfOwners={numberOfOwners}
+            numberOfPlanners={numberOfPlanners}
+            openGuestAlocationWindow={openGuestAlocationWindow}
+            owners={owners}
+            planners={planners}
+          />
         )}
         <Main>
           {firstRow ? (
@@ -1019,56 +906,22 @@ const EventHostDashboard: React.FC = () => {
             </button>
           )}
           {!!firstRow && (
-            <FirstRow>
-              <div>
-                <button type="button" onClick={handleGuestsSection}>
-                  <h2>Convidados</h2>
-                  <p>
-                    {confirmedGuests}/{eventGuests.length}
-                  </p>
-                </button>
-              </div>
-              <div>
-                {isOwner ? (
-                  <button type="button" onClick={handleBudgetDrawer}>
-                    <h2>Orçamento</h2>
-                    <p>{eventInfo ? numberFormat(eventInfo.budget) : ''}</p>
-                  </button>
-                ) : (
-                  <button type="button">
-                    <h2>Orçamento</h2>
-                    <p>
-                      {eventInfo.budget ? numberFormat(eventInfo.budget) : ''}
-                    </p>
-                  </button>
-                )}
-              </div>
-              <div>
-                <button type="button" onClick={handleSupplierSection}>
-                  <h2>Fornecedores</h2>
-                  <p>
-                    {hiredSuppliers.length}/
-                    {selectedSuppliers.length + hiredSuppliers.length}
-                  </p>
-                </button>
-              </div>
-              <div>
-                <button type="button" onClick={handleFinanceSection}>
-                  <h2>Financeiro</h2>
-                  <p>
-                    {Math.round((totalEventCost / eventInfo.budget) * 100)}%
-                  </p>
-                </button>
-              </div>
-              <div>
-                <button type="button" onClick={handleCheckListSection}>
-                  <h2>Check-List</h2>
-                  <p>
-                    {resolvedCheckListTasks.length}/{checkListTasks}
-                  </p>
-                </button>
-              </div>
-            </FirstRow>
+            <FirstRow
+              checkListTasks={checkListTasks}
+              confirmedGuests={confirmedGuests}
+              eventGuests={eventGuests}
+              eventInfo={eventInfo}
+              handleBudgetDrawer={handleBudgetDrawer}
+              handleCheckListSection={handleCheckListSection}
+              handleFinanceSection={handleFinanceSection}
+              handleGuestsSection={handleGuestsSection}
+              handleSupplierSection={handleSupplierSection}
+              hiredSuppliers={hiredSuppliers}
+              isOwner={isOwner}
+              resolvedCheckListTasks={resolvedCheckListTasks}
+              selectedSuppliers={selectedSuppliers}
+              totalEventCost={totalEventCost}
+            />
           )}
           {!!budgetDrawer && (
             <WindowUnFormattedContainer
