@@ -4,13 +4,13 @@ import { Form } from '@unform/web';
 import * as Yup from 'yup';
 
 import Input from '../Input';
-import WindowContainer from '../WindowContainer';
 
 import { Container } from './styles';
 import { useToast } from '../../hooks/toast';
 import IEventDTO from '../../dtos/IEventDTO';
 import getValidationErrors from '../../utils/getValidationErros';
 import api from '../../services/api';
+import WindowUnFormattedContainer from '../WindowUnFormattedContainer';
 
 interface IProps {
   onHandleCloseWindow: MouseEventHandler;
@@ -71,14 +71,14 @@ const EditEventNameWindow: React.FC<IProps> = ({
   );
 
   return (
-    <WindowContainer
+    <WindowUnFormattedContainer
       onHandleCloseWindow={onHandleCloseWindow}
       containerStyle={{
         zIndex: 10,
-        top: '140px',
-        left: '535px',
-        height: '250px',
-        width: '440px',
+        top: '30%',
+        left: '5%',
+        height: '40%',
+        width: '90%',
       }}
     >
       <Form ref={formRef} onSubmit={handleEditEventName}>
@@ -97,7 +97,7 @@ const EditEventNameWindow: React.FC<IProps> = ({
           </span>
         </Container>
       </Form>
-    </WindowContainer>
+    </WindowUnFormattedContainer>
   );
 };
 

@@ -25,10 +25,9 @@ export const Container = styled.div`
     }
 
     input {
-      border: 1px solid var(--primary-color);
       border-radius: 4px;
-      width: 300px;
-      height: 32px;
+      width: 100%;
+      height: 40px;
     }
 
     button {
