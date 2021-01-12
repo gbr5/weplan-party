@@ -18,7 +18,7 @@ export const Container = styled.div`
   top: 7vh;
   height: 93vh;
   left: 0;
-  width: 20vw;
+  width: 18vw;
   padding: 2vh 0;
 
   display: grid;
@@ -33,7 +33,7 @@ export const Container = styled.div`
   background: var(--card-color);
 
   @media (max-width: 1000px) {
-    width: 50vw;
+    width: 52vw;
     height: 92.5vh;
     top: 7.5vh;
 
@@ -93,10 +93,9 @@ export const ToggleButton = styled.div`
   align-items: center;
   justify-content: stretch;
   text-align: left;
-  padding-left: 2vw;
 
   @media (max-width: 1000px) {
-    padding-left: 4vw;
+    padding-left: 2vw;
   }
 
   strong {
