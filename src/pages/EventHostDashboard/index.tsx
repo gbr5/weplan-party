@@ -13,15 +13,13 @@ import {
   FiChevronLeft,
 } from 'react-icons/fi';
 import { useLocation } from 'react-router-dom';
-import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
-import { Container, EventPageContent, Main, BudgetDrawer } from './styles';
+import { Container, EventPageContent, Main } from './styles';
 import PageHeader from '../../components/PageHeader';
 import FirstRow from '../../components/EventHostComponents/FirstRow';
 import SideMenu from '../../components/EventHostComponents/SideMenu';
 
 import api from '../../services/api';
-import Input from '../../components/Input';
 import { useToast } from '../../hooks/toast';
 import getValidationErrors from '../../utils/getValidationErros';
 import { useAuth } from '../../hooks/auth';
@@ -55,7 +53,7 @@ import CreateEventInfoWindowForm from '../../components/CreateEventInfoWindowFor
 import UpdateEventNumberOfGuestsWindow from '../../components/UpdateEventNumberOfGuestsWindow';
 import GuestAlocationWindow from '../../components/GuestAlocationWindow';
 import IEventGuestDTO from '../../dtos/IEventGuestDTO';
-import WindowUnFormattedContainer from '../../components/WindowUnFormattedContainer';
+import EditEventBudgetWindow from '../../components/EditEventBudgetWindow';
 
 interface IUserInfoDTO {
   id: string;
@@ -72,15 +70,10 @@ const EventHostDashboard: React.FC = () => {
   const { addToast } = useToast();
   const location = useLocation<IParams>();
   const { user } = useAuth();
-
   const pageEvent = location.state.params;
-
   const eventId = pageEvent.id;
-
   const [eventName, setEventName] = useState(pageEvent.name);
-
   const [isOwner, setIsOwner] = useState(false);
-
   const [friendsWindow, setFriendsWindow] = useState(false);
   const [guestAlocationWindow, setGuestAlocationWindow] = useState(false);
   const [membersWindow, setMembersWindow] = useState(false);
@@ -98,7 +91,6 @@ const EventHostDashboard: React.FC = () => {
   const [deleteOwnerDrawer, setDeleteOwnerDrawer] = useState(false);
   const [firstRow, setFirstRow] = useState(true);
   const [sidebar, setSidebar] = useState(false);
-
   const [latestActionsSection, setLatestActionsSection] = useState(false);
   const [guestsSection, setGuestsSection] = useState(false);
   const [financeSection, setFinanceSection] = useState(false);
@@ -112,7 +104,6 @@ const EventHostDashboard: React.FC = () => {
   const [createEventInfoWindowForm, setCreateEventInfoWindowForm] = useState(
     false,
   );
-
   const [confirmedGuests, setConfirmedGuests] = useState(0);
   const [myGuestsConfirmed, setMyGuestsConfirmed] = useState(0);
   const [numberOfOwners, setNumberOfOwners] = useState(0);
@@ -120,7 +111,6 @@ const EventHostDashboard: React.FC = () => {
   const [numberOfPlanners, setNumberOfPlanners] = useState(0);
   const [totalGuestNumber, setTotalGuestNumber] = useState(0);
   const [checkListTasks, setCheckListTasks] = useState(0);
-
   const [myGuests, setMyGuests] = useState<IEventGuestDTO[]>([]);
   const [selectedFriend, setSelectedFriend] = useState<IFriendDTO>(
     {} as IFriendDTO,
@@ -177,7 +167,6 @@ const EventHostDashboard: React.FC = () => {
     setNumberOfGuestDrawer(false);
     setSidebar(false);
   }, []);
-
   const closeAllSections = useCallback(() => {
     setSelectedFriend({} as IFriendDTO);
     setOwner({} as IEventOwnerDTO);
@@ -192,21 +181,17 @@ const EventHostDashboard: React.FC = () => {
     setFirstRow(false);
     setSidebar(false);
   }, []);
-
   const closeEventInfoWindowForm = useCallback(() => {
     setCreateEventInfoWindowForm(false);
   }, []);
-
   const openEventInfoWindowForm = useCallback(() => {
     setCreateEventInfoWindowForm(true);
   }, []);
-
   useEffect(() => {
     if (!pageEvent.eventInfo && !eventInfo.id) {
       openEventInfoWindowForm();
     }
   }, [openEventInfoWindowForm, eventInfo, pageEvent]);
-
   const handleFirstRow = useCallback(() => {
     closeAllWindows();
     setFirstRow(!firstRow);
@@ -215,23 +200,18 @@ const EventHostDashboard: React.FC = () => {
     setSidebar(!sidebar);
     setFirstRow(false);
   }, [sidebar]);
-
   const openGuestAlocationWindow = useCallback(() => {
     setGuestAlocationWindow(true);
   }, []);
-
   const closeGuestAlocationWindow = useCallback(() => {
     setGuestAlocationWindow(false);
   }, []);
-
   const openUpdateEventNumberOfGuestsWindow = useCallback(() => {
     setUpdateEventNumberOfGuestsWindow(true);
   }, []);
-
   const closeUpdateEventNumberOfGuestsWindow = useCallback(() => {
     setUpdateEventNumberOfGuestsWindow(false);
   }, []);
-
   const handleEventInfoWindow = useCallback(() => {
     closeAllWindows();
     setEventInfoDrawer(!eventInfoDrawer);
@@ -252,7 +232,6 @@ const EventHostDashboard: React.FC = () => {
     },
     [closeAllWindows],
   );
-
   const handleMembersWindow = useCallback(() => {
     closeAllWindows();
     setMembersWindow(!membersWindow);
@@ -261,7 +240,6 @@ const EventHostDashboard: React.FC = () => {
     closeAllWindows();
     setBudgetDrawer(!budgetDrawer);
   }, [budgetDrawer, closeAllWindows]);
-
   const handleEditEventNameDrawer = useCallback(() => {
     closeAllWindows();
     setEditEventNameDrawer(!editEventNameDrawer);
@@ -284,7 +262,6 @@ const EventHostDashboard: React.FC = () => {
     closeAllWindows();
     setAddPlannerDrawer(!addPlannerDrawer);
   }, [addPlannerDrawer, closeAllWindows]);
-
   const handleLatestActionsSection = useCallback(() => {
     closeAllSections();
     setLatestActionsSection(true);
@@ -309,7 +286,6 @@ const EventHostDashboard: React.FC = () => {
     closeAllSections();
     setMessagesSection(true);
   }, [closeAllSections]);
-
   const handleGetCheckListTasks = useCallback(() => {
     try {
       api
@@ -410,7 +386,6 @@ const EventHostDashboard: React.FC = () => {
       throw new Error(err);
     }
   }, [eventId, user]);
-
   const currentNumberOfGuests = useMemo(() => {
     const currentMembersGuestNumber: number = members
       .map(tmember => tmember.number_of_guests)
@@ -423,7 +398,6 @@ const EventHostDashboard: React.FC = () => {
       currentMembersGuestNumber + currentOwnersGuestNumber;
     return currentGuestNumber;
   }, [members, owners]);
-
   const availableNumberOfGuests = useMemo(() => {
     const availableGuestNumber = totalGuestNumber - currentNumberOfGuests;
     return availableGuestNumber;
@@ -444,7 +418,6 @@ const EventHostDashboard: React.FC = () => {
     const availableGuestNumber = Number(myNumberOfGuests) - myGuests.length;
     return availableGuestNumber;
   }, [myGuests, owners, members, isOwner, user]);
-
   const handleGetSuppliers = useCallback(() => {
     try {
       api
@@ -458,7 +431,6 @@ const EventHostDashboard: React.FC = () => {
       throw new Error(err);
     }
   }, [pageEvent]);
-
   const handleCloseAddPlannerWindow = useCallback(() => {
     setSelectedSupplier({} as IEventSupplierDTO);
     setAddPlannerDrawer(false);
@@ -466,13 +438,11 @@ const EventHostDashboard: React.FC = () => {
     handleAddPlannerDrawer();
     handleGetPlanners();
   }, [handleAddPlannerDrawer, handleGetPlanners]);
-
   const handleCloseAddMemberWindow = useCallback(() => {
     setSelectedFriend({} as IFriendDTO);
     setAddMemberWindowForm(false);
     handleGetMembers();
   }, [handleGetMembers]);
-
   const handleGetHiredSuppliers = useCallback(() => {
     try {
       api
@@ -484,7 +454,6 @@ const EventHostDashboard: React.FC = () => {
       throw new Error(err);
     }
   }, [pageEvent]);
-
   const handleCloseEditEventInfoWindow = useCallback(
     (data: IEventInfoDTO) => {
       setEventInfo(data);
@@ -493,58 +462,11 @@ const EventHostDashboard: React.FC = () => {
     },
     [handleGetEventInfo],
   );
-
   const handleCloseAddOwnerWindow = useCallback(() => {
     setSelectedFriend({} as IFriendDTO);
     setAddOwnerDrawer(false);
     handleGetOwners();
   }, [handleGetOwners]);
-  const handleEditBudget = useCallback(
-    async (data: IEventInfoDTO) => {
-      try {
-        formRef.current?.setErrors([]);
-
-        const schema = Yup.object().shape({
-          budget: Yup.string().required(),
-        });
-
-        await schema.validate(data, {
-          abortEarly: false,
-        });
-
-        await api.put(`events/${eventId}/event-info`, {
-          duration: eventInfo.duration,
-          number_of_guests: eventInfo.number_of_guests,
-          budget: Number(data.budget),
-          description: eventInfo.description,
-          country: eventInfo.country,
-          local_state: eventInfo.local_state,
-          city: eventInfo.city,
-          address: eventInfo.address,
-        });
-
-        setBudgetDrawer(false);
-        handleGetEventInfo();
-        addToast({
-          type: 'success',
-          title: 'Informações editadas com sucesso',
-          description: 'As mudanças já foram atualizadas no seu evento.',
-        });
-      } catch (err) {
-        if (err instanceof Yup.ValidationError) {
-          const error = getValidationErrors(err);
-
-          formRef.current?.setErrors(error);
-        }
-        addToast({
-          type: 'error',
-          title: 'Erro ao editar informações do evento',
-          description: 'Tente novamente.',
-        });
-      }
-    },
-    [addToast, eventId, eventInfo, handleGetEventInfo],
-  );
   const handleCloseEditEventNameWindow = useCallback(() => {
     setEditEventNameDrawer(false);
     handleGetEventInfo();
@@ -555,7 +477,6 @@ const EventHostDashboard: React.FC = () => {
     setMember({} as IEventMemberDTO);
     handleGetMembers();
   }, [handleGetMembers]);
-
   const handleDeleteMember = useCallback(async () => {
     try {
       await api.delete(
@@ -614,10 +535,6 @@ const EventHostDashboard: React.FC = () => {
       });
     }
   }, [eventId, owner, addToast, handleGetOwners]);
-  // const handleEditOwnerWindow = useCallback(() => {
-  //   setOwnerProfileWindow(false);
-  //   setEditOwnerDrawer(true);
-  // }, []);
   const totalEventCost = useMemo(() => {
     const totalCost: number = hiredSuppliers
       .map(supplier => {
@@ -632,7 +549,6 @@ const EventHostDashboard: React.FC = () => {
       .reduce((a, b) => a + b, 0);
     return totalCost;
   }, [hiredSuppliers]);
-
   const handleSeletedFriend = useCallback(
     (props: IFriendDTO) => {
       if (addMemberWindowForm) {
@@ -650,17 +566,14 @@ const EventHostDashboard: React.FC = () => {
     },
     [addMemberWindowForm, addOwnerDrawer, closeAllWindows],
   );
-
   const handleCloseOwnerWindow = useCallback(() => {
     setOwnerProfileWindow(false);
     setOwner({} as IEventOwnerDTO);
   }, []);
-
   const handleEditEventInfoWindow = useCallback(() => {
     setEventInfoDrawer(false);
     setEditEventInfoDrawer(true);
   }, []);
-
   useEffect(() => {
     handleGetSuppliers();
   }, [handleGetSuppliers]);
@@ -691,24 +604,7 @@ const EventHostDashboard: React.FC = () => {
 
   return (
     <Container>
-      <PageHeader>
-        {/* {isOwner ? (
-          <span>
-            <button type="button" onClick={handleEditEventNameDrawer}>
-              <h5>
-                {eventName}
-                <FiEdit3 size={16} />
-              </h5>
-            </button>
-          </span>
-        ) : (
-          <span>
-            <button type="button">
-              <h5>{eventName}</h5>
-            </button>
-          </span>
-        )} */}
-      </PageHeader>
+      <PageHeader />
       {!!createEventInfoWindowForm && (
         <CreateEventInfoWindowForm
           eventId={eventId}
@@ -924,35 +820,12 @@ const EventHostDashboard: React.FC = () => {
             />
           )}
           {!!budgetDrawer && (
-            <WindowUnFormattedContainer
-              onHandleCloseWindow={() => setBudgetDrawer(false)}
-              containerStyle={{
-                zIndex: 10,
-                top: '29vh',
-                left: '5%',
-                height: '42vh',
-                width: '90%',
-              }}
-            >
-              <Form ref={formRef} onSubmit={handleEditBudget}>
-                <BudgetDrawer>
-                  <span>
-                    <h2>Novo Orçamento</h2>
-
-                    <Input
-                      name="budget"
-                      placeholder="Orçamento"
-                      defaultValue={eventInfo.budget}
-                      type="text"
-                    />
-
-                    <button type="submit">
-                      <h3>Salvar</h3>
-                    </button>
-                  </span>
-                </BudgetDrawer>
-              </Form>
-            </WindowUnFormattedContainer>
+            <EditEventBudgetWindow
+              eventId={eventId}
+              eventInfo={eventInfo}
+              handleGetEventInfo={handleGetEventInfo}
+              setBudgetDrawer={(e: boolean) => setBudgetDrawer(e)}
+            />
           )}
           {!!latestActionsSection && <LatestNewsSection />}
           {!!supplierSection && (
