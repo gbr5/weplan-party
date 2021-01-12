@@ -17,6 +17,7 @@ export const Container = styled.div`
 
     @media (max-width: 1000px) {
       gap: 2vw;
+      margin: 2vh auto;
     }
 
     > h2 {
@@ -48,10 +49,18 @@ export const TransactionDate = styled(Tooltip)`
     color: var(--primary-color);
     margin-right: 16px;
     margin-left: auto;
+
+    @media (max-width: 1000px) {
+      width: 100%;
+    }
   }
   > p {
     font-size: 16px;
     color: var(--letter-color-4);
+
+    @media (max-width: 1000px) {
+      width: 100%;
+    }
   }
   > button {
     background: transparent;
