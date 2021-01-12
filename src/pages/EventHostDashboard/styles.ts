@@ -347,9 +347,9 @@ export const BudgetDrawer = styled.div`
     }
 
     input {
-      border: 1px solid var(--primary-color);
       border-radius: 4px;
-      height: 32px;
+      height: 40px;
+      width: 100%;
     }
 
     button {

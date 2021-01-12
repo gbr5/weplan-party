@@ -43,7 +43,9 @@ const MyNextEventSection: React.FC<IProps> = ({
         })
         .reduce((a, b) => a + b, 0);
       nextEvent.event.eventInfo &&
-        setEventCostPercentage(cost / Number(nextEvent.event.eventInfo.budget));
+        setEventCostPercentage(
+          Math.round(cost / Number(nextEvent.event.eventInfo.budget)),
+        );
       setCheckListResolvedTasks(
         nextEvent.checkLists.filter(task => task.status === 3).length,
       );
