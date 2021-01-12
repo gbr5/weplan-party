@@ -15,30 +15,27 @@ export const Container = styled.div`
   position: fixed;
   z-index: 5;
 
-  top: 8.5vh;
+  top: 7vh;
+  height: 93vh;
   left: 0;
+  width: 18vw;
+  padding: 2vh 0;
 
-  height: 91.5vh;
-  width: 30vw;
-
-  display: flex;
-  flex-direction: column;
-  /* gap: 16px; */
-  gap: 4vh;
-
+  display: grid;
   align-items: center;
-  justify-content: center;
-  text-align: left;
+  justify-content: stretch;
+  grid-template-rows: repeat(9, 1fr);
+  border-radius: 0 8px 8px 0;
 
   animation: ${apearFromLeft} 0.8s;
+  box-shadow: var(--box-shadow);
 
-  background: var(--letter-color-2);
+  background: var(--card-color);
 
   @media (max-width: 1000px) {
-    /* display: block; */
-    width: 90vw;
-    height: 91vh;
-    top: 9vh;
+    width: 52vw;
+    height: 92.5vh;
+    top: 7.5vh;
 
     gap: 4vh;
 
@@ -54,14 +51,13 @@ export const MenuItemContainer = styled.div`
 
   align-items: center;
   justify-content: center;
-  box-shadow: var(--box-shadow);
   text-align: left;
 
   &:hover {
     color: var(--title-color);
     background: var(--secondary-color);
     /* background: rgba(255, 125, 5, 0.5); */
-    box-shadow: var(--window-box-shadow);
+    /* box-shadow: var(--window-box-shadow); */
 
     button {
       color: var(--primary-color);
@@ -72,12 +68,17 @@ export const MenuItemContainer = styled.div`
     width: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: stretch;
     background: transparent;
     border: none;
     height: 40px;
     gap: 2vw;
     text-align: left;
+    padding-left: 2vw;
+
+    @media (max-width: 1000px) {
+      padding-left: 4vw;
+    }
 
     h3 {
       text-align: left;
@@ -90,19 +91,24 @@ export const ToggleButton = styled.div`
   display: flex;
   gap: 16px;
   align-items: center;
-  justify-content: center;
+  justify-content: stretch;
+  text-align: left;
+
+  @media (max-width: 1000px) {
+    padding-left: 2vw;
+  }
 
   strong {
-    font-size: 16px;
-    color: var(--letter-color-5);
+    font-size: 20px;
+    color: black;
   }
 `;
 
 export const LogoutButton = styled.button`
   background: transparent;
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 500;
-  color: var(--letter-color-5);
+  color: black;
   width: 100%;
   border: none;
   height: 40px;
