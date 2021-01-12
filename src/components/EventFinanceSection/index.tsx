@@ -330,7 +330,11 @@ const EventFinanceSection: React.FC<IPropsDTO> = ({
         </Suppliers>
 
         <PageContainer
-          containerStyle={{ height: '368px', boxSizing: 'border-box' }}
+          containerStyle={{
+            height: '368px',
+            boxSizing: 'border-box',
+            minWidth: '480px',
+          }}
         >
           {!!supplierTransactions && (
             <SupplierTransactionAgreementsWindow>
