@@ -24,6 +24,15 @@ export const Container = styled.div`
     margin: 0;
     width: 100%;
 
+    @media (max-width: 1000px) {
+      overflow-x: scroll;
+      display: inline-flexbox;
+      width: 100%;
+      border-radius: 0;
+      align-items: stretch;
+      justify-content: center;
+    }
+
     > div {
       display: flex;
       flex-direction: column;
@@ -31,6 +40,9 @@ export const Container = styled.div`
       gap: 16px;
       width: 100%;
 
+      @media (max-width: 1000px) {
+        height: 100%;
+      }
       > div {
         background: var(--card-color);
         display: flex;
@@ -42,14 +54,25 @@ export const Container = styled.div`
         border-radius: 8px;
         box-shadow: var(--window-box-shadow);
 
+        @media (max-width: 1000px) {
+          height: 100px;
+        }
         > h3 {
           font-size: 20px;
           color: var(--letter-color-5);
+
+          @media (max-width: 1000px) {
+            font-size: 18px;
+          }
         }
 
         > p {
           font-size: 20px;
           color: var(--letter-color-5);
+
+          @media (max-width: 1000px) {
+            font-size: 18px;
+          }
         }
         > div:last-child() {
           color: var(--red-color);
@@ -65,6 +88,15 @@ export const Container = styled.div`
     height: 400px;
     box-sizing: border-box;
     padding-bottom: 32px;
+
+    @media (max-width: 1000px) {
+      overflow-x: scroll;
+      display: inline-flexbox;
+      width: 100%;
+      border-radius: 0;
+      align-items: stretch;
+      justify-content: center;
+    }
   }
 `;
 
@@ -88,11 +120,17 @@ export const Suppliers = styled.div`
     display: flex;
     flex-direction: column;
     gap: 16px;
-    width: 250px;
+    min-width: 150px;
+    max-width: 250px;
     height: 100%;
+    width: 100%;
 
     overflow-y: scroll;
     padding: 16px 16px 16px 0;
+
+    @media (max-width: 1000px) {
+      min-width: 150px;
+    }
   }
 `;
 
@@ -147,6 +185,10 @@ export const MenuButton = styled.button<ButtonProps>`
 
   font-size: 24px;
   transition: 0.25s;
+
+  @media (max-width: 1000px) {
+    font-size: 20px;
+  }
 
   &:hover {
     border-bottom: 1px solid var(--primary-color);

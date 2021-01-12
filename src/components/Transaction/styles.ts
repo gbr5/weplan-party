@@ -15,11 +15,19 @@ export const Container = styled.div`
     gap: 16px;
     margin-right: auto;
 
+    @media (max-width: 1000px) {
+      gap: 2vw;
+    }
+
     > h2 {
       text-align: left;
       width: 200px;
       font-size: 16px;
       color: var(--letter-color-4);
+
+      @media (max-width: 1000px) {
+        width: 100%;
+      }
     }
   }
 `;
@@ -31,6 +39,10 @@ export const TransactionDate = styled(Tooltip)`
   justify-content: right;
   margin-left: auto;
   width: 100%;
+
+  @media (max-width: 1000px) {
+    gap: 2vw;
+  }
 
   > h3 {
     color: var(--primary-color);
@@ -49,6 +61,10 @@ export const TransactionDate = styled(Tooltip)`
     gap: 8px;
     align-items: center;
     justify-content: center;
+
+    @media (max-width: 1000px) {
+      gap: 2vw;
+    }
 
     color: var(--letter-color-5);
     font-weight: 500;
