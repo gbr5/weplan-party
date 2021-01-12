@@ -70,15 +70,10 @@ const EventHostDashboard: React.FC = () => {
   const { addToast } = useToast();
   const location = useLocation<IParams>();
   const { user } = useAuth();
-
   const pageEvent = location.state.params;
-
   const eventId = pageEvent.id;
-
   const [eventName, setEventName] = useState(pageEvent.name);
-
   const [isOwner, setIsOwner] = useState(false);
-
   const [friendsWindow, setFriendsWindow] = useState(false);
   const [guestAlocationWindow, setGuestAlocationWindow] = useState(false);
   const [membersWindow, setMembersWindow] = useState(false);
@@ -96,7 +91,6 @@ const EventHostDashboard: React.FC = () => {
   const [deleteOwnerDrawer, setDeleteOwnerDrawer] = useState(false);
   const [firstRow, setFirstRow] = useState(true);
   const [sidebar, setSidebar] = useState(false);
-
   const [latestActionsSection, setLatestActionsSection] = useState(false);
   const [guestsSection, setGuestsSection] = useState(false);
   const [financeSection, setFinanceSection] = useState(false);
@@ -110,7 +104,6 @@ const EventHostDashboard: React.FC = () => {
   const [createEventInfoWindowForm, setCreateEventInfoWindowForm] = useState(
     false,
   );
-
   const [confirmedGuests, setConfirmedGuests] = useState(0);
   const [myGuestsConfirmed, setMyGuestsConfirmed] = useState(0);
   const [numberOfOwners, setNumberOfOwners] = useState(0);
@@ -118,7 +111,6 @@ const EventHostDashboard: React.FC = () => {
   const [numberOfPlanners, setNumberOfPlanners] = useState(0);
   const [totalGuestNumber, setTotalGuestNumber] = useState(0);
   const [checkListTasks, setCheckListTasks] = useState(0);
-
   const [myGuests, setMyGuests] = useState<IEventGuestDTO[]>([]);
   const [selectedFriend, setSelectedFriend] = useState<IFriendDTO>(
     {} as IFriendDTO,
@@ -175,7 +167,6 @@ const EventHostDashboard: React.FC = () => {
     setNumberOfGuestDrawer(false);
     setSidebar(false);
   }, []);
-
   const closeAllSections = useCallback(() => {
     setSelectedFriend({} as IFriendDTO);
     setOwner({} as IEventOwnerDTO);
@@ -190,21 +181,17 @@ const EventHostDashboard: React.FC = () => {
     setFirstRow(false);
     setSidebar(false);
   }, []);
-
   const closeEventInfoWindowForm = useCallback(() => {
     setCreateEventInfoWindowForm(false);
   }, []);
-
   const openEventInfoWindowForm = useCallback(() => {
     setCreateEventInfoWindowForm(true);
   }, []);
-
   useEffect(() => {
     if (!pageEvent.eventInfo && !eventInfo.id) {
       openEventInfoWindowForm();
     }
   }, [openEventInfoWindowForm, eventInfo, pageEvent]);
-
   const handleFirstRow = useCallback(() => {
     closeAllWindows();
     setFirstRow(!firstRow);
@@ -213,23 +200,18 @@ const EventHostDashboard: React.FC = () => {
     setSidebar(!sidebar);
     setFirstRow(false);
   }, [sidebar]);
-
   const openGuestAlocationWindow = useCallback(() => {
     setGuestAlocationWindow(true);
   }, []);
-
   const closeGuestAlocationWindow = useCallback(() => {
     setGuestAlocationWindow(false);
   }, []);
-
   const openUpdateEventNumberOfGuestsWindow = useCallback(() => {
     setUpdateEventNumberOfGuestsWindow(true);
   }, []);
-
   const closeUpdateEventNumberOfGuestsWindow = useCallback(() => {
     setUpdateEventNumberOfGuestsWindow(false);
   }, []);
-
   const handleEventInfoWindow = useCallback(() => {
     closeAllWindows();
     setEventInfoDrawer(!eventInfoDrawer);
@@ -250,7 +232,6 @@ const EventHostDashboard: React.FC = () => {
     },
     [closeAllWindows],
   );
-
   const handleMembersWindow = useCallback(() => {
     closeAllWindows();
     setMembersWindow(!membersWindow);
@@ -259,7 +240,6 @@ const EventHostDashboard: React.FC = () => {
     closeAllWindows();
     setBudgetDrawer(!budgetDrawer);
   }, [budgetDrawer, closeAllWindows]);
-
   const handleEditEventNameDrawer = useCallback(() => {
     closeAllWindows();
     setEditEventNameDrawer(!editEventNameDrawer);
@@ -282,7 +262,6 @@ const EventHostDashboard: React.FC = () => {
     closeAllWindows();
     setAddPlannerDrawer(!addPlannerDrawer);
   }, [addPlannerDrawer, closeAllWindows]);
-
   const handleLatestActionsSection = useCallback(() => {
     closeAllSections();
     setLatestActionsSection(true);
@@ -307,7 +286,6 @@ const EventHostDashboard: React.FC = () => {
     closeAllSections();
     setMessagesSection(true);
   }, [closeAllSections]);
-
   const handleGetCheckListTasks = useCallback(() => {
     try {
       api
@@ -408,7 +386,6 @@ const EventHostDashboard: React.FC = () => {
       throw new Error(err);
     }
   }, [eventId, user]);
-
   const currentNumberOfGuests = useMemo(() => {
     const currentMembersGuestNumber: number = members
       .map(tmember => tmember.number_of_guests)
@@ -421,7 +398,6 @@ const EventHostDashboard: React.FC = () => {
       currentMembersGuestNumber + currentOwnersGuestNumber;
     return currentGuestNumber;
   }, [members, owners]);
-
   const availableNumberOfGuests = useMemo(() => {
     const availableGuestNumber = totalGuestNumber - currentNumberOfGuests;
     return availableGuestNumber;
@@ -442,7 +418,6 @@ const EventHostDashboard: React.FC = () => {
     const availableGuestNumber = Number(myNumberOfGuests) - myGuests.length;
     return availableGuestNumber;
   }, [myGuests, owners, members, isOwner, user]);
-
   const handleGetSuppliers = useCallback(() => {
     try {
       api
@@ -456,7 +431,6 @@ const EventHostDashboard: React.FC = () => {
       throw new Error(err);
     }
   }, [pageEvent]);
-
   const handleCloseAddPlannerWindow = useCallback(() => {
     setSelectedSupplier({} as IEventSupplierDTO);
     setAddPlannerDrawer(false);
@@ -464,13 +438,11 @@ const EventHostDashboard: React.FC = () => {
     handleAddPlannerDrawer();
     handleGetPlanners();
   }, [handleAddPlannerDrawer, handleGetPlanners]);
-
   const handleCloseAddMemberWindow = useCallback(() => {
     setSelectedFriend({} as IFriendDTO);
     setAddMemberWindowForm(false);
     handleGetMembers();
   }, [handleGetMembers]);
-
   const handleGetHiredSuppliers = useCallback(() => {
     try {
       api
@@ -482,7 +454,6 @@ const EventHostDashboard: React.FC = () => {
       throw new Error(err);
     }
   }, [pageEvent]);
-
   const handleCloseEditEventInfoWindow = useCallback(
     (data: IEventInfoDTO) => {
       setEventInfo(data);
@@ -491,7 +462,6 @@ const EventHostDashboard: React.FC = () => {
     },
     [handleGetEventInfo],
   );
-
   const handleCloseAddOwnerWindow = useCallback(() => {
     setSelectedFriend({} as IFriendDTO);
     setAddOwnerDrawer(false);
@@ -507,7 +477,6 @@ const EventHostDashboard: React.FC = () => {
     setMember({} as IEventMemberDTO);
     handleGetMembers();
   }, [handleGetMembers]);
-
   const handleDeleteMember = useCallback(async () => {
     try {
       await api.delete(
@@ -566,10 +535,6 @@ const EventHostDashboard: React.FC = () => {
       });
     }
   }, [eventId, owner, addToast, handleGetOwners]);
-  // const handleEditOwnerWindow = useCallback(() => {
-  //   setOwnerProfileWindow(false);
-  //   setEditOwnerDrawer(true);
-  // }, []);
   const totalEventCost = useMemo(() => {
     const totalCost: number = hiredSuppliers
       .map(supplier => {
@@ -584,7 +549,6 @@ const EventHostDashboard: React.FC = () => {
       .reduce((a, b) => a + b, 0);
     return totalCost;
   }, [hiredSuppliers]);
-
   const handleSeletedFriend = useCallback(
     (props: IFriendDTO) => {
       if (addMemberWindowForm) {
@@ -602,17 +566,14 @@ const EventHostDashboard: React.FC = () => {
     },
     [addMemberWindowForm, addOwnerDrawer, closeAllWindows],
   );
-
   const handleCloseOwnerWindow = useCallback(() => {
     setOwnerProfileWindow(false);
     setOwner({} as IEventOwnerDTO);
   }, []);
-
   const handleEditEventInfoWindow = useCallback(() => {
     setEventInfoDrawer(false);
     setEditEventInfoDrawer(true);
   }, []);
-
   useEffect(() => {
     handleGetSuppliers();
   }, [handleGetSuppliers]);
