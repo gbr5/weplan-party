@@ -30,7 +30,7 @@ const TransactionInputRow: React.FC<IPropsDTO> = ({
 }: IPropsDTO) => {
   const transaction = `transactions[${rowIndex - 1}]`;
 
-  const inputHeight = { height: '40px' };
+  const inputHeight = { height: '40px', width: '150px' };
 
   // const checkboxOptions: CheckboxOption[] = [
   //   {
