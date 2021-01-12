@@ -11,6 +11,9 @@ import TransactionInputRow from '../TransactionInputRow';
 import ITransactionAgreementDTO from '../../dtos/ITransactionAgreementDTO';
 import api from '../../services/api';
 import IEventSupplierDTO from '../../dtos/IEventSupplierDTO';
+import WindowUnFormattedContainer from '../WindowUnFormattedContainer';
+
+import { TransactionsContainer } from './styles';
 
 interface IPropsDTO {
   // eslint-disable-next-line react/require-default-props
@@ -174,36 +177,37 @@ const TransactionAgreementForm: React.FC<IPropsDTO> = ({
           </button>
         </div>
         {!!transactionContainer && (
-          <WindowContainer
+          <WindowUnFormattedContainer
             onHandleCloseWindow={onHandleCloseWindow}
             containerStyle={{
               zIndex: 10,
-              top: '5%',
-              left: '5%',
-              height: '90%',
-              width: '90%',
-              overflow: 'scroll',
+              top: '0%',
+              left: '0%',
+              height: '100%',
+              width: '100%',
             }}
           >
-            {installmentsRows.map(row => {
-              iCount += 1;
-              row && console.log(row);
-              return (
-                <>
-                  <TransactionInputRow
-                    key={iCount}
-                    rowIndex={iCount}
-                    installmentDefaultAmount={
-                      totalAmount / numberOfInstallments
-                    }
-                  />
-                </>
-              );
-            })}
-            <div>
-              <button type="submit">Salvar</button>
-            </div>
-          </WindowContainer>
+            <TransactionsContainer>
+              {installmentsRows.map(row => {
+                iCount += 1;
+                row && console.log(row);
+                return (
+                  <>
+                    <TransactionInputRow
+                      key={iCount}
+                      rowIndex={iCount}
+                      installmentDefaultAmount={
+                        totalAmount / numberOfInstallments
+                      }
+                    />
+                  </>
+                );
+              })}
+              <div>
+                <button type="submit">Salvar</button>
+              </div>
+            </TransactionsContainer>
+          </WindowUnFormattedContainer>
         )}
       </Form>
     </WindowContainer>

@@ -23,17 +23,27 @@ const appearFromLeft = keyframes`
 export const TransactionRow = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: stretch;
   background: var(--background-color);
   border-radius: 8px;
-  gap: 32px;
-  padding: 32px;
+  gap: 4vw;
+  padding: 4vw;
+  margin: 4vh auto;
 
   animation: ${appearFromLeft} 0.5s;
+
+  @media (max-width: 1000px) {
+    flex-direction: column;
+    gap: 2vw;
+  }
 
   > p {
     font-size: 18px;
     color: var(--title-color);
+
+    @media (max-width: 1000px) {
+      font-size: 14px;
+    }
   }
 
   > span {
@@ -45,6 +55,11 @@ export const TransactionRow = styled.div`
       width: 250px;
       font-size: 16px;
       color: var(--primary-color);
+
+      @media (max-width: 1000px) {
+        font-size: 13px;
+        width: 100px;
+      }
     }
   }
 `;
