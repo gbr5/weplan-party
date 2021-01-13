@@ -4,7 +4,6 @@ import placeholder from '../../../../assets/WePlanLogo.svg';
 import IEventDTO from '../../../../dtos/IEventDTO';
 import IUserDTO from '../../../../dtos/IUserDTO';
 import formatDateToString from '../../../../utils/formatDateToString';
-import { currency } from '../../../../utils/masks';
 import { numberFormat } from '../../../../utils/numberFormat';
 
 import { Container } from './styles';
