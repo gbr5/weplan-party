@@ -5,8 +5,8 @@ export const Container = styled.div`
   align-items: stretch;
   justify-content: stretch;
   width: 100%;
-  height: 48px;
-  margin: 2vh auto;
+  height: 54px;
+  padding: 1vh 0;
 
   overflow-x: scroll;
 
@@ -14,14 +14,14 @@ export const Container = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 176px;
+    width: 100%;
     height: 40px;
 
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 400;
 
     @media (max-width: 1000px) {
-      font-size: 14px;
+      font-size: 12px;
       width: 100%;
     }
   }

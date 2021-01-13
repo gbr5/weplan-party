@@ -7,7 +7,7 @@ import formatDateToString from '../../../../utils/formatDateToString';
 import { numberFormat } from '../../../../utils/numberFormat';
 import PossibleDates from './PossibleDatesSection';
 
-import { Container, EventSection, EventInfoSection } from './styles';
+import { Container, EventSection, InsideSection, EventInfoSection } from './styles';
 
 interface IProps {
   event: IEventDTO;
@@ -29,22 +29,24 @@ const FirstSection: React.FC<IProps> = ({ event, master }: IProps) => {
       <img src={placeholder} alt="WePlan"/>
       <EventSection>
         <h1>{event.name}</h1>
-        <span>
-          <p>Anfitrião Master</p>
-          <p>{master.name}</p>
-        </span>
-        <span>
-          <p>{event.event_type}</p>
-          <p>{event.isPublished ? 'Publicado' : 'Não Publicado'}</p>
-        </span>
-        <span>
-          {event.isDateDefined && (
-            <>
-              <p>{eventDate.date}</p>
-              <p>{eventDate.hour}</p>
-            </>
-          )}
-        </span>
+        <InsideSection>
+          <span>
+            <p>Anfitrião Master</p>
+            <p>{master.name}</p>
+          </span>
+          <span>
+            <p>{event.event_type}</p>
+            <p>{event.isPublished ? 'Publicado' : 'Não Publicado'}</p>
+          </span>
+          <span>
+            {event.isDateDefined && (
+              <>
+                <p>{eventDate.date}</p>
+                <p>{eventDate.hour}</p>
+              </>
+            )}
+          </span>
+        </InsideSection>
         <p>Possíveis datas</p>
         <PossibleDates dates={event.eventDates} />
       </EventSection>
@@ -59,7 +61,7 @@ const FirstSection: React.FC<IProps> = ({ event, master }: IProps) => {
         </span>
         <span>
           <p>Orçamento</p>
-          <p>R$ {numberFormat(event.eventInfo && event.eventInfo.budget)}</p>
+          <p>{numberFormat(event.eventInfo && event.eventInfo.budget)}</p>
         </span>
         <span>
           <p>Descrição</p>
