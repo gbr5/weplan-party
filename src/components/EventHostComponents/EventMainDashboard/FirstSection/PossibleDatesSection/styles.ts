@@ -21,7 +21,6 @@ export const Container = styled.div`
     font-weight: 400;
 
     @media (max-width: 1000px) {
-      display: inline;
       font-size: 14px;
       width: 100%;
     }
