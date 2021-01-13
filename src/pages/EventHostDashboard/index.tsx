@@ -54,6 +54,7 @@ import UpdateEventNumberOfGuestsWindow from '../../components/UpdateEventNumberO
 import GuestAlocationWindow from '../../components/GuestAlocationWindow';
 import IEventGuestDTO from '../../dtos/IEventGuestDTO';
 import EditEventBudgetWindow from '../../components/EditEventBudgetWindow';
+import EventMainDashboard from '../../components/EventHostComponents/EventMainDashboard';
 
 interface IUserInfoDTO {
   id: string;
@@ -91,11 +92,11 @@ const EventHostDashboard: React.FC = () => {
   const [deleteOwnerDrawer, setDeleteOwnerDrawer] = useState(false);
   const [firstRow, setFirstRow] = useState(true);
   const [sidebar, setSidebar] = useState(false);
-  const [latestActionsSection, setLatestActionsSection] = useState(false);
+  const [latestActionsSection, setLatestActionsSection] = useState(true);
   const [guestsSection, setGuestsSection] = useState(false);
   const [financeSection, setFinanceSection] = useState(false);
   const [supplierSection, setSupplierSection] = useState(false);
-  const [checkListSection, setCheckListSection] = useState(true);
+  const [checkListSection, setCheckListSection] = useState(false);
   const [messagesSection, setMessagesSection] = useState(false);
   const [
     updateEventNumberOfGuestsWindow,
@@ -827,7 +828,8 @@ const EventHostDashboard: React.FC = () => {
               setBudgetDrawer={(e: boolean) => setBudgetDrawer(e)}
             />
           )}
-          {!!latestActionsSection && <LatestNewsSection />}
+          {/* {!!latestActionsSection && <LatestNewsSection />} */}
+          {!!latestActionsSection && <EventMainDashboard />}
           {!!supplierSection && (
             <EventSupplierSection
               handleGetHiredSuppliers={handleGetHiredSuppliers}

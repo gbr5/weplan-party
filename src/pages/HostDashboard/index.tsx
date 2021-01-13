@@ -262,7 +262,6 @@ const Dashboard: React.FC = () => {
             nextEvent={myNextEvent}
             handleMyEventDashboard={handleMyEventDashboard}
           />
-
           <BottomPage>
             <BottomSection>
               <div>

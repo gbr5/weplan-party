@@ -12,4 +12,5 @@ export default interface IEventDTO {
   isGuest?: boolean;
   isOwner?: boolean;
   eventInfo: IEventInfoDTO;
+  avatar_url?: string;
 }
