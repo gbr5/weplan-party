@@ -74,7 +74,7 @@ const Dashboard: React.FC = () => {
   }, [getMyNextEvent]);
 
   const closeCreatePersonInfoWindow = useCallback(() => {
-    setCreatePersonInfoWindow(true);
+    setCreatePersonInfoWindow(false);
   }, []);
 
   const getPersonInfo = useCallback(() => {

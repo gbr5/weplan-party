@@ -7,7 +7,12 @@ import formatDateToString from '../../../../utils/formatDateToString';
 import { numberFormat } from '../../../../utils/numberFormat';
 import PossibleDates from './PossibleDatesSection';
 
-import { Container, EventSection, InsideSection, EventInfoSection } from './styles';
+import {
+  Container,
+  EventSection,
+  InsideSection,
+  EventInfoSection,
+} from './styles';
 
 interface IProps {
   event: IEventDTO;
@@ -22,11 +27,11 @@ const FirstSection: React.FC<IProps> = ({ event, master }: IProps) => {
     return {
       date,
       hour,
-    }
+    };
   }, [event.date]);
   return (
     <Container>
-      <img src={placeholder} alt="WePlan"/>
+      <img src={placeholder} alt="WePlan" />
       <EventSection>
         <h1>{event.name}</h1>
         <InsideSection>
