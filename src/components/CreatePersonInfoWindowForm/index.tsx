@@ -12,6 +12,7 @@ import { useToast } from '../../hooks/toast';
 import getValidationErrors from '../../utils/getValidationErros';
 
 import { Container, QuestionTitle } from './styles';
+import WindowUnFormattedContainer from '../WindowUnFormattedContainer';
 
 interface IPersonUser {
   person_id: string;
@@ -83,38 +84,49 @@ const CreatePersonInfoWindowForm: React.FC<IProps> = ({
   };
 
   return (
-    <Container>
-      <Form ref={formRef} onSubmit={handleSubmitPersonInfo}>
-        <QuestionTitle>
-          <strong>Usuário Final</strong>
-          Faça seu cadastro
-        </QuestionTitle>
+    <WindowUnFormattedContainer
+      onHandleCloseWindow={() => handleCloseWindow()}
+      containerStyle={{
+        zIndex: 100,
+        top: '0',
+        left: '0',
+        height: '100%',
+        width: '100%',
+      }}
+    >
+      <Container>
+        <Form ref={formRef} onSubmit={handleSubmitPersonInfo}>
+          <QuestionTitle>
+            <strong>Usuário Final</strong>
+            Faça seu cadastro
+          </QuestionTitle>
 
-        <Input
-          containerStyle={containerStyles}
-          name="first_name"
-          icon={FiUser}
-          type="text"
-          placeholder="Prénome"
-        />
-        <Input
-          containerStyle={containerStyles}
-          name="last_name"
-          icon={FiUser}
-          type="text"
-          placeholder="Sobrenome"
-        />
-        <Input
-          containerStyle={containerStyles}
-          name="person_id"
-          mask="brlID"
-          type="text"
-          placeholder="CPF"
-        />
+          <Input
+            containerStyle={containerStyles}
+            name="first_name"
+            icon={FiUser}
+            type="text"
+            placeholder="Prénome"
+          />
+          <Input
+            containerStyle={containerStyles}
+            name="last_name"
+            icon={FiUser}
+            type="text"
+            placeholder="Sobrenome"
+          />
+          <Input
+            containerStyle={containerStyles}
+            name="person_id"
+            mask="brlID"
+            type="text"
+            placeholder="CPF"
+          />
 
-        <Button type="submit">Cadastrar</Button>
-      </Form>
-    </Container>
+          <Button type="submit">Cadastrar</Button>
+        </Form>
+      </Container>
+    </WindowUnFormattedContainer>
   );
 };
 

@@ -1,19 +1,31 @@
 import React from 'react';
 
-import { Container } from './styles';
+import { Container, Section } from './styles';
 
 const SecondSection: React.FC = () => {
   return (
     <Container>
-      <div>
-        <h1>D</h1>
-      </div>
-      <div>
-        <h1>E</h1>
-      </div>
-      <div>
-        <h1>F</h1>
-      </div>
+      <Section>
+        <h1>Arquivos</h1>
+      </Section>
+      <Section>
+        <h1>Imagens</h1>
+      </Section>
+      <Section>
+        <h1>Compromissos</h1>
+      </Section>
+      <Section>
+        <h1>A Pagar</h1>
+      </Section>
+      <Section>
+        <h1>Notas</h1>
+      </Section>
+      <Section>
+        <h1>Votações</h1>
+      </Section>
+      <Section>
+        <h1>Inspirações</h1>
+      </Section>
     </Container>
   );
 };

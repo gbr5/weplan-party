@@ -361,17 +361,10 @@ const PageHeader: React.FC = ({ children }) => {
           <button type="button" onClick={handleNavigateToDashboard}>
             <img src={logo} alt="WePlan" />
           </button>
-
-          {/* <Profile>
-            <Link to="/profile">
-              <img src={imageProfile} alt={user.name} />
-            </Link>
-          </Profile> */}
           {children}
           <Menu>
             <button type="button" onClick={handleProfileWindow}>
               <img src={imageProfile} alt={user.name} />
-              {/* <MdPerson size={30} /> */}
             </button>
           </Menu>
         </HeaderContent>

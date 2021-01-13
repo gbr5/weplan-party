@@ -1,24 +1,6 @@
-import styled, { keyframes } from 'styled-components';
-
-const appearFromTop = keyframes`
-  0% {
-    opacity: 0;
-    transform: translateY(-1050px);
-  }
-  90% {
-    opacity: 0.01;
-    transform: translateY(-500px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0px);
-  }
-`;
+import styled from 'styled-components';
 
 export const Container = styled.div`
-  animation: ${appearFromTop} 3s;
-  position: fixed;
-  z-index: 100;
   display: flex;
   width: 100%;
   height: 100%;

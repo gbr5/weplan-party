@@ -44,6 +44,7 @@ export const EventSection = styled.div`
   align-items: center;
   justify-content: stretch;
   gap: 2vh;
+  height: 100%;
 
   h1 {
     border-bottom: 1px solid var(--title-color);
@@ -94,7 +95,7 @@ export const InsideSection = styled.div`
 `;
 
 export const EventInfoSection = styled.div`
-  height: 300px;
+  height: 100%;
   width: 100%;
   display: block;
   flex-direction: column;
