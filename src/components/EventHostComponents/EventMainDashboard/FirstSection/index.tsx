@@ -1,65 +1,84 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import placeholder from '../../../../assets/WePlanLogo.svg';
+import IEventDTO from '../../../../dtos/IEventDTO';
+import IUserDTO from '../../../../dtos/IUserDTO';
+import formatDateToString from '../../../../utils/formatDateToString';
+import { currency } from '../../../../utils/masks';
+import { numberFormat } from '../../../../utils/numberFormat';
 
 import { Container } from './styles';
 
-const FirstSection: React.FC = () => {
+interface IProps {
+  event: IEventDTO;
+  master: IUserDTO;
+}
+
+const FirstSection: React.FC<IProps> = ({ event, master }: IProps) => {
+  const eventDate = useMemo(() => {
+    const date = formatDateToString(String(event.date)).split(' - ')[1];
+    const hour = formatDateToString(String(event.date)).split(' - ')[0];
+
+    return {
+      date,
+      hour,
+    }
+  }, [event.date]);
   return (
     <Container>
       <img src={placeholder} alt="WePlan"/>
       <div>
-        <h1>Nome do Evento</h1>
+        <h1>{event.name}</h1>
         <span>
           <p>Anfitrião Master</p>
-          <p>Fulano de Tal da Silva</p>
+          <p>{master.name}</p>
         </span>
         <span>
-          <p>Tipo de Evento</p>
-          <p>Não publicado</p>
+          <p>{event.event_type}</p>
+          <p>{event.isPublished ? 'Publicado' : 'Não Publicado'}</p>
         </span>
         <span>
-          <p>Data</p>
-          <p>Horário</p>
+          <p>{eventDate.date}</p>
+          <p>{eventDate.hour}</p>
         </span>
         <p>Possíveis datas</p>
       </div>
       <div>
         <span>
           <p>Duração</p>
-          <p>3 horas</p>
+          <p>{event.eventInfo.duration} horas</p>
         </span>
         <span>
           <p>N° de Convidados</p>
-          <p>150</p>
+          <p>{event.eventInfo.number_of_guests}</p>
         </span>
         <span>
           <p>Orçamento</p>
-          <p>R$ 55.000,00</p>
+          <p>R$ {numberFormat(event.eventInfo.budget)}</p>
         </span>
         <span>
           <p>Descrição</p>
-          <p>...</p>
+          <p>{event.eventInfo.description}</p>
         </span>
         <span>
           <p>País</p>
-          <p>Brasil</p>
+          <p>{event.eventInfo.country}</p>
         </span>
         <span>
           <p>Estado</p>
-          <p>MG</p>
+          <p>{event.eventInfo.local_state}</p>
         </span>
         <span>
           <p>Cidade</p>
-          <p>Belo Horizonte</p>
+          <p>{event.eventInfo.city}</p>
         </span>
         <span>
           <p>Endereço</p>
-          <p>Av. Brasil, 155, bairro Floresta</p>
+          <p>{event.eventInfo.address}</p>
         </span>
         <span>
           <p>Traje</p>
-          <p>Livre</p>
+          <p>{event.eventInfo.dress_code || ''}</p>
         </span>
       </div>
     </Container>

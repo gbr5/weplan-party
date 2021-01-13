@@ -11,6 +11,8 @@ export default interface IEventDTO {
   daysTillDate?: number;
   isGuest?: boolean;
   isOwner?: boolean;
+  isPublished: boolean;
+  isDateDefined: boolean;
   eventInfo: IEventInfoDTO;
   avatar_url?: string;
 }

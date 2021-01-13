@@ -54,6 +54,7 @@ import GuestAlocationWindow from '../../components/GuestAlocationWindow';
 import IEventGuestDTO from '../../dtos/IEventGuestDTO';
 import EditEventBudgetWindow from '../../components/EditEventBudgetWindow';
 import EventMainDashboard from '../../components/EventHostComponents/EventMainDashboard';
+import IUserDTO from '../../dtos/IUserDTO';
 
 interface IUserInfoDTO {
   id: string;
@@ -141,6 +142,22 @@ const EventHostDashboard: React.FC = () => {
   const [notStartedCheckListTasks, setNotStartedCheckListTasks] = useState<
     IEventCheckListDTO[]
   >([]);
+
+  const [master, setMaster] = useState({} as IUserDTO);
+
+  const getMaster = useCallback(() => {
+    try {
+      api.get(`user-profile/${pageEvent.user_id}`).then(response =>{
+        setMaster(response.data);
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
+  }, [pageEvent.user_id]);
+
+  useEffect(() => {
+    getMaster();
+  }, [getMaster]);
 
   const closeAllWindows = useCallback(() => {
     setGuestAlocationWindow(false);
@@ -828,7 +845,7 @@ const EventHostDashboard: React.FC = () => {
             />
           )}
           {/* {!!latestActionsSection && <LatestNewsSection />} */}
-          {!!latestActionsSection && <EventMainDashboard />}
+          {!!latestActionsSection && <EventMainDashboard event={pageEvent} master={master} />}
           {!!supplierSection && (
             <EventSupplierSection
               handleGetHiredSuppliers={handleGetHiredSuppliers}

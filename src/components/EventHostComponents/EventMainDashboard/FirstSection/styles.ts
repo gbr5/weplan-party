@@ -45,6 +45,7 @@ export const Container = styled.div`
     align-items: center;
     justify-content: stretch;
     padding: 1vh;
+    overflow-y: scroll;
 
     h1 {
       border-bottom: 1px solid var(--title-color);
