@@ -8,4 +8,5 @@ export default interface IEventOwnerDTO {
   number_of_guests: number;
   event: IEventDTO;
   userEventOwner: IUserDTO;
+  event_avatar_url?: string;
 }

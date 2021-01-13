@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import IShowEventDTO from '../../../dtos/IShowEventDTO';
 import formatStringToDate from '../../../utils/formatDateToString';
 import { Container, Fields, MyNextEventTitle, Section } from './styles';
+import placeholder from '../../../assets/WePlanLogo.svg';
 
 interface IProps {
   handleMyEventDashboard: Function;
@@ -53,6 +54,11 @@ const MyNextEventSection: React.FC<IProps> = ({
     }
   }, [nextEvent]);
 
+  const avatar =
+    nextEvent.event_avatar_url && nextEvent.event_avatar_url !== 'n/a'
+      ? nextEvent.event_avatar_url
+      : placeholder;
+
   return (
     <Container>
       {nextEvent.event ? (
@@ -68,10 +74,7 @@ const MyNextEventSection: React.FC<IProps> = ({
 
           <Section>
             <Fields>
-              <img
-                src="https://images.unsplash.com/photo-1496843916299-590492c751f4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"
-                alt=""
-              />
+              <img src={avatar} alt="WePlan" />
             </Fields>
 
             <Fields>

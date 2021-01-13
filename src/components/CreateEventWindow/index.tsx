@@ -140,22 +140,6 @@ const CreateEventWindow: React.FC<IProps> = ({
         });
         setEventName(event.data.name);
         handleSetEventName(event.data.name);
-      } else if (selectedYear === 0) {
-        const date = new Date();
-        const hour = date.getHours();
-        const minutes = date.getMinutes() + 5;
-
-        date.setHours(hour);
-        date.setMinutes(minutes);
-
-        const event = await api.post('/events', {
-          name: eventName,
-          date,
-          event_type: eventType,
-          isDateDefined,
-        });
-        setEventName(event.data.name);
-        handleSetEventName(event.data.name);
       } else {
         const date = new Date();
         const hour = date.getHours();
@@ -170,13 +154,19 @@ const CreateEventWindow: React.FC<IProps> = ({
           event_type: eventType,
           isDateDefined,
         });
-        const eventDates = await api.post('event/dates', {
-          event_id: event.data.id,
-          dates: selectedEventDates,
-        });
-        console.log(eventDates.data);
-        setEventName(event.data.name);
-        handleSetEventName(event.data.name);
+
+        if (selectedYear === 0) {
+          setEventName(event.data.name);
+          handleSetEventName(event.data.name);
+        } else {
+          const eventDates = await api.post('event/dates', {
+            event_id: event.data.id,
+            dates: selectedEventDates,
+          });
+          console.log(eventDates.data);
+          setEventName(event.data.name);
+          handleSetEventName(event.data.name);
+        }
       }
       handleGetMyEvents();
       addToast({

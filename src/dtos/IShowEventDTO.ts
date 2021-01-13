@@ -10,4 +10,5 @@ export default interface IShowEventDTO {
   guests: IEventGuestDTO[];
   suppliers: ISelectedSupplierDTO[];
   eventNotes: IEventNoteDTO[];
+  event_avatar_url: string;
 }

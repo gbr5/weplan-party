@@ -39,7 +39,7 @@ export const EventPageContent = styled.main`
   width: 100%;
   display: flex;
   padding: 0 80px;
-  gap: 80px;
+  gap: 4vh;
   animation: ${appearFromTop} 0.5s;
 
   @media (max-width: 1000px) {
@@ -92,17 +92,21 @@ export const Main = styled.div`
   display: flex;
   width: 100%;
   flex-direction: column;
-  margin-top: 150px;
+  margin-top: 144px;
   position: relative;
 
   > button {
     z-index: 5;
     position: fixed;
     top: 5vh;
-    left: 47.7%;
+    left: 47%;
     background: transparent;
     border: none;
     transition: 0.25s;
+
+    @media (max-width: 1000px) {
+      left: 41.5%;
+    }
 
     > svg {
       color: var(--primary-color);
@@ -119,12 +123,15 @@ export const Main = styled.div`
       z-index: 5;
       position: absolute;
       top: 4vh;
-      left: 47.5%;
+      left: 47.3%;
       background: transparent;
       border: none;
       transition: 0.25s;
       animation: ${appearFromTop} 0.5s;
 
+      @media (max-width: 1000px) {
+        left: 41.5%;
+      }
       > svg {
         color: var(--letter-color-4);
         transition: 0.25s;

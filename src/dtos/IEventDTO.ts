@@ -1,5 +1,10 @@
 import IEventInfoDTO from './IEventInfoDTO';
 
+interface IEventDateDTO {
+  id: string;
+  date: Date;
+}
+
 export default interface IEventDTO {
   id: string;
   name: string;
@@ -11,5 +16,9 @@ export default interface IEventDTO {
   daysTillDate?: number;
   isGuest?: boolean;
   isOwner?: boolean;
+  isPublished: boolean;
+  isDateDefined: boolean;
   eventInfo: IEventInfoDTO;
+  avatar_url?: string;
+  eventDates: IEventDateDTO[];
 }

@@ -48,12 +48,13 @@ import MembersWindow from '../../components/MembersWindow';
 import EditEventInfoWindow from '../../components/EditEventInfoWindow';
 import AddPlannerWindow from '../../components/AddPlannerWindow';
 import MessageSection from '../../components/MessageSection';
-import LatestNewsSection from '../../components/LatestNewsSection';
 import CreateEventInfoWindowForm from '../../components/CreateEventInfoWindowForm';
 import UpdateEventNumberOfGuestsWindow from '../../components/UpdateEventNumberOfGuestsWindow';
 import GuestAlocationWindow from '../../components/GuestAlocationWindow';
 import IEventGuestDTO from '../../dtos/IEventGuestDTO';
 import EditEventBudgetWindow from '../../components/EditEventBudgetWindow';
+import EventMainDashboard from '../../components/EventHostComponents/EventMainDashboard';
+import IUserDTO from '../../dtos/IUserDTO';
 
 interface IUserInfoDTO {
   id: string;
@@ -91,11 +92,11 @@ const EventHostDashboard: React.FC = () => {
   const [deleteOwnerDrawer, setDeleteOwnerDrawer] = useState(false);
   const [firstRow, setFirstRow] = useState(true);
   const [sidebar, setSidebar] = useState(false);
-  const [latestActionsSection, setLatestActionsSection] = useState(false);
+  const [latestActionsSection, setLatestActionsSection] = useState(true);
   const [guestsSection, setGuestsSection] = useState(false);
   const [financeSection, setFinanceSection] = useState(false);
   const [supplierSection, setSupplierSection] = useState(false);
-  const [checkListSection, setCheckListSection] = useState(true);
+  const [checkListSection, setCheckListSection] = useState(false);
   const [messagesSection, setMessagesSection] = useState(false);
   const [
     updateEventNumberOfGuestsWindow,
@@ -141,6 +142,22 @@ const EventHostDashboard: React.FC = () => {
   const [notStartedCheckListTasks, setNotStartedCheckListTasks] = useState<
     IEventCheckListDTO[]
   >([]);
+
+  const [master, setMaster] = useState({} as IUserDTO);
+
+  const getMaster = useCallback(() => {
+    try {
+      api.get(`user-profile/${pageEvent.user_id}`).then(response =>{
+        setMaster(response.data);
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
+  }, [pageEvent.user_id]);
+
+  useEffect(() => {
+    getMaster();
+  }, [getMaster]);
 
   const closeAllWindows = useCallback(() => {
     setGuestAlocationWindow(false);
@@ -827,7 +844,8 @@ const EventHostDashboard: React.FC = () => {
               setBudgetDrawer={(e: boolean) => setBudgetDrawer(e)}
             />
           )}
-          {!!latestActionsSection && <LatestNewsSection />}
+          {/* {!!latestActionsSection && <LatestNewsSection />} */}
+          {!!latestActionsSection && <EventMainDashboard event={pageEvent} master={master} />}
           {!!supplierSection && (
             <EventSupplierSection
               handleGetHiredSuppliers={handleGetHiredSuppliers}
