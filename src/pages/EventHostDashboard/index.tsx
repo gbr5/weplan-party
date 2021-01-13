@@ -48,7 +48,6 @@ import MembersWindow from '../../components/MembersWindow';
 import EditEventInfoWindow from '../../components/EditEventInfoWindow';
 import AddPlannerWindow from '../../components/AddPlannerWindow';
 import MessageSection from '../../components/MessageSection';
-import LatestNewsSection from '../../components/LatestNewsSection';
 import CreateEventInfoWindowForm from '../../components/CreateEventInfoWindowForm';
 import UpdateEventNumberOfGuestsWindow from '../../components/UpdateEventNumberOfGuestsWindow';
 import GuestAlocationWindow from '../../components/GuestAlocationWindow';
