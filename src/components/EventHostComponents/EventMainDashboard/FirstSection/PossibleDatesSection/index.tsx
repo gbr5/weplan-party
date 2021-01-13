@@ -20,6 +20,6 @@ const PossibleDates: React.FC<IProps> = ({ dates }: IProps) => {
       ))}
     </Container>
   );
-}
+};
 
 export default PossibleDates;
