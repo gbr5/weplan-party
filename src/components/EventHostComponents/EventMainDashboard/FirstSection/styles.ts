@@ -35,42 +35,75 @@ export const Container = styled.div`
       width: 100%;
     }
   }
+`;
 
-  div {
-    /* border: 1px solid rgba(255, 255, 255,0.5); */
-    /* border-radius: 8px; */
-    height: 300px;
-    display: block;
-    flex-direction: column;
-    align-items: center;
+export const EventSection = styled.div`
+  height: 300px;
+  display: block;
+  flex-direction: column;
+  align-items: center;
+  justify-content: stretch;
+  padding: 1vh;
+
+  h1 {
+    border-bottom: 1px solid var(--title-color);
+    width: 100%;
+    text-align: center;
+    margin: 2vh auto 4vh;
+  }
+
+  span {
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    align-items: stretch;
     justify-content: stretch;
-    padding: 1vh;
-    overflow-y: scroll;
+    gap: 2vh;
+    margin: 2vh auto;
 
-    h1 {
-      border-bottom: 1px solid var(--title-color);
-      width: 100%;
-      text-align: center;
-      margin: 2vh auto 4vh;
+    p {
+      font-size: 14px;
     }
+  }
 
-    span {
-      display: grid;
-      grid-template-columns: 2fr 3fr;
-      align-items: stretch;
-      justify-content: stretch;
-      gap: 2vh;
-      margin: 2vh auto;
+  @media (max-width: 1000px) {
+    margin: 1vh auto 2vh;
+    padding: 0;
+    border-bottom: 1px solid var(--secondary-color);
+  }
+`;
 
-      p {
-        font-size: 14px;
-      }
+export const EventInfoSection = styled.div`
+  height: 300px;
+  display: block;
+  flex-direction: column;
+  align-items: center;
+  justify-content: stretch;
+  padding: 1vh;
+  overflow-y: scroll;
+
+  h1 {
+    border-bottom: 1px solid var(--title-color);
+    width: 100%;
+    text-align: center;
+    margin: 2vh auto 4vh;
+  }
+
+  span {
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    align-items: stretch;
+    justify-content: stretch;
+    gap: 2vh;
+    margin: 2vh auto;
+
+    p {
+      font-size: 14px;
     }
+  }
 
-    @media (max-width: 1000px) {
-      margin: 1vh auto 2vh;
-      padding: 0;
-      border-bottom: 1px solid var(--secondary-color);
-    }
+  @media (max-width: 1000px) {
+    margin: 1vh auto 2vh;
+    padding: 0;
+    border-bottom: 1px solid var(--secondary-color);
   }
 `;

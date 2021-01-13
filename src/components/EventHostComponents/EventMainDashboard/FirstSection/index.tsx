@@ -5,8 +5,9 @@ import IEventDTO from '../../../../dtos/IEventDTO';
 import IUserDTO from '../../../../dtos/IUserDTO';
 import formatDateToString from '../../../../utils/formatDateToString';
 import { numberFormat } from '../../../../utils/numberFormat';
+import PossibleDates from './PossibleDatesSection';
 
-import { Container } from './styles';
+import { Container, EventSection, EventInfoSection } from './styles';
 
 interface IProps {
   event: IEventDTO;
@@ -26,7 +27,7 @@ const FirstSection: React.FC<IProps> = ({ event, master }: IProps) => {
   return (
     <Container>
       <img src={placeholder} alt="WePlan"/>
-      <div>
+      <EventSection>
         <h1>{event.name}</h1>
         <span>
           <p>Anfitrião Master</p>
@@ -37,49 +38,54 @@ const FirstSection: React.FC<IProps> = ({ event, master }: IProps) => {
           <p>{event.isPublished ? 'Publicado' : 'Não Publicado'}</p>
         </span>
         <span>
-          <p>{eventDate.date}</p>
-          <p>{eventDate.hour}</p>
+          {event.isDateDefined && (
+            <>
+              <p>{eventDate.date}</p>
+              <p>{eventDate.hour}</p>
+            </>
+          )}
         </span>
         <p>Possíveis datas</p>
-      </div>
-      <div>
+        <PossibleDates dates={event.eventDates} />
+      </EventSection>
+      <EventInfoSection>
         <span>
           <p>Duração</p>
-          <p>{event.eventInfo.duration} horas</p>
+          <p>{event.eventInfo && event.eventInfo.duration} horas</p>
         </span>
         <span>
           <p>N° de Convidados</p>
-          <p>{event.eventInfo.number_of_guests}</p>
+          <p>{event.eventInfo && event.eventInfo.number_of_guests}</p>
         </span>
         <span>
           <p>Orçamento</p>
-          <p>R$ {numberFormat(event.eventInfo.budget)}</p>
+          <p>R$ {numberFormat(event.eventInfo && event.eventInfo.budget)}</p>
         </span>
         <span>
           <p>Descrição</p>
-          <p>{event.eventInfo.description}</p>
+          <p>{event.eventInfo && event.eventInfo.description}</p>
         </span>
         <span>
           <p>País</p>
-          <p>{event.eventInfo.country}</p>
+          <p>{event.eventInfo && event.eventInfo.country}</p>
         </span>
         <span>
           <p>Estado</p>
-          <p>{event.eventInfo.local_state}</p>
+          <p>{event.eventInfo && event.eventInfo.local_state}</p>
         </span>
         <span>
           <p>Cidade</p>
-          <p>{event.eventInfo.city}</p>
+          <p>{event.eventInfo && event.eventInfo.city}</p>
         </span>
         <span>
           <p>Endereço</p>
-          <p>{event.eventInfo.address}</p>
+          <p>{event.eventInfo && event.eventInfo.address}</p>
         </span>
         <span>
           <p>Traje</p>
-          <p>{event.eventInfo.dress_code || ''}</p>
+          <p>{event.eventInfo ? event.eventInfo.dress_code : ''}</p>
         </span>
-      </div>
+      </EventInfoSection>
     </Container>
   );
 };
