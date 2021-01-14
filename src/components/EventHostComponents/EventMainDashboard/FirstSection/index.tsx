@@ -140,11 +140,13 @@ const FirstSection: React.FC<IProps> = ({
             </button>
           </span>
           <span>
-            {updatedEvent.isDateDefined && (
+            {updatedEvent.isDateDefined ? (
               <>
                 <p>{eventDate.date}</p>
                 <p>{eventDate.hour}</p>
               </>
+            ) : (
+              <button type="button">Definir a data do evento</button>
             )}
           </span>
         </InsideSection>
