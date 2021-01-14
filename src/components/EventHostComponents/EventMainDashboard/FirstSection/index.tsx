@@ -13,6 +13,7 @@ import IUserDTO from '../../../../dtos/IUserDTO';
 import { useToast } from '../../../../hooks/toast';
 import api from '../../../../services/api';
 import formatDateToString from '../../../../utils/formatDateToString';
+import { getEventType } from '../../../../utils/getEventType';
 import { numberFormat } from '../../../../utils/numberFormat';
 import PossibleDates from './PossibleDatesSection';
 
@@ -96,6 +97,26 @@ const FirstSection: React.FC<IProps> = ({
     };
   }, [updatedEvent.date]);
 
+  const handleEventIsPublished = useCallback(async () => {
+    try {
+      console.log(event);
+      await api.put(`event/is-published/${event.id}`);
+      getEvent();
+
+      addToast({
+        type: 'success',
+        title: 'Evento atualizado com sucesso.',
+      });
+    } catch (err) {
+      addToast({
+        type: 'error',
+        title: 'Erro na atualização',
+        description: 'Ocorreu um erro ao atualizar o evento, tente novamente.',
+      });
+      throw new Error(err);
+    }
+  }, [event, getEvent, addToast]);
+
   return (
     <Container>
       <AvatarInput>
@@ -113,8 +134,10 @@ const FirstSection: React.FC<IProps> = ({
             <p>{master.name}</p>
           </span>
           <span>
-            <p>{updatedEvent.event_type}</p>
-            <p>{updatedEvent.isPublished ? 'Publicado' : 'Não Publicado'}</p>
+            <p>Tipo de evento: {getEventType(event.event_type)}</p>
+            <button type="button" onClick={handleEventIsPublished}>
+              {updatedEvent.isPublished ? 'Publicado' : 'Não Publicado'}
+            </button>
           </span>
           <span>
             {updatedEvent.isDateDefined && (

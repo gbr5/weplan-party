@@ -43,7 +43,7 @@ export const AvatarInput = styled.div`
   /* top: 16px; */
   width: 186px;
   margin: 0 auto 32px;
-  z-index: 10;
+  z-index: 3;
   align-self: center;
 
   > img {
