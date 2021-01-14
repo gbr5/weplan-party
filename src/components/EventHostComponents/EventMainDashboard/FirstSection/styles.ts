@@ -1,3 +1,4 @@
+import { shade } from 'polished';
 import styled, { keyframes } from 'styled-components';
 
 const appearFromTop = keyframes`
@@ -33,6 +34,52 @@ export const Container = styled.div`
     @media (max-width: 1000px) {
       margin-top: 2px;
       width: 100%;
+    }
+  }
+`;
+
+export const AvatarInput = styled.div`
+  position: relative;
+  /* top: 16px; */
+  width: 186px;
+  margin: 0 auto 32px;
+  z-index: 10;
+  align-self: center;
+
+  > img {
+    width: 186px;
+    height: 186px;
+    border-radius: 50%;
+    box-shadow: var(--box-shadow);
+  }
+
+  label {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    bottom: 0;
+    right: 1%;
+    border: none;
+    transition: background-color 0.4s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    input {
+      display: none;
+    }
+
+    svg {
+      width: 24px;
+      height: 24px;
+      color: var(--letter-color-4);
+    }
+
+    &:hover {
+      background-color: ${shade(0.3, '#ff9000')};
     }
   }
 `;
