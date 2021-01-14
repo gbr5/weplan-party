@@ -10,12 +10,17 @@ import { Container } from './styles';
 interface IProps {
   event: IEventDTO;
   master: IUserDTO;
+  getEvents: Function;
 }
 
-const EventMainDashboard: React.FC<IProps> = ({ event, master }: IProps) => {
+const EventMainDashboard: React.FC<IProps> = ({
+  event,
+  master,
+  getEvents,
+}: IProps) => {
   return (
     <Container>
-      <FirstSection event={event} master={master} />
+      <FirstSection getEvents={getEvents} event={event} master={master} />
       <SecondSection />
     </Container>
   );

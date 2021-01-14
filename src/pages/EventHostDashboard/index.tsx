@@ -147,7 +147,7 @@ const EventHostDashboard: React.FC = () => {
 
   const getMaster = useCallback(() => {
     try {
-      api.get(`user-profile/${pageEvent.user_id}`).then(response =>{
+      api.get(`user-profile/${pageEvent.user_id}`).then(response => {
         setMaster(response.data);
       });
     } catch (err) {
@@ -845,7 +845,13 @@ const EventHostDashboard: React.FC = () => {
             />
           )}
           {/* {!!latestActionsSection && <LatestNewsSection />} */}
-          {!!latestActionsSection && <EventMainDashboard event={pageEvent} master={master} />}
+          {!!latestActionsSection && (
+            <EventMainDashboard
+              getEvents={handleGetEventInfo}
+              event={pageEvent}
+              master={master}
+            />
+          )}
           {!!supplierSection && (
             <EventSupplierSection
               handleGetHiredSuppliers={handleGetHiredSuppliers}

@@ -1,54 +1,152 @@
-import React, { useMemo } from 'react';
+import React, {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import { FiCamera } from 'react-icons/fi';
 
 import placeholder from '../../../../assets/WePlanLogo.svg';
 import IEventDTO from '../../../../dtos/IEventDTO';
 import IUserDTO from '../../../../dtos/IUserDTO';
+import { useToast } from '../../../../hooks/toast';
+import api from '../../../../services/api';
 import formatDateToString from '../../../../utils/formatDateToString';
+import { getEventType } from '../../../../utils/getEventType';
 import { numberFormat } from '../../../../utils/numberFormat';
 import PossibleDates from './PossibleDatesSection';
 
 import {
   Container,
+  AvatarInput,
   EventSection,
   InsideSection,
   EventInfoSection,
 } from './styles';
 
 interface IProps {
+  getEvents: Function;
   event: IEventDTO;
   master: IUserDTO;
 }
 
-const FirstSection: React.FC<IProps> = ({ event, master }: IProps) => {
+const FirstSection: React.FC<IProps> = ({
+  event,
+  master,
+  getEvents,
+}: IProps) => {
+  const { addToast } = useToast();
+
+  const [avatar, setAvatar] = useState(placeholder);
+  const [updatedEvent, setUpdatedEvent] = useState({} as IEventDTO);
+
+  const getEvent = useCallback(() => {
+    try {
+      api.get(`events/${event.id}`).then(response => {
+        setUpdatedEvent(response.data.event);
+        if (response.data.event.avatar_url) {
+          setAvatar(response.data.event.avatar_url);
+        }
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
+  }, [event]);
+
+  const handleAvatarChange = useCallback(
+    async (e: ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files) {
+        const data = new FormData();
+
+        data.append('avatar', e.target.files[0]);
+
+        const response = await api.patch(`/events/avatar/${event.id}`, data);
+        console.log(response.data);
+        setAvatar(response.data);
+        getEvents();
+        getEvent();
+
+        addToast({
+          type: 'success',
+          title: 'Avatar atualizado com sucesso.',
+        });
+      } else {
+        addToast({
+          type: 'error',
+          title: 'Erro na atualização',
+          description:
+            'Ocorreu um erro ao atualizar o perfil, tente novamente.',
+        });
+      }
+    },
+    [addToast, event, getEvents, getEvent],
+  );
+
+  useEffect(() => {
+    getEvent();
+  }, [getEvent]);
+
   const eventDate = useMemo(() => {
-    const date = formatDateToString(String(event.date)).split(' - ')[1];
-    const hour = formatDateToString(String(event.date)).split(' - ')[0];
+    const date = formatDateToString(String(updatedEvent.date)).split(' - ')[1];
+    const hour = formatDateToString(String(updatedEvent.date)).split(' - ')[0];
 
     return {
       date,
       hour,
     };
-  }, [event.date]);
+  }, [updatedEvent.date]);
+
+  const handleEventIsPublished = useCallback(async () => {
+    try {
+      console.log(event);
+      await api.put(`event/is-published/${event.id}`);
+      getEvent();
+
+      addToast({
+        type: 'success',
+        title: 'Evento atualizado com sucesso.',
+      });
+    } catch (err) {
+      addToast({
+        type: 'error',
+        title: 'Erro na atualização',
+        description: 'Ocorreu um erro ao atualizar o evento, tente novamente.',
+      });
+      throw new Error(err);
+    }
+  }, [event, getEvent, addToast]);
+
   return (
     <Container>
-      <img src={placeholder} alt="WePlan" />
+      <AvatarInput>
+        <img src={avatar} alt="WePlan" />
+        <label htmlFor="avatar">
+          <FiCamera />
+          <input type="file" id="avatar" onChange={handleAvatarChange} />
+        </label>
+      </AvatarInput>
       <EventSection>
-        <h1>{event.name}</h1>
+        <h1>{updatedEvent.name}</h1>
         <InsideSection>
           <span>
             <p>Anfitrião Master</p>
             <p>{master.name}</p>
           </span>
           <span>
-            <p>{event.event_type}</p>
-            <p>{event.isPublished ? 'Publicado' : 'Não Publicado'}</p>
+            <p>Tipo de evento: {getEventType(event.event_type)}</p>
+            <button type="button" onClick={handleEventIsPublished}>
+              {updatedEvent.isPublished ? 'Publicado' : 'Não Publicado'}
+            </button>
           </span>
           <span>
-            {event.isDateDefined && (
+            {updatedEvent.isDateDefined ? (
               <>
                 <p>{eventDate.date}</p>
                 <p>{eventDate.hour}</p>
               </>
+            ) : (
+              <button type="button">Definir a data do evento</button>
             )}
           </span>
         </InsideSection>

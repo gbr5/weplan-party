@@ -32,7 +32,7 @@ import GuestToUserMessageWindow from '../../components/GuestToUserMessageWindow'
 import BooleanQuestionWindow from '../../components/BooleanQuestionWindow';
 
 const Dashboard: React.FC = () => {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const { addToast } = useToast();
   const history = useHistory();
 
@@ -75,7 +75,8 @@ const Dashboard: React.FC = () => {
 
   const closeCreatePersonInfoWindow = useCallback(() => {
     setCreatePersonInfoWindow(false);
-  }, []);
+    signOut();
+  }, [signOut]);
 
   const getPersonInfo = useCallback(() => {
     try {

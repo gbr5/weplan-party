@@ -9,8 +9,6 @@ export const Container = styled.div`
   justify-content: center;
   background: var(--header-background-color);
   border-radius: 8px;
-  gap: 16px;
-  box-shadow: var(--window-box-shadow);
   padding: 32px;
 
   > form {
