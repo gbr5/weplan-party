@@ -38,10 +38,10 @@ export function brlID(
 export function brlDateFormat(
   e: React.FormEvent<HTMLInputElement>,
 ): React.FormEvent<HTMLInputElement> {
-  e.currentTarget.maxLength = 6;
+  e.currentTarget.maxLength = 8;
   let { value } = e.currentTarget;
   value = value.replace(/\D/g, '');
-  value = value.replace(/^(\d{2})(\d{2})(\d{2})/, '$1/$2/$3');
+  value = value.replace(/^(\d{2})(\d{2})(\d{4})/, '$1/$2/$3');
   const day = value.split('/')[0];
   const month = value.split('/')[1];
   const year = value.split('/')[2];
