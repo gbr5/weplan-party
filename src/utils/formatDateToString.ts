@@ -21,10 +21,7 @@ export default function formatDateToString(date: string): string {
     month === 12 && (year = newDate.getFullYear() + 1);
     month === 12 ? (month = '01') : (month = newDate.getMonth() + 2);
   } else {
-    day =
-      newDate.getDate() < 9
-        ? `0${newDate.getDate() + 1}`
-        : newDate.getDate() + 1;
+    day = newDate.getDate() < 9 ? `0${newDate.getDate()}` : newDate.getDate();
   }
 
   const formattedDate = `${hours}:${minutes} - ${day}/${month}/${year}`;

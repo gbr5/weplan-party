@@ -5,7 +5,7 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import { FiCamera } from 'react-icons/fi';
+import { FiCamera, FiEdit } from 'react-icons/fi';
 
 import placeholder from '../../../../assets/WePlanLogo.svg';
 import IEventDTO from '../../../../dtos/IEventDTO';
@@ -15,6 +15,7 @@ import api from '../../../../services/api';
 import formatDateToString from '../../../../utils/formatDateToString';
 import { getEventType } from '../../../../utils/getEventType';
 import { numberFormat } from '../../../../utils/numberFormat';
+import SetEventDate from '../SetEventDate';
 import PossibleDates from './PossibleDatesSection';
 
 import {
@@ -38,8 +39,13 @@ const FirstSection: React.FC<IProps> = ({
 }: IProps) => {
   const { addToast } = useToast();
 
+  const [eventDateWindow, setEventDateWindow] = useState(false);
   const [avatar, setAvatar] = useState(placeholder);
   const [updatedEvent, setUpdatedEvent] = useState({} as IEventDTO);
+
+  const openEventDateWindow = useCallback(() => {
+    setEventDateWindow(true);
+  }, []);
 
   const getEvent = useCallback(() => {
     try {
@@ -116,9 +122,17 @@ const FirstSection: React.FC<IProps> = ({
       throw new Error(err);
     }
   }, [event, getEvent, addToast]);
+  console.log(updatedEvent.date);
 
   return (
     <Container>
+      {eventDateWindow && (
+        <SetEventDate
+          closeWindow={() => setEventDateWindow(false)}
+          event={updatedEvent}
+          getEvent={getEvent}
+        />
+      )}
       <AvatarInput>
         <img src={avatar} alt="WePlan" />
         <label htmlFor="avatar">
@@ -144,9 +158,14 @@ const FirstSection: React.FC<IProps> = ({
               <>
                 <p>{eventDate.date}</p>
                 <p>{eventDate.hour}</p>
+                <button type="button" onClick={openEventDateWindow}>
+                  <FiEdit />
+                </button>
               </>
             ) : (
-              <button type="button">Definir a data do evento</button>
+              <button type="button" onClick={openEventDateWindow}>
+                Definir a data do evento
+              </button>
             )}
           </span>
         </InsideSection>
