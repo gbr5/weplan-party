@@ -141,6 +141,37 @@ export const InsideSection = styled.div`
   }
 `;
 
+export const PublishedButton = styled.button`
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  padding: 4px;
+  border: var(--title-color);
+  box-shadow: var(--box-shadow);
+  color: var(--title-color);
+
+  &:hover {
+    background: var(--primary-color);
+    color: var(--secondary-color);
+    border: var(--primary-color);
+    box-shadow: var(--box-shadow);
+  }
+`;
+export const EditButton = styled.button`
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--title-color);
+  border: none;
+  width: 40px;
+  border-radius: 4px;
+  padding: 4px;
+
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
 export const EventInfoSection = styled.div`
   height: 100%;
   width: 100%;

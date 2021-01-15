@@ -30,3 +30,25 @@ export const Container = styled.div`
     }
   }
 `;
+
+export const PublishedButton = styled.button`
+  background: rgba(0, 0, 0, 0.3);
+  border: var(--title-color);
+  box-shadow: var(--box-shadow);
+  color: var(--primary-color);
+
+  &:hover {
+    background: var(--primary-color);
+    color: var(--secondary-color);
+    border: var(--primary-color);
+    box-shadow: var(--box-shadow);
+  }
+`;
+export const EditButton = styled.button`
+  background: transparent;
+  color: var(--primary-color);
+
+  &:hover {
+    opacity: 0.8;
+  }
+`;

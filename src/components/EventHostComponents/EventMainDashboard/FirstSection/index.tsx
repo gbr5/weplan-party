@@ -24,6 +24,8 @@ import {
   EventSection,
   InsideSection,
   EventInfoSection,
+  PublishedButton,
+  EditButton,
 } from './styles';
 
 interface IProps {
@@ -146,23 +148,23 @@ const FirstSection: React.FC<IProps> = ({
           </span>
           <span>
             <p>Tipo de evento: {getEventType(event.event_type)}</p>
-            <button type="button" onClick={handleEventIsPublished}>
-              {updatedEvent.isPublished ? 'Publicado' : 'Não Publicado'}
-            </button>
+            <PublishedButton type="button" onClick={handleEventIsPublished}>
+              {updatedEvent.isPublished ? 'Publicado' : 'Publicar'}
+            </PublishedButton>
           </span>
           <span>
             {updatedEvent.isDateDefined ? (
               <>
                 <p>{eventDate.date}</p>
                 <p>{eventDate.hour}</p>
-                <button type="button" onClick={openEventDateWindow}>
+                <EditButton type="button" onClick={openEventDateWindow}>
                   <FiEdit />
-                </button>
+                </EditButton>
               </>
             ) : (
-              <button type="button" onClick={openEventDateWindow}>
+              <PublishedButton type="button" onClick={openEventDateWindow}>
                 Definir a data do evento
-              </button>
+              </PublishedButton>
             )}
           </span>
         </InsideSection>
