@@ -163,7 +163,6 @@ const CreateEventWindow: React.FC<IProps> = ({
             event_id: event.data.id,
             dates: selectedEventDates,
           });
-          console.log(eventDates.data);
           setEventName(event.data.name);
           handleSetEventName(event.data.name);
         }

@@ -68,7 +68,6 @@ const FirstSection: React.FC<IProps> = ({
         data.append('avatar', e.target.files[0]);
 
         const response = await api.patch(`/events/avatar/${event.id}`, data);
-        console.log(response.data);
         setAvatar(response.data);
         getEvents();
         getEvent();
@@ -105,7 +104,6 @@ const FirstSection: React.FC<IProps> = ({
 
   const handleEventIsPublished = useCallback(async () => {
     try {
-      console.log(event);
       await api.put(`event/is-published/${event.id}`);
       getEvent();
 
@@ -122,7 +120,6 @@ const FirstSection: React.FC<IProps> = ({
       throw new Error(err);
     }
   }, [event, getEvent, addToast]);
-  console.log(updatedEvent.date);
 
   return (
     <Container>

@@ -45,7 +45,6 @@ const SetEventDate: React.FC<IProps> = ({
       const date = new Date(`${Number(month)}/${Number(day)}/${Number(year)}`);
       date.setHours(Number(hour));
       date.setMinutes(Number(minute));
-      console.log(date);
       await api.put(`event/is-date-defined/${event.id}`, {
         isDateDefined: true,
         date,
