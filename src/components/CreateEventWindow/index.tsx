@@ -159,7 +159,7 @@ const CreateEventWindow: React.FC<IProps> = ({
           setEventName(event.data.name);
           handleSetEventName(event.data.name);
         } else {
-          const eventDates = await api.post('event/dates', {
+          await api.post('event/dates', {
             event_id: event.data.id,
             dates: selectedEventDates,
           });
