@@ -6,12 +6,12 @@ import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
 import BooleanQuestionWindow from '../BooleanQuestionWindow';
 import Input from '../Input';
-import SetTimeWindow from '../SetTimeWindow';
 import WindowUnFormattedContainer from '../WindowUnFormattedContainer';
 import SelectEventDatesWindow from './SelectEventDatesWindow';
 import SelectMonthWindow from './SelectMonthWindow';
 import SelectWeekDayWindow from './SelectWeekDayWindow';
 import SelectYearWindow from './SelectYearWindow';
+import SetDateWindow from './SetDateWindow';
 
 import {
   Container,
@@ -47,8 +47,6 @@ const CreateEventWindow: React.FC<IProps> = ({
   const [createButton, setCreateButton] = useState(false);
   const [eventName, setEventName] = useState('');
   const [isDateDefined, setIsDateDefined] = useState(false);
-  const [eventStartTime, setEventStartTime] = useState('');
-  const [eventStartTimeWindow, setEventStartTimeWindow] = useState(false);
   const [selectedDate, setSelectedDate] = useState(`${newDate}`);
   const [xStep, setXStep] = useState('1');
   const [selectedYear, setSelectedYear] = useState(0);
@@ -85,23 +83,8 @@ const CreateEventWindow: React.FC<IProps> = ({
     [selectedMonths],
   );
 
-  const setTime = useCallback(
-    (props: string) => {
-      if (isDateDefined) {
-        setEventStartTime(props);
-        setEventStartTimeWindow(false);
-        setXStep('6');
-      } else {
-        setEventStartTime(props);
-        setEventStartTimeWindow(false);
-        setXStep('7');
-      }
-    },
-    [isDateDefined],
-  );
-
   const createEventWithDefinedDate = useCallback(() => {
-    setXStep('6');
+    setXStep('5');
     setCreateButton(true);
   }, []);
 
@@ -114,7 +97,6 @@ const CreateEventWindow: React.FC<IProps> = ({
     (props: boolean) => {
       setIsDateDefined(props);
       if (props) {
-        setEventStartTimeWindow(true);
         createEventWithDefinedDate();
       } else {
         setXStep('2');
@@ -127,10 +109,6 @@ const CreateEventWindow: React.FC<IProps> = ({
     try {
       if (isDateDefined) {
         const date = new Date(selectedDate);
-        const eventHour = eventStartTime.split(':');
-
-        date.setHours(Number(eventHour[0]));
-        date.setMinutes(Number(eventHour[1]));
 
         const event = await api.post('/events', {
           name: eventName,
@@ -185,7 +163,6 @@ const CreateEventWindow: React.FC<IProps> = ({
     addToast,
     eventName,
     selectedYear,
-    eventStartTime,
     eventType,
     handleSetEventName,
     handleEventInfoDrawer,
@@ -231,49 +208,17 @@ const CreateEventWindow: React.FC<IProps> = ({
 
       return month;
     });
-    setEventStartTimeWindow(true);
-  }, [selectedYear, selectedMonths, selectedWeekDays]);
+    handleCreateEvent();
+  }, [selectedYear, handleCreateEvent, selectedMonths, selectedWeekDays]);
 
-  const closeStartTimeWindow = useCallback(() => {
-    if (isDateDefined) {
-      createEventWithDefinedDate();
-    } else {
-      createEventWithoutDefinedDate();
-    }
-    setEventStartTimeWindow(false);
-  }, [
-    createEventWithoutDefinedDate,
-    createEventWithDefinedDate,
-    isDateDefined,
-  ]);
-
-  const definePossibleDates = useCallback(
-    (props: boolean) => {
-      if (props) {
-        setXStep('3');
-      } else {
-        createEventWithoutDefinedDate();
-      }
-    },
-    [createEventWithoutDefinedDate],
-  );
+  const handleSetDefinedDate = useCallback((props: string) => {
+    setSelectedDate(props);
+    setCreateButton(true);
+    setXStep('10');
+  }, []);
 
   return (
     <>
-      {eventStartTimeWindow && (
-        <SetTimeWindow
-          containerStyle={{
-            zIndex: 20,
-            top: '0',
-            left: '0',
-            height: '100%',
-            width: '100%',
-          }}
-          closeWindow={() => closeStartTimeWindow()}
-          setTime={setTime}
-          message="Defina o horário de início do seu evento. (Você pode alterar posteriormente)"
-        />
-      )}
       <WindowUnFormattedContainer
         onHandleCloseWindow={onHandleCloseWindow}
         containerStyle={{
@@ -306,27 +251,20 @@ const CreateEventWindow: React.FC<IProps> = ({
               />
             )}
             {xStep === '2' && (
-              <BooleanQuestionWindow
-                onHandleCloseWindow={() => definePossibleDates(false)}
-                question="Deseja definir algumas possíveis datas?"
-                selectBooleanOption={definePossibleDates}
-              />
-            )}
-            {xStep === '3' && (
               <SelectWeekDayWindow
                 changeWindow={(e: string) => setXStep(e)}
                 closeWindow={() => createEventWithoutDefinedDate()}
                 selectWeekDay={handleSelectedWeekDays}
               />
             )}
-            {xStep === '4' && (
+            {xStep === '3' && (
               <SelectYearWindow
                 changeWindow={(e: string) => setXStep(e)}
                 closeWindow={() => createEventWithoutDefinedDate()}
                 selectYear={(e: number) => setSelectedYear(e)}
               />
             )}
-            {xStep === '5' && (
+            {xStep === '4' && (
               <SelectMonthWindow
                 changeWindow={(e: string) => setXStep(e)}
                 closeWindow={() => createEventWithoutDefinedDate()}
@@ -334,17 +272,21 @@ const CreateEventWindow: React.FC<IProps> = ({
                 openEventStartTimeWindow={() => handleSelectedDates()}
               />
             )}
-            {xStep === '6' && (
+            {xStep === '5' && (
               <>
-                <h3>Selecione a data</h3>
+                <SetDateWindow
+                  closeWindow={() => setXStep('1')}
+                  thenFunction={handleSetDefinedDate}
+                />
+                {/* <h3>Selecione a data</h3>
                 <Input
                   type="date"
                   name="date"
                   onChange={e => setSelectedDate(e.target.value)}
-                />
+                /> */}
               </>
             )}
-            {xStep === '7' && (
+            {xStep === '6' && (
               <SelectEventDatesWindow
                 changeWindow={(e: string) => setXStep(e)}
                 closeWindow={() => createEventWithoutDefinedDate()}

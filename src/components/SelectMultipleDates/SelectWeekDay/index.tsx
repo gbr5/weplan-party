@@ -9,7 +9,7 @@ interface IProps {
   changeWindow: Function;
 }
 
-const SelectWeekDayWindow: React.FC<IProps> = ({
+const SelectWeekDay: React.FC<IProps> = ({
   closeWindow,
   selectWeekDay,
   changeWindow,
@@ -125,11 +125,14 @@ const SelectWeekDayWindow: React.FC<IProps> = ({
           Domingo
         </BooleanButton>
         <div>
-          <PreviousButton type="button" onClick={() => changeWindow('1')}>
+          <PreviousButton type="button" onClick={() => changeWindow('Month')}>
             Anterior
           </PreviousButton>
           {nextButton && (
-            <NextButton type="button" onClick={() => changeWindow('3')}>
+            <NextButton
+              type="button"
+              onClick={() => changeWindow('PossibleDates')}
+            >
               Próximo
             </NextButton>
           )}
@@ -139,4 +142,4 @@ const SelectWeekDayWindow: React.FC<IProps> = ({
   );
 };
 
-export default SelectWeekDayWindow;
+export default SelectWeekDay;

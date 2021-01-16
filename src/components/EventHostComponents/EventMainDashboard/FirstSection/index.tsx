@@ -6,15 +6,18 @@ import React, {
   useState,
 } from 'react';
 import { FiCamera, FiEdit } from 'react-icons/fi';
+import { MdAdd } from 'react-icons/md';
 
 import placeholder from '../../../../assets/WePlanLogo.svg';
 import IEventDTO from '../../../../dtos/IEventDTO';
+import IShowEventDTO from '../../../../dtos/IShowEventDTO';
 import IUserDTO from '../../../../dtos/IUserDTO';
 import { useToast } from '../../../../hooks/toast';
 import api from '../../../../services/api';
 import formatDateToString from '../../../../utils/formatDateToString';
 import { getEventType } from '../../../../utils/getEventType';
 import { numberFormat } from '../../../../utils/numberFormat';
+import SelectMultipleDates from '../../../SelectMultipleDates';
 import SetEventDate from '../SetEventDate';
 import PossibleDates from './PossibleDatesSection';
 
@@ -26,6 +29,7 @@ import {
   EventInfoSection,
   PublishedButton,
   EditButton,
+  PossibleDatesHeader,
 } from './styles';
 
 interface IProps {
@@ -44,6 +48,8 @@ const FirstSection: React.FC<IProps> = ({
   const [eventDateWindow, setEventDateWindow] = useState(false);
   const [avatar, setAvatar] = useState(placeholder);
   const [updatedEvent, setUpdatedEvent] = useState({} as IEventDTO);
+  const [alreadySelectedDates, setAlreadySelectedDates] = useState<Date[]>([]);
+  const [createEventDatesWindow, setCreateEventDatesWindow] = useState(false);
 
   const openEventDateWindow = useCallback(() => {
     setEventDateWindow(true);
@@ -51,10 +57,12 @@ const FirstSection: React.FC<IProps> = ({
 
   const getEvent = useCallback(() => {
     try {
-      api.get(`events/${event.id}`).then(response => {
+      api.get<IShowEventDTO>(`events/${event.id}`).then(response => {
         setUpdatedEvent(response.data.event);
         if (response.data.event.avatar_url) {
           setAvatar(response.data.event.avatar_url);
+          const dates = response.data.event.eventDates.map(date => date.date);
+          setAlreadySelectedDates(dates);
         }
       });
     } catch (err) {
@@ -123,6 +131,21 @@ const FirstSection: React.FC<IProps> = ({
     }
   }, [event, getEvent, addToast]);
 
+  const handleCreateEventDates = useCallback(
+    (props: Date[]) => {
+      try {
+        api.post('event/dates', {
+          event_id: event.id,
+          dates: props,
+        });
+        getEvent();
+      } catch (err) {
+        throw new Error(err);
+      }
+    },
+    [event, getEvent],
+  );
+
   return (
     <Container>
       {eventDateWindow && (
@@ -130,6 +153,13 @@ const FirstSection: React.FC<IProps> = ({
           closeWindow={() => setEventDateWindow(false)}
           event={updatedEvent}
           getEvent={getEvent}
+        />
+      )}
+      {createEventDatesWindow && (
+        <SelectMultipleDates
+          alreadySelectedDates={alreadySelectedDates}
+          closeWindow={() => setCreateEventDatesWindow(false)}
+          selectDates={(e: Date[]) => handleCreateEventDates(e)}
         />
       )}
       <AvatarInput>
@@ -168,7 +198,16 @@ const FirstSection: React.FC<IProps> = ({
             )}
           </span>
         </InsideSection>
-        <p>Possíveis datas</p>
+        <PossibleDatesHeader>
+          <p>Possíveis datas</p>
+
+          <PublishedButton
+            type="button"
+            onClick={() => setCreateEventDatesWindow(true)}
+          >
+            <MdAdd />
+          </PublishedButton>
+        </PossibleDatesHeader>
         <PossibleDates dates={event.eventDates} />
       </EventSection>
       <EventInfoSection>

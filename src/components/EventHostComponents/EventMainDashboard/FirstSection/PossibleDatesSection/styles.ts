@@ -4,8 +4,10 @@ export const Container = styled.div`
   display: inline-flexbox;
   align-items: stretch;
   justify-content: stretch;
-  /* width: 100%; */
+  width: 100%;
+  flex: 1;
   height: 54px;
+  max-width: 500px;
 
   overflow-x: scroll;
 

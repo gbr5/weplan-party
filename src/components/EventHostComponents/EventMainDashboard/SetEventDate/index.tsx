@@ -82,8 +82,6 @@ const SetEventDate: React.FC<IProps> = ({
         left: '10%',
         height: '30%',
         width: '80%',
-        margin: 'auto',
-        maxWidth: '350px',
       }}
     >
       {timeWindow && (

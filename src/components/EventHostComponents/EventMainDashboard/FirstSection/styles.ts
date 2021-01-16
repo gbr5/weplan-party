@@ -141,6 +141,17 @@ export const InsideSection = styled.div`
   }
 `;
 
+export const PossibleDatesHeader = styled.div`
+  display: flex;
+
+  width: 100%;
+
+  gap: 4vh;
+
+  align-items: center;
+  justify-content: center;
+`;
+
 export const PublishedButton = styled.button`
   background: rgba(0, 0, 0, 0.3);
   border-radius: 4px;
