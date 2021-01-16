@@ -162,7 +162,6 @@ const FirstSection: React.FC<IProps> = ({
           selectDates={(e: Date[]) => handleCreateEventDates(e)}
         />
       )}
-
       <AvatarInput>
         <img src={avatar} alt="WePlan" />
         <label htmlFor="avatar">
@@ -199,7 +198,6 @@ const FirstSection: React.FC<IProps> = ({
             )}
           </span>
         </InsideSection>
-
         <PossibleDatesHeader>
           <p>Possíveis datas</p>
 
