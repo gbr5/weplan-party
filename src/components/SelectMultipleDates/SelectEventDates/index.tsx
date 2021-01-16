@@ -16,7 +16,7 @@ interface IProps {
   selectedPossibleEventDates: Date[];
 }
 
-const SelectEventDatesWindow: React.FC<IProps> = ({
+const SelectEventDates: React.FC<IProps> = ({
   closeWindow,
   selectEventDates,
   changeWindow,
@@ -120,4 +120,4 @@ const SelectEventDatesWindow: React.FC<IProps> = ({
   );
 };
 
-export default SelectEventDatesWindow;
+export default SelectEventDates;

@@ -1,7 +1,7 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import WindowUnFormattedContainer from '../../WindowUnFormattedContainer';
 
-import { Container, BooleanButton, NextButton, PreviousButton } from './styles';
+import { Container, BooleanButton } from './styles';
 
 interface IProps {
   closeWindow: Function;
@@ -9,19 +9,11 @@ interface IProps {
   changeWindow: Function;
 }
 
-const SelectYearWindow: React.FC<IProps> = ({
+const SelectYear: React.FC<IProps> = ({
   closeWindow,
   selectYear,
   changeWindow,
 }: IProps) => {
-  const [yearOne, setYearOne] = useState(false);
-  const [yearTwo, setYearTwo] = useState(false);
-  const [yearTree, setYearThree] = useState(false);
-  const [yearFour, setYearFour] = useState(false);
-  const [yearFive, setYearFive] = useState(false);
-  const [yearSix, setYearSix] = useState(false);
-  const [yearSeven, setYearSeven] = useState(false);
-  const [nextButton, setNextButton] = useState(false);
   const today = new Date();
   const thisYear = today.getFullYear();
 
@@ -32,40 +24,12 @@ const SelectYearWindow: React.FC<IProps> = ({
   const sixthYear = fifthYear + 1;
   const seventhYear = sixthYear + 1;
 
-  const unSelectAll = useCallback(() => {
-    setYearOne(false);
-    setYearTwo(false);
-    setYearThree(false);
-    setYearFour(false);
-    setYearFive(false);
-    setYearSix(false);
-    setYearSeven(false);
-  }, []);
-
   const handleSelectYear = useCallback(
     (props: number) => {
-      unSelectAll();
       selectYear(props);
-      props === thisYear && setYearOne(true);
-      props === secondYear && setYearTwo(true);
-      props === thirdYear && setYearThree(true);
-      props === fourthYear && setYearFour(true);
-      props === fifthYear && setYearFive(true);
-      props === sixthYear && setYearSix(true);
-      props === seventhYear && setYearSeven(true);
-      setNextButton(true);
+      changeWindow('Month');
     },
-    [
-      selectYear,
-      unSelectAll,
-      thisYear,
-      secondYear,
-      thirdYear,
-      fourthYear,
-      fifthYear,
-      sixthYear,
-      seventhYear,
-    ],
+    [changeWindow, selectYear],
   );
 
   return (
@@ -80,69 +44,59 @@ const SelectYearWindow: React.FC<IProps> = ({
       }}
     >
       <Container>
-        <h2>Selecione 1 ano</h2>
+        <h2>Selecione os anos de interesse</h2>
         <BooleanButton
-          isActive={yearOne}
+          isActive
           type="button"
           onClick={() => handleSelectYear(thisYear)}
         >
           {thisYear}
         </BooleanButton>
         <BooleanButton
-          isActive={yearTwo}
+          isActive
           type="button"
           onClick={() => handleSelectYear(secondYear)}
         >
           {secondYear}
         </BooleanButton>
         <BooleanButton
-          isActive={yearTree}
+          isActive
           type="button"
           onClick={() => handleSelectYear(thirdYear)}
         >
           {thirdYear}
         </BooleanButton>
         <BooleanButton
-          isActive={yearFour}
+          isActive
           type="button"
           onClick={() => handleSelectYear(fourthYear)}
         >
           {fourthYear}
         </BooleanButton>
         <BooleanButton
-          isActive={yearFive}
+          isActive
           type="button"
           onClick={() => handleSelectYear(fifthYear)}
         >
           {fifthYear}
         </BooleanButton>
         <BooleanButton
-          isActive={yearSix}
+          isActive
           type="button"
           onClick={() => handleSelectYear(sixthYear)}
         >
           {sixthYear}
         </BooleanButton>
         <BooleanButton
-          isActive={yearSeven}
+          isActive
           type="button"
           onClick={() => handleSelectYear(seventhYear)}
         >
           {seventhYear}
         </BooleanButton>
-        <div>
-          <PreviousButton type="button" onClick={() => changeWindow('2')}>
-            Anterior
-          </PreviousButton>
-          {nextButton && (
-            <NextButton type="button" onClick={() => changeWindow('4')}>
-              Próximo
-            </NextButton>
-          )}
-        </div>
       </Container>
     </WindowUnFormattedContainer>
   );
 };
 
-export default SelectYearWindow;
+export default SelectYear;

@@ -13,14 +13,12 @@ interface IProps {
   closeWindow: Function;
   selectMonth: Function;
   changeWindow: Function;
-  openEventStartTimeWindow: Function;
 }
 
-const SelectMonthWindow: React.FC<IProps> = ({
+const SelectMonth: React.FC<IProps> = ({
   closeWindow,
   selectMonth,
   changeWindow,
-  openEventStartTimeWindow,
 }: IProps) => {
   const [january, setJanuary] = useState(false);
   const [february, setFebruary] = useState(false);
@@ -203,14 +201,11 @@ const SelectMonthWindow: React.FC<IProps> = ({
           </BooleanButton>
         </MonthContainer>
         <footer>
-          <PreviousButton type="button" onClick={() => changeWindow('3')}>
+          <PreviousButton type="button" onClick={() => changeWindow('Year')}>
             Anterior
           </PreviousButton>
           {nextButton && (
-            <NextButton
-              type="button"
-              onClick={() => openEventStartTimeWindow(true)}
-            >
+            <NextButton type="button" onClick={() => changeWindow('Weekday')}>
               Próximo
             </NextButton>
           )}
@@ -220,4 +215,4 @@ const SelectMonthWindow: React.FC<IProps> = ({
   );
 };
 
-export default SelectMonthWindow;
+export default SelectMonth;

@@ -1,5 +1,5 @@
 import React from 'react';
-import formatDateToString from '../../../../../utils/formatDateToString';
+import dateToFormattedDate from '../../../../../utils/dateToFormattedDate';
 
 import { Container } from './styles';
 
@@ -16,7 +16,7 @@ const PossibleDates: React.FC<IProps> = ({ dates }: IProps) => {
   return (
     <Container>
       {dates.map(date => (
-        <strong key={date.id}>{formatDateToString(String(date.date))}</strong>
+        <strong key={date.id}>{dateToFormattedDate(String(date.date))}</strong>
       ))}
     </Container>
   );
