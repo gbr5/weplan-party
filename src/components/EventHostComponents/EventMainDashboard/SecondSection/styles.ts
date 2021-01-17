@@ -33,14 +33,14 @@ export const Section = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: stretch;
-  gap: 2vh;
+  gap: 2px;
   border: 1px solid rgba(255, 255, 255, 0.5);
 
   h1 {
     border-bottom: 1px solid var(--title-color);
     width: 100%;
     text-align: center;
-    margin: 2vh auto 4vh;
+    margin: 2vh auto 0;
   }
 
   span {

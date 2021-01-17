@@ -10,7 +10,6 @@ import { MdAdd } from 'react-icons/md';
 
 import placeholder from '../../../../assets/WePlanLogo.svg';
 import IEventDTO from '../../../../dtos/IEventDTO';
-import IShowEventDTO from '../../../../dtos/IShowEventDTO';
 import IUserDTO from '../../../../dtos/IUserDTO';
 import { useToast } from '../../../../hooks/toast';
 import api from '../../../../services/api';
@@ -33,7 +32,7 @@ import {
 } from './styles';
 
 interface IProps {
-  getEvents: Function;
+  getEvent: Function;
   event: IEventDTO;
   master: IUserDTO;
 }
@@ -41,34 +40,23 @@ interface IProps {
 const FirstSection: React.FC<IProps> = ({
   event,
   master,
-  getEvents,
+  getEvent,
 }: IProps) => {
   const { addToast } = useToast();
 
   const [eventDateWindow, setEventDateWindow] = useState(false);
   const [avatar, setAvatar] = useState(placeholder);
-  const [updatedEvent, setUpdatedEvent] = useState({} as IEventDTO);
   const [alreadySelectedDates, setAlreadySelectedDates] = useState<Date[]>([]);
   const [createEventDatesWindow, setCreateEventDatesWindow] = useState(false);
+
+  useEffect(() => {
+    const dates = !!event.eventDates && event.eventDates.map(date => date.date);
+    !!dates && setAlreadySelectedDates(dates);
+  }, [event]);
 
   const openEventDateWindow = useCallback(() => {
     setEventDateWindow(true);
   }, []);
-
-  const getEvent = useCallback(() => {
-    try {
-      api.get<IShowEventDTO>(`events/${event.id}`).then(response => {
-        setUpdatedEvent(response.data.event);
-        if (response.data.event.avatar_url) {
-          setAvatar(response.data.event.avatar_url);
-          const dates = response.data.event.eventDates.map(date => date.date);
-          setAlreadySelectedDates(dates);
-        }
-      });
-    } catch (err) {
-      throw new Error(err);
-    }
-  }, [event]);
 
   const handleAvatarChange = useCallback(
     async (e: ChangeEvent<HTMLInputElement>) => {
@@ -79,7 +67,6 @@ const FirstSection: React.FC<IProps> = ({
 
         const response = await api.patch(`/events/avatar/${event.id}`, data);
         setAvatar(response.data);
-        getEvents();
         getEvent();
 
         addToast({
@@ -95,7 +82,7 @@ const FirstSection: React.FC<IProps> = ({
         });
       }
     },
-    [addToast, event, getEvents, getEvent],
+    [addToast, event, getEvent],
   );
 
   useEffect(() => {
@@ -103,14 +90,14 @@ const FirstSection: React.FC<IProps> = ({
   }, [getEvent]);
 
   const eventDate = useMemo(() => {
-    const date = formatDateToString(String(updatedEvent.date)).split(' - ')[1];
-    const hour = formatDateToString(String(updatedEvent.date)).split(' - ')[0];
+    const date = formatDateToString(String(event.date)).split(' - ')[1];
+    const hour = formatDateToString(String(event.date)).split(' - ')[0];
 
     return {
       date,
       hour,
     };
-  }, [updatedEvent.date]);
+  }, [event.date]);
 
   const handleEventIsPublished = useCallback(async () => {
     try {
@@ -151,7 +138,7 @@ const FirstSection: React.FC<IProps> = ({
       {eventDateWindow && (
         <SetEventDate
           closeWindow={() => setEventDateWindow(false)}
-          event={updatedEvent}
+          event={event}
           getEvent={getEvent}
         />
       )}
@@ -170,7 +157,7 @@ const FirstSection: React.FC<IProps> = ({
         </label>
       </AvatarInput>
       <EventSection>
-        <h1>{updatedEvent.name}</h1>
+        <h1>{event.name}</h1>
         <InsideSection>
           <span>
             <p>Anfitrião Master</p>
@@ -179,11 +166,11 @@ const FirstSection: React.FC<IProps> = ({
           <span>
             <p>Tipo de evento: {getEventType(event.event_type)}</p>
             <PublishedButton type="button" onClick={handleEventIsPublished}>
-              {updatedEvent.isPublished ? 'Publicado' : 'Publicar'}
+              {event.isPublished ? 'Publicado' : 'Publicar'}
             </PublishedButton>
           </span>
           <span>
-            {updatedEvent.isDateDefined ? (
+            {event.isDateDefined ? (
               <>
                 <p>{eventDate.date}</p>
                 <p>{eventDate.hour}</p>
