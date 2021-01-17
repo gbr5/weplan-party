@@ -846,11 +846,7 @@ const EventHostDashboard: React.FC = () => {
           )}
           {/* {!!latestActionsSection && <LatestNewsSection />} */}
           {!!latestActionsSection && (
-            <EventMainDashboard
-              getEvents={handleGetEventInfo}
-              event={pageEvent}
-              master={master}
-            />
+            <EventMainDashboard event={pageEvent} master={master} />
           )}
           {!!supplierSection && (
             <EventSupplierSection

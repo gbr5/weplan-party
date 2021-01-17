@@ -1,15 +1,25 @@
 import React from 'react';
+import IEventDTO from '../../../../dtos/IEventDTO';
+import EventFile from './EventFile';
+import EventImage from './EventImage';
 
 import { Container, Section } from './styles';
 
-const SecondSection: React.FC = () => {
+interface IProps {
+  event: IEventDTO;
+}
+
+const SecondSection: React.FC<IProps> = ({ event }: IProps) => {
+  console.log(event);
   return (
     <Container>
       <Section>
         <h1>Arquivos</h1>
+        {event.eventFiles && <EventFile files={event.eventFiles} />}
       </Section>
       <Section>
         <h1>Imagens</h1>
+        <EventImage images={event.eventImages} />
       </Section>
       <Section>
         <h1>Compromissos</h1>

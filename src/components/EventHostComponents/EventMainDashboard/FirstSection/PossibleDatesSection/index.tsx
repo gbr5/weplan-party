@@ -15,9 +15,12 @@ interface IProps {
 const PossibleDates: React.FC<IProps> = ({ dates }: IProps) => {
   return (
     <Container>
-      {dates.map(date => (
-        <strong key={date.id}>{dateToFormattedDate(String(date.date))}</strong>
-      ))}
+      {!!dates &&
+        dates.map(date => (
+          <strong key={date.id}>
+            {dateToFormattedDate(String(date.date))}
+          </strong>
+        ))}
     </Container>
   );
 };
