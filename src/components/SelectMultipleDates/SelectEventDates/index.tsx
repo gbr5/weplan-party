@@ -1,5 +1,6 @@
 import { differenceInDays, parseISO } from 'date-fns';
 import React, { useCallback, useState } from 'react';
+import dateToFormattedDate from '../../../utils/dateToFormattedDate';
 import WindowUnFormattedContainer from '../../WindowUnFormattedContainer';
 
 import {
@@ -109,7 +110,7 @@ const SelectEventDates: React.FC<IProps> = ({
                   isActive={!!isActive}
                   type="button"
                 >
-                  Data já selecionada
+                  Já selecionada - {dateToFormattedDate(String(date))}
                 </BooleanButton>
               ) : (
                 <BooleanButton
