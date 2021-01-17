@@ -35,7 +35,6 @@ const SetTimeWindow: React.FC<IProps> = ({
   const [startHour, setStartHour] = useState('');
   const handleSubmit = useCallback(() => {
     const time = `${startHour}:${startMinute}`;
-    console.log(`${startHour}:${startMinute}`);
     setTime(time);
   }, [setTime, startHour, startMinute]);
 
