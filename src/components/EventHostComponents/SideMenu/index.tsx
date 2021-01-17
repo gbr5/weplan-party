@@ -52,6 +52,9 @@ const SideMenu: React.FC<IProps> = ({
 }: IProps) => {
   return (
     <Container>
+      <button type="button" onClick={() => handleLatestActionsSection()}>
+        <h1>Dashboard</h1>
+      </button>
       {isOwner ? (
         <button type="button" onClick={() => handleEditEventNameDrawer()}>
           <h3>{eventName}</h3>

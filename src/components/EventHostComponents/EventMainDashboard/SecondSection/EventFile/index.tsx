@@ -18,7 +18,9 @@ const EventFile: React.FC<IProps> = ({ files }: IProps) => {
           return (
             <Row>
               <FileContainer>
-                <a href={file.file_url}>{file.file_name}</a>
+                <a download target="blank" href={file.file_url}>
+                  {file.file_name}
+                </a>
               </FileContainer>
             </Row>
           );

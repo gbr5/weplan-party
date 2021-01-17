@@ -154,7 +154,10 @@ const AddEventGuestListWindow: React.FC<IProps> = ({
       {!!firstWindow && (
         <PageContainer>
           <MenuButtonContainer>
-            <a href="https://weplan-user.s3.amazonaws.com/planilha_de_convidados_WePlan-Exemplo.csv">
+            <a
+              href="https://weplan-user.s3.amazonaws.com/planilha_de_convidados_WePlan-Exemplo.csv"
+              target="blank"
+            >
               modelo.csv
               <MdFileDownload size={60} />
             </a>
