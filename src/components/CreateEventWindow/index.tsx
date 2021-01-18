@@ -1,16 +1,11 @@
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
-import { getDaysInMonth } from 'date-fns';
 import React, { MouseEventHandler, useCallback, useRef, useState } from 'react';
 import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
 import BooleanQuestionWindow from '../BooleanQuestionWindow';
 import Input from '../Input';
 import WindowUnFormattedContainer from '../WindowUnFormattedContainer';
-import SelectEventDatesWindow from './SelectEventDatesWindow';
-import SelectMonthWindow from './SelectMonthWindow';
-import SelectWeekDayWindow from './SelectWeekDayWindow';
-import SelectYearWindow from './SelectYearWindow';
 import SetDateWindow from './SetDateWindow';
 
 import {
@@ -49,47 +44,9 @@ const CreateEventWindow: React.FC<IProps> = ({
   const [isDateDefined, setIsDateDefined] = useState(false);
   const [selectedDate, setSelectedDate] = useState(`${newDate}`);
   const [xStep, setXStep] = useState('1');
-  const [selectedYear, setSelectedYear] = useState(0);
-  const [selectedMonths, setSelectedMonths] = useState<string[]>([]);
-  const [selectedWeekDays, setSelectedWeekDays] = useState<string[]>([]);
-  const [selectedEventDates, setSelectedEventDates] = useState<Date[]>([]);
-  const handleSelectedWeekDays = useCallback(
-    (props: string) => {
-      const findDay = selectedWeekDays.find(day => day === props);
-      let days = selectedWeekDays;
-
-      if (!findDay) {
-        days.push(props);
-      } else {
-        days = selectedWeekDays.filter(day => day !== props);
-      }
-      setSelectedWeekDays(days);
-    },
-    [selectedWeekDays],
-  );
-
-  const handleSelectedMonths = useCallback(
-    (props: string) => {
-      const findMonth = selectedMonths.find(month => month === props);
-      let months = selectedMonths;
-
-      if (!findMonth) {
-        months.push(props);
-      } else {
-        months = selectedMonths.filter(month => month !== props);
-      }
-      setSelectedMonths(months);
-    },
-    [selectedMonths],
-  );
 
   const createEventWithDefinedDate = useCallback(() => {
     setXStep('5');
-    setCreateButton(true);
-  }, []);
-
-  const createEventWithoutDefinedDate = useCallback(() => {
-    setXStep('10');
     setCreateButton(true);
   }, []);
 
@@ -133,17 +90,8 @@ const CreateEventWindow: React.FC<IProps> = ({
           isDateDefined,
         });
 
-        if (selectedYear === 0) {
-          setEventName(event.data.name);
-          handleSetEventName(event.data.name);
-        } else {
-          await api.post('event/dates', {
-            event_id: event.data.id,
-            dates: selectedEventDates,
-          });
-          setEventName(event.data.name);
-          handleSetEventName(event.data.name);
-        }
+        setEventName(event.data.name);
+        handleSetEventName(event.data.name);
       }
       handleGetMyEvents();
       addToast({
@@ -162,54 +110,13 @@ const CreateEventWindow: React.FC<IProps> = ({
   }, [
     addToast,
     eventName,
-    selectedYear,
     eventType,
     handleSetEventName,
     handleEventInfoDrawer,
     handleGetMyEvents,
     selectedDate,
     isDateDefined,
-    selectedEventDates,
   ]);
-
-  const selectDefinedEventDates = useCallback(
-    (dates: Date[]) => {
-      setSelectedEventDates(dates);
-      createEventWithoutDefinedDate();
-    },
-    [createEventWithoutDefinedDate],
-  );
-
-  const handleSelectedDates = useCallback(() => {
-    const transformedDates: Date[] = [];
-
-    selectedMonths.map(month => {
-      const allDatesFromMonth: Date[] = [];
-      const numberOfDaysInMonth = getDaysInMonth(Number(month));
-      for (let i = 1; i < numberOfDaysInMonth; i += 1) {
-        const thisDate = new Date(`${month}/${i}/${selectedYear}`);
-        allDatesFromMonth.push(thisDate);
-      }
-      selectedWeekDays.map(weekDay => {
-        let thisDay = weekDay;
-        if (weekDay === '7') {
-          thisDay = '0';
-        }
-        const xDates = allDatesFromMonth.filter(
-          date => date.getDay() === Number(thisDay),
-        );
-        xDates.map(date => {
-          transformedDates.push(date);
-          setSelectedEventDates(transformedDates);
-          return date;
-        });
-        return '';
-      });
-
-      return month;
-    });
-    handleCreateEvent();
-  }, [selectedYear, handleCreateEvent, selectedMonths, selectedWeekDays]);
 
   const handleSetDefinedDate = useCallback((props: string) => {
     setSelectedDate(props);
@@ -250,51 +157,12 @@ const CreateEventWindow: React.FC<IProps> = ({
                 selectBooleanOption={handleIsDateDefined}
               />
             )}
-            {xStep === '2' && (
-              <SelectWeekDayWindow
-                changeWindow={(e: string) => setXStep(e)}
-                closeWindow={() => createEventWithoutDefinedDate()}
-                selectWeekDay={handleSelectedWeekDays}
-              />
-            )}
-            {xStep === '3' && (
-              <SelectYearWindow
-                changeWindow={(e: string) => setXStep(e)}
-                closeWindow={() => createEventWithoutDefinedDate()}
-                selectYear={(e: number) => setSelectedYear(e)}
-              />
-            )}
-            {xStep === '4' && (
-              <SelectMonthWindow
-                changeWindow={(e: string) => setXStep(e)}
-                closeWindow={() => createEventWithoutDefinedDate()}
-                selectMonth={(e: string) => handleSelectedMonths(e)}
-                openEventStartTimeWindow={() => handleSelectedDates()}
-              />
-            )}
             {xStep === '5' && (
-              <>
-                <SetDateWindow
-                  closeWindow={() => setXStep('1')}
-                  thenFunction={handleSetDefinedDate}
-                />
-                {/* <h3>Selecione a data</h3>
-                <Input
-                  type="date"
-                  name="date"
-                  onChange={e => setSelectedDate(e.target.value)}
-                /> */}
-              </>
-            )}
-            {xStep === '6' && (
-              <SelectEventDatesWindow
-                changeWindow={(e: string) => setXStep(e)}
-                closeWindow={() => createEventWithoutDefinedDate()}
-                selectEventDates={(e: Date[]) => selectDefinedEventDates(e)}
-                selectedPossibleEventDates={selectedEventDates}
+              <SetDateWindow
+                closeWindow={() => setXStep('1')}
+                thenFunction={handleSetDefinedDate}
               />
             )}
-
             {createButton && (
               <ButtonContainer>
                 <PreviousButton type="button" onClick={() => setXStep('1')}>
