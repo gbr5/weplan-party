@@ -1,4 +1,6 @@
+import { differenceInDays, parseISO } from 'date-fns';
 import React, { useCallback, useState } from 'react';
+import dateToFormattedDate from '../../../utils/dateToFormattedDate';
 import WindowUnFormattedContainer from '../../WindowUnFormattedContainer';
 
 import {
@@ -13,6 +15,7 @@ interface IProps {
   closeWindow: Function;
   selectEventDates: Function;
   changeWindow: Function;
+  alreadySelectedDates: Date[];
   selectedPossibleEventDates: Date[];
 }
 
@@ -20,6 +23,7 @@ const SelectEventDates: React.FC<IProps> = ({
   closeWindow,
   selectEventDates,
   changeWindow,
+  alreadySelectedDates,
   selectedPossibleEventDates,
 }: IProps) => {
   const [selectedEventDates, setSelectedEventDates] = useState(
@@ -95,7 +99,20 @@ const SelectEventDates: React.FC<IProps> = ({
               }/${
                 month.length === 1 ? `0${month}` : month
               }/${date.getFullYear()}`;
-              return (
+
+              const wrongDates = alreadySelectedDates.find(
+                xDate => differenceInDays(parseISO(String(xDate)), date) <= 0,
+              );
+
+              return wrongDates ? (
+                <BooleanButton
+                  key={formattedDate}
+                  isActive={!!isActive}
+                  type="button"
+                >
+                  Já selecionada - {dateToFormattedDate(String(date))}
+                </BooleanButton>
+              ) : (
                 <BooleanButton
                   key={formattedDate}
                   isActive={!!isActive}

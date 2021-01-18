@@ -165,6 +165,7 @@ const SelectMultipleDates: React.FC<IProps> = ({
       )}
       {selectPossibleDatesWindow && (
         <SelectEventDates
+          alreadySelectedDates={alreadySelectedDates}
           changeWindow={(e: string) => handleNavigateToWindow(e)}
           closeWindow={closeWindow}
           selectEventDates={(e: Date) => selectDates(e)}
