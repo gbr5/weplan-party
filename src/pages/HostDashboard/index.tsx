@@ -173,10 +173,10 @@ const Dashboard: React.FC = () => {
   }, [user]);
 
   const getMyEvents = useCallback(() => {
-    getMyNextEvent();
     getEventsAsMember();
     getEventsAsOwner();
     getEventsAsGuest();
+    getMyNextEvent();
   }, [getEventsAsMember, getMyNextEvent, getEventsAsOwner, getEventsAsGuest]);
 
   useEffect(() => {

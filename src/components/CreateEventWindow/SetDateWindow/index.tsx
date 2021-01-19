@@ -29,16 +29,12 @@ const SetDateWindow: React.FC<IProps> = ({
       const year = `${updatedDate.split('')[4]}${updatedDate.split('')[5]}${
         updatedDate.split('')[6]
       }${updatedDate.split('')[7]}`;
-      console.log(props);
       const hour = props.split(':')[0];
       const minute = props.split(':')[1];
-      console.log(`${Number(month)}/${Number(day)}/${Number(year)}`);
       const date = new Date(`${Number(month)}/${Number(day)}/${Number(year)}`);
-      console.log(date);
-      console.log(hour, minute);
+
       date.setHours(Number(hour));
       date.setMinutes(Number(minute));
-      console.log(date);
       thenFunction(String(date));
     },
     [thenFunction, updatedDate],

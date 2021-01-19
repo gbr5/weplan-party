@@ -32,16 +32,11 @@ import {
 } from './styles';
 
 interface IProps {
-  getEvent: Function;
   event: IEventDTO;
   master: IUserDTO;
 }
 
-const FirstSection: React.FC<IProps> = ({
-  event,
-  master,
-  getEvent,
-}: IProps) => {
+const FirstSection: React.FC<IProps> = ({ event, master }: IProps) => {
   const { addToast } = useToast();
 
   const [eventDateWindow, setEventDateWindow] = useState(false);
@@ -67,7 +62,6 @@ const FirstSection: React.FC<IProps> = ({
 
         const response = await api.patch(`/events/avatar/${event.id}`, data);
         setAvatar(response.data);
-        getEvent();
 
         addToast({
           type: 'success',
@@ -82,13 +76,8 @@ const FirstSection: React.FC<IProps> = ({
         });
       }
     },
-    [addToast, event, getEvent],
+    [addToast, event],
   );
-
-  useEffect(() => {
-    getEvent();
-  }, [getEvent]);
-
   const eventDate = useMemo(() => {
     const date = formatDateToString(String(event.date)).split(' - ')[1];
     const hour = formatDateToString(String(event.date)).split(' - ')[0];
@@ -102,7 +91,6 @@ const FirstSection: React.FC<IProps> = ({
   const handleEventIsPublished = useCallback(async () => {
     try {
       await api.put(`event/is-published/${event.id}`);
-      getEvent();
 
       addToast({
         type: 'success',
@@ -116,7 +104,7 @@ const FirstSection: React.FC<IProps> = ({
       });
       throw new Error(err);
     }
-  }, [event, getEvent, addToast]);
+  }, [event, addToast]);
 
   const handleCreateEventDates = useCallback(
     (props: Date[]) => {
@@ -125,12 +113,11 @@ const FirstSection: React.FC<IProps> = ({
           event_id: event.id,
           dates: props,
         });
-        getEvent();
       } catch (err) {
         throw new Error(err);
       }
     },
-    [event, getEvent],
+    [event],
   );
 
   return (
@@ -139,7 +126,7 @@ const FirstSection: React.FC<IProps> = ({
         <SetEventDate
           closeWindow={() => setEventDateWindow(false)}
           event={event}
-          getEvent={getEvent}
+          getEvent={() => setEventDateWindow(false)}
         />
       )}
       {createEventDatesWindow && (

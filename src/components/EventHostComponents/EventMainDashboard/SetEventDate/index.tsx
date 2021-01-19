@@ -1,6 +1,4 @@
-import { FormHandles } from '@unform/core';
-import { Form } from '@unform/web';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import IEventDTO from '../../../../dtos/IEventDTO';
 import { useToast } from '../../../../hooks/toast';
 import api from '../../../../services/api';
@@ -11,14 +9,11 @@ import WindowUnFormattedContainer from '../../../WindowUnFormattedContainer';
 
 import { Container } from './styles';
 
-interface IFormData {
-  date: string;
-}
-
 interface IProps {
   closeWindow: Function;
   getEvent: Function;
-  event: IEventDTO;
+  // eslint-disable-next-line react/require-default-props
+  event?: IEventDTO;
 }
 
 const SetEventDate: React.FC<IProps> = ({
@@ -26,7 +21,6 @@ const SetEventDate: React.FC<IProps> = ({
   getEvent,
   closeWindow,
 }: IProps) => {
-  const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
 
   const [timeWindow, setTimeWindow] = useState(false);
@@ -35,23 +29,28 @@ const SetEventDate: React.FC<IProps> = ({
 
   const handleSubmit = useCallback(async () => {
     try {
-      const day = `${updatedDate.split('')[0]}${updatedDate.split('')[1]}`;
-      const month = `${updatedDate.split('')[2]}${updatedDate.split('')[3]}`;
-      const year = `${updatedDate.split('')[4]}${updatedDate.split('')[5]}${
-        updatedDate.split('')[6]
-      }${updatedDate.split('')[7]}`;
-      const hour = time.split(':')[0];
-      const minute = time.split(':')[1];
-      const date = new Date(`${Number(month)}/${Number(day)}/${Number(year)}`);
-      date.setHours(Number(hour));
-      date.setMinutes(Number(minute));
-      await api.put(`event/is-date-defined/${event.id}`, {
-        isDateDefined: true,
-        date,
-      });
-      getEvent();
-      closeWindow();
-      setTimeWindow(false);
+      if (event !== undefined) {
+        const day = `${updatedDate.split('')[0]}${updatedDate.split('')[1]}`;
+        const month = `${updatedDate.split('')[2]}${updatedDate.split('')[3]}`;
+        const year = `${updatedDate.split('')[4]}${updatedDate.split('')[5]}${
+          updatedDate.split('')[6]
+        }${updatedDate.split('')[7]}`;
+        const hour = time.split(':')[0];
+        const minute = time.split(':')[1];
+        const date = new Date(
+          `${Number(month)}/${Number(day)}/${Number(year)}`,
+        );
+        date.setHours(Number(hour));
+        date.setMinutes(Number(minute));
+        await api.put(`event/is-date-defined/${event.id}`, {
+          isDateDefined: true,
+          date,
+        });
+
+        getEvent();
+        closeWindow();
+        setTimeWindow(false);
+      }
 
       addToast({
         type: 'success',
@@ -87,7 +86,7 @@ const SetEventDate: React.FC<IProps> = ({
       {timeWindow && (
         <SetTimeWindow
           closeWindow={() => setTimeWindow(false)}
-          setTime={handleSetTime}
+          setTime={(e: string) => handleSetTime(e)}
           containerStyle={{
             zIndex: 15,
             top: '30%',
@@ -98,10 +97,10 @@ const SetEventDate: React.FC<IProps> = ({
           message="Defina o horário"
         />
       )}
-      <Form ref={formRef} onSubmit={() => setTimeWindow(true)}>
-        <Container>
-          <h1>Defina a data</h1>
+      <Container>
+        <h1>Defina a data</h1>
 
+        {event !== undefined && (
           <Input
             pattern="\d*"
             onChange={e => setUpdatedDate(e.target.value)}
@@ -114,13 +113,13 @@ const SetEventDate: React.FC<IProps> = ({
               height: '40px',
             }}
           />
-          {updatedDate !== '' && (
-            <button type="button" onClick={() => setTimeWindow(true)}>
-              Salvar
-            </button>
-          )}
-        </Container>
-      </Form>
+        )}
+        {updatedDate !== '' && (
+          <button type="button" onClick={() => setTimeWindow(true)}>
+            Salvar
+          </button>
+        )}
+      </Container>
     </WindowUnFormattedContainer>
   );
 };

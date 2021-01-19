@@ -10,7 +10,6 @@ interface IProps {
 }
 
 const SecondSection: React.FC<IProps> = ({ event }: IProps) => {
-  console.log(event);
   return (
     <Container>
       <Section>
