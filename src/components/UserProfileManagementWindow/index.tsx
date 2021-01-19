@@ -43,9 +43,9 @@ const UserProfileManagementWindow: React.FC<IProps> = ({
       onHandleCloseWindow={onHandleCloseWindow}
       containerStyle={{
         zIndex: 15,
-        top: '10%',
+        top: '0%',
         left: '0%',
-        height: '90%',
+        height: '100%',
         width: '100%',
       }}
     >

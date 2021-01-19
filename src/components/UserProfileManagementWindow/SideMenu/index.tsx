@@ -14,6 +14,7 @@ import AvatarPlaceholder from '../../../assets/WePlanLogo.svg';
 
 import {
   Container,
+  ActivityButton,
   Header,
   AvatarInput,
   InfoSection,
@@ -24,6 +25,7 @@ import api from '../../../services/api';
 import { useAuth } from '../../../hooks/auth';
 import { useToast } from '../../../hooks/toast';
 import Input from '../../Input';
+import ActivityManagement from '../ActivityManagement';
 
 interface IFormData {
   name: string;
@@ -53,6 +55,9 @@ const SideMenu: React.FC<IProps> = ({ user }: IProps) => {
       }
     },
     [updateUser],
+  );
+  const [activityManagementWindow, setActivityManagementWindow] = useState(
+    false,
   );
 
   const handleSubmit = useCallback(
@@ -121,6 +126,11 @@ const SideMenu: React.FC<IProps> = ({ user }: IProps) => {
 
   return (
     <Form onSubmit={handleSubmit} ref={formRef}>
+      {activityManagementWindow && (
+        <ActivityManagement
+          closeWindow={() => setActivityManagementWindow(false)}
+        />
+      )}
       <Container>
         <Header>
           <AvatarInput>
@@ -181,6 +191,12 @@ const SideMenu: React.FC<IProps> = ({ user }: IProps) => {
             </InfoInputContainer>
             <button type="submit">Salvar</button>
           </InfoSection>
+          <ActivityButton
+            type="button"
+            onClick={() => setActivityManagementWindow(true)}
+          >
+            Gerenciar atividade
+          </ActivityButton>
         </Header>
       </Container>
     </Form>

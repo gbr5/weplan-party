@@ -35,6 +35,22 @@ export const Header = styled.div`
   } */
 `;
 
+export const ActivityButton = styled.button`
+  height: 40px;
+  width: 100%;
+  background: var(--red-color);
+  color: var(--primary-color);
+  transition: 0.3s;
+  border: none;
+  box-shadow: var(--box-shadow);
+
+  &:hover {
+    color: var(--red-color);
+    background: var(--secondary-color);
+    box-shadow: var(--window-box-shadow);
+  }
+`;
+
 export const AvatarInput = styled.div`
   position: relative;
   /* top: 16px; */
