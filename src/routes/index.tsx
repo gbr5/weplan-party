@@ -10,17 +10,12 @@ import ForgotPassword from '../pages/ForgotPassword';
 import ResetPassword from '../pages/ResetPassword';
 import Profile from '../pages/Profile';
 
-// import Dashboard from '../pages/Dashboard';
 import HostDashboard from '../pages/HostDashboard';
 import EventHostDashboard from '../pages/EventHostDashboard';
 import FriendsDashboard from '../pages/FriendsDashboard';
-// import SupplierDashboard from '../pages/SupplierDashboard';
-
-// import { useAuth } from '../hooks/auth';
+import WelcomePage from '../pages/WelcomePage';
 
 const Routes: React.FC = () => {
-  // const { user } = useAuth();
-
   return (
     <Switch>
       <Route path="/" exact component={Main} />
@@ -28,6 +23,7 @@ const Routes: React.FC = () => {
       <Route path="/signup" exact component={SignUp} />
       <Route path="/forgot-password" exact component={ForgotPassword} />
       <Route path="/reset-password" exact component={ResetPassword} />
+      <Route path="/wellcome" exact component={WelcomePage} />
 
       <Route path="/profile" exact component={Profile} isPrivate />
       <Route
@@ -38,14 +34,6 @@ const Routes: React.FC = () => {
       />
       <Route path="/dashboard" exact component={HostDashboard} isPrivate />
       <Route path="/friends" exact component={FriendsDashboard} isPrivate />
-      {/* {user && user.isSupplier && (
-        <Route
-          path="/supplier-dashboard"
-          exact
-          component={SupplierDashboard}
-          isPrivate
-        />
-      )} */}
     </Switch>
   );
 };

@@ -12,14 +12,16 @@ interface IProps {
 
 const ActivityManagement: React.FC<IProps> = ({ closeWindow }: IProps) => {
   const { user, signOut } = useAuth();
-  const [activationConfirmation, setActivationConfirmation] = useState(false);
+  const [suspendProfileConfirmation, setSuspendProfileConfirmation] = useState(
+    false,
+  );
   const [deleteProfileConfirmation, setDeleteProfileConfirmation] = useState(
     false,
   );
 
-  const handleActivationProfile = useCallback(async () => {
+  const handleSuspendProfile = useCallback(async () => {
     try {
-      await api.put(`user/activation/${user.id}`, {
+      await api.put(`user/suspend/${user.id}`, {
         isActive: false,
       });
       signOut();
@@ -36,15 +38,15 @@ const ActivityManagement: React.FC<IProps> = ({ closeWindow }: IProps) => {
     }
   }, [user, signOut]);
 
-  const handleActivationConfirmation = useCallback(
+  const handleSuspendConfirmation = useCallback(
     (props: boolean) => {
       if (props) {
-        handleActivationProfile();
+        handleSuspendProfile();
       } else {
-        setActivationConfirmation(false);
+        setSuspendProfileConfirmation(false);
       }
     },
-    [handleActivationProfile],
+    [handleSuspendProfile],
   );
   const handleDeleteProfileConfirmation = useCallback(
     (props: boolean) => {
@@ -74,7 +76,7 @@ const ActivityManagement: React.FC<IProps> = ({ closeWindow }: IProps) => {
           <div>
             <button
               type="button"
-              onClick={() => setActivationConfirmation(true)}
+              onClick={() => setSuspendProfileConfirmation(true)}
             >
               Suspender
             </button>
@@ -90,13 +92,11 @@ const ActivityManagement: React.FC<IProps> = ({ closeWindow }: IProps) => {
             </span>
           </div>
         </Section>
-        {activationConfirmation && (
+        {suspendProfileConfirmation && (
           <BooleanQuestionWindow
-            onHandleCloseWindow={() => setActivationConfirmation(false)}
+            onHandleCloseWindow={() => setSuspendProfileConfirmation(false)}
             question="Deseja suspender o seu perfil?"
-            selectBooleanOption={(e: boolean) =>
-              handleActivationConfirmation(e)
-            }
+            selectBooleanOption={(e: boolean) => handleSuspendConfirmation(e)}
           />
         )}
         <Section>

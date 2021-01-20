@@ -13,6 +13,8 @@ export default interface IUserDTO {
   email: string;
   trimmed_name: string;
   avatar_url: string;
+  isActive: boolean;
+  isDeleted: boolean;
   personInfo: IPersonInfoDTO;
   companyInfo: ICompanyInfoDTO;
   userContacts: IUserContactDTO[];

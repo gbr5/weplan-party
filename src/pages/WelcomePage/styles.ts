@@ -11,11 +11,24 @@ export const Container = styled.div`
   align-items: stretch;
 `;
 
+export const LogoContainer = styled.div`
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 32px;
+
+  img {
+    height: 64px;
+  }
+`;
+
 export const Content = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: rgba(10, 10, 10, 0.25);
 
   place-content: center;
 
@@ -34,25 +47,11 @@ const appearFromLeft = keyframes`
   }
 `;
 
-export const LogoContainer = styled.div`
-  width: 100%;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  gap: 32px;
-
-  img {
-    height: 64px;
-  }
-`;
-
 export const AnimationContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-
+  gap: 32px;
 
   place-content: center;
 
@@ -67,6 +66,13 @@ export const AnimationContainer = styled.div`
     margin: 40px 0;
     width: 340px;
     text-align: center;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 32px;
+    align-items: center;
+    justify-content: center;
 
     h1 {
       color: var(--title-color);

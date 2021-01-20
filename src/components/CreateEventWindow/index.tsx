@@ -39,28 +39,19 @@ const CreateEventWindow: React.FC<IProps> = ({
 
   const newDate = new Date();
 
-  const [createButton, setCreateButton] = useState(false);
   const [eventName, setEventName] = useState('');
   const [isDateDefined, setIsDateDefined] = useState(false);
   const [selectedDate, setSelectedDate] = useState(`${newDate}`);
   const [xStep, setXStep] = useState('1');
 
-  const createEventWithDefinedDate = useCallback(() => {
-    setXStep('5');
-    setCreateButton(true);
+  const handleIsDateDefined = useCallback((props: boolean) => {
+    setIsDateDefined(props);
+    if (props) {
+      setXStep('2');
+    } else {
+      setXStep('0');
+    }
   }, []);
-
-  const handleIsDateDefined = useCallback(
-    (props: boolean) => {
-      setIsDateDefined(props);
-      if (props) {
-        createEventWithDefinedDate();
-      } else {
-        setXStep('2');
-      }
-    },
-    [createEventWithDefinedDate],
-  );
 
   const handleCreateEvent = useCallback(async () => {
     try {
@@ -120,8 +111,7 @@ const CreateEventWindow: React.FC<IProps> = ({
 
   const handleSetDefinedDate = useCallback((props: string) => {
     setSelectedDate(props);
-    setCreateButton(true);
-    setXStep('10');
+    setXStep('0');
   }, []);
 
   return (
@@ -157,23 +147,21 @@ const CreateEventWindow: React.FC<IProps> = ({
                 selectBooleanOption={handleIsDateDefined}
               />
             )}
-            {xStep === '5' && (
+            {xStep === '2' && (
               <SetDateWindow
                 closeWindow={() => setXStep('1')}
                 thenFunction={handleSetDefinedDate}
               />
             )}
-            {createButton && (
-              <ButtonContainer>
-                <PreviousButton type="button" onClick={() => setXStep('1')}>
-                  Anterior
-                </PreviousButton>
+            <ButtonContainer>
+              <PreviousButton type="button" onClick={() => setXStep('1')}>
+                Anterior
+              </PreviousButton>
 
-                <NextButton type="submit">
-                  <h3>Criar</h3>
-                </NextButton>
-              </ButtonContainer>
-            )}
+              <NextButton type="submit">
+                <h3>Criar</h3>
+              </NextButton>
+            </ButtonContainer>
           </Container>
         </Form>
       </WindowUnFormattedContainer>
