@@ -19,6 +19,11 @@ export const ActivationMessageContainer = styled.div`
   p {
     font-size: 20px;
   }
+
+  button {
+    background: var(--primary-color);
+    color: var(--secondary-color);
+  }
 `;
 export const Container = styled.div`
   height: 100vh;
