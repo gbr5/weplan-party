@@ -4,6 +4,22 @@ import '../../styles/global';
 
 import signInBackgroundImg from '../../assets/lotus_flower-by-Daniel_Holtzhouse.jpeg';
 
+export const ActivationMessageContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: stretch;
+  padding: 2vw;
+  gap: 4vh;
+
+  h1 {
+    color: var(--primary-color);
+  }
+
+  p {
+    font-size: 20px;
+  }
+`;
 export const Container = styled.div`
   height: 100vh;
 
