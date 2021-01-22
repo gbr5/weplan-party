@@ -15,7 +15,6 @@ import { Container, QuestionTitle } from './styles';
 import WindowUnFormattedContainer from '../WindowUnFormattedContainer';
 
 interface IPersonUser {
-  person_id: string;
   first_name: string;
   last_name: string;
 }
@@ -39,7 +38,6 @@ const CreatePersonInfoWindowForm: React.FC<IProps> = ({
         formRef.current?.setErrors({});
 
         const schema = Yup.object().shape({
-          person_id: Yup.string().required('CPF é obrigatório'),
           first_name: Yup.string().required('Nome é obrigatório'),
           last_name: Yup.string().required('Sobrenome é obrigatório'),
         });
@@ -48,8 +46,20 @@ const CreatePersonInfoWindowForm: React.FC<IProps> = ({
           abortEarly: false,
         });
 
+        const findFirstAndLastName = await api.get(
+          `person-info/${data.first_name}/${data.last_name}`,
+        );
+
+        if (findFirstAndLastName.data.id) {
+          return addToast({
+            type: 'error',
+            title: 'Erro no cadastro | [Informações de Usuário].',
+            description: `Nome e Sobrenome "${data.first_name} ${data.last_name}" já cadastrado em outro perfil, tente novamente.`,
+          });
+        }
+
         await api.post(`/person-info/${user.id}`, {
-          person_id: data.person_id,
+          person_id: user.id,
           first_name: data.first_name,
           last_name: data.last_name,
         });
@@ -57,7 +67,7 @@ const CreatePersonInfoWindowForm: React.FC<IProps> = ({
         getPersonInfo();
         handleCloseWindow();
 
-        addToast({
+        return addToast({
           type: 'success',
           title: 'Cadastro realizado!',
           description: 'Você já pode fazer seu login no GoBarber!',
@@ -69,7 +79,7 @@ const CreatePersonInfoWindowForm: React.FC<IProps> = ({
           formRef.current?.setErrors(error);
         }
 
-        addToast({
+        return addToast({
           type: 'error',
           title: 'Erro no cadastro',
           description: 'Ocorreu um erro ao fazer o cadastro, tente novamente.',
@@ -115,14 +125,6 @@ const CreatePersonInfoWindowForm: React.FC<IProps> = ({
             type="text"
             placeholder="Sobrenome"
           />
-          <Input
-            containerStyle={containerStyles}
-            name="person_id"
-            mask="brlID"
-            type="text"
-            placeholder="CPF"
-          />
-
           <Button type="submit">Cadastrar</Button>
         </Form>
       </Container>
