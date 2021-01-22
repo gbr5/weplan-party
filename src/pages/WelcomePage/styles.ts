@@ -1,5 +1,4 @@
 import styled, { keyframes } from 'styled-components';
-import { shade } from 'polished';
 import '../../styles/global';
 
 import signInBackgroundImg from '../../assets/lotus_flower-by-Daniel_Holtzhouse.jpeg';
@@ -21,7 +20,7 @@ export const LogoContainer = styled.div`
   gap: 32px;
 
   img {
-    height: 64px;
+    height: 80px;
   }
 `;
 
@@ -62,6 +61,23 @@ export const AnimationContainer = styled.div`
     font-size: 80px;
   }
 
+  button {
+    width: 100%;
+    height: 40px;
+    background: var(--primary-color);
+    color: var(--secondary-color);
+    box-shadow: var(--box-shadow);
+    border-radius: 8px;
+    border: none;
+    transition: 0.3s;
+
+    &:hover {
+      background: var(--secondary-color);
+      color: var(--primary-color);
+      box-shadow: var(--window-box-shadow);
+    }
+  }
+
   form {
     margin: 40px 0;
     width: 340px;
@@ -92,7 +108,6 @@ export const AnimationContainer = styled.div`
       box-shadow: var(--window-box-shadow);
 
       &:hover {
-        /* color: ${shade(0.2, '#f4ede8')}; */
         color: var(--title-color);
         background: rgba(10, 10, 10, 0.4);
         box-shadow: var(--box-shadow);
@@ -101,7 +116,7 @@ export const AnimationContainer = styled.div`
   }
 
   > a {
-    color: var(--primary-color);
+    color: var(--red-color);
     font-weight: 500;
     display: block;
     margin-top: 24px;
@@ -112,12 +127,16 @@ export const AnimationContainer = styled.div`
     display: flex;
     align-items: center;
 
+    border-bottom: 2px solid var(--title-color);
+
     svg {
       margin-right: 16px;
     }
 
     &:hover {
-      color: ${shade(0.2, '#ff9000')};
+      color: var(--primary-color);
+
+      border-bottom: 2px solid var(--red-color);
     }
   }
 `;

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { FiArrowLeft } from 'react-icons/fi';
 
@@ -20,9 +20,18 @@ const WelcomePage: React.FC = () => {
   const { addToast } = useToast();
   const location = useLocation();
 
+  const [updateTokenButton, setUpdateTokenButton] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
+
   const handleSubmit = useCallback(async () => {
     try {
-      const token = location.search.replace('?token=', '');
+      const queryParams = location.search.replace('?token=', '');
+      const token = queryParams.split('&')[0];
+      const email = queryParams.split('&')[1].replace('email=', '');
+      setUserEmail(email);
+      console.log('token', token);
+      console.log('email', email);
+      console.log('location.search', location.search);
 
       await api.put(`/user/activation/${token}`);
 
@@ -38,6 +47,7 @@ const WelcomePage: React.FC = () => {
         description:
           'Ocorreu um erro ao tentar realizar da sua conta, tente novamente.',
       });
+      setUpdateTokenButton(true);
       throw new Error(err);
     }
   }, [addToast, location]);
@@ -45,6 +55,29 @@ const WelcomePage: React.FC = () => {
   useEffect(() => {
     handleSubmit();
   }, [handleSubmit]);
+
+  const sendNewActivationEmail = useCallback(async () => {
+    try {
+      await api.post('user/activation', {
+        email: userEmail,
+      });
+
+      addToast({
+        type: 'success',
+        title: 'E-mail enviado com sucesso!',
+        description:
+          'O token para validação do seu perfil tem validade de 2 horas.',
+      });
+    } catch (err) {
+      addToast({
+        type: 'error',
+        title: 'Erro ao enviar e-mail.',
+        description:
+          'Ocorreu um erro ao enviar e-mail de verificação, tente novamente.',
+      });
+      throw new Error(err);
+    }
+  }, [addToast, userEmail]);
 
   return (
     <Container>
@@ -55,6 +88,12 @@ const WelcomePage: React.FC = () => {
             <h1>WePlan</h1>
           </LogoContainer>
           <h1>Seja bem vindo!</h1>
+
+          {updateTokenButton && (
+            <button type="button" onClick={sendNewActivationEmail}>
+              Reenviar e-mail de verificação
+            </button>
+          )}
 
           <Link to="/">
             <FiArrowLeft />
