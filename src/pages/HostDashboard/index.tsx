@@ -29,7 +29,7 @@ import IPersonInfoDTO from '../../dtos/IPersonInfoDTO';
 import CreatePersonInfoWindowForm from '../../components/CreatePersonInfoWindowForm';
 import FriendsEventsSection from '../../components/MainDashboardBottomSection/FriendsEventsSection';
 import GuestToUserMessageWindow from '../../components/GuestToUserMessageWindow';
-import BooleanQuestionWindow from '../../components/BooleanQuestionWindow';
+import DeleteEventQuestionWindow from './DeleteEventQuestionWindow';
 
 const Dashboard: React.FC = () => {
   const { user, signOut } = useAuth();
@@ -251,10 +251,10 @@ const Dashboard: React.FC = () => {
         />
       )}
       {!!deleteEventWindow && (
-        <BooleanQuestionWindow
-          onHandleCloseWindow={() => setDeleteEventWindow(false)}
+        <DeleteEventQuestionWindow
+          closeWindow={() => setDeleteEventWindow(false)}
           question="Tem certeza de que deseja deletar o evento?"
-          selectBooleanOption={() => handleDeleteEventQuestion(eventToDelete)}
+          deleteEvent={() => handleDeleteEventQuestion(eventToDelete)}
         />
       )}
       <Content>
