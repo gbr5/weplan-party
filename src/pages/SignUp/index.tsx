@@ -155,35 +155,35 @@ const SignUp: React.FC = () => {
 
         Promise.all([
           api.post(`/profile/contact-info/add/${response.data.id}`, {
-            contact_info: 'n/a',
+            contact_info: `n/a - ${response.data.id}1`,
             contact_type: 'Whatsapp',
           }),
           api.post(`/profile/contact-info/add/${response.data.id}`, {
-            contact_info: 'n/a',
+            contact_info: `n/a - ${response.data.id}2`,
             contact_type: 'Phone',
           }),
           api.post(`/profile/contact-info/add/${response.data.id}`, {
-            contact_info: 'n/a',
+            contact_info: `n/a - ${response.data.id}3`,
             contact_type: 'Email',
           }),
           api.post(`/profile/contact-info/add/${response.data.id}`, {
-            contact_info: 'n/a',
+            contact_info: `n/a - ${response.data.id}4`,
             contact_type: 'Address',
           }),
           api.post(`/profile/contact-info/add/${response.data.id}`, {
-            contact_info: 'n/a',
+            contact_info: `n/a - ${response.data.id}5`,
             contact_type: 'Instagram',
           }),
           api.post(`/profile/contact-info/add/${response.data.id}`, {
-            contact_info: 'n/a',
+            contact_info: `n/a - ${response.data.id}6`,
             contact_type: 'Facebook',
           }),
           api.post(`/profile/contact-info/add/${response.data.id}`, {
-            contact_info: 'n/a',
+            contact_info: `n/a - ${response.data.id}7`,
             contact_type: 'Linkedin',
           }),
           api.post(`/profile/contact-info/add/${response.data.id}`, {
-            contact_info: 'n/a',
+            contact_info: `n/a - ${response.data.id}8`,
             contact_type: 'Website',
           }),
         ]);
@@ -192,8 +192,8 @@ const SignUp: React.FC = () => {
 
         return addToast({
           type: 'success',
-          title: 'Cadastro realizado!',
-          description: 'Você será redirecionado para a página de login!',
+          title: 'Sucesso!',
+          description: 'Agora só falta você nos dizer o ser nome completo.',
         });
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
