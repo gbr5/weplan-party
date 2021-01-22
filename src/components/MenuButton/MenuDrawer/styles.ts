@@ -34,19 +34,19 @@ export const Container = styled.div`
 
   @media (max-width: 1000px) {
     width: 52vw;
-    height: 90vh;
+    /* height: 90vh;
     top: 0;
 
     gap: 4vh;
 
-    overflow-y: scroll;
-    /* width: 52vw;
+    overflow-y: scroll; */
+    width: 52vw;
     height: 92.5vh;
     top: 7.5vh;
 
     gap: 4vh;
 
-    overflow-y: scroll; */
+    overflow-y: scroll;
   }
 `;
 

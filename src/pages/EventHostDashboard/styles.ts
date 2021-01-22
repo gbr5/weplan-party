@@ -33,9 +33,9 @@ export const Container = styled.div`
 
   margin-bottom: 4vh;
 
-  @media (max-width: 1000px) {
+  /* @media (max-width: 1000px) {
     margin-bottom: 8vh;
-  }
+  } */
 `;
 
 export const EventPageContent = styled.main`
@@ -99,9 +99,9 @@ export const Main = styled.div`
   margin-top: 144px;
   position: relative;
 
-  @media (max-width: 1000px) {
+  /* @media (max-width: 1000px) {
     margin-top: 13vh;
-  }
+  } */
 
   > button {
     z-index: 5;
@@ -113,7 +113,8 @@ export const Main = styled.div`
     transition: 0.25s;
 
     @media (max-width: 1000px) {
-      left: 81.5%;
+      /* left: 41.5%; */
+      left: 83.2%;
     }
 
     > svg {
@@ -138,7 +139,7 @@ export const Main = styled.div`
       animation: ${appearFromTop} 0.5s;
 
       @media (max-width: 1000px) {
-        left: 81.5%;
+        left: 83.2%;
         /* left: 41.5%; */
       }
       > svg {
