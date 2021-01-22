@@ -79,11 +79,15 @@ const SignUp: React.FC = () => {
         history.push('/signin');
         setOptions(true);
         setUserId('');
-
-        return addToast({
+        addToast({
           type: 'success',
           title: 'Cadastro realizado!',
-          description: 'Você já pode fazer seu login no GoBarber!',
+          description: 'Yuhuu!! Vamos fazer a festaaa!!',
+        });
+        return addToast({
+          type: 'success',
+          title: 'Ative a sua Conta',
+          description: 'Eviamos o link para ativar a sua conta no seu e-mail.',
         });
       } catch (err) {
         if (err instanceof Yup.ValidationError) {

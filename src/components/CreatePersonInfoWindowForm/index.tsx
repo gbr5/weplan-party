@@ -70,7 +70,7 @@ const CreatePersonInfoWindowForm: React.FC<IProps> = ({
         return addToast({
           type: 'success',
           title: 'Cadastro realizado!',
-          description: 'Você já pode fazer seu login no GoBarber!',
+          description: 'Você já pode fazer seu login no WePlan!',
         });
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
