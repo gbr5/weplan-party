@@ -14,7 +14,7 @@ export const Content = styled.main`
 
   @media (max-width: 1000px) {
     margin: 0 1vh;
-    padding-bottom: 8vh;
+    /* padding-bottom: 8vh; */
   }
 `;
 
@@ -22,9 +22,9 @@ export const MiddlePage = styled.div`
   margin-top: 10vh;
   display: flex;
   flex-direction: column;
-  @media (max-width: 1000px) {
+  /* @media (max-width: 1000px) {
     margin-top: 2vh;
-  }
+  } */
 `;
 
 export const BottomPage = styled.div`

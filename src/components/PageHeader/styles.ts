@@ -14,10 +14,11 @@ export const Header = styled.header`
   box-shadow: var(--box-shadow);
 
   @media (max-width: 1000px) {
-    padding: 2vh 0;
+    padding: 4px 0;
+    /* padding: 2vh 0;
     top: unset;
     bottom: 0;
-    background: var(--letter-color-5);
+    background: var(--letter-color-5); */
   }
 `;
 
