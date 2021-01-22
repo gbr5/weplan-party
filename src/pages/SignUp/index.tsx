@@ -44,11 +44,13 @@ const SignUp: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
   const history = useHistory();
+  const [loading, setLoading] = useState(false);
 
   const handleSubmitPersonInfo = useCallback(
     async (data: IPersonUser) => {
       try {
         formRef.current?.setErrors({});
+        setLoading(true);
 
         const schema = Yup.object().shape({
           first_name: Yup.string().required('Nome é obrigatório'),
@@ -106,6 +108,8 @@ const SignUp: React.FC = () => {
           title: 'Erro no cadastro',
           description: 'Ocorreu um erro ao fazer o cadastro, tente novamente.',
         });
+      } finally {
+        setLoading(false);
       }
     },
     [addToast, history, userId, userEmail],
@@ -115,6 +119,7 @@ const SignUp: React.FC = () => {
     async (data: SignUpForm) => {
       try {
         formRef.current?.setErrors({});
+        setLoading(true);
 
         const schema = Yup.object().shape({
           name: Yup.string().required('Nome é obrigatório'),
@@ -217,6 +222,8 @@ const SignUp: React.FC = () => {
           title: 'Erro no cadastro',
           description: 'Ocorreu um erro ao fazer o cadastro, tente novamente.',
         });
+      } finally {
+        setLoading(false);
       }
     },
     [addToast],
@@ -261,7 +268,9 @@ const SignUp: React.FC = () => {
                 placeholder="Confirme a sua senha"
               />
 
-              <Button type="submit">Cadastrar</Button>
+              <Button loading={loading} type="submit">
+                Cadastrar
+              </Button>
             </Form>
           )}
 
@@ -285,14 +294,9 @@ const SignUp: React.FC = () => {
                 type="text"
                 placeholder="Sobrenome"
               />
-              {/* <Input
-                name="person_id"
-                icon={FiUser}
-                type="text"
-                placeholder="CPF"
-              /> */}
-
-              <Button type="submit">Cadastrar</Button>
+              <Button loading={loading} type="submit">
+                Cadastrar
+              </Button>
             </Form>
           )}
 

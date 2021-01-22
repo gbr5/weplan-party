@@ -76,7 +76,7 @@ const ResetPassword: React.FC = () => {
           description: 'Você será redirecionado para a página de login.',
         });
 
-        history.push('/');
+        history.push('/signin');
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const error = getValidationErrors(err);
