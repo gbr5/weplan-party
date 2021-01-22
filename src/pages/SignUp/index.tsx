@@ -39,6 +39,7 @@ interface IPersonUser {
 
 const SignUp: React.FC = () => {
   const [userId, setUserId] = useState('');
+  const [userEmail, setUserEmail] = useState('');
   const [options, setOptions] = useState(true);
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
@@ -76,14 +77,22 @@ const SignUp: React.FC = () => {
           last_name: data.last_name,
         });
 
+        addToast({
+          type: 'success',
+          title: 'Cadastro realizado!',
+          description: 'Yuhuu!! Vamos fazer a festaaa!!',
+        });
+        await api.post('user/activation', {
+          email: userEmail,
+        });
         history.push('/signin');
         setOptions(true);
         setUserId('');
 
         return addToast({
           type: 'success',
-          title: 'Cadastro realizado!',
-          description: 'Você já pode fazer seu login no GoBarber!',
+          title: 'Ative a sua Conta',
+          description: 'Eviamos o link para ativar a sua conta no seu e-mail.',
         });
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
@@ -99,7 +108,7 @@ const SignUp: React.FC = () => {
         });
       }
     },
-    [addToast, history, userId],
+    [addToast, history, userId, userEmail],
   );
 
   const handleSubmit = useCallback(
@@ -152,6 +161,7 @@ const SignUp: React.FC = () => {
 
         const response = await api.post('/users', validatedData);
         setUserId(response.data.id);
+        setUserEmail(response.data.email);
 
         Promise.all([
           api.post(`/profile/contact-info/add/${response.data.id}`, {
