@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import { FiLogIn, FiMail, FiLock } from 'react-icons/fi';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
@@ -32,9 +32,15 @@ interface SignInFormData {
   password: string;
 }
 
+interface IParams {
+  params?: string;
+}
+
 const SignIn: React.FC = () => {
+  const location = useLocation<IParams>();
   const formRef = useRef<FormHandles>(null);
   const history = useHistory();
+  const defaultEmail = (location.state && location.state.params) || '';
 
   const { signIn } = useAuth();
   const { addToast } = useToast();
@@ -142,6 +148,7 @@ const SignIn: React.FC = () => {
                 type="email"
                 inputMode="email"
                 placeholder="E-mail"
+                defaultValue={defaultEmail}
               />
               <Input
                 name="password"
