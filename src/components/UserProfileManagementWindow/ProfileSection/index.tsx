@@ -82,6 +82,7 @@ const ProfileSection: React.FC<IProps> = ({
     setWebsiteField(false);
   }, []);
 
+  const [personIdPlaceholder, setPersonIdPlaceholder] = useState('Identidade');
   const [userDefaultWhatsapp, setUserDefaultWhatsapp] = useState('Whatsapp');
   const [userDefaultPhone, setUserDefaultPhone] = useState('Telefone');
   const [userDefaultEmail, setUserDefaultEmail] = useState('Email');
@@ -96,22 +97,31 @@ const ProfileSection: React.FC<IProps> = ({
     if (user.userContacts) {
       user.userContacts.map(contact => {
         contact.contact_type === 'Whatsapp' &&
+          !contact.contact_info.includes('n/a') &&
           setUserDefaultWhatsapp(contact.contact_info);
         contact.contact_type === 'Phone' &&
+          !contact.contact_info.includes('n/a') &&
           setUserDefaultPhone(contact.contact_info);
         contact.contact_type === 'Email' &&
+          !contact.contact_info.includes('n/a') &&
           setUserDefaultEmail(contact.contact_info);
         contact.contact_type === 'Address' &&
+          !contact.contact_info.includes('n/a') &&
           setUserDefaultAddress(contact.contact_info);
         contact.contact_type === 'Instagram' &&
+          !contact.contact_info.includes('n/a') &&
           setUserDefaultInstagram(contact.contact_info);
         contact.contact_type === 'Facebook' &&
+          !contact.contact_info.includes('n/a') &&
           setUserDefaultFacebook(contact.contact_info);
         contact.contact_type === 'Twitter' &&
+          !contact.contact_info.includes('n/a') &&
           setUserDefaultTwitter(contact.contact_info);
         contact.contact_type === 'Linkedin' &&
+          !contact.contact_info.includes('n/a') &&
           setUserDefaultLinkedin(contact.contact_info);
         contact.contact_type === 'Website' &&
+          !contact.contact_info.includes('n/a') &&
           setUserDefaultWebsite(contact.contact_info);
         return contact.contact_type;
       });
@@ -127,9 +137,6 @@ const ProfileSection: React.FC<IProps> = ({
       setUserDefaultLinkedin('Linkedin');
     }
   }, [user]);
-  // const avatar = useMemo(() => {
-  //   return user.avatar_url ? user.avatar_url : AvatarPlaceholder;
-  // }, [user]);
 
   const imgAlt = useMemo(() => {
     return `${user.avatar_url} - WePlan Party`;
@@ -243,7 +250,7 @@ const ProfileSection: React.FC<IProps> = ({
           updatePersonInfo(data.first_name, data.last_name, data.person_id);
         const firstName = user.personInfo ? user.personInfo.first_name : 'n/a';
         const lastName = user.personInfo ? user.personInfo.last_name : 'n/a';
-        const personID = user.personInfo ? user.personInfo.person_id : 'n/a';
+        const personID = user.personInfo ? user.personInfo.person_id : user.id;
         firstNameField &&
           !lastNameField &&
           !personIdField &&
@@ -319,6 +326,15 @@ const ProfileSection: React.FC<IProps> = ({
     ],
   );
 
+  useEffect(() => {
+    if (
+      user.personInfo &&
+      !user.personInfo.person_id.includes(user.personInfo.user_id)
+    ) {
+      setPersonIdPlaceholder(user.personInfo.person_id);
+    }
+  }, [user.personInfo]);
+
   return (
     <Form ref={formRef} onSubmit={handleSubmit}>
       <Container>
@@ -390,13 +406,10 @@ const ProfileSection: React.FC<IProps> = ({
                 type="button"
                 onClick={() => setPersonIdField(!personIdField)}
               >
-                {user.personInfo && user.personInfo.person_id}
+                {user.personInfo && personIdPlaceholder}
               </button>
             ) : (
-              <Input
-                name="person_id"
-                placeholder={user.personInfo && user.personInfo.person_id}
-              />
+              <Input name="person_id" placeholder={personIdPlaceholder} />
             )}
           </InfoInputContainer>
           <InfoInputContainer>
