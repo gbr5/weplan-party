@@ -50,7 +50,6 @@ const SignUp: React.FC = () => {
         formRef.current?.setErrors({});
 
         const schema = Yup.object().shape({
-          person_id: Yup.string().required('CPF é obrigatório'),
           first_name: Yup.string().required('Nome é obrigatório'),
           last_name: Yup.string().required('Sobrenome é obrigatório'),
         });
@@ -59,8 +58,20 @@ const SignUp: React.FC = () => {
           abortEarly: false,
         });
 
+        const findFirstAndLastName = await api.get(
+          `person-info/${data.first_name}/${data.last_name}`,
+        );
+
+        if (findFirstAndLastName.data.id) {
+          return addToast({
+            type: 'error',
+            title: 'Erro no cadastro | [Informações de Usuário].',
+            description: `Nome e Sobrenome "${data.first_name} ${data.last_name}" já cadastrado em outro perfil, tente novamente.`,
+          });
+        }
+
         await api.post(`/person-info/${userId}`, {
-          person_id: data.person_id,
+          person_id: userId,
           first_name: data.first_name,
           last_name: data.last_name,
         });
@@ -69,7 +80,7 @@ const SignUp: React.FC = () => {
         setOptions(true);
         setUserId('');
 
-        addToast({
+        return addToast({
           type: 'success',
           title: 'Cadastro realizado!',
           description: 'Você já pode fazer seu login no GoBarber!',
@@ -81,7 +92,7 @@ const SignUp: React.FC = () => {
           formRef.current?.setErrors(error);
         }
 
-        addToast({
+        return addToast({
           type: 'error',
           title: 'Erro no cadastro',
           description: 'Ocorreu um erro ao fazer o cadastro, tente novamente.',
@@ -111,6 +122,26 @@ const SignUp: React.FC = () => {
         await schema.validate(data, {
           abortEarly: false,
         });
+
+        const findByNameOrEmail = await api.get(
+          `user/name-or-email?name=${data.name}&email=${data.email}`,
+        );
+
+        if (findByNameOrEmail.data.name === data.name) {
+          return addToast({
+            type: 'error',
+            title: 'Erro no cadastro | [Nome de Usuário]',
+            description: `Nome de usuário "${data.name}" indisponível, tente novamente`,
+          });
+        }
+
+        if (findByNameOrEmail.data.email === data.email) {
+          return addToast({
+            type: 'error',
+            title: 'Erro no cadastro | [E-mail]',
+            description: `O e-mail "${data.email}" já está cadastrado, tente novamente`,
+          });
+        }
 
         const validatedData = {
           name: data.name,
@@ -159,7 +190,7 @@ const SignUp: React.FC = () => {
 
         setOptions(false);
 
-        addToast({
+        return addToast({
           type: 'success',
           title: 'Cadastro realizado!',
           description: 'Você será redirecionado para a página de login!',
@@ -171,7 +202,7 @@ const SignUp: React.FC = () => {
           formRef.current?.setErrors(error);
         }
 
-        addToast({
+        return addToast({
           type: 'error',
           title: 'Erro no cadastro',
           description: 'Ocorreu um erro ao fazer o cadastro, tente novamente.',
@@ -194,7 +225,12 @@ const SignUp: React.FC = () => {
             <Form ref={formRef} onSubmit={handleSubmit}>
               <QuestionTitle>Faça seu cadastro</QuestionTitle>
 
-              <Input name="name" icon={FiUser} type="text" placeholder="Nome" />
+              <Input
+                name="name"
+                icon={FiUser}
+                type="text"
+                placeholder="Nome de usuário"
+              />
               <Input
                 name="email"
                 icon={FiMail}
@@ -230,7 +266,7 @@ const SignUp: React.FC = () => {
                 name="first_name"
                 icon={FiUser}
                 type="text"
-                placeholder="Prénome"
+                placeholder="Nome"
                 autoCapitalize="false"
               />
               <Input
@@ -239,12 +275,12 @@ const SignUp: React.FC = () => {
                 type="text"
                 placeholder="Sobrenome"
               />
-              <Input
+              {/* <Input
                 name="person_id"
                 icon={FiUser}
                 type="text"
                 placeholder="CPF"
-              />
+              /> */}
 
               <Button type="submit">Cadastrar</Button>
             </Form>
