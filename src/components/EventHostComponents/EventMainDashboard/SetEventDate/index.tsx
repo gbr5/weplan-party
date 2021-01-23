@@ -92,12 +92,12 @@ const SetEventDate: React.FC<IProps> = ({
         <Form ref={formRef} onSubmit={handleSubmit}>
           {event !== undefined && (
             <Input
-              pattern="\d*"
               onChange={e => setUpdatedDate(e.target.value)}
               mask="brlDateFormat"
               placeholder={dateToFormattedDate(String(event.date))}
               name="date"
               type="text"
+              pattern="\d*"
               containerStyle={{
                 width: '128px',
                 height: '40px',
