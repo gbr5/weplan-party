@@ -99,7 +99,7 @@ const SideMenu: React.FC<IProps> = ({ user }: IProps) => {
           description: 'As alterações já podem ser visualizadas',
         });
       } catch (err) {
-        return addToast({
+        addToast({
           type: 'error',
           title: 'Erro ao atualizar informações de usuário.',
           description: 'Tente novamente.',
