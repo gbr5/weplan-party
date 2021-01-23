@@ -80,16 +80,16 @@ const SetEventDate: React.FC<IProps> = ({
       onHandleCloseWindow={() => closeWindow()}
       containerStyle={{
         zIndex: 15,
-        top: '35%',
-        left: '10%',
-        height: '30%',
-        width: '80%',
+        top: '0%',
+        left: '0%',
+        height: '100%',
+        width: '100%',
       }}
     >
-      <Container>
-        <h1>Defina a data</h1>
+      <Form ref={formRef} onSubmit={handleSubmit}>
+        <Container>
+          <h1>Defina a data</h1>
 
-        <Form ref={formRef} onSubmit={handleSubmit}>
           {event !== undefined && (
             <Input
               onChange={e => setUpdatedDate(e.target.value)}
@@ -111,10 +111,10 @@ const SetEventDate: React.FC<IProps> = ({
               setTime={(e: string) => handleSetTime(e)}
               containerStyle={{
                 zIndex: 15,
-                top: '30%',
-                left: '10%',
-                height: '30%',
-                width: '80%',
+                top: '0%',
+                left: '0%',
+                height: '100%',
+                width: '100%',
               }}
               message="Defina o horário"
             />
@@ -124,8 +124,8 @@ const SetEventDate: React.FC<IProps> = ({
               Próximo
             </button>
           )}
-        </Form>
-      </Container>
+        </Container>
+      </Form>
     </WindowUnFormattedContainer>
   );
 };
