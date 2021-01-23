@@ -69,12 +69,12 @@ const SetDateWindow: React.FC<IProps> = ({
         <h1>Defina a data</h1>
 
         <Input
-          pattern="\d*"
           onChange={e => setUpdatedDate(e.target.value)}
           mask="brlDateFormat"
           placeholder={dateToFormattedDate(String(new Date()))}
           name="date"
           type="text"
+          pattern="\d*"
           containerStyle={{
             width: '128px',
             height: '40px',
