@@ -92,7 +92,10 @@ const EventHostDashboard: React.FC = () => {
   const [deleteOwnerDrawer, setDeleteOwnerDrawer] = useState(false);
   const [firstRow, setFirstRow] = useState(true);
   const [sidebar, setSidebar] = useState(false);
-  const [latestActionsSection, setLatestActionsSection] = useState(true);
+  // const [latestActionsSection, setLatestActionsSection] = useState(true);
+  const [eventMainDashboardSection, setEventMainDashboardSection] = useState(
+    true,
+  );
   const [guestsSection, setGuestsSection] = useState(false);
   const [financeSection, setFinanceSection] = useState(false);
   const [supplierSection, setSupplierSection] = useState(false);
@@ -189,7 +192,7 @@ const EventHostDashboard: React.FC = () => {
     setOwner({} as IEventOwnerDTO);
     setMember({} as IEventMemberDTO);
     setSelectedSupplier({} as IEventSupplierDTO);
-    setLatestActionsSection(false);
+    setEventMainDashboardSection(false);
     setGuestsSection(false);
     setFinanceSection(false);
     setCheckListSection(false);
@@ -281,7 +284,7 @@ const EventHostDashboard: React.FC = () => {
   }, [addPlannerDrawer, closeAllWindows]);
   const handleLatestActionsSection = useCallback(() => {
     closeAllSections();
-    setLatestActionsSection(true);
+    setEventMainDashboardSection(true);
   }, [closeAllSections]);
   const handleGuestsSection = useCallback(() => {
     closeAllSections();
@@ -619,11 +622,22 @@ const EventHostDashboard: React.FC = () => {
     handleGetHiredSuppliers();
   }, [handleGetHiredSuppliers]);
 
+  const updateEventMainDashboard = useCallback(() => {
+    try {
+      setEventMainDashboardSection(false);
+    } catch (err) {
+      throw new Error(err);
+    } finally {
+      setEventMainDashboardSection(true);
+    }
+  }, []);
+
   return (
     <Container>
-      <PageHeader />
-      {!!createEventInfoWindowForm && (
+      <PageHeader updateMyEvents={updateEventMainDashboard} />
+      {!!createEventInfoWindowForm && !!pageEvent.eventInfo && (
         <CreateEventInfoWindowForm
+          updateEvent={updateEventMainDashboard}
           eventId={eventId}
           getEventInfo={handleGetEventInfo}
           handleCloseWindow={closeEventInfoWindowForm}
@@ -845,7 +859,7 @@ const EventHostDashboard: React.FC = () => {
             />
           )}
           {/* {!!latestActionsSection && <LatestNewsSection />} */}
-          {!!latestActionsSection && (
+          {!!eventMainDashboardSection && (
             <EventMainDashboard event={pageEvent} master={master} />
           )}
           {!!supplierSection && (

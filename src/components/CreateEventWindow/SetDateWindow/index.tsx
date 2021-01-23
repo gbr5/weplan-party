@@ -45,10 +45,10 @@ const SetDateWindow: React.FC<IProps> = ({
       onHandleCloseWindow={() => closeWindow()}
       containerStyle={{
         zIndex: 15,
-        top: '30%',
-        left: '10%',
-        height: '30%',
-        width: '80%',
+        top: '0%',
+        left: '0%',
+        height: '100%',
+        width: '100%',
       }}
     >
       {timeWindow && (
@@ -57,16 +57,18 @@ const SetDateWindow: React.FC<IProps> = ({
           setTime={(e: string) => handleThenFunction(e)}
           containerStyle={{
             zIndex: 15,
-            top: '30%',
-            left: '10%',
-            height: '30%',
-            width: '80%',
+            top: '0%',
+            left: '0%',
+            height: '100%',
+            width: '100%',
           }}
-          message="Defina o horário"
+          message="Que horas começa?"
         />
       )}
       <Container>
-        <h1>Defina a data</h1>
+        <h1>Dia do evento</h1>
+
+        <p>Dia/Mês/Ano</p>
 
         <Input
           onChange={e => setUpdatedDate(e.target.value)}
@@ -82,7 +84,7 @@ const SetDateWindow: React.FC<IProps> = ({
         />
         {updatedDate !== '' && (
           <button type="button" onClick={() => setTimeWindow(true)}>
-            Salvar
+            Próximo
           </button>
         )}
       </Container>

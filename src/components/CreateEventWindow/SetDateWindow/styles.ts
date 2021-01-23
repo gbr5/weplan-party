@@ -4,13 +4,25 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
 
-  gap: 16px;
+  gap: 4vh;
 
   align-items: center;
-  justify-content: center;
+  justify-content: stretch;
 
   width: 100%;
   height: 100%;
+
+  h1 {
+    font-size: 28px;
+  }
+
+  p {
+    font-size: 24px;
+  }
+
+  div {
+    margin: 4vh 0;
+  }
 
   button {
     height: 40px;

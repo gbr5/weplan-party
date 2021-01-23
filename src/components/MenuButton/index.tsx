@@ -1,29 +1,19 @@
-import React, { useCallback, useState, useRef } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { MdMenu } from 'react-icons/md';
-import { FormHandles } from '@unform/core';
-import * as Yup from 'yup';
-import { Form } from '@unform/web';
-// import { useHistory } from 'react-router-dom';
-
-import { useToast } from '../../hooks/toast';
-// import { useAuth } from '../../hooks/auth';
-import api from '../../services/api';
-import getValidationErrors from '../../utils/getValidationErros';
-
-import Input from '../Input';
-
-import { Button, EventInfoDrawer } from './styles';
+import { Button } from './styles';
 import MainFriendsWindow from '../MainFriendsWindow';
-import ICreateEventInfoDTO from '../../dtos/ICreateEventInfoDTO';
 import UploadFileWindow from '../UploadFileWindow';
 import MenuDrawer from './MenuDrawer';
 import EventTypeWindow from '../EventTypeWindow';
 import CreateEventWindow from '../CreateEventWindow';
 import Backdrop from '../Backdrop';
+import CreateEventInfoWindowForm from '../CreateEventInfoWindowForm';
+import IEventDTO from '../../dtos/IEventDTO';
 
 interface IProps {
   signOut: Function;
+  updateMyEvents: Function;
 }
 interface IEvent {
   id: string;
@@ -31,7 +21,7 @@ interface IEvent {
   trimmed_name: string;
 }
 
-const MenuButton: React.FC<IProps> = ({ signOut }: IProps) => {
+const MenuButton: React.FC<IProps> = ({ signOut, updateMyEvents }: IProps) => {
   const [menuDrawer, setMenuDrawer] = useState(false);
   const [friendsWindow, setFriendsWindow] = useState(false);
   const [createEventDrawer, setCreateEventDrawer] = useState(false);
@@ -39,8 +29,7 @@ const MenuButton: React.FC<IProps> = ({ signOut }: IProps) => {
   const [uploadFileWindow, setUploadFileWindow] = useState(false);
   const [eventType, setEventType] = useState<string>();
   const [eventInfoDrawer, setEventInfoDrawer] = useState(false);
-  const [myEvents, setMyEvents] = useState<IEvent[]>([]);
-  const [eventName, setEventName] = useState('');
+  const [eventCreated, setEventCreated] = useState({} as IEventDTO);
   const [backdrop, setBackdrop] = useState(false);
 
   const closeAll = useCallback(() => {
@@ -52,10 +41,6 @@ const MenuButton: React.FC<IProps> = ({ signOut }: IProps) => {
     setUploadFileWindow(false);
     setBackdrop(false);
   }, []);
-
-  const formRef = useRef<FormHandles>(null);
-
-  const { addToast } = useToast();
 
   const [tipoDeEvento, setTipoDeEvento] = useState('Outros');
 
@@ -103,71 +88,6 @@ const MenuButton: React.FC<IProps> = ({ signOut }: IProps) => {
     setEventInfoDrawer(!eventInfoDrawer);
   }, [eventInfoDrawer]);
 
-  const handlePostEventInfo = useCallback(
-    async (data: ICreateEventInfoDTO) => {
-      try {
-        const new_event = myEvents.find(event => event.name === eventName);
-        formRef.current?.setErrors([]);
-
-        const schema = Yup.object().shape({
-          number_of_guests: Yup.string().required('Nome é obrigatório'),
-          duration: Yup.string(),
-          budget: Yup.number().required(''),
-          description: Yup.string().required(),
-          country: Yup.string().required(),
-          local_state: Yup.string().required(),
-          city: Yup.string().required(),
-          address: Yup.string().required(),
-          dress_code: Yup.string().required(),
-        });
-
-        await schema.validate(data, {
-          abortEarly: false,
-        });
-
-        const hours = Number(data.duration.split(':')[0]) * 60;
-        const minutes = Number(data.duration.split(':')[1]);
-        new_event &&
-          (await api.post(`events/${new_event.id}/event-info`, {
-            number_of_guests: data.number_of_guests,
-            duration: hours + minutes,
-            budget: data.budget,
-            description: data.description,
-            country: data.country,
-            local_state: data.local_state,
-            city: data.city,
-            address: data.address,
-            dress_code: data.dress_code,
-          }));
-
-        addToast({
-          type: 'success',
-          title: 'Item criado com Sucesso',
-          description: 'O item foi adicionado à sua check-list.',
-        });
-        handleEventInfoDrawer();
-      } catch (err) {
-        if (err instanceof Yup.ValidationError) {
-          const error = getValidationErrors(err);
-
-          formRef.current?.setErrors(error);
-        }
-
-        addToast({
-          type: 'error',
-          title: 'Erro ao criar item da check-list',
-          description: 'Erro  ao criar o item, tente novamente.',
-        });
-      }
-    },
-    [addToast, handleEventInfoDrawer, myEvents, eventName],
-  );
-
-  const handleGetMyEvents = useCallback(async () => {
-    const response = await api.get('events');
-    setMyEvents(response.data);
-  }, []);
-
   const handleMenuDrawer = useCallback(() => {
     closeAll();
     setMenuDrawer(!menuDrawer);
@@ -196,10 +116,10 @@ const MenuButton: React.FC<IProps> = ({ signOut }: IProps) => {
           eventType={eventType}
           handleEventInfoDrawer={handleEventInfoDrawer}
           handleEventTypeDrawer={handleEventTypeDrawer}
-          handleGetMyEvents={handleGetMyEvents}
+          handleGetMyEvents={updateMyEvents}
           onHandleCloseWindow={() => closeAll()}
           tipoDeEvento={tipoDeEvento}
-          handleSetEventName={(e: string) => setEventName(e)}
+          setEventCreated={(e: IEventDTO) => setEventCreated(e)}
         />
       )}
       {!!eventTypeDrawer && (
@@ -209,47 +129,12 @@ const MenuButton: React.FC<IProps> = ({ signOut }: IProps) => {
         />
       )}
       {!!eventInfoDrawer && (
-        <Form ref={formRef} onSubmit={handlePostEventInfo}>
-          <EventInfoDrawer>
-            <h1>Informações do evento</h1>
-            <div>
-              <div>
-                <p>Duração (em horas)</p>
-                <Input
-                  name="duration"
-                  type="time"
-                  placeholder="Duração (em horas)"
-                />
-                <p>Número de Convidados</p>
-                <Input
-                  name="number_of_guests"
-                  type="number"
-                  placeholder="Número de convidados"
-                />
-                <p>Orçamento</p>
-                <Input name="budget" type="number" placeholder="Orçamento" />
-                <p>Descrição</p>
-                <Input name="description" type="text" placeholder="Descrição" />
-              </div>
-              <div>
-                <p>País</p>
-                <Input name="country" type="text" placeholder="País" />
-                <p>Estado</p>
-                <Input name="local_state" type="text" placeholder="Estado" />
-                <p>Cidade</p>
-                <Input name="city" type="text" placeholder="Cidade" />
-                <p>Traje</p>
-                <Input name="dress_code" type="text" placeholder="Traje" />
-              </div>
-              <p>Endereço</p>
-              <Input name="address" type="text" placeholder="Endereço" />
-            </div>
-
-            <button type="submit">
-              <h3>Salvar</h3>
-            </button>
-          </EventInfoDrawer>
-        </Form>
+        <CreateEventInfoWindowForm
+          updateEvent={() => updateMyEvents()}
+          eventId={eventCreated.id}
+          getEventInfo={() => setEventInfoDrawer(false)}
+          handleCloseWindow={() => setEventInfoDrawer(false)}
+        />
       )}
       {uploadFileWindow && (
         <UploadFileWindow

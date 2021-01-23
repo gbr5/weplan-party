@@ -8,11 +8,9 @@ import SignIn from '../pages/SignIn';
 import SignUp from '../pages/SignUp';
 import ForgotPassword from '../pages/ForgotPassword';
 import ResetPassword from '../pages/ResetPassword';
-import Profile from '../pages/Profile';
 
 import HostDashboard from '../pages/HostDashboard';
 import EventHostDashboard from '../pages/EventHostDashboard';
-import FriendsDashboard from '../pages/FriendsDashboard';
 import WelcomePage from '../pages/WelcomePage';
 
 const Routes: React.FC = () => {
@@ -25,7 +23,6 @@ const Routes: React.FC = () => {
       <Route path="/reset-password" exact component={ResetPassword} />
       <Route path="/wellcome" exact component={WelcomePage} />
 
-      <Route path="/profile" exact component={Profile} isPrivate />
       <Route
         path="/dashboard/my-event/:name"
         exact
@@ -33,7 +30,6 @@ const Routes: React.FC = () => {
         isPrivate
       />
       <Route path="/dashboard" exact component={HostDashboard} isPrivate />
-      <Route path="/friends" exact component={FriendsDashboard} isPrivate />
     </Switch>
   );
 };
