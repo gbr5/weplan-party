@@ -30,9 +30,6 @@ const WelcomePage: React.FC = () => {
       const token = queryParams.split('&')[0];
       const email = queryParams.split('&')[1].replace('email=', '');
       setUserEmail(email);
-      console.log('token', token);
-      console.log('email', email);
-      console.log('location.search', location.search);
 
       await api.put(`/user/activation/${token}`);
 

@@ -1,5 +1,5 @@
 import { shade } from 'polished';
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 
 const appearFromTop = keyframes`
   0% {
@@ -152,20 +152,39 @@ export const PossibleDatesHeader = styled.div`
   justify-content: center;
 `;
 
-export const PublishedButton = styled.button`
-  background: rgba(0, 0, 0, 0.3);
+interface IButtonProps {
+  isPublished: boolean;
+}
+
+export const PublishedButton = styled.button<IButtonProps>`
+  background: var(--secondary-color);
   border-radius: 4px;
   padding: 4px;
   border: var(--title-color);
   box-shadow: var(--box-shadow);
   color: var(--title-color);
+  transition: 0.3s;
 
   &:hover {
     background: var(--primary-color);
     color: var(--secondary-color);
     border: var(--primary-color);
-    box-shadow: var(--box-shadow);
+    box-shadow: var(--window-box-shadow);
   }
+
+  ${props =>
+    props.isPublished &&
+    css`
+      background: var(--primary-color);
+      box-shadow: var(--box-shadow);
+      color: var(--secondary-color);
+
+      &:hover {
+        background: var(--secondary-color);
+        color: var(--primary-color);
+        box-shadow: var(--window-box-shadow);
+      }
+    `}
 `;
 export const EditButton = styled.button`
   background: rgba(0, 0, 0, 0.3);

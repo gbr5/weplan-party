@@ -43,11 +43,28 @@ const FirstSection: React.FC<IProps> = ({ event, master }: IProps) => {
   const [avatar, setAvatar] = useState(placeholder);
   const [alreadySelectedDates, setAlreadySelectedDates] = useState<Date[]>([]);
   const [createEventDatesWindow, setCreateEventDatesWindow] = useState(false);
+  const [updatedEvent, setUpdatedEvent] = useState(event);
+
+  const updateEvent = useCallback(() => {
+    try {
+      api.get(`events/${event.id}`).then(response => {
+        setUpdatedEvent(response.data.event);
+        addToast({
+          type: 'success',
+          title: 'Evento atualizado',
+        });
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
+  }, [event, addToast]);
 
   useEffect(() => {
-    const dates = !!event.eventDates && event.eventDates.map(date => date.date);
+    const dates =
+      !!updatedEvent.eventDates &&
+      updatedEvent.eventDates.map(date => date.date);
     !!dates && setAlreadySelectedDates(dates);
-  }, [event]);
+  }, [updatedEvent]);
 
   const openEventDateWindow = useCallback(() => {
     setEventDateWindow(true);
@@ -60,12 +77,15 @@ const FirstSection: React.FC<IProps> = ({ event, master }: IProps) => {
 
         data.append('avatar', e.target.files[0]);
 
-        const response = await api.patch(`/events/avatar/${event.id}`, data);
+        const response = await api.patch(
+          `/events/avatar/${updatedEvent.id}`,
+          data,
+        );
         setAvatar(response.data);
-
+        updateEvent();
         addToast({
           type: 'success',
-          title: 'Avatar atualizado com sucesso.',
+          title: 'Atualização enviada.',
         });
       } else {
         addToast({
@@ -76,25 +96,26 @@ const FirstSection: React.FC<IProps> = ({ event, master }: IProps) => {
         });
       }
     },
-    [addToast, event],
+    [addToast, updateEvent, updatedEvent],
   );
   const eventDate = useMemo(() => {
-    const date = formatDateToString(String(event.date)).split(' - ')[1];
-    const hour = formatDateToString(String(event.date)).split(' - ')[0];
+    const date = formatDateToString(String(updatedEvent.date)).split(' - ')[1];
+    const hour = formatDateToString(String(updatedEvent.date)).split(' - ')[0];
 
     return {
       date,
       hour,
     };
-  }, [event.date]);
+  }, [updatedEvent.date]);
 
   const handleEventIsPublished = useCallback(async () => {
     try {
-      await api.put(`event/is-published/${event.id}`);
+      await api.put(`event/is-published/${updatedEvent.id}`);
 
+      updateEvent();
       addToast({
-        type: 'success',
-        title: 'Evento atualizado com sucesso.',
+        type: 'info',
+        title: 'Atualização enviada!',
       });
     } catch (err) {
       addToast({
@@ -104,20 +125,30 @@ const FirstSection: React.FC<IProps> = ({ event, master }: IProps) => {
       });
       throw new Error(err);
     }
-  }, [event, addToast]);
+  }, [updatedEvent, updateEvent, addToast]);
 
   const handleCreateEventDates = useCallback(
     (props: Date[]) => {
       try {
         api.post('event/dates', {
-          event_id: event.id,
+          event_id: updatedEvent.id,
           dates: props,
         });
+        updateEvent();
+
+        addToast({
+          type: 'info',
+          title: 'Atualização enviada!',
+        });
       } catch (err) {
+        addToast({
+          type: 'error',
+          title: 'Erro ao criar possíveis datas',
+        });
         throw new Error(err);
       }
     },
-    [event],
+    [updatedEvent, updateEvent, addToast],
   );
 
   return (
@@ -126,7 +157,7 @@ const FirstSection: React.FC<IProps> = ({ event, master }: IProps) => {
         <SetEventDate
           closeWindow={() => setEventDateWindow(false)}
           event={event}
-          getEvent={() => setEventDateWindow(false)}
+          getEvent={() => updateEvent()}
         />
       )}
       {createEventDatesWindow && (
@@ -144,20 +175,24 @@ const FirstSection: React.FC<IProps> = ({ event, master }: IProps) => {
         </label>
       </AvatarInput>
       <EventSection>
-        <h1>{event.name}</h1>
+        <h1>{updatedEvent.name}</h1>
         <InsideSection>
           <span>
             <p>Anfitrião Master</p>
             <p>{master.name}</p>
           </span>
           <span>
-            <p>Tipo de evento: {getEventType(event.event_type)}</p>
-            <PublishedButton type="button" onClick={handleEventIsPublished}>
-              {event.isPublished ? 'Publicado' : 'Publicar'}
+            <p>Tipo de evento: {getEventType(updatedEvent.event_type)}</p>
+            <PublishedButton
+              isPublished={updatedEvent.isPublished}
+              type="button"
+              onClick={handleEventIsPublished}
+            >
+              {updatedEvent.isPublished ? 'Publicado' : 'Publicar'}
             </PublishedButton>
           </span>
           <span>
-            {event.isDateDefined ? (
+            {updatedEvent.isDateDefined ? (
               <>
                 <p>{eventDate.date}</p>
                 <p>{eventDate.hour}</p>
@@ -166,7 +201,11 @@ const FirstSection: React.FC<IProps> = ({ event, master }: IProps) => {
                 </EditButton>
               </>
             ) : (
-              <PublishedButton type="button" onClick={openEventDateWindow}>
+              <PublishedButton
+                isPublished
+                type="button"
+                onClick={openEventDateWindow}
+              >
                 Definir a data do evento
               </PublishedButton>
             )}
@@ -176,50 +215,61 @@ const FirstSection: React.FC<IProps> = ({ event, master }: IProps) => {
           <p>Possíveis datas</p>
 
           <PublishedButton
+            isPublished
             type="button"
             onClick={() => setCreateEventDatesWindow(true)}
           >
             <MdAdd />
           </PublishedButton>
         </PossibleDatesHeader>
-        <PossibleDates dates={event.eventDates} />
+        <PossibleDates dates={updatedEvent.eventDates} />
       </EventSection>
       <EventInfoSection>
         <span>
           <p>Duração</p>
-          <p>{event.eventInfo && event.eventInfo.duration} horas</p>
+          <p>
+            {updatedEvent.eventInfo && updatedEvent.eventInfo.duration} horas
+          </p>
         </span>
         <span>
           <p>N° de Convidados</p>
-          <p>{event.eventInfo && event.eventInfo.number_of_guests}</p>
+          <p>
+            {updatedEvent.eventInfo && updatedEvent.eventInfo.number_of_guests}
+          </p>
         </span>
         <span>
           <p>Orçamento</p>
-          <p>{numberFormat(event.eventInfo && event.eventInfo.budget)}</p>
+          <p>
+            {numberFormat(
+              updatedEvent.eventInfo && updatedEvent.eventInfo.budget,
+            )}
+          </p>
         </span>
         <span>
           <p>Descrição</p>
-          <p>{event.eventInfo && event.eventInfo.description}</p>
+          <p>{updatedEvent.eventInfo && updatedEvent.eventInfo.description}</p>
         </span>
         <span>
           <p>País</p>
-          <p>{event.eventInfo && event.eventInfo.country}</p>
+          <p>{updatedEvent.eventInfo && updatedEvent.eventInfo.country}</p>
         </span>
         <span>
           <p>Estado</p>
-          <p>{event.eventInfo && event.eventInfo.local_state}</p>
+          <p>{updatedEvent.eventInfo && updatedEvent.eventInfo.local_state}</p>
         </span>
         <span>
           <p>Cidade</p>
-          <p>{event.eventInfo && event.eventInfo.city}</p>
+          <p>{updatedEvent.eventInfo && updatedEvent.eventInfo.city}</p>
         </span>
         <span>
           <p>Endereço</p>
-          <p>{event.eventInfo && event.eventInfo.address}</p>
+          <p>{updatedEvent.eventInfo && updatedEvent.eventInfo.address}</p>
         </span>
         <span>
           <p>Traje</p>
-          <p>{event.eventInfo ? event.eventInfo.dress_code : ''}</p>
+          <p>
+            {updatedEvent.eventInfo ? updatedEvent.eventInfo.dress_code : ''}
+          </p>
         </span>
       </EventInfoSection>
     </Container>
