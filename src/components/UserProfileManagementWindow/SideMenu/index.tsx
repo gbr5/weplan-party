@@ -61,8 +61,28 @@ const SideMenu: React.FC<IProps> = ({ user }: IProps) => {
   );
 
   const handleSubmit = useCallback(
-    (data: IFormData) => {
+    async (data: IFormData) => {
       try {
+        const response = await api.get<IUserDTO[]>(
+          `users?uniqueName=${data.name}&email=${data.email}`,
+        );
+
+        if (response.data[0].name === data.name) {
+          return addToast({
+            type: 'error',
+            title: 'Error ao Atualizar o Perfil [Nome de Usuário]',
+            description: `Nome de usuário "${data.name}" indisponível, tente novamente.`,
+          });
+        }
+
+        if (response.data[0].email === data.email) {
+          return addToast({
+            type: 'error',
+            title: 'Error ao Atualizar o Perfil [E-mail]',
+            description: `E-mail "${data.email}" indisponível, tente novamente.`,
+          });
+        }
+
         if (userNameField && userEmailField) {
           updateUserInfo(data.name, data.email);
         }
@@ -73,13 +93,13 @@ const SideMenu: React.FC<IProps> = ({ user }: IProps) => {
           updateUserInfo(user.name, data.email);
         }
 
-        addToast({
+        return addToast({
           type: 'success',
           title: 'Atualização efetuada com sucesso',
           description: 'As alterações já podem ser visualizadas',
         });
       } catch (err) {
-        addToast({
+        return addToast({
           type: 'error',
           title: 'Erro ao atualizar informações de usuário.',
           description: 'Tente novamente.',

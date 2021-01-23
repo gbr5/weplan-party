@@ -29,7 +29,7 @@ const BooleanQuestionWindow: React.FC<IProps> = ({
       <Container>
         <h1>{question}</h1>
         <div>
-          <button type="button" onClick={() => selectBooleanOption()}>
+          <button type="button" onClick={() => selectBooleanOption(true)}>
             Sim
           </button>
           <button type="button" onClick={() => selectBooleanOption(false)}>
