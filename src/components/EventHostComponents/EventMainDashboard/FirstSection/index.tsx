@@ -158,6 +158,22 @@ const FirstSection: React.FC<IProps> = ({ event, master }: IProps) => {
     [updatedEvent, updateEvent, addToast],
   );
 
+  const eventDuration = useMemo(() => {
+    if (updatedEvent.eventInfo) {
+      const durationSplitted = (updatedEvent.eventInfo.duration / 60)
+        .toString()
+        .split('.');
+      const hour = durationSplitted[0];
+      const minutes = (Number(`0.${durationSplitted[1]}`) * 60)
+        .toString()
+        .split('.')[0];
+      return `${hour.length === 1 ? `0${hour}` : hour}:${
+        minutes.length === 1 ? `0${minutes}` : minutes
+      }`;
+    }
+    return '00:00';
+  }, [updatedEvent.eventInfo]);
+
   return (
     <Container>
       {eventDateWindow && (
@@ -234,9 +250,7 @@ const FirstSection: React.FC<IProps> = ({ event, master }: IProps) => {
       <EventInfoSection>
         <span>
           <p>Duração</p>
-          <p>
-            {updatedEvent.eventInfo && updatedEvent.eventInfo.duration} horas
-          </p>
+          <p>{updatedEvent.eventInfo && eventDuration}</p>
         </span>
         <span>
           <p>N° de Convidados</p>
