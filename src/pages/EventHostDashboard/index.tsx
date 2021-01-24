@@ -730,7 +730,6 @@ const EventHostDashboard: React.FC = () => {
           onHandleCloseWindow={() => setEditEventInfoDrawer(false)}
         />
       )}
-
       {!!addPlannerDrawer && (
         <AddPlannerWindow
           eventId={eventId}
@@ -860,7 +859,11 @@ const EventHostDashboard: React.FC = () => {
           )}
           {/* {!!latestActionsSection && <LatestNewsSection />} */}
           {!!eventMainDashboardSection && (
-            <EventMainDashboard event={pageEvent} master={master} />
+            <EventMainDashboard
+              currentNumberOfGuests={currentNumberOfGuests}
+              event={pageEvent}
+              master={master}
+            />
           )}
           {!!supplierSection && (
             <EventSupplierSection
