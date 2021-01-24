@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useCallback, useRef } from 'react';
+import React, { MouseEventHandler, useCallback, useRef, useState } from 'react';
 
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
@@ -12,6 +12,7 @@ import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
 import getValidationErrors from '../../utils/getValidationErros';
 import IEventInfoDTO from '../../dtos/IEventInfoDTO';
+import SetTimeWindow from '../SetTimeWindow';
 
 interface IProps {
   onHandleCloseWindow: MouseEventHandler;
@@ -31,13 +32,15 @@ const EditEventInfoWindow: React.FC<IProps> = ({
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
 
+  const [eventDurationWindow, setEventDurationWindow] = useState(true);
+  const [eventDuration, setEventDuration] = useState('');
+
   const handleEditEventInfo = useCallback(
     async (data: IEventInfoDTO) => {
       try {
         formRef.current?.setErrors([]);
 
         const schema = Yup.object().shape({
-          duration: Yup.number(),
           number_of_guests: Yup.number(),
           budget: Yup.number(),
           country: Yup.string(),
@@ -45,11 +48,13 @@ const EditEventInfoWindow: React.FC<IProps> = ({
           city: Yup.string(),
           address: Yup.string(),
           dress_code: Yup.string(),
+          description: Yup.string(),
         });
 
         await schema.validate(data, {
           abortEarly: false,
         });
+
         if (data.number_of_guests < currentNumberOfGuests) {
           addToast({
             type: 'error',
@@ -61,17 +66,21 @@ const EditEventInfoWindow: React.FC<IProps> = ({
         }
         let updatedEventInfo = {} as IEventInfoDTO;
 
+        const hours = Number(eventDuration.split(':')[0]) * 60;
+        const minutes = Number(eventDuration.split(':')[1]);
+
         if (!eventInfo.id) {
           const response = await api.post(`events/${eventId}/event-info`, {
             number_of_guests: data.number_of_guests,
             local_state: data.local_state,
             city: data.city,
-            duration: data.duration,
+            duration:
+              eventDuration !== '' ? hours + minutes : eventInfo.duration,
             country: data.country,
             address: data.address,
             dress_code: data.dress_code,
             budget: data.budget,
-            description: 'Descrição',
+            description: data.description,
           });
           updatedEventInfo = response.data;
         } else {
@@ -79,12 +88,12 @@ const EditEventInfoWindow: React.FC<IProps> = ({
             number_of_guests: data.number_of_guests,
             local_state: data.local_state,
             city: data.city,
-            duration: data.duration,
+            duration: eventDuration !== '' ? hours + minutes : '',
             country: data.country,
             address: data.address,
             dress_code: data.dress_code,
             budget: data.budget,
-            description: 'Descrição',
+            description: data.description,
           });
           updatedEventInfo = response.data;
         }
@@ -109,8 +118,20 @@ const EditEventInfoWindow: React.FC<IProps> = ({
         });
       }
     },
-    [addToast, currentNumberOfGuests, handleCloseWindow, eventId, eventInfo],
+    [
+      addToast,
+      currentNumberOfGuests,
+      eventDuration,
+      handleCloseWindow,
+      eventId,
+      eventInfo,
+    ],
   );
+
+  const handleEventDuration = useCallback((e: string) => {
+    setEventDuration(e);
+    setEventDurationWindow(false);
+  }, []);
 
   return (
     <WindowContainer
@@ -123,64 +144,110 @@ const EditEventInfoWindow: React.FC<IProps> = ({
         width: '90%',
       }}
     >
+      {eventDurationWindow && (
+        <SetTimeWindow
+          closeWindow={() => setEventDurationWindow(false)}
+          containerStyle={{
+            height: '100%',
+            width: '100%',
+            left: '0%',
+            top: '0%',
+            zIndex: 25,
+            position: 'fixed',
+          }}
+          message="Defina a duração do evento"
+          setTime={(e: string) => handleEventDuration(e)}
+        />
+      )}
+
       <Form ref={formRef} onSubmit={handleEditEventInfo}>
         <Container>
           <h1>Editar informações do evento</h1>
           <div>
             <div>
-              <Input
-                defaultValue={eventInfo ? eventInfo.duration : ''}
-                name="duration"
-                type="number"
-                placeholder="Duração (em horas)"
-              />
-              <Input
-                defaultValue={eventInfo ? eventInfo.number_of_guests : ''}
-                name="number_of_guests"
-                type="number"
-                placeholder="Número de convidados"
-              />
-              <Input
-                defaultValue={eventInfo ? eventInfo.budget : ''}
-                name="budget"
-                type="number"
-                placeholder="Orçamento"
-              />
+              <div>
+                <p>Descrição</p>
+                <Input
+                  defaultValue={
+                    eventInfo && eventInfo.description
+                      ? eventInfo.description
+                      : ''
+                  }
+                  name="description"
+                  type="text"
+                  placeholder="Descrição"
+                />
+              </div>
+              <div>
+                <p>N° de Convidados</p>
+                <Input
+                  defaultValue={eventInfo ? eventInfo.number_of_guests : ''}
+                  name="number_of_guests"
+                  type="number"
+                  placeholder="Número de convidados"
+                />
+              </div>
+              <div>
+                <p>Orçamento</p>
+                <Input
+                  defaultValue={eventInfo ? eventInfo.budget : ''}
+                  name="budget"
+                  type="number"
+                  placeholder="Orçamento"
+                />
+              </div>
+              <div>
+                <p>Traje</p>
+                <Input
+                  defaultValue={
+                    eventInfo && eventInfo.dress_code
+                      ? eventInfo.dress_code
+                      : ''
+                  }
+                  name="dress_code"
+                  type="text"
+                  placeholder="Traje"
+                />
+              </div>
             </div>
             <div>
-              <Input
-                defaultValue={eventInfo ? eventInfo.country : ''}
-                name="country"
-                type="text"
-                placeholder="País"
-              />
-              <Input
-                defaultValue={eventInfo ? eventInfo.local_state : ''}
-                name="local_state"
-                type="text"
-                placeholder="Estado"
-              />
-              <Input
-                defaultValue={eventInfo ? eventInfo.city : ''}
-                name="city"
-                type="text"
-                placeholder="Cidade"
-              />
+              <div>
+                <p>País</p>
+                <Input
+                  defaultValue={eventInfo ? eventInfo.country : ''}
+                  name="country"
+                  type="text"
+                  placeholder="País"
+                />
+              </div>
+              <div>
+                <p>Estado</p>
+                <Input
+                  defaultValue={eventInfo ? eventInfo.local_state : ''}
+                  name="local_state"
+                  type="text"
+                  placeholder="Estado"
+                />
+              </div>
+              <div>
+                <p>Cidade</p>
+                <Input
+                  defaultValue={eventInfo ? eventInfo.city : ''}
+                  name="city"
+                  type="text"
+                  placeholder="Cidade"
+                />
+              </div>
+              <div>
+                <p>Endereço</p>
+                <Input
+                  defaultValue={eventInfo ? eventInfo.address : ''}
+                  name="address"
+                  type="text"
+                  placeholder="Endereço"
+                />
+              </div>
             </div>
-            <Input
-              defaultValue={
-                eventInfo && eventInfo.dress_code ? eventInfo.dress_code : ''
-              }
-              name="dress_code"
-              type="text"
-              placeholder="Traje"
-            />
-            <Input
-              defaultValue={eventInfo ? eventInfo.address : ''}
-              name="address"
-              type="text"
-              placeholder="Endereço"
-            />
           </div>
           <button type="submit">
             <h3>Salvar</h3>

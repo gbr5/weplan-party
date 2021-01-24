@@ -15,17 +15,17 @@ import { useToast } from '../../../../hooks/toast';
 import api from '../../../../services/api';
 import formatDateToString from '../../../../utils/formatDateToString';
 import { getEventType } from '../../../../utils/getEventType';
-import { numberFormat } from '../../../../utils/numberFormat';
+import EditEventInfoWindow from '../../../EditEventInfoWindow';
 import SelectMultipleDates from '../../../SelectMultipleDates';
 import SetEventDate from '../SetEventDate';
 import PossibleDates from './PossibleDatesSection';
+import EventInfoSection from './EventInfoSection';
 
 import {
   Container,
   AvatarInput,
   EventSection,
   InsideSection,
-  EventInfoSection,
   PublishedButton,
   EditButton,
   PossibleDatesHeader,
@@ -34,12 +34,18 @@ import {
 interface IProps {
   event: IEventDTO;
   master: IUserDTO;
+  currentNumberOfGuests: number;
 }
 
-const FirstSection: React.FC<IProps> = ({ event, master }: IProps) => {
+const FirstSection: React.FC<IProps> = ({
+  event,
+  master,
+  currentNumberOfGuests,
+}: IProps) => {
   const { addToast } = useToast();
 
   const [eventDateWindow, setEventDateWindow] = useState(false);
+  const [editEventInfoDrawer, setEditEventInfoDrawer] = useState(false);
   const [avatar, setAvatar] = useState(event.avatar_url || placeholder);
   const [alreadySelectedDates, setAlreadySelectedDates] = useState<Date[]>([]);
   const [createEventDatesWindow, setCreateEventDatesWindow] = useState(false);
@@ -158,21 +164,10 @@ const FirstSection: React.FC<IProps> = ({ event, master }: IProps) => {
     [updatedEvent, updateEvent, addToast],
   );
 
-  const eventDuration = useMemo(() => {
-    if (updatedEvent.eventInfo) {
-      const durationSplitted = (updatedEvent.eventInfo.duration / 60)
-        .toString()
-        .split('.');
-      const hour = durationSplitted[0];
-      const minutes = (Number(`0.${durationSplitted[1]}`) * 60)
-        .toString()
-        .split('.')[0];
-      return `${hour.length === 1 ? `0${hour}` : hour}:${
-        minutes.length === 1 ? `0${minutes}` : minutes
-      }`;
-    }
-    return '00:00';
-  }, [updatedEvent.eventInfo]);
+  const handleCloseWindow = useCallback(() => {
+    setEditEventInfoDrawer(false);
+    updateEvent();
+  }, [updateEvent]);
 
   return (
     <Container>
@@ -190,6 +185,16 @@ const FirstSection: React.FC<IProps> = ({ event, master }: IProps) => {
           selectDates={(e: Date[]) => handleCreateEventDates(e)}
         />
       )}
+      {!!editEventInfoDrawer && (
+        <EditEventInfoWindow
+          eventId={event.id}
+          eventInfo={event.eventInfo}
+          currentNumberOfGuests={currentNumberOfGuests}
+          handleCloseWindow={handleCloseWindow}
+          onHandleCloseWindow={() => setEditEventInfoDrawer(false)}
+        />
+      )}
+
       <AvatarInput>
         <img src={avatar} alt="WePlan" />
         <label htmlFor="avatar">
@@ -247,52 +252,10 @@ const FirstSection: React.FC<IProps> = ({ event, master }: IProps) => {
         </PossibleDatesHeader>
         <PossibleDates dates={updatedEvent.eventDates} />
       </EventSection>
-      <EventInfoSection>
-        <span>
-          <p>Duração</p>
-          <p>{updatedEvent.eventInfo && eventDuration}</p>
-        </span>
-        <span>
-          <p>N° de Convidados</p>
-          <p>
-            {updatedEvent.eventInfo && updatedEvent.eventInfo.number_of_guests}
-          </p>
-        </span>
-        <span>
-          <p>Orçamento</p>
-          <p>
-            {numberFormat(
-              updatedEvent.eventInfo && updatedEvent.eventInfo.budget,
-            )}
-          </p>
-        </span>
-        <span>
-          <p>Descrição</p>
-          <p>{updatedEvent.eventInfo && updatedEvent.eventInfo.description}</p>
-        </span>
-        <span>
-          <p>País</p>
-          <p>{updatedEvent.eventInfo && updatedEvent.eventInfo.country}</p>
-        </span>
-        <span>
-          <p>Estado</p>
-          <p>{updatedEvent.eventInfo && updatedEvent.eventInfo.local_state}</p>
-        </span>
-        <span>
-          <p>Cidade</p>
-          <p>{updatedEvent.eventInfo && updatedEvent.eventInfo.city}</p>
-        </span>
-        <span>
-          <p>Endereço</p>
-          <p>{updatedEvent.eventInfo && updatedEvent.eventInfo.address}</p>
-        </span>
-        <span>
-          <p>Traje</p>
-          <p>
-            {updatedEvent.eventInfo ? updatedEvent.eventInfo.dress_code : ''}
-          </p>
-        </span>
-      </EventInfoSection>
+      <EventInfoSection
+        event={updatedEvent}
+        openEditEventInfo={() => setEditEventInfoDrawer(true)}
+      />
     </Container>
   );
 };
