@@ -64,7 +64,11 @@ interface IAppointmentDTO {
   appointment_type: string;
 }
 
-const PageHeader: React.FC = ({ children }) => {
+interface IProps {
+  updateMyEvents: Function;
+}
+
+const PageHeader: React.FC<IProps> = ({ updateMyEvents }: IProps) => {
   const { colors } = useContext(ThemeContext);
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
@@ -355,13 +359,12 @@ const PageHeader: React.FC = ({ children }) => {
       <Header>
         <HeaderContent>
           <h1>
-            <MenuButton signOut={signOut} />
+            <MenuButton updateMyEvents={updateMyEvents} signOut={signOut} />
           </h1>
 
           <button type="button" onClick={handleNavigateToDashboard}>
             <img src={logo} alt="WePlan" />
           </button>
-          {children}
           <Menu>
             <button type="button" onClick={handleProfileWindow}>
               <img src={imageProfile} alt={user.name} />

@@ -17,7 +17,7 @@ import {
 
 interface IProps {
   handleGetMyEvents: Function;
-  handleSetEventName: Function;
+  setEventCreated: Function;
   handleEventTypeDrawer: Function;
   handleEventInfoDrawer: Function;
   onHandleCloseWindow: MouseEventHandler;
@@ -27,7 +27,7 @@ interface IProps {
 
 const CreateEventWindow: React.FC<IProps> = ({
   handleGetMyEvents,
-  handleSetEventName,
+  setEventCreated,
   handleEventTypeDrawer,
   handleEventInfoDrawer,
   onHandleCloseWindow,
@@ -65,7 +65,7 @@ const CreateEventWindow: React.FC<IProps> = ({
           isDateDefined,
         });
         setEventName(event.data.name);
-        handleSetEventName(event.data.name);
+        setEventCreated(event.data.name);
       } else {
         const date = new Date();
         const hour = date.getHours();
@@ -81,8 +81,9 @@ const CreateEventWindow: React.FC<IProps> = ({
           isDateDefined,
         });
 
-        setEventName(event.data.name);
-        handleSetEventName(event.data.name);
+        console.log(event.data);
+        setEventName(event.data);
+        setEventCreated(event.data.name);
       }
       handleGetMyEvents();
       addToast({
@@ -102,7 +103,7 @@ const CreateEventWindow: React.FC<IProps> = ({
     addToast,
     eventName,
     eventType,
-    handleSetEventName,
+    setEventCreated,
     handleEventInfoDrawer,
     handleGetMyEvents,
     selectedDate,
@@ -114,6 +115,7 @@ const CreateEventWindow: React.FC<IProps> = ({
     setXStep('0');
   }, []);
 
+  console.log('oi');
   return (
     <>
       <WindowUnFormattedContainer

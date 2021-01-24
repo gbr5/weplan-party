@@ -40,7 +40,7 @@ const FirstSection: React.FC<IProps> = ({ event, master }: IProps) => {
   const { addToast } = useToast();
 
   const [eventDateWindow, setEventDateWindow] = useState(false);
-  const [avatar, setAvatar] = useState(placeholder);
+  const [avatar, setAvatar] = useState(event.avatar_url || placeholder);
   const [alreadySelectedDates, setAlreadySelectedDates] = useState<Date[]>([]);
   const [createEventDatesWindow, setCreateEventDatesWindow] = useState(false);
   const [updatedEvent, setUpdatedEvent] = useState(event);
@@ -49,6 +49,9 @@ const FirstSection: React.FC<IProps> = ({ event, master }: IProps) => {
     try {
       api.get(`events/${event.id}`).then(response => {
         setUpdatedEvent(response.data.event);
+        response.data.avatar_url &&
+          response.data.avatar_url !== avatar &&
+          setAvatar(response.data.avatar_url);
         addToast({
           type: 'success',
           title: 'Evento atualizado',
@@ -57,7 +60,11 @@ const FirstSection: React.FC<IProps> = ({ event, master }: IProps) => {
     } catch (err) {
       throw new Error(err);
     }
-  }, [event, addToast]);
+  }, [event, addToast, avatar]);
+
+  useEffect(() => {
+    updateEvent();
+  }, [updateEvent]);
 
   useEffect(() => {
     const dates =

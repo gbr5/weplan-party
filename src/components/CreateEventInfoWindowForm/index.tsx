@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
 import { FormHandles } from '@unform/core';
@@ -10,20 +10,26 @@ import api from '../../services/api';
 import { useToast } from '../../hooks/toast';
 import getValidationErrors from '../../utils/getValidationErros';
 import WindowUnFormattedContainer from '../WindowUnFormattedContainer';
+import SetTimeWindow from '../SetTimeWindow';
 
 interface IProps {
   eventId: string;
   getEventInfo: Function;
   handleCloseWindow: Function;
+  updateEvent: Function;
 }
 
 const CreateEventInfoWindowForm: React.FC<IProps> = ({
   handleCloseWindow,
   eventId,
   getEventInfo,
+  updateEvent,
 }: IProps) => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
+
+  const [eventDurationWindow, setEventDurationWindow] = useState(true);
+  const [eventDuration, setEventDuration] = useState('');
 
   const handlePostEventInfo = useCallback(
     async (data: ICreateEventInfoDTO) => {
@@ -32,7 +38,6 @@ const CreateEventInfoWindowForm: React.FC<IProps> = ({
 
         const schema = Yup.object().shape({
           number_of_guests: Yup.string().required('Nome é obrigatório'),
-          duration: Yup.string(),
           budget: Yup.number().required(''),
           description: Yup.string().required(),
           country: Yup.string().required(),
@@ -46,8 +51,8 @@ const CreateEventInfoWindowForm: React.FC<IProps> = ({
           abortEarly: false,
         });
 
-        const hours = Number(data.duration.split(':')[0]) * 60;
-        const minutes = Number(data.duration.split(':')[0]);
+        const hours = Number(eventDuration.split(':')[0]) * 60;
+        const minutes = Number(eventDuration.split(':')[1]);
 
         await api.post(`events/${eventId}/event-info`, {
           number_of_guests: data.number_of_guests,
@@ -62,11 +67,12 @@ const CreateEventInfoWindowForm: React.FC<IProps> = ({
         });
 
         getEventInfo();
+        updateEvent();
 
         addToast({
           type: 'success',
-          title: 'Item criado com Sucesso',
-          description: 'O item foi adicionado à sua check-list.',
+          title: 'Evento Atualizado com Sucesso',
+          description: 'As mudanças serão propagadas em instantes.',
         });
         handleCloseWindow();
       } catch (err) {
@@ -83,8 +89,20 @@ const CreateEventInfoWindowForm: React.FC<IProps> = ({
         });
       }
     },
-    [addToast, handleCloseWindow, getEventInfo, eventId],
+    [
+      addToast,
+      handleCloseWindow,
+      updateEvent,
+      getEventInfo,
+      eventDuration,
+      eventId,
+    ],
   );
+
+  const handleEventDuration = useCallback((e: string) => {
+    setEventDuration(e);
+    setEventDurationWindow(false);
+  }, []);
 
   return (
     <WindowUnFormattedContainer
@@ -97,16 +115,27 @@ const CreateEventInfoWindowForm: React.FC<IProps> = ({
         width: '90%',
       }}
     >
+      {eventDurationWindow && (
+        <SetTimeWindow
+          closeWindow={() => setEventDurationWindow(false)}
+          containerStyle={{
+            height: '100%',
+            width: '100%',
+            left: '0%',
+            top: '0%',
+            zIndex: 25,
+            position: 'fixed',
+          }}
+          message="Defina a duração do evento"
+          setTime={(e: string) => handleEventDuration(e)}
+        />
+      )}
       <Form ref={formRef} onSubmit={handlePostEventInfo}>
         <EventInfoForm>
           <h1>Informações do evento</h1>
           <div>
             <div>
-              <Input
-                name="duration"
-                type="number"
-                placeholder="Duração (em horas)"
-              />
+              <Input name="dress_code" type="text" placeholder="Traje" />
               <Input
                 name="number_of_guests"
                 type="number"
@@ -119,9 +148,8 @@ const CreateEventInfoWindowForm: React.FC<IProps> = ({
               <Input name="country" type="text" placeholder="País" />
               <Input name="local_state" type="text" placeholder="Estado" />
               <Input name="city" type="text" placeholder="Cidade" />
-              <Input name="dress_code" type="text" placeholder="Traje" />
+              <Input name="address" type="text" placeholder="Endereço" />
             </div>
-            <Input name="address" type="text" placeholder="Endereço" />
           </div>
 
           <button type="submit">

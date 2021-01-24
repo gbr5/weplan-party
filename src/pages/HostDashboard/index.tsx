@@ -236,7 +236,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <Container>
-      <PageHeader />
+      <PageHeader updateMyEvents={getMyEvents} />
       {!!createPersonInfoWindow && (
         <CreatePersonInfoWindowForm
           getPersonInfo={getPersonInfo}
