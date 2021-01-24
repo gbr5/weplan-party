@@ -1,4 +1,4 @@
-import React, { MouseEventHandler } from 'react';
+import React, { MouseEventHandler, useMemo } from 'react';
 
 import { FiEdit3 } from 'react-icons/fi';
 import WindowContainer from '../WindowContainer';
@@ -21,6 +21,20 @@ const EventInfoWindow: React.FC<IProps> = ({
   handleEditEventInfo,
   isOwner,
 }: IProps) => {
+  const eventDuration = useMemo(() => {
+    if (eventInfo) {
+      const durationSplitted = (eventInfo.duration / 60).toString().split('.');
+      const hour = durationSplitted[0];
+      const minutes = (Number(`0.${durationSplitted[1]}`) * 60)
+        .toString()
+        .split('.')[0];
+      return `${hour.length === 1 ? `0${hour}` : hour}:${
+        minutes.length === 1 ? `0${minutes}` : minutes
+      }`;
+    }
+    return '00:00';
+  }, [eventInfo]);
+
   return (
     <WindowContainer
       onHandleCloseWindow={onHandleCloseWindow}
@@ -40,7 +54,7 @@ const EventInfoWindow: React.FC<IProps> = ({
             <div>
               <div>
                 <p>Duração: </p>
-                <h3>{eventInfo ? eventInfo.duration : ''}</h3>
+                <h3>{eventDuration}</h3>
               </div>
               <div>
                 <p>N° de convidados: </p>
