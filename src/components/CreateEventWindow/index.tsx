@@ -81,9 +81,8 @@ const CreateEventWindow: React.FC<IProps> = ({
           isDateDefined,
         });
 
-        console.log(event.data);
-        setEventName(event.data);
-        setEventCreated(event.data.name);
+        setEventName(event.data.name);
+        setEventCreated(event.data);
       }
       handleGetMyEvents();
       addToast({
@@ -115,7 +114,6 @@ const CreateEventWindow: React.FC<IProps> = ({
     setXStep('0');
   }, []);
 
-  console.log('oi');
   return (
     <>
       <WindowUnFormattedContainer
