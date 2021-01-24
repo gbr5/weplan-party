@@ -635,7 +635,7 @@ const EventHostDashboard: React.FC = () => {
   return (
     <Container>
       <PageHeader updateMyEvents={updateEventMainDashboard} />
-      {!!createEventInfoWindowForm && !!pageEvent.eventInfo && (
+      {!!createEventInfoWindowForm && !pageEvent.eventInfo && (
         <CreateEventInfoWindowForm
           updateEvent={updateEventMainDashboard}
           eventId={eventId}
