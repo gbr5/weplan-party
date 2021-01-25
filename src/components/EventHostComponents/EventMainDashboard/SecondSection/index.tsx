@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import IEventDTO from '../../../../dtos/IEventDTO';
-import EventFile from './EventFile';
+import { useToast } from '../../../../hooks/toast';
+import api from '../../../../services/api';
+import EventFileSection from './EventFileSection';
 import EventImage from './EventImage';
 
 import { Container, Section } from './styles';
@@ -10,15 +12,37 @@ interface IProps {
 }
 
 const SecondSection: React.FC<IProps> = ({ event }: IProps) => {
+  const { addToast } = useToast();
+  const [updatedEvent, setUpdatedEvent] = useState(event);
+
+  const updateEvent = useCallback(() => {
+    try {
+      api.get(`events/${event.id}`).then(response => {
+        setUpdatedEvent(response.data.event);
+        addToast({
+          type: 'success',
+          title: 'Evento atualizado',
+        });
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
+  }, [event, addToast]);
+
   return (
     <Container>
-      <Section>
+      <EventFileSection
+        updateEvent={updateEvent}
+        eventId={event.id}
+        files={updatedEvent.eventFiles}
+      />
+      {/* <Section>
         <h1>Arquivos</h1>
         {event.eventFiles && <EventFile files={event.eventFiles} />}
-      </Section>
+      </Section> */}
       <Section>
         <h1>Imagens</h1>
-        <EventImage images={event.eventImages} />
+        <EventImage images={updatedEvent.eventImages} />
       </Section>
       <Section>
         <h1>Compromissos</h1>
