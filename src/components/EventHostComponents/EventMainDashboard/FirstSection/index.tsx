@@ -69,10 +69,6 @@ const FirstSection: React.FC<IProps> = ({
   }, [event, addToast, avatar]);
 
   useEffect(() => {
-    updateEvent();
-  }, [updateEvent]);
-
-  useEffect(() => {
     const dates =
       !!updatedEvent.eventDates &&
       updatedEvent.eventDates.map(date => date.date);

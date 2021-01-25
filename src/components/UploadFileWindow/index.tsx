@@ -15,11 +15,6 @@ import api from '../../services/api';
 import { useAuth } from '../../hooks/auth';
 import IUserFileCategoryDTO from '../../dtos/IUserFileCategoryDTO';
 
-interface IFormDTO {
-  title: string;
-  message: string;
-}
-
 interface IProps {
   onHandleCloseWindow: MouseEventHandler;
   handleCloseWindow: Function;
