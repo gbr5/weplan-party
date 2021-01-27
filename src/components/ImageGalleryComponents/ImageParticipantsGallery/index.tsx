@@ -8,7 +8,6 @@ interface IProps {
 }
 
 const ImageParticipantsGallery: React.FC<IProps> = ({ images }: IProps) => {
-  console.log(images, 'oi;');
   return (
     <Container>
       {images.map(image => {

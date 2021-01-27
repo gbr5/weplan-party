@@ -67,7 +67,6 @@ const ImageGallery: React.FC = () => {
   const getImages = useCallback(() => {
     try {
       api.get(`/user/images/${user.id}`).then(response => {
-        console.log(response.data);
         setUserImages(response.data);
       });
     } catch (err) {
@@ -82,7 +81,6 @@ const ImageGallery: React.FC = () => {
   const getUserImageCategories = useCallback(() => {
     try {
       api.get(`/user/image/categories/${user.id}`).then(response => {
-        console.log(response.data);
         setUserImageCategories(response.data);
       });
     } catch (err) {
@@ -97,7 +95,6 @@ const ImageGallery: React.FC = () => {
   const getEventImages = useCallback(() => {
     try {
       api.get(`/user/event/images`).then(response => {
-        console.log(response.data);
         setEventImages(response.data);
       });
     } catch (err) {
@@ -112,7 +109,6 @@ const ImageGallery: React.FC = () => {
   const getMarkedImages = useCallback(() => {
     try {
       api.get(`/user/image/participants`).then(response => {
-        console.log(response.data);
         setMarkedImages(response.data);
       });
     } catch (err) {
