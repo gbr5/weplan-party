@@ -126,7 +126,10 @@ const ImageGallery: React.FC = () => {
       {allImageSection && <Gallery images={userImages} />}
       {eventImageSection && <EventImageGallery eventImages={eventImages} />}
       {imageByCategoriesSection && (
-        <ImagesByCategoryGallery userImageCategories={userImageCategories} />
+        <ImagesByCategoryGallery
+          userImageCategories={userImageCategories}
+          getUserImageCategories={getUserImageCategories}
+        />
       )}
       {markedImageSection && <ImageParticipantsGallery images={markedImages} />}
       <SideMenu

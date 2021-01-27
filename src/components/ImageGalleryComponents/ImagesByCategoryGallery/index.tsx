@@ -1,15 +1,25 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import IUserImageCategoryDTO from '../../../dtos/IUserImageCategoryDTO';
+import AddUserImageCategory from '../AddUserImageCategory';
 
-import { Container, ImageContainer, CategoriesMenu, Category } from './styles';
+import {
+  Container,
+  ImageContainer,
+  CategoriesMenu,
+  Category,
+  AddButton,
+} from './styles';
 
 interface IProps {
   userImageCategories: IUserImageCategoryDTO[];
+  getUserImageCategories: Function;
 }
 
 const ImagesByCategoryGallery: React.FC<IProps> = ({
   userImageCategories,
+  getUserImageCategories,
 }: IProps) => {
+  const [addUserImageWindow, setAddUserImageWindow] = useState(false);
   const [selectedImageCategory, setSelectedImageCategory] = useState(
     {} as IUserImageCategoryDTO,
   );
@@ -29,6 +39,12 @@ const ImagesByCategoryGallery: React.FC<IProps> = ({
 
   return (
     <Container>
+      {addUserImageWindow && (
+        <AddUserImageCategory
+          closeWindow={() => setAddUserImageWindow(false)}
+          getUserImageCategories={getUserImageCategories}
+        />
+      )}
       <CategoriesMenu>
         <div>
           {userImageCategories.map(category => {
@@ -48,6 +64,9 @@ const ImagesByCategoryGallery: React.FC<IProps> = ({
           })}
         </div>
       </CategoriesMenu>
+      <AddButton type="button" onClick={() => setAddUserImageWindow(true)}>
+        Adicionar Pasta
+      </AddButton>
       <ImageContainer>
         {selectedImageCategory &&
           selectedImageCategory.categoryImages &&

@@ -3,10 +3,13 @@ import styled, { css } from 'styled-components';
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  flex: 1;
-  width: 100%;
+  align-items: stretch;
+  justify-content: stretch;
   margin-top: 8.5vh;
+
+  gap: 4vh;
 `;
+
 export const ImageContainer = styled.div`
   width: 100%;
   display: grid;
@@ -26,8 +29,10 @@ export const ImageContainer = styled.div`
 
 export const CategoriesMenu = styled.div`
   width: 100%;
+  display: flex;
   div {
     display: inline-flexbox;
+    width: 100%;
     align-items: stretch;
     justify-content: center;
     overflow-x: scroll;
@@ -55,4 +60,22 @@ export const Category = styled.button<ICategoryProps>`
       font-size: 20px;
       border: 2px solid var(--title-color);
     `}
+`;
+
+export const AddButton = styled.button`
+  border-radius: 4px;
+  border: none;
+  background: var(--primary-color);
+  color: var(--secondary-color);
+  box-shadow: var(--box-shadow);
+
+  width: 100%;
+  height: 32px;
+  font-weight: 500;
+
+  &:hover {
+    color: var(--primary-color);
+    background: var(--secondary-color);
+    box-shadow: var(--window-box-shadow);
+  }
 `;
