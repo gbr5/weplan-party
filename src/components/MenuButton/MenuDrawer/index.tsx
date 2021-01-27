@@ -1,9 +1,10 @@
-import React, { useContext } from 'react';
+import React, { useCallback, useContext } from 'react';
 import { ThemeContext } from 'styled-components';
 import Swicth from 'react-switch';
 import { FiPower } from 'react-icons/fi';
-import { MdAttachFile, MdGroup } from 'react-icons/md';
+import { MdAttachFile, MdGroup, MdImage } from 'react-icons/md';
 
+import { useHistory } from 'react-router-dom';
 import { useToggleTheme } from '../../../hooks/theme';
 
 import {
@@ -26,9 +27,14 @@ const MenuDrawer: React.FC<IProps> = ({
   handleUploadFileWindow,
   handleNavigateToFriends,
 }: IProps) => {
+  const history = useHistory();
   const { colors } = useContext(ThemeContext);
 
   const { toggleTheme, themeBoolean } = useToggleTheme();
+
+  const navigateToUserImages = useCallback(() => {
+    history.push('/images');
+  }, [history]);
 
   return (
     <Container>
@@ -56,6 +62,11 @@ const MenuDrawer: React.FC<IProps> = ({
       <MenuItemContainer>
         <button type="button" onClick={() => handleNavigateToFriends()}>
           <MdGroup /> <h3>Contatos</h3>
+        </button>
+      </MenuItemContainer>
+      <MenuItemContainer>
+        <button type="button" onClick={() => navigateToUserImages()}>
+          <MdImage /> <h3>Imagens</h3>
         </button>
       </MenuItemContainer>
       <MenuItemContainer>
