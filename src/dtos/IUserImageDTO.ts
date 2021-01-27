@@ -4,8 +4,6 @@ export default interface IUserImageDTO {
   name: string;
   image_name: string;
   description: string;
-  url: string;
-  file_url: string;
   created_at: Date;
   updated_at: Date;
   image_url: string;

@@ -12,6 +12,7 @@ import ResetPassword from '../pages/ResetPassword';
 import HostDashboard from '../pages/HostDashboard';
 import EventHostDashboard from '../pages/EventHostDashboard';
 import WelcomePage from '../pages/WelcomePage';
+import ImageGallery from '../pages/ImageGallery';
 
 const Routes: React.FC = () => {
   return (
@@ -19,6 +20,7 @@ const Routes: React.FC = () => {
       <Route path="/" exact component={Main} />
       <Route path="/signin" exact component={SignIn} />
       <Route path="/signup" exact component={SignUp} />
+
       <Route path="/forgot-password" exact component={ForgotPassword} />
       <Route path="/reset-password" exact component={ResetPassword} />
       <Route path="/wellcome" exact component={WelcomePage} />
@@ -30,6 +32,7 @@ const Routes: React.FC = () => {
         isPrivate
       />
       <Route path="/dashboard" exact component={HostDashboard} isPrivate />
+      <Route path="/images" exact component={ImageGallery} isPrivate />
     </Switch>
   );
 };
