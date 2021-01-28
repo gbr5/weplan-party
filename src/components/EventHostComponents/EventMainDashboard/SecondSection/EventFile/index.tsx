@@ -16,7 +16,7 @@ const EventFile: React.FC<IProps> = ({ files }: IProps) => {
         files.map(xfile => {
           const { file } = xfile;
           return (
-            <Row>
+            <Row key={xfile.id}>
               <FileContainer>
                 <a download target="blank" href={file.file_url}>
                   {file.file_name}

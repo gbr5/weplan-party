@@ -64,7 +64,7 @@ interface IButtonProps {
   isActive: boolean;
 }
 
-export const FileButton = styled.button<IButtonProps>`
+export const ImageButton = styled.button<IButtonProps>`
   background: var(--secondary-color);
   border: none;
   margin: auto;

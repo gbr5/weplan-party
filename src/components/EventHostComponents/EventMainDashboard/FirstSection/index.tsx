@@ -119,7 +119,7 @@ const FirstSection: React.FC<IProps> = ({
 
   const handleEventIsPublished = useCallback(async () => {
     try {
-      await api.put(`event/is-published/${updatedEvent.id}`);
+      await api.put(`event/is-published/${event.id}`);
 
       updateEvent();
       addToast({
@@ -134,7 +134,7 @@ const FirstSection: React.FC<IProps> = ({
       });
       throw new Error(err);
     }
-  }, [updatedEvent, updateEvent, addToast]);
+  }, [event, updateEvent, addToast]);
 
   const handleCreateEventDates = useCallback(
     (props: Date[]) => {
