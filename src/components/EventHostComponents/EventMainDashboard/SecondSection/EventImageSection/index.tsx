@@ -3,8 +3,9 @@ import IEventImageDTO from '../../../../../dtos/IEventImageDTO';
 import IUserImageDTO from '../../../../../dtos/IUserImageDTO';
 import { useToast } from '../../../../../hooks/toast';
 import api from '../../../../../services/api';
-// import SelectUserImageWindow from '../../../../SelectUserImageWindow';
 import AddButton from '../../../../UserComponents/AddButton';
+import AddImageQuestion from '../../../../UserComponents/AddImageQuestion';
+import SelectUserImageWindow from '../../../../UserComponents/SelectUserImageWindow';
 import EventImage from '../EventImage';
 
 import { Container } from './styles';
@@ -22,6 +23,7 @@ const EventImageSection: React.FC<IProps> = ({
 }: IProps) => {
   const { addToast } = useToast();
   const [selectUserImageWindow, setSelectUserImageWindow] = useState(false);
+  const [addImageQuestion, setAddImageQuestion] = useState(false);
 
   const selectUserImage = useCallback(
     async (e: IUserImageDTO) => {
@@ -48,19 +50,28 @@ const EventImageSection: React.FC<IProps> = ({
   );
 
   return (
-    <Container>
-      {/* {selectUserImageWindow && (
-        // <SelectUserImageWindow
-          onHandleCloseWindow={() => setSelectUserImageWindow(false)}
-          handleCloseWindow={() => setSelectUserImageWindow(false)}
-          initialCategory=""
-          selectUserImage={(e: IUserImageDTO) => selectUserImage(e)}
+    <>
+      {addImageQuestion && (
+        <AddImageQuestion
+          addNewImage={() => setAddImageQuestion(true)}
+          selectExistingImage={() => setSelectUserImageWindow(true)}
+          closeWindow={() => setAddImageQuestion(false)}
         />
-      )} */}
-      <AddButton onClick={() => setSelectUserImageWindow(true)} />
-      <h1>Arquivos</h1>
-      {images && <EventImage images={images} />}
-    </Container>
+      )}
+      <Container>
+        {selectUserImageWindow && (
+          <SelectUserImageWindow
+            onHandleCloseWindow={() => setSelectUserImageWindow(false)}
+            handleCloseWindow={() => setSelectUserImageWindow(false)}
+            initialCategory="all"
+            selectUserImage={(e: IUserImageDTO) => selectUserImage(e)}
+          />
+        )}
+        <AddButton onClick={() => setSelectUserImageWindow(true)} />
+        <h1>Imagens</h1>
+        {images && <EventImage images={images} />}
+      </Container>
+    </>
   );
 };
 

@@ -3,7 +3,8 @@ import IEventDTO from '../../../../dtos/IEventDTO';
 import { useToast } from '../../../../hooks/toast';
 import api from '../../../../services/api';
 import EventFileSection from './EventFileSection';
-import EventImage from './EventImage';
+import EventImageSection from './EventImageSection';
+import EventInspirationImageSection from './EventInspirationImageSection';
 
 import { Container, Section } from './styles';
 
@@ -36,14 +37,12 @@ const SecondSection: React.FC<IProps> = ({ event }: IProps) => {
         eventId={event.id}
         files={updatedEvent.eventFiles}
       />
-      {/* <Section>
-        <h1>Arquivos</h1>
-        {event.eventFiles && <EventFile files={event.eventFiles} />}
-      </Section> */}
-      <Section>
-        <h1>Imagens</h1>
-        <EventImage images={updatedEvent.eventImages} />
-      </Section>
+      <EventImageSection
+        eventId={event.id}
+        images={updatedEvent.eventImages}
+        updateEvent={updateEvent}
+      />
+      <EventInspirationImageSection eventId={event.id} />
       <Section>
         <h1>Compromissos</h1>
       </Section>
@@ -55,9 +54,6 @@ const SecondSection: React.FC<IProps> = ({ event }: IProps) => {
       </Section>
       <Section>
         <h1>Votações</h1>
-      </Section>
-      <Section>
-        <h1>Inspirações</h1>
       </Section>
     </Container>
   );

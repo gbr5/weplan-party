@@ -1,20 +1,21 @@
 import React from 'react';
-import IEventImageDTO from '../../../../../dtos/IEventImageDTO';
+import IEventInspirationImageDTO from '../../../../../dtos/IEventInspirationImageDTO';
 import ListSection from '../ListSection';
 import Row from '../ListSection/Row';
 
 import { ImageContainer } from './styles';
 
 interface IProps {
-  images: IEventImageDTO[];
+  images: IEventInspirationImageDTO[];
 }
 
-const EventImage: React.FC<IProps> = ({ images }: IProps) => {
+const EventInspirationImage: React.FC<IProps> = ({ images }: IProps) => {
   return (
     <ListSection>
       {!!images &&
         images.map(ximage => {
-          const { image } = ximage;
+          const { inspirationImage } = ximage;
+          const { image } = inspirationImage;
           return (
             <Row key={ximage.id}>
               <ImageContainer>
@@ -28,4 +29,4 @@ const EventImage: React.FC<IProps> = ({ images }: IProps) => {
   );
 };
 
-export default EventImage;
+export default EventInspirationImage;
