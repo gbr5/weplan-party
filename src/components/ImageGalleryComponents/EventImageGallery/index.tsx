@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import IEventDTO from '../../../dtos/IEventDTO';
 import IListUserEventImagesDTO from '../../../dtos/IListUserEventImagesDTO';
 
@@ -10,31 +10,49 @@ interface IProps {
 
 const EventImageGallery: React.FC<IProps> = ({ eventImages }: IProps) => {
   const [selectedEvent, setSelectedEvent] = useState({} as IEventDTO);
+  const [events, setEvents] = useState<IEventDTO[]>([eventImages[0].event]);
+
+  useEffect(() => {
+    const filteredEventArray: IEventDTO[] = [];
+    const eventArray = eventImages.map(image => image.event);
+    eventArray.map(event => {
+      const findEvent = filteredEventArray.find(
+        xEvent => xEvent.id === event.id,
+      );
+      !findEvent && filteredEventArray.push(event);
+      return event;
+    });
+    events.length !== filteredEventArray.length &&
+      setEvents(filteredEventArray);
+  }, [eventImages, events]);
+
   return (
     <Container>
       <CategoriesMenu>
-        {eventImages.map(eventImage => {
-          const isActive = eventImage.event_id === selectedEvent.id;
+        {events.map(event => {
+          const isActive = event.id === selectedEvent.id;
           return (
             <Category
               type="button"
               isActive={isActive}
-              onClick={() => setSelectedEvent(eventImage.event)}
-              key={eventImage.id}
+              onClick={() => setSelectedEvent(event)}
+              key={event.id}
             >
-              {eventImage.image.name}
+              {event.name}
             </Category>
           );
         })}
       </CategoriesMenu>
       <ImageContainer>
-        {eventImages.map(image => {
-          return (
-            <button type="button" key={image.image.id}>
-              <img src={image.image_url} alt={image.image.image_name} />
-            </button>
-          );
-        })}
+        {eventImages
+          .filter(image => image.event_id === selectedEvent.id)
+          .map(image => {
+            return (
+              <button type="button" key={image.id}>
+                <img src={image.image_url} alt={image.image.image_name} />
+              </button>
+            );
+          })}
       </ImageContainer>
     </Container>
   );
