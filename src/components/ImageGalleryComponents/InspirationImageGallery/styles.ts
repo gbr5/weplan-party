@@ -1,48 +1,36 @@
 import styled, { css } from 'styled-components';
 
-export const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-top: 8.5vh;
-`;
-export const ImageContainer = styled.div`
+interface IGridViewProps {
+  gridView: boolean;
+}
+
+export const Container = styled.div<IGridViewProps>`
   width: 100%;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  margin-top: 8.5vh;
   align-items: center;
   justify-content: center;
   gap: 4px;
 
+  ${props =>
+    !props.gridView &&
+    css`
+      grid-template-columns: 1fr;
+    `}
   button {
     width: 100%;
-
-    img {
-      max-width: 30vw;
-    }
   }
 `;
 
-export const CategoriesMenu = styled.div`
-  display: inline-block;
-  overflow-x: scroll;
-`;
-
-interface ICategoryProps {
-  isActive: boolean;
+interface IImageViewProps {
+  gridView: boolean;
 }
-
-export const Category = styled.button<ICategoryProps>`
-  background: var(--primary-color);
-  border: 2px solid var(--primary-color);
-  border-radius: 4px;
-  height: 40px;
-  width: 160px;
-  box-shadow: var(--box-shadow);
-
+export const ImageButton = styled.img<IImageViewProps>`
+  max-width: 30vw;
   ${props =>
-    props.isActive &&
+    !props.gridView &&
     css`
-      background: var(--secondary-color);
-      border: 2px solid var(--title-color);
+      max-width: 100vw;
     `}
 `;

@@ -14,6 +14,7 @@ import { Container } from './styles';
 import ImageParticipantsGallery from '../../components/ImageGalleryComponents/ImageParticipantsGallery';
 import InspirationImageGallery from '../../components/ImageGalleryComponents/InspirationImageGallery';
 import IInspirationImageDTO from '../../dtos/IInspirationImageDTO';
+import BottomMenu from '../../components/ImageGalleryComponents/BottomMenu';
 
 const ImageGallery: React.FC = () => {
   const { user } = useAuth();
@@ -25,6 +26,7 @@ const ImageGallery: React.FC = () => {
   const [imageByCategoriesSection, setImageByCategoriesSection] = useState(
     false,
   );
+  const [gridView, setGridView] = useState(true);
 
   const closeAllWindows = useCallback(() => {
     setAllImageSection(false);
@@ -138,17 +140,25 @@ const ImageGallery: React.FC = () => {
   return (
     <Container>
       <PageHeader updateMyEvents={() => getImages()} />
-      {allImageSection && <Gallery images={userImages} />}
-      {eventImageSection && <EventImageGallery eventImages={eventImages} />}
+      {allImageSection && <Gallery gridView={gridView} images={userImages} />}
+      {eventImageSection && (
+        <EventImageGallery gridView={gridView} eventImages={eventImages} />
+      )}
       {imageByCategoriesSection && (
         <ImagesByCategoryGallery
+          gridView={gridView}
           userImageCategories={userImageCategories}
           getUserImageCategories={getUserImageCategories}
         />
       )}
-      {markedImageSection && <ImageParticipantsGallery images={markedImages} />}
+      {markedImageSection && (
+        <ImageParticipantsGallery gridView={gridView} images={markedImages} />
+      )}
       {inspirationImageSection && (
-        <InspirationImageGallery inspirationImages={inspirationImages} />
+        <InspirationImageGallery
+          gridView={gridView}
+          inspirationImages={inspirationImages}
+        />
       )}
       <SideMenu
         showAllImages={showAllImages}
@@ -157,6 +167,7 @@ const ImageGallery: React.FC = () => {
         showInspirationImages={showInspirationImages}
         showMarkedImages={showMarkedImages}
       />
+      <BottomMenu handleGridView={(e: boolean) => setGridView(e)} />
     </Container>
   );
 };

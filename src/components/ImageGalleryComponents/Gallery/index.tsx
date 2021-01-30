@@ -1,19 +1,24 @@
 import React from 'react';
 import IUserImageDTO from '../../../dtos/IUserImageDTO';
 
-import { Container } from './styles';
+import { Container, ImageButton } from './styles';
 
 interface IProps {
   images: IUserImageDTO[];
+  gridView: boolean;
 }
 
-const Gallery: React.FC<IProps> = ({ images }: IProps) => {
+const Gallery: React.FC<IProps> = ({ images, gridView }: IProps) => {
   return (
-    <Container>
+    <Container gridView={gridView}>
       {images.map(image => {
         return (
           <button type="button" key={image.id}>
-            <img src={image.image_url} alt={image.image_name} />
+            <ImageButton
+              gridView={gridView}
+              src={image.image_url}
+              alt={image.image_name}
+            />
           </button>
         );
       })}

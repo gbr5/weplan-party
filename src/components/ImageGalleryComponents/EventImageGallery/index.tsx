@@ -2,13 +2,23 @@ import React, { useEffect, useState } from 'react';
 import IEventDTO from '../../../dtos/IEventDTO';
 import IListUserEventImagesDTO from '../../../dtos/IListUserEventImagesDTO';
 
-import { Container, ImageContainer, CategoriesMenu, Category } from './styles';
+import {
+  Container,
+  ImageContainer,
+  CategoriesMenu,
+  ImageButton,
+  Category,
+} from './styles';
 
 interface IProps {
   eventImages: IListUserEventImagesDTO[];
+  gridView: boolean;
 }
 
-const EventImageGallery: React.FC<IProps> = ({ eventImages }: IProps) => {
+const EventImageGallery: React.FC<IProps> = ({
+  eventImages,
+  gridView,
+}: IProps) => {
   const [selectedEvent, setSelectedEvent] = useState({} as IEventDTO);
   const [events, setEvents] = useState<IEventDTO[]>([eventImages[0].event]);
 
@@ -43,13 +53,17 @@ const EventImageGallery: React.FC<IProps> = ({ eventImages }: IProps) => {
           );
         })}
       </CategoriesMenu>
-      <ImageContainer>
+      <ImageContainer gridView={gridView}>
         {eventImages
           .filter(image => image.event_id === selectedEvent.id)
           .map(image => {
             return (
               <button type="button" key={image.id}>
-                <img src={image.image_url} alt={image.image.image_name} />
+                <ImageButton
+                  gridView={gridView}
+                  src={image.image_url}
+                  alt={image.image.image_name}
+                />
               </button>
             );
           })}

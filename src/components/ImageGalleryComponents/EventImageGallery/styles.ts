@@ -5,7 +5,12 @@ export const Container = styled.div`
   flex-direction: column;
   margin-top: 8.5vh;
 `;
-export const ImageContainer = styled.div`
+
+interface IGridViewProps {
+  gridView: boolean;
+}
+
+export const ImageContainer = styled.div<IGridViewProps>`
   width: 100%;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -13,13 +18,27 @@ export const ImageContainer = styled.div`
   justify-content: center;
   gap: 4px;
 
+  ${props =>
+    !props.gridView &&
+    css`
+      grid-template-columns: 1fr;
+    `}
+
   button {
     width: 100%;
-
-    img {
-      max-width: 30vw;
-    }
   }
+`;
+
+interface IImageViewProps {
+  gridView: boolean;
+}
+export const ImageButton = styled.img<IImageViewProps>`
+  max-width: 30vw;
+  ${props =>
+    !props.gridView &&
+    css`
+      max-width: 100vw;
+    `}
 `;
 
 export const CategoriesMenu = styled.div`
