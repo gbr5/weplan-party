@@ -32,9 +32,12 @@ const MenuDrawer: React.FC<IProps> = ({
 
   const { toggleTheme, themeBoolean } = useToggleTheme();
 
-  const navigateToUserImages = useCallback(() => {
-    history.push('/images');
-  }, [history]);
+  const navigateTo = useCallback(
+    (e: string) => {
+      history.push(e);
+    },
+    [history],
+  );
 
   return (
     <Container>
@@ -65,7 +68,7 @@ const MenuDrawer: React.FC<IProps> = ({
         </button>
       </MenuItemContainer>
       <MenuItemContainer>
-        <button type="button" onClick={() => navigateToUserImages()}>
+        <button type="button" onClick={() => navigateTo('/images')}>
           <MdImage /> <h3>Imagens</h3>
         </button>
       </MenuItemContainer>
@@ -80,7 +83,7 @@ const MenuDrawer: React.FC<IProps> = ({
         </button>
       </MenuItemContainer>
       <MenuItemContainer>
-        <button type="button">
+        <button type="button" onClick={() => navigateTo('/calendar')}>
           <h3>Compromissos</h3>
         </button>
       </MenuItemContainer>
