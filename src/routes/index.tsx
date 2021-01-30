@@ -13,6 +13,7 @@ import HostDashboard from '../pages/HostDashboard';
 import EventHostDashboard from '../pages/EventHostDashboard';
 import WelcomePage from '../pages/WelcomePage';
 import ImageGallery from '../pages/ImageGallery';
+import CalendarPage from '../pages/CalendarPage';
 
 const Routes: React.FC = () => {
   return (
@@ -33,6 +34,7 @@ const Routes: React.FC = () => {
       />
       <Route path="/dashboard" exact component={HostDashboard} isPrivate />
       <Route path="/images" exact component={ImageGallery} isPrivate />
+      <Route path="/calendar" exact component={CalendarPage} isPrivate />
     </Switch>
   );
 };

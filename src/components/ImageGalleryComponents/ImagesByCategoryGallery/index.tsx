@@ -8,16 +8,19 @@ import {
   CategoriesMenu,
   Category,
   AddButton,
+  ImageButton,
 } from './styles';
 
 interface IProps {
   userImageCategories: IUserImageCategoryDTO[];
   getUserImageCategories: Function;
+  gridView: boolean;
 }
 
 const ImagesByCategoryGallery: React.FC<IProps> = ({
   userImageCategories,
   getUserImageCategories,
+  gridView,
 }: IProps) => {
   const [addUserImageWindow, setAddUserImageWindow] = useState(false);
   const [selectedImageCategory, setSelectedImageCategory] = useState(
@@ -67,13 +70,17 @@ const ImagesByCategoryGallery: React.FC<IProps> = ({
       <AddButton type="button" onClick={() => setAddUserImageWindow(true)}>
         Adicionar Pasta
       </AddButton>
-      <ImageContainer>
+      <ImageContainer gridView={gridView}>
         {selectedImageCategory &&
           selectedImageCategory.categoryImages &&
           selectedImageCategory.categoryImages.map(image => {
             return (
               <button type="button" key={image.image.id}>
-                <img src={image.image.image_url} alt={image.image.image_name} />
+                <ImageButton
+                  gridView={gridView}
+                  src={image.image.image_url}
+                  alt={image.image.image_name}
+                />
               </button>
             );
           })}

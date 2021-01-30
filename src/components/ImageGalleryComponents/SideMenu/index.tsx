@@ -7,8 +7,8 @@ import {
   MdGroup,
   MdStar,
 } from 'react-icons/md';
-import AddImageQuestion from '../../UserComponents/AddImageQuestion';
 import SelectUserImageWindow from '../../UserComponents/SelectUserImageWindow';
+import UploadImageWindow from '../../UserComponents/UploadImageWindow';
 
 import {
   Container,
@@ -33,16 +33,15 @@ const SideMenu: React.FC<IProps> = ({
   showMarkedImages,
 }: IProps) => {
   const [sideMenu, setSideMenu] = useState(true);
-  const [addImageQuestion, setAddImageQuestion] = useState(false);
+  const [uploadImage, setUploadImage] = useState(false);
   const [selectUserImageWindow, setSelectUserImageWindow] = useState(false);
 
   return (
     <>
-      {addImageQuestion && (
-        <AddImageQuestion
-          addNewImage={() => setAddImageQuestion(true)}
-          selectExistingImage={() => setSelectUserImageWindow(true)}
-          closeWindow={() => setAddImageQuestion(false)}
+      {uploadImage && (
+        <UploadImageWindow
+          handleCloseWindow={() => setUploadImage(false)}
+          onHandleCloseWindow={() => setUploadImage(false)}
         />
       )}
       {selectUserImageWindow && (
@@ -71,7 +70,7 @@ const SideMenu: React.FC<IProps> = ({
             <MenuButton type="button" onClick={() => handleImageByCategories()}>
               <MdFolder size={32} />
             </MenuButton>
-            <MenuButton type="button" onClick={() => setAddImageQuestion(true)}>
+            <MenuButton type="button" onClick={() => setUploadImage(true)}>
               <MdAddAPhoto size={32} />
             </MenuButton>
           </MenuContainer>

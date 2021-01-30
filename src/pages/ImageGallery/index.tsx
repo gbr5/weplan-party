@@ -12,31 +12,35 @@ import { useAuth } from '../../hooks/auth';
 import api from '../../services/api';
 import { Container } from './styles';
 import ImageParticipantsGallery from '../../components/ImageGalleryComponents/ImageParticipantsGallery';
+import InspirationImageGallery from '../../components/ImageGalleryComponents/InspirationImageGallery';
+import IInspirationImageDTO from '../../dtos/IInspirationImageDTO';
+import BottomMenu from '../../components/ImageGalleryComponents/BottomMenu';
 
 const ImageGallery: React.FC = () => {
   const { user } = useAuth();
 
   const [allImageSection, setAllImageSection] = useState(true);
   const [eventImageSection, setEventImageSection] = useState(false);
-  // const [inspirationImageSection, setInspirationImageSection] = useState(false);
+  const [inspirationImageSection, setInspirationImageSection] = useState(false);
   const [markedImageSection, setMarkedImageSection] = useState(false);
   const [imageByCategoriesSection, setImageByCategoriesSection] = useState(
     false,
   );
+  const [gridView, setGridView] = useState(true);
 
   const closeAllWindows = useCallback(() => {
     setAllImageSection(false);
     setImageByCategoriesSection(false);
     setEventImageSection(false);
-    // setInspirationImageSection(false);
+    setInspirationImageSection(false);
     setMarkedImageSection(false);
   }, []);
 
   const [userImages, setUserImages] = useState<IUserImageDTO[]>([]);
   const [eventImages, setEventImages] = useState<IListUserEventImagesDTO[]>([]);
-  // const [inspirationImages, setInspirationImages] = useState<
-  //   IUserImageCategoryDTO[]
-  // >([]);
+  const [inspirationImages, setInspirationImages] = useState<
+    IInspirationImageDTO[]
+  >([]);
   const [markedImages, setMarkedImages] = useState<IImageParticipantDTO[]>([]);
   const [userImageCategories, setUserImageCategories] = useState<
     IUserImageCategoryDTO[]
@@ -56,8 +60,7 @@ const ImageGallery: React.FC = () => {
   }, [closeAllWindows]);
   const showInspirationImages = useCallback(() => {
     closeAllWindows();
-    // setInspirationImageSection(true);
-    setAllImageSection(true);
+    setInspirationImageSection(true);
   }, [closeAllWindows]);
   const showMarkedImages = useCallback(() => {
     closeAllWindows();
@@ -120,18 +123,43 @@ const ImageGallery: React.FC = () => {
     getMarkedImages();
   }, [getMarkedImages]);
 
+  const getInspirationImages = useCallback(() => {
+    try {
+      api.get(`/inspiration/images/`).then(response => {
+        setInspirationImages(response.data);
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
+  }, []);
+
+  useEffect(() => {
+    getInspirationImages();
+  }, [getInspirationImages]);
+
   return (
     <Container>
       <PageHeader updateMyEvents={() => getImages()} />
-      {allImageSection && <Gallery images={userImages} />}
-      {eventImageSection && <EventImageGallery eventImages={eventImages} />}
+      {allImageSection && <Gallery gridView={gridView} images={userImages} />}
+      {eventImageSection && (
+        <EventImageGallery gridView={gridView} eventImages={eventImages} />
+      )}
       {imageByCategoriesSection && (
         <ImagesByCategoryGallery
+          gridView={gridView}
           userImageCategories={userImageCategories}
           getUserImageCategories={getUserImageCategories}
         />
       )}
-      {markedImageSection && <ImageParticipantsGallery images={markedImages} />}
+      {markedImageSection && (
+        <ImageParticipantsGallery gridView={gridView} images={markedImages} />
+      )}
+      {inspirationImageSection && (
+        <InspirationImageGallery
+          gridView={gridView}
+          inspirationImages={inspirationImages}
+        />
+      )}
       <SideMenu
         showAllImages={showAllImages}
         handleImageByCategories={handleImageByCategories}
@@ -139,6 +167,7 @@ const ImageGallery: React.FC = () => {
         showInspirationImages={showInspirationImages}
         showMarkedImages={showMarkedImages}
       />
+      <BottomMenu handleGridView={(e: boolean) => setGridView(e)} />
     </Container>
   );
 };

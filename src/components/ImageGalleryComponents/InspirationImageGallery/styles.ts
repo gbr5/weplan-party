@@ -18,7 +18,6 @@ export const Container = styled.div<IGridViewProps>`
     css`
       grid-template-columns: 1fr;
     `}
-
   button {
     width: 100%;
   }
