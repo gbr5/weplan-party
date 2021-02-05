@@ -69,6 +69,32 @@ export const Section = styled.div`
   }
 `;
 
+export const AddAppointmentButton = styled.button`
+  position: fixed;
+  top: 80px;
+  right: 40px;
+
+  color: var(--secondary-color);
+  background: var(--primary-color);
+  box-shadow: var(--box-shadow);
+
+  border: none;
+  border-radius: 4px;
+
+  transition: 0.5s;
+
+  @media (max-width: 1000px) {
+    top: 64px;
+    right: 16px;
+  }
+
+  &:hover {
+    background: var(--secondary-color);
+    color: var(--primary-color);
+    box-shadow: var(--window-box-shadow);
+  }
+`;
+
 export const Appointments = styled.div`
   display: flex;
   flex-direction: column;

@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { MdArrowForward } from 'react-icons/md';
+import { MdAddAlert, MdArrowForward } from 'react-icons/md';
 import Appointment from '../../components/AppointmentsComponents/Appointment';
 import AppointmentWindow from '../../components/AppointmentsComponents/AppointmentWindow';
 import DashboardCalendar from '../../components/CalendarDashboard';
+import CreateAppointmentForm from '../../components/AppointmentsComponents/CreateAppointmentForm';
 import PageHeader from '../../components/PageHeader';
 import IAppointmentDTO from '../../dtos/IAppointmentDTO';
 import api from '../../services/api';
@@ -14,11 +15,13 @@ import {
   Section,
   FirstSection,
   Appointments,
+  AddAppointmentButton,
 } from './styles';
 
 const CalendarPage: React.FC = () => {
   const today = new Date();
   const [appointmentWindow, setAppointmentWindow] = useState(false);
+  const [createAppointmentForm, setCreateAppointmentForm] = useState(false);
   const [selectedDate, setSelectedDate] = useState(today);
   const [selectedAppointment, setSelectedAppointment] = useState(
     {} as IAppointmentDTO,
@@ -93,8 +96,19 @@ const CalendarPage: React.FC = () => {
           closeWindow={() => setAppointmentWindow(false)}
         />
       )}
+      {createAppointmentForm && (
+        <CreateAppointmentForm
+          closeWindow={() => setCreateAppointmentForm(false)}
+        />
+      )}
       <PageHeader updateMyEvents={() => setSelectedDate(today)} />
       <Body>
+        <AddAppointmentButton
+          type="button"
+          onClick={() => setCreateAppointmentForm(true)}
+        >
+          <MdAddAlert size={32} />
+        </AddAppointmentButton>
         <h1>Compromissos</h1>
         <FirstSection>
           <DashboardCalendar handleSetDate={(e: Date) => setSelectedDate(e)} />
