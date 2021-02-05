@@ -30,7 +30,9 @@ export const Body = styled.div`
     border-bottom: 1px solid var(--title-color);
     width: 264px;
   }
+`;
 
+export const ArrowContainer = styled.div`
   svg {
     display: none;
     @media (max-width: 1000px) {
@@ -67,8 +69,35 @@ export const Section = styled.div`
   }
 `;
 
+export const AddAppointmentButton = styled.button`
+  position: fixed;
+  top: 80px;
+  right: 40px;
+
+  color: var(--secondary-color);
+  background: var(--primary-color);
+  box-shadow: var(--box-shadow);
+
+  border: none;
+  border-radius: 4px;
+
+  transition: 0.5s;
+
+  @media (max-width: 1000px) {
+    top: 64px;
+    right: 16px;
+  }
+
+  &:hover {
+    background: var(--secondary-color);
+    color: var(--primary-color);
+    box-shadow: var(--window-box-shadow);
+  }
+`;
+
 export const Appointments = styled.div`
   display: flex;
+  flex-direction: column;
   height: 40vh;
   min-height: 320px;
   min-width: 320px;
@@ -78,11 +107,15 @@ export const Appointments = styled.div`
 
   background: var(--header-background-color);
 
+  gap: 4px;
+
+  overflow-y: scroll;
+
   h3 {
     text-align: center;
-    width: 320px;
+    width: 100%;
     height: 40px;
     margin: 0 auto 0 auto;
-    border-bottom: 1px solid var(--title-color);
+    /* border-bottom: 1px solid var(--title-color); */
   }
 `;

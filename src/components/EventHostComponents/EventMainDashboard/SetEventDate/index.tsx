@@ -14,8 +14,7 @@ import { Container } from './styles';
 interface IProps {
   closeWindow: Function;
   getEvent: Function;
-  // eslint-disable-next-line react/require-default-props
-  event?: IEventDTO;
+  event: IEventDTO;
 }
 
 const SetEventDate: React.FC<IProps> = ({
