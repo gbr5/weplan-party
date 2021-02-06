@@ -1,7 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
-import { differenceInDays } from 'date-fns/esm';
 import Input from '../../Input';
 import WindowUnFormattedContainer from '../../WindowUnFormattedContainer';
 
@@ -10,6 +9,9 @@ import { useToast } from '../../../hooks/toast';
 import api from '../../../services/api';
 import SelectDate from '../../UserComponents/SelectDate';
 import formatDateToString from '../../../utils/formatDateToString';
+import IUserDTO from '../../../dtos/IUserDTO';
+import IFriendDTO from '../../../dtos/IFriendDTO';
+import SelectFriendWindow from '../../SelectFriendWindow';
 
 interface IFormData {
   subject: string;
@@ -19,9 +21,13 @@ interface IFormData {
 
 interface IProps {
   closeWindow: Function;
+  getAppointments: Function;
 }
 
-const CreateAppointmentForm: React.FC<IProps> = ({ closeWindow }: IProps) => {
+const CreateAppointmentForm: React.FC<IProps> = ({
+  closeWindow,
+  getAppointments,
+}: IProps) => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
 
@@ -35,26 +41,43 @@ const CreateAppointmentForm: React.FC<IProps> = ({ closeWindow }: IProps) => {
   const [addressInput, setAddressInput] = useState(false);
   const [duration, setDuration] = useState(0);
   const [durationInput, setDurationInput] = useState(false);
+  const [appointmentParticipants, setAppointmentParticipants] = useState<
+    IUserDTO[]
+  >([]);
+  const [participants, setParticipants] = useState(false);
+  const [finalSection, setFinalSection] = useState(false);
 
   const handleSubmit = useCallback(
     async (data: IFormData) => {
       try {
-        await api.post('appointments', {
-          subject,
-          address,
-          date: selectedDate,
-          duration_minutes: duration,
-          weplanGuest: false,
-          guest: false,
-          appointment_type: 'Personal',
-        });
+        if (appointmentParticipants.length > 0) {
+          await api.post('appointments/weplan-guests', {
+            subject,
+            address,
+            date: selectedDate,
+            duration_minutes: duration,
+            appointment_type: 'Personal',
+            guests: appointmentParticipants,
+          });
+        } else {
+          await api.post('appointments', {
+            subject,
+            address,
+            date: selectedDate,
+            duration_minutes: duration,
+            weplanGuest: false,
+            guest: false,
+            appointment_type: 'Personal',
+          });
+        }
         setSelectedDate(new Date());
         addToast({
           type: 'success',
           title: 'Compromisso criado com sucesso',
         });
         closeWindow();
-        console.log(data.duration_minutes);
+        getAppointments();
+        console.log(!data.duration_minutes);
       } catch (err) {
         addToast({
           type: 'error',
@@ -64,7 +87,16 @@ const CreateAppointmentForm: React.FC<IProps> = ({ closeWindow }: IProps) => {
         throw new Error(err);
       }
     },
-    [addToast, closeWindow, selectedDate, subject, duration, address],
+    [
+      addToast,
+      closeWindow,
+      selectedDate,
+      subject,
+      duration,
+      address,
+      appointmentParticipants,
+      getAppointments,
+    ],
   );
 
   const nextSection = useCallback(() => {
@@ -73,25 +105,71 @@ const CreateAppointmentForm: React.FC<IProps> = ({ closeWindow }: IProps) => {
       setAddressInput(true);
     } else if (addressInput) {
       setAddressInput(false);
+      setSelectDateWindow(true);
+    } else if (selectDateWindow) {
+      setSelectDateWindow(false);
       setDurationInput(true);
     } else if (durationInput) {
       setDurationInput(false);
-      setSelectDateWindow(true);
+      setParticipants(true);
+    } else if (participants) {
+      setParticipants(false);
+      setFinalSection(true);
     }
-  }, [subjectInput, addressInput, durationInput]);
+  }, [
+    subjectInput,
+    addressInput,
+    selectDateWindow,
+    durationInput,
+    participants,
+  ]);
 
   const previousSection = useCallback(() => {
     if (addressInput) {
       setAddressInput(false);
       setSubjectInput(true);
-    } else if (durationInput) {
-      setDurationInput(false);
-      setAddressInput(true);
     } else if (selectDateWindow) {
       setSelectDateWindow(false);
+      setAddressInput(true);
+    } else if (durationInput) {
+      setDurationInput(false);
+      setSelectDateWindow(true);
+    } else if (participants) {
+      setParticipants(false);
       setDurationInput(true);
+    } else if (finalSection) {
+      setFinalSection(false);
+      setParticipants(true);
     }
-  }, [selectDateWindow, addressInput, durationInput]);
+  }, [
+    selectDateWindow,
+    addressInput,
+    durationInput,
+    participants,
+    finalSection,
+  ]);
+
+  const handleSelectedFriend = useCallback(
+    (e: IFriendDTO) => {
+      if (
+        appointmentParticipants.find(
+          participant => participant.id === e.friend.id,
+        )
+      ) {
+        const xParticipants = appointmentParticipants.filter(
+          xParticipant => xParticipant.id !== e.friend.id,
+        );
+        setAppointmentParticipants(xParticipants);
+        nextSection();
+      } else {
+        const xParticipants = appointmentParticipants;
+        xParticipants.push(e.friend);
+        setAppointmentParticipants(xParticipants);
+        nextSection();
+      }
+    },
+    [appointmentParticipants, nextSection],
+  );
 
   return (
     <WindowUnFormattedContainer
@@ -144,6 +222,8 @@ const CreateAppointmentForm: React.FC<IProps> = ({ closeWindow }: IProps) => {
             <>
               <p>Assunto: {subject}</p>
               <p>Endereço: {address}</p>
+
+              <p>Data: {formatDateToString(String(selectedDate))}</p>
               <strong>Duração (minutos):</strong>
               <Input
                 onChange={e => setDuration(Number(e.target.value))}
@@ -160,12 +240,29 @@ const CreateAppointmentForm: React.FC<IProps> = ({ closeWindow }: IProps) => {
               </ButtonContainer>
             </>
           )}
-          {differenceInDays(today, selectedDate) < 0 && (
+          {participants && (
+            <SelectFriendWindow
+              onHandleCloseWindow={() => nextSection()}
+              handleSelectedFriend={(e: IFriendDTO) => handleSelectedFriend(e)}
+            />
+          )}
+          {finalSection && (
             <>
               <p>Assunto: {subject}</p>
               <p>Endereço: {address}</p>
               <p>Data: {formatDateToString(String(selectedDate))}</p>
               <p>Duração: {duration} minutos</p>
+              {appointmentParticipants.length > 0 && (
+                <div>
+                  <p>Participantes:</p>
+                  {appointmentParticipants.map(participant => {
+                    return <p key={participant.id}>{participant.name}</p>;
+                  })}
+                </div>
+              )}
+              <button type="button" onClick={() => setParticipants(true)}>
+                Adicionar participantes
+              </button>
 
               <ButtonContainer>
                 <button type="button" onClick={previousSection}>
@@ -179,7 +276,7 @@ const CreateAppointmentForm: React.FC<IProps> = ({ closeWindow }: IProps) => {
       </Form>
       {selectDateWindow && (
         <SelectDate
-          closeWindow={() => setSelectDateWindow(false)}
+          closeWindow={() => nextSection()}
           selectDate={(e: Date) => setSelectedDate(e)}
         />
       )}

@@ -98,6 +98,7 @@ const CalendarPage: React.FC = () => {
       )}
       {createAppointmentForm && (
         <CreateAppointmentForm
+          getAppointments={getSelectedDateAppointments}
           closeWindow={() => setCreateAppointmentForm(false)}
         />
       )}
