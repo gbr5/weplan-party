@@ -12,6 +12,8 @@ import formatDateToString from '../../../utils/formatDateToString';
 import IUserDTO from '../../../dtos/IUserDTO';
 import IFriendDTO from '../../../dtos/IFriendDTO';
 import SelectFriendWindow from '../../SelectFriendWindow';
+import IUserFileDTO from '../../../dtos/IUserFileDTO';
+import SelectUserFileWindow from '../../SelectUserFileWindow';
 
 interface IFormData {
   subject: string;
@@ -45,13 +47,15 @@ const CreateAppointmentForm: React.FC<IProps> = ({
     IUserDTO[]
   >([]);
   const [participants, setParticipants] = useState(false);
+  const [appointmentFiles, setAppointmentFiles] = useState<IUserFileDTO[]>([]);
+  const [files, setFiles] = useState(false);
   const [finalSection, setFinalSection] = useState(false);
 
   const handleSubmit = useCallback(
     async (data: IFormData) => {
       try {
         if (appointmentParticipants.length > 0) {
-          await api.post('appointments/weplan-guests', {
+          const appointment = await api.post('appointments/weplan-guests', {
             subject,
             address,
             date: selectedDate,
@@ -59,8 +63,15 @@ const CreateAppointmentForm: React.FC<IProps> = ({
             appointment_type: 'Personal',
             guests: appointmentParticipants,
           });
+
+          if (appointmentFiles.length > 0) {
+            await api.post('appointment/files', {
+              files: appointmentFiles,
+              appointment_id: appointment.data.id,
+            });
+          }
         } else {
-          await api.post('appointments', {
+          const appointment = await api.post('appointments', {
             subject,
             address,
             date: selectedDate,
@@ -69,7 +80,15 @@ const CreateAppointmentForm: React.FC<IProps> = ({
             guest: false,
             appointment_type: 'Personal',
           });
+
+          if (appointmentFiles.length > 0) {
+            await api.post('appointment/files', {
+              files: appointmentFiles,
+              appointment_id: appointment.data.id,
+            });
+          }
         }
+
         setSelectedDate(new Date());
         addToast({
           type: 'success',
@@ -95,6 +114,7 @@ const CreateAppointmentForm: React.FC<IProps> = ({
       duration,
       address,
       appointmentParticipants,
+      appointmentFiles,
       getAppointments,
     ],
   );
@@ -114,6 +134,9 @@ const CreateAppointmentForm: React.FC<IProps> = ({
       setParticipants(true);
     } else if (participants) {
       setParticipants(false);
+      setFiles(true);
+    } else if (files) {
+      setFiles(false);
       setFinalSection(true);
     }
   }, [
@@ -122,6 +145,7 @@ const CreateAppointmentForm: React.FC<IProps> = ({
     selectDateWindow,
     durationInput,
     participants,
+    files,
   ]);
 
   const previousSection = useCallback(() => {
@@ -133,13 +157,16 @@ const CreateAppointmentForm: React.FC<IProps> = ({
       setAddressInput(true);
     } else if (durationInput) {
       setDurationInput(false);
-      setSelectDateWindow(true);
+      setAddressInput(true);
     } else if (participants) {
       setParticipants(false);
       setDurationInput(true);
+    } else if (files) {
+      setFiles(false);
+      setDurationInput(true);
     } else if (finalSection) {
       setFinalSection(false);
-      setParticipants(true);
+      setDurationInput(true);
     }
   }, [
     selectDateWindow,
@@ -147,7 +174,26 @@ const CreateAppointmentForm: React.FC<IProps> = ({
     durationInput,
     participants,
     finalSection,
+    files,
   ]);
+
+  const handleSelectedFile = useCallback(
+    (e: IUserFileDTO) => {
+      if (appointmentFiles.find(file => file.file_name === e.file_name)) {
+        const xFiles = appointmentFiles.filter(
+          xFile => xFile.file_name !== e.file_name,
+        );
+        setAppointmentFiles(xFiles);
+        nextSection();
+      } else {
+        const xFiles = appointmentFiles;
+        xFiles.push(e);
+        setAppointmentFiles(xFiles);
+        nextSection();
+      }
+    },
+    [appointmentFiles, nextSection],
+  );
 
   const handleSelectedFriend = useCallback(
     (e: IFriendDTO) => {
@@ -240,12 +286,6 @@ const CreateAppointmentForm: React.FC<IProps> = ({
               </ButtonContainer>
             </>
           )}
-          {participants && (
-            <SelectFriendWindow
-              onHandleCloseWindow={() => nextSection()}
-              handleSelectedFriend={(e: IFriendDTO) => handleSelectedFriend(e)}
-            />
-          )}
           {finalSection && (
             <>
               <p>Assunto: {subject}</p>
@@ -263,6 +303,17 @@ const CreateAppointmentForm: React.FC<IProps> = ({
               <button type="button" onClick={() => setParticipants(true)}>
                 Adicionar participantes
               </button>
+              {appointmentFiles.length > 0 && (
+                <div>
+                  <p>Arquivos:</p>
+                  {appointmentFiles.map(file => {
+                    return <p key={file.id}>{file.file_name}</p>;
+                  })}
+                </div>
+              )}
+              <button type="button" onClick={() => setFiles(true)}>
+                Adicionar arquivos
+              </button>
 
               <ButtonContainer>
                 <button type="button" onClick={previousSection}>
@@ -278,6 +329,21 @@ const CreateAppointmentForm: React.FC<IProps> = ({
         <SelectDate
           closeWindow={() => nextSection()}
           selectDate={(e: Date) => setSelectedDate(e)}
+        />
+      )}
+
+      {participants && (
+        <SelectFriendWindow
+          onHandleCloseWindow={() => nextSection()}
+          handleSelectedFriend={(e: IFriendDTO) => handleSelectedFriend(e)}
+        />
+      )}
+      {files && (
+        <SelectUserFileWindow
+          handleCloseWindow={() => nextSection()}
+          onHandleCloseWindow={() => nextSection()}
+          initialCategory="All"
+          selectUserFile={(e: IUserFileDTO) => handleSelectedFile(e)}
         />
       )}
     </WindowUnFormattedContainer>
