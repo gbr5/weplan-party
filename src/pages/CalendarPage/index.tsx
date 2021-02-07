@@ -92,6 +92,7 @@ const CalendarPage: React.FC = () => {
     <Container>
       {appointmentWindow && (
         <AppointmentWindow
+          getAppointments={getSelectedDateAppointments}
           appointment={selectedAppointment}
           closeWindow={() => setAppointmentWindow(false)}
         />

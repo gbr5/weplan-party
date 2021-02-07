@@ -51,73 +51,69 @@ const CreateAppointmentForm: React.FC<IProps> = ({
   const [files, setFiles] = useState(false);
   const [finalSection, setFinalSection] = useState(false);
 
-  const handleSubmit = useCallback(
-    async (data: IFormData) => {
-      try {
-        if (appointmentParticipants.length > 0) {
-          const appointment = await api.post('appointments/weplan-guests', {
-            subject,
-            address,
-            date: selectedDate,
-            duration_minutes: duration,
-            appointment_type: 'Personal',
-            guests: appointmentParticipants,
-          });
+  const handleSubmit = useCallback(async () => {
+    try {
+      if (appointmentParticipants.length > 0) {
+        const appointment = await api.post('appointments/weplan-guests', {
+          subject,
+          address,
+          date: selectedDate,
+          duration_minutes: duration,
+          appointment_type: 'Personal',
+          guests: appointmentParticipants,
+        });
 
-          if (appointmentFiles.length > 0) {
-            await api.post('appointment/files', {
-              files: appointmentFiles,
-              appointment_id: appointment.data.id,
-            });
-          }
-        } else {
-          const appointment = await api.post('appointments', {
-            subject,
-            address,
-            date: selectedDate,
-            duration_minutes: duration,
-            weplanGuest: false,
-            guest: false,
-            appointment_type: 'Personal',
+        if (appointmentFiles.length > 0) {
+          await api.post('appointment/files', {
+            files: appointmentFiles,
+            appointment_id: appointment.data.id,
           });
-
-          if (appointmentFiles.length > 0) {
-            await api.post('appointment/files', {
-              files: appointmentFiles,
-              appointment_id: appointment.data.id,
-            });
-          }
         }
+      } else {
+        const appointment = await api.post('appointments', {
+          subject,
+          address,
+          date: selectedDate,
+          duration_minutes: duration,
+          weplanGuest: false,
+          guest: false,
+          appointment_type: 'Personal',
+        });
 
-        setSelectedDate(new Date());
-        addToast({
-          type: 'success',
-          title: 'Compromisso criado com sucesso',
-        });
-        closeWindow();
-        getAppointments();
-        console.log(!data.duration_minutes);
-      } catch (err) {
-        addToast({
-          type: 'error',
-          title: 'Erro ao criar compromisso',
-          description: 'Tente novamente!',
-        });
-        throw new Error(err);
+        if (appointmentFiles.length > 0) {
+          await api.post('appointment/files', {
+            files: appointmentFiles,
+            appointment_id: appointment.data.id,
+          });
+        }
       }
-    },
-    [
-      addToast,
-      closeWindow,
-      selectedDate,
-      subject,
-      duration,
-      address,
-      appointmentParticipants,
-      appointmentFiles,
-      getAppointments,
-    ],
-  );
+
+      setSelectedDate(new Date());
+      addToast({
+        type: 'success',
+        title: 'Compromisso criado com sucesso',
+      });
+      closeWindow();
+      getAppointments();
+    } catch (err) {
+      addToast({
+        type: 'error',
+        title: 'Erro ao criar compromisso',
+        description: 'Tente novamente!',
+      });
+      throw new Error(err);
+    }
+  }, [
+    addToast,
+    closeWindow,
+    selectedDate,
+    subject,
+    duration,
+    address,
+    appointmentParticipants,
+    appointmentFiles,
+    getAppointments,
+  ]);
 
   const nextSection = useCallback(() => {
     if (subjectInput) {
