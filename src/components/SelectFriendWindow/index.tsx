@@ -11,14 +11,18 @@ import {
 import WindowContainer from '../WindowContainer';
 import IFriendDTO from '../../dtos/IFriendDTO';
 import api from '../../services/api';
+import IUserDTO from '../../dtos/IUserDTO';
 
 interface IPropsDTO {
   onHandleCloseWindow: MouseEventHandler;
   handleSelectedFriend: Function;
+  // eslint-disable-next-line react/require-default-props
+  alreadySelected?: IUserDTO[];
 }
 
 const SelectFriendWindow: React.FC<IPropsDTO> = ({
   onHandleCloseWindow,
+  alreadySelected,
   handleSelectedFriend,
 }: IPropsDTO) => {
   const [friends, setFriends] = useState<IFriendDTO[]>([]);
@@ -26,13 +30,27 @@ const SelectFriendWindow: React.FC<IPropsDTO> = ({
 
   const getFriends = useCallback(() => {
     try {
-      api.get('users/friends/list').then(response => {
-        setFriends(response.data);
+      api.get<IFriendDTO[]>('users/friends/list').then(response => {
+        const xfriends: IFriendDTO[] = [];
+        if (alreadySelected && alreadySelected.length > 0) {
+          response.data.map(xF => {
+            const findSelected = alreadySelected.find(
+              xS => xS.id === xF.friend_id,
+            );
+            if (!findSelected) {
+              xfriends.push(xF);
+            }
+            return '';
+          });
+          setFriends(xfriends);
+        } else {
+          setFriends(response.data);
+        }
       });
     } catch (err) {
       throw new Error(err);
     }
-  }, []);
+  }, [alreadySelected]);
 
   useEffect(() => {
     getFriends();
