@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { FiFilePlus } from 'react-icons/fi';
 import { MdPersonAdd } from 'react-icons/md';
 import IAppointmentDTO from '../../../dtos/IAppointmentDTO';
-import dateToFormattedDate from '../../../utils/dateToFormattedDate';
+import formatDateToString from '../../../utils/formatDateToString';
 import WindowUnFormattedContainer from '../../WindowUnFormattedContainer';
 import AddAppointmentFilesWindow from '../AddAppointmentFilesWindow';
 import AddAppointmentParticipantsWindow from '../AddAppointmentParticipantsWindow';
 
-import { Container, Section } from './styles';
+import { Container, Section, AddButton } from './styles';
 
 interface IProps {
   appointment: IAppointmentDTO;
@@ -50,25 +50,25 @@ const AppointmentWindow: React.FC<IProps> = ({
         />
       )}
       <Container>
-        <h3>{appointment.subject}</h3>
-        <p>{dateToFormattedDate(String(appointment.date))}</p>
-        <p>{appointment.address}</p>
+        <h3>Assunto: {appointment.subject}</h3>
+        <p>Data: {formatDateToString(String(appointment.date))}</p>
+        <p>Endereço: {appointment.address}</p>
         <Section>
-          <button
+          <AddButton
             type="button"
             onClick={() => setAddAppointmentParticipant(true)}
           >
             <MdPersonAdd />
-          </button>
+          </AddButton>
           <h3>Participantes</h3>
           {appointment.weplanGuestAppointments.map(participant => {
             return <p>{participant.guest.name}</p>;
           })}
         </Section>
         <Section>
-          <button type="button" onClick={() => setAddAppointmentFile(true)}>
+          <AddButton type="button" onClick={() => setAddAppointmentFile(true)}>
             <FiFilePlus />
-          </button>
+          </AddButton>
           <h3>Arquivos</h3>
           {appointment.appointmentFiles.map(file => {
             return <a href={file.file.file_url}>{file.file.file_name}</a>;

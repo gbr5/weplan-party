@@ -53,6 +53,9 @@ const CreateAppointmentForm: React.FC<IProps> = ({
 
   const handleSubmit = useCallback(async () => {
     try {
+      if (duration === 0) {
+        return;
+      }
       if (appointmentParticipants.length > 0) {
         const appointment = await api.post('appointments/weplan-guests', {
           subject,
