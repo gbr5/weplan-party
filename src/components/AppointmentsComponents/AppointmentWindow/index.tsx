@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { FiFilePlus } from 'react-icons/fi';
 import { MdPersonAdd } from 'react-icons/md';
 import IAppointmentDTO from '../../../dtos/IAppointmentDTO';
 import dateToFormattedDate from '../../../utils/dateToFormattedDate';
 import WindowUnFormattedContainer from '../../WindowUnFormattedContainer';
+import AddAppointmentFilesWindow from '../AddAppointmentFilesWindow';
 import AddAppointmentParticipantsWindow from '../AddAppointmentParticipantsWindow';
 
 import { Container, Section } from './styles';
@@ -21,6 +23,7 @@ const AppointmentWindow: React.FC<IProps> = ({
   const [addAppointmentParticipant, setAddAppointmentParticipant] = useState(
     false,
   );
+  const [addAppointmentFile, setAddAppointmentFile] = useState(false);
   return (
     <WindowUnFormattedContainer
       onHandleCloseWindow={() => closeWindow()}
@@ -37,6 +40,13 @@ const AppointmentWindow: React.FC<IProps> = ({
           appointment={appointment}
           getAppointments={getAppointments}
           closeWindow={() => setAddAppointmentParticipant(false)}
+        />
+      )}
+      {addAppointmentFile && (
+        <AddAppointmentFilesWindow
+          appointment={appointment}
+          getAppointments={getAppointments}
+          closeWindow={() => setAddAppointmentFile(false)}
         />
       )}
       <Container>
@@ -56,6 +66,9 @@ const AppointmentWindow: React.FC<IProps> = ({
           })}
         </Section>
         <Section>
+          <button type="button" onClick={() => setAddAppointmentFile(true)}>
+            <FiFilePlus />
+          </button>
           <h3>Arquivos</h3>
           {appointment.appointmentFiles.map(file => {
             return <a href={file.file.file_url}>{file.file.file_name}</a>;
