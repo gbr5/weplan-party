@@ -40,7 +40,9 @@ const CalendarPage: React.FC = () => {
 
       api
         .get<IAppointmentDTO[]>(
-          `user-appointments/by-month?month=${xtoday.getMonth()}&year=${xtoday.getFullYear()}`,
+          `user-appointments/by-date?day=${xtoday.getDate()}&month=${
+            xtoday.getMonth() + 1
+          }&year=${xtoday.getFullYear()}`,
         )
         .then(response => {
           setNextAppointments(response.data);
