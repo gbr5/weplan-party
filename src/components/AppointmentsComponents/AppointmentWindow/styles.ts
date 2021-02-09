@@ -9,6 +9,7 @@ export const Container = styled.div`
 
   align-items: center;
   justify-content: stretch;
+  margin: 24px 24px 32px 16px;
 
   h1 {
     width: 100%;
@@ -46,6 +47,18 @@ export const Section = styled.div`
   justify-content: stretch;
 
   position: relative;
+
+  a {
+    text-decoration: none;
+    font-size: 18px;
+    color: var(--title-color);
+    border-bottom: 1px solid var(--primary-color);
+
+    &:hover {
+      color: var(--primary-color);
+      border-bottom: 1px solid var(--title-color);
+    }
+  }
 `;
 
 export const AddButton = styled.button`
