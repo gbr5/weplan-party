@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 4vh;
   width: 100%;
   text-align: center;
 
@@ -26,6 +26,10 @@ export const Container = styled.div`
     width: 100%;
     font-size: 20px;
     color: var(--primary-color);
+    line-height: 32px;
+  }
+
+  p {
     line-height: 32px;
   }
 `;

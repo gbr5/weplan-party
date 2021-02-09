@@ -9,7 +9,9 @@ import SelectDate from '../../UserComponents/SelectDate';
 import WindowUnFormattedContainer from '../../WindowUnFormattedContainer';
 import AddAppointmentFilesWindow from '../AddAppointmentFilesWindow';
 import AddAppointmentParticipantsWindow from '../AddAppointmentParticipantsWindow';
+import EditAppointmentAddress from '../EditAppointmentAddress';
 import EditAppointmentDuration from '../EditAppointmentDuration';
+import EditAppointmentSubject from '../EditAppointmentSubject';
 
 import { Container, Section, AddButton } from './styles';
 
@@ -32,6 +34,8 @@ const AppointmentWindow: React.FC<IProps> = ({
   const [addAppointmentFile, setAddAppointmentFile] = useState(false);
   const [editAppointmentDate, setEditAppointmentDate] = useState(false);
   const [editAppointmentDuration, setEditAppointmentDuration] = useState(false);
+  const [editAppointmentAddress, setEditAppointmentAddress] = useState(false);
+  const [editAppointmentSubject, setEditAppointmentSubject] = useState(false);
 
   const getAppointment = useCallback(() => {
     try {
@@ -112,10 +116,30 @@ const AppointmentWindow: React.FC<IProps> = ({
           closeWindow={() => setEditAppointmentDuration(false)}
         />
       )}
+      {editAppointmentAddress && (
+        <EditAppointmentAddress
+          appointment={appointment}
+          getAppointment={getAppointment}
+          closeWindow={() => setEditAppointmentAddress(false)}
+        />
+      )}
+      {editAppointmentSubject && (
+        <EditAppointmentSubject
+          appointment={appointment}
+          getAppointment={getAppointment}
+          closeWindow={() => setEditAppointmentSubject(false)}
+        />
+      )}
       <Container>
         <h1>Compromisso</h1>
         <span>
           <h3>Assunto: {updatedAppointment.subject}</h3>
+          <AddButton
+            type="button"
+            onClick={() => setEditAppointmentSubject(true)}
+          >
+            <MdEdit />
+          </AddButton>
         </span>
         <span>
           <p>Data: {formatDateToString(String(updatedAppointment.date))}</p>
@@ -134,6 +158,12 @@ const AppointmentWindow: React.FC<IProps> = ({
         </span>
         <span>
           <p>Endereço: {updatedAppointment.address}</p>
+          <AddButton
+            type="button"
+            onClick={() => setEditAppointmentAddress(true)}
+          >
+            <MdEdit />
+          </AddButton>
         </span>
         <Section>
           <AddButton
