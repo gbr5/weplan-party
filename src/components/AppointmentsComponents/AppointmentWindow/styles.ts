@@ -10,10 +10,23 @@ export const Container = styled.div`
   align-items: center;
   justify-content: stretch;
 
-  h3 {
+  h1 {
     width: 100%;
     font-size: 24px;
     color: var(--primary-color);
+  }
+
+  span {
+    display: flex;
+    position: relative;
+    width: 100%;
+  }
+
+  h3 {
+    width: 100%;
+    font-size: 20px;
+    color: var(--primary-color);
+    line-height: 32px;
   }
 `;
 
