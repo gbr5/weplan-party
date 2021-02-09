@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { FiFilePlus } from 'react-icons/fi';
-import { MdPersonAdd } from 'react-icons/md';
+import { MdEdit, MdPersonAdd } from 'react-icons/md';
 import IAppointmentDTO from '../../../dtos/IAppointmentDTO';
 import { useToast } from '../../../hooks/toast';
 import api from '../../../services/api';
@@ -9,6 +9,7 @@ import SelectDate from '../../UserComponents/SelectDate';
 import WindowUnFormattedContainer from '../../WindowUnFormattedContainer';
 import AddAppointmentFilesWindow from '../AddAppointmentFilesWindow';
 import AddAppointmentParticipantsWindow from '../AddAppointmentParticipantsWindow';
+import EditAppointmentDuration from '../EditAppointmentDuration';
 
 import { Container, Section, AddButton } from './styles';
 
@@ -30,6 +31,7 @@ const AppointmentWindow: React.FC<IProps> = ({
   );
   const [addAppointmentFile, setAddAppointmentFile] = useState(false);
   const [editAppointmentDate, setEditAppointmentDate] = useState(false);
+  const [editAppointmentDuration, setEditAppointmentDuration] = useState(false);
 
   const getAppointment = useCallback(() => {
     try {
@@ -39,25 +41,26 @@ const AppointmentWindow: React.FC<IProps> = ({
           setUpdatedAppointment(response.data);
         });
       getAppointments();
-      addToast({
-        type: 'success',
-        title: 'Compromisso atualizado!',
-      });
     } catch (err) {
       throw new Error(err);
     }
-  }, [appointment, addToast, getAppointments]);
+  }, [appointment, getAppointments]);
 
   const handleSelectedDate = useCallback(
     async (e: Date) => {
       try {
-        await api.post(`appointments/${updatedAppointment.id}`, {
-          ...updatedAppointment,
+        await api.put(`appointments/${updatedAppointment.id}`, {
+          subject: updatedAppointment.subject,
           date: e,
+          duration_minutes: updatedAppointment.duration_minutes,
+          address: updatedAppointment.address,
+          appointment_type: updatedAppointment.appointment_type,
+          weplanGuest: updatedAppointment.weplanGuest,
+          guest: updatedAppointment.guest,
         });
         addToast({
-          type: 'info',
-          title: 'Atualização enviada',
+          type: 'success',
+          title: 'Compromisso atualizado com sucesso',
         });
         getAppointment();
       } catch (err) {
@@ -102,6 +105,13 @@ const AppointmentWindow: React.FC<IProps> = ({
           closeWindow={() => setAddAppointmentFile(false)}
         />
       )}
+      {editAppointmentDuration && (
+        <EditAppointmentDuration
+          appointment={appointment}
+          getAppointment={getAppointment}
+          closeWindow={() => setEditAppointmentDuration(false)}
+        />
+      )}
       <Container>
         <h1>Compromisso</h1>
         <span>
@@ -109,7 +119,18 @@ const AppointmentWindow: React.FC<IProps> = ({
         </span>
         <span>
           <p>Data: {formatDateToString(String(updatedAppointment.date))}</p>
-          <AddButton type="button" />
+          <AddButton type="button" onClick={() => setEditAppointmentDate(true)}>
+            <MdEdit />
+          </AddButton>
+        </span>
+        <span>
+          <p>Duração: {updatedAppointment.duration_minutes} minutos</p>
+          <AddButton
+            type="button"
+            onClick={() => setEditAppointmentDuration(true)}
+          >
+            <MdEdit />
+          </AddButton>
         </span>
         <span>
           <p>Endereço: {updatedAppointment.address}</p>
@@ -123,7 +144,7 @@ const AppointmentWindow: React.FC<IProps> = ({
           </AddButton>
           <h3>Participantes</h3>
           {updatedAppointment.weplanGuestAppointments.map(participant => {
-            return <p>{participant.guest.name}</p>;
+            return <p key={participant.id}>{participant.guest.name}</p>;
           })}
         </Section>
         <Section>
@@ -132,7 +153,11 @@ const AppointmentWindow: React.FC<IProps> = ({
           </AddButton>
           <h3>Arquivos</h3>
           {updatedAppointment.appointmentFiles.map(file => {
-            return <a href={file.file.file_url}>{file.file.file_name}</a>;
+            return (
+              <a key={file.id} href={file.file.file_url}>
+                {file.file.file_name}
+              </a>
+            );
           })}
         </Section>
       </Container>
