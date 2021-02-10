@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import IEventDTO from '../../../../dtos/IEventDTO';
 import { useToast } from '../../../../hooks/toast';
 import api from '../../../../services/api';
+import EventAppointmentSection from './EventAppointmentSection';
 import EventFileSection from './EventFileSection';
 import EventImageSection from './EventImageSection';
 import EventInspirationImageSection from './EventInspirationImageSection';
@@ -43,9 +44,7 @@ const SecondSection: React.FC<IProps> = ({ event }: IProps) => {
         updateEvent={updateEvent}
       />
       <EventInspirationImageSection eventId={event.id} />
-      <Section>
-        <h1>Compromissos</h1>
-      </Section>
+      <EventAppointmentSection eventId={event.id} />
       <Section>
         <h1>A Pagar</h1>
       </Section>
