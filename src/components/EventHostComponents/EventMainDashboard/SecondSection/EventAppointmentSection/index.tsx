@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import IAppointmentDTO from '../../../../../dtos/IAppointmentDTO';
 import IEventAppointmentDTO from '../../../../../dtos/IEventAppointmentDTO';
 import { useToast } from '../../../../../hooks/toast';
 import api from '../../../../../services/api';
+import AddAppointmentReminderWindow from '../../../../AppointmentsComponents/AddAppointmentReminderWindow';
 import CreateEventAppointment from '../../../../AppointmentsComponents/CreateEventAppointment';
 import AddButton from '../../../../UserComponents/AddButton';
 import EventAppointment from '../EventAppointment';
@@ -17,6 +19,12 @@ const EventAppointmentSection: React.FC<IProps> = ({ eventId }: IProps) => {
   const [eventAppointments, setEventAppointments] = useState<
     IEventAppointmentDTO[]
   >([]);
+  const [selectedAppointment, setSelectedAppointment] = useState(
+    {} as IAppointmentDTO,
+  );
+  const [appointmentReminderWindow, setAppointmentReminderWindow] = useState(
+    false,
+  );
   const [createAppointmentWindow, setCreateAppointmentWindow] = useState(false);
 
   const getEventAppointments = useCallback(() => {
@@ -37,13 +45,26 @@ const EventAppointmentSection: React.FC<IProps> = ({ eventId }: IProps) => {
     getEventAppointments();
   }, [getEventAppointments]);
 
+  const addReminder = useCallback((e: IAppointmentDTO) => {
+    setSelectedAppointment(e);
+    setAppointmentReminderWindow(true);
+  }, []);
+
   return (
     <Container>
       {createAppointmentWindow && (
         <CreateEventAppointment
+          addReminder={(e: IAppointmentDTO) => addReminder(e)}
           eventId={eventId}
           closeWindow={() => setCreateAppointmentWindow(false)}
           getAppointments={getEventAppointments}
+        />
+      )}
+      {appointmentReminderWindow && (
+        <AddAppointmentReminderWindow
+          closeWindow={() => setAppointmentReminderWindow(false)}
+          getAppointments={getEventAppointments}
+          appointment={selectedAppointment}
         />
       )}
       <AddButton onClick={() => setCreateAppointmentWindow(true)} />

@@ -1,4 +1,5 @@
 import IAppointmentFileDTO from './IAppointmentFileDTO';
+import IAppointmentReminderDTO from './IAppointmentReminderDTO';
 import IWeplanAppointmentGuestDTO from './IWeplanAppointmentGuestDTO';
 
 interface IEventDateDTO {
@@ -18,4 +19,5 @@ export default interface IAppointmentDTO {
   host_id: string;
   weplanGuestAppointments: IWeplanAppointmentGuestDTO[];
   appointmentFiles: IAppointmentFileDTO[];
+  appointmentReminders: IAppointmentReminderDTO[];
 }

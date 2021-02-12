@@ -17,6 +17,7 @@ import {
   Appointments,
   AddAppointmentButton,
 } from './styles';
+import AddAppointmentReminderWindow from '../../components/AppointmentsComponents/AddAppointmentReminderWindow';
 
 const CalendarPage: React.FC = () => {
   const today = new Date();
@@ -26,6 +27,10 @@ const CalendarPage: React.FC = () => {
   const [selectedAppointment, setSelectedAppointment] = useState(
     {} as IAppointmentDTO,
   );
+  const [appointmentReminderWindow, setAppointmentReminderWindow] = useState(
+    false,
+  );
+
   const [dayAppointments, setDayAppointments] = useState<IAppointmentDTO[]>([]);
   const [monthAppointments, setMonthAppointments] = useState<IAppointmentDTO[]>(
     [],
@@ -90,6 +95,11 @@ const CalendarPage: React.FC = () => {
     setAppointmentWindow(true);
   }, []);
 
+  const addReminder = useCallback((e: IAppointmentDTO) => {
+    setSelectedAppointment(e);
+    setAppointmentReminderWindow(true);
+  }, []);
+
   return (
     <Container>
       {appointmentWindow && (
@@ -101,8 +111,16 @@ const CalendarPage: React.FC = () => {
       )}
       {createAppointmentForm && (
         <CreateAppointmentForm
+          addReminder={(e: IAppointmentDTO) => addReminder(e)}
           getAppointments={getSelectedDateAppointments}
           closeWindow={() => setCreateAppointmentForm(false)}
+        />
+      )}
+      {appointmentReminderWindow && (
+        <AddAppointmentReminderWindow
+          closeWindow={() => setAppointmentReminderWindow(false)}
+          getAppointments={getSelectedDateAppointments}
+          appointment={selectedAppointment}
         />
       )}
       <PageHeader updateMyEvents={() => setSelectedDate(today)} />

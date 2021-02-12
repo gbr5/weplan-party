@@ -1,9 +1,9 @@
 import styled, { css } from 'styled-components';
 import '../../styles/global';
 
-export const FriendsContainer = styled.span`
-  display: grid;
-  grid-template-rows: 1fr 5fr 1fr;
+export const FriendsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
   gap: 24px;
   width: 100%;
   height: 100%;

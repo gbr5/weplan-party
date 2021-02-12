@@ -8,7 +8,7 @@ import {
   FriendButton,
   FriendsContainer,
 } from './styles';
-import WindowContainer from '../WindowContainer';
+import WindowUnFormattedContainer from '../WindowUnFormattedContainer';
 import IFriendDTO from '../../dtos/IFriendDTO';
 import api from '../../services/api';
 import IUserDTO from '../../dtos/IUserDTO';
@@ -61,14 +61,14 @@ const SelectFriendWindow: React.FC<IPropsDTO> = ({
   }, [handleSelectedFriend, selectedFriend]);
 
   return (
-    <WindowContainer
+    <WindowUnFormattedContainer
       onHandleCloseWindow={onHandleCloseWindow}
       containerStyle={{
         zIndex: 40,
-        top: '5%',
-        left: '5%',
-        height: '90%',
-        width: '90%',
+        top: '0%',
+        left: '0%',
+        height: '100%',
+        width: '100%',
       }}
     >
       <FriendsContainer>
@@ -93,7 +93,7 @@ const SelectFriendWindow: React.FC<IPropsDTO> = ({
           )}
         </SaveButton>
       </FriendsContainer>
-    </WindowContainer>
+    </WindowUnFormattedContainer>
   );
 };
 

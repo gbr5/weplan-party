@@ -4,7 +4,11 @@ import { Form } from '@unform/web';
 import Input from '../../Input';
 import WindowUnFormattedContainer from '../../WindowUnFormattedContainer';
 
-import { Container, ButtonContainer } from './styles';
+import {
+  Container,
+  ButtonContainer,
+  SelectFriendWindowContainer,
+} from './styles';
 import { useToast } from '../../../hooks/toast';
 import api from '../../../services/api';
 import SelectDate from '../../UserComponents/SelectDate';
@@ -15,20 +19,16 @@ import SelectFriendWindow from '../../SelectFriendWindow';
 import IUserFileDTO from '../../../dtos/IUserFileDTO';
 import SelectUserFileWindow from '../../SelectUserFileWindow';
 
-interface IFormData {
-  subject: string;
-  duration_minutes: number;
-  address: string;
-}
-
 interface IProps {
   closeWindow: Function;
   getAppointments: Function;
+  addReminder: Function;
   eventId: string;
 }
 
 const CreateEventAppointment: React.FC<IProps> = ({
   closeWindow,
+  addReminder,
   getAppointments,
   eventId,
 }: IProps) => {
@@ -39,6 +39,7 @@ const CreateEventAppointment: React.FC<IProps> = ({
 
   const [selectedDate, setSelectedDate] = useState(today);
   const [selectDateWindow, setSelectDateWindow] = useState(false);
+
   const [subjectInput, setSubjectInput] = useState(true);
   const [subject, setSubject] = useState('');
   const [address, setAddress] = useState('');
@@ -78,6 +79,7 @@ const CreateEventAppointment: React.FC<IProps> = ({
           event_id: eventId,
           appointment_id: appointment.data.id,
         });
+        addReminder(appointment.data);
       } else {
         const appointment = await api.post('appointments', {
           subject,
@@ -99,6 +101,7 @@ const CreateEventAppointment: React.FC<IProps> = ({
           event_id: eventId,
           appointment_id: appointment.data.id,
         });
+        addReminder(appointment.data);
       }
 
       setSelectedDate(new Date());
@@ -127,6 +130,7 @@ const CreateEventAppointment: React.FC<IProps> = ({
     appointmentFiles,
     getAppointments,
     eventId,
+    addReminder,
   ]);
 
   const nextSection = useCallback(() => {
@@ -228,124 +232,127 @@ const CreateEventAppointment: React.FC<IProps> = ({
   );
 
   return (
-    <WindowUnFormattedContainer
-      onHandleCloseWindow={closeWindow}
-      containerStyle={{
-        zIndex: 15,
-        top: '0',
-        left: '0',
-        height: '100%',
-        width: '100%',
-      }}
-    >
-      <Form ref={formRef} onSubmit={handleSubmit}>
-        <Container>
-          {subjectInput && (
-            <>
-              <strong>Qual o assunto:</strong>
-              <Input
-                onChange={e => setSubject(e.target.value)}
-                name="subject"
-                type="text"
-                placeholder="Assunto"
-              />
-              <button type="button" onClick={nextSection}>
-                Próximo
-              </button>
-            </>
-          )}
-          {addressInput && (
-            <>
-              <p>Assunto: {subject}</p>
-              <strong>Qual o endereço:</strong>
-              <Input
-                onChange={e => setAddress(e.target.value)}
-                name="address"
-                type="text"
-                placeholder="Endereço"
-              />
-              <ButtonContainer>
-                <button type="button" onClick={previousSection}>
-                  Voltar
-                </button>
+    <>
+      <WindowUnFormattedContainer
+        onHandleCloseWindow={closeWindow}
+        containerStyle={{
+          zIndex: 9,
+          top: '0',
+          left: '0',
+          height: '100%',
+          width: '100%',
+        }}
+      >
+        <Form ref={formRef} onSubmit={handleSubmit}>
+          <Container>
+            {subjectInput && (
+              <>
+                <strong>Qual o assunto:</strong>
+                <Input
+                  onChange={e => setSubject(e.target.value)}
+                  name="subject"
+                  type="text"
+                  placeholder="Assunto"
+                />
                 <button type="button" onClick={nextSection}>
                   Próximo
                 </button>
-              </ButtonContainer>
-            </>
-          )}
-          {durationInput && (
-            <>
-              <p>Assunto: {subject}</p>
-              <p>Endereço: {address}</p>
+              </>
+            )}
+            {addressInput && (
+              <>
+                <p>Assunto: {subject}</p>
+                <strong>Qual o endereço:</strong>
+                <Input
+                  onChange={e => setAddress(e.target.value)}
+                  name="address"
+                  type="text"
+                  placeholder="Endereço"
+                />
+                <ButtonContainer>
+                  <button type="button" onClick={previousSection}>
+                    Voltar
+                  </button>
+                  <button type="button" onClick={nextSection}>
+                    Próximo
+                  </button>
+                </ButtonContainer>
+              </>
+            )}
+            {durationInput && (
+              <>
+                <p>Assunto: {subject}</p>
+                <p>Endereço: {address}</p>
 
-              <p>Data: {formatDateToString(String(selectedDate))}</p>
-              <strong>Duração (minutos):</strong>
-              <Input
-                onChange={e => setDuration(Number(e.target.value))}
-                name="duration_minutes"
-                type="number"
-              />
-              <ButtonContainer>
-                <button type="button" onClick={previousSection}>
-                  Voltar
+                <p>Data: {formatDateToString(String(selectedDate))}</p>
+                <strong>Duração (minutos):</strong>
+                <Input
+                  onChange={e => setDuration(Number(e.target.value))}
+                  name="duration_minutes"
+                  type="number"
+                />
+                <ButtonContainer>
+                  <button type="button" onClick={previousSection}>
+                    Voltar
+                  </button>
+                  <button type="button" onClick={nextSection}>
+                    Próximo
+                  </button>
+                </ButtonContainer>
+              </>
+            )}
+            {finalSection && (
+              <>
+                <p>Assunto: {subject}</p>
+                <p>Endereço: {address}</p>
+                <p>Data: {formatDateToString(String(selectedDate))}</p>
+                <p>Duração: {duration} minutos</p>
+                {appointmentParticipants.length > 0 && (
+                  <div>
+                    <p>Participantes:</p>
+                    {appointmentParticipants.map(participant => {
+                      return <p key={participant.id}>{participant.name}</p>;
+                    })}
+                  </div>
+                )}
+                <button type="button" onClick={() => setParticipants(true)}>
+                  Adicionar participantes
                 </button>
-                <button type="button" onClick={nextSection}>
-                  Próximo
+                {appointmentFiles.length > 0 && (
+                  <div>
+                    <p>Arquivos:</p>
+                    {appointmentFiles.map(file => {
+                      return <p key={file.id}>{file.file_name}</p>;
+                    })}
+                  </div>
+                )}
+                <button type="button" onClick={() => setFiles(true)}>
+                  Adicionar arquivos
                 </button>
-              </ButtonContainer>
-            </>
-          )}
-          {finalSection && (
-            <>
-              <p>Assunto: {subject}</p>
-              <p>Endereço: {address}</p>
-              <p>Data: {formatDateToString(String(selectedDate))}</p>
-              <p>Duração: {duration} minutos</p>
-              {appointmentParticipants.length > 0 && (
-                <div>
-                  <p>Participantes:</p>
-                  {appointmentParticipants.map(participant => {
-                    return <p key={participant.id}>{participant.name}</p>;
-                  })}
-                </div>
-              )}
-              <button type="button" onClick={() => setParticipants(true)}>
-                Adicionar participantes
-              </button>
-              {appointmentFiles.length > 0 && (
-                <div>
-                  <p>Arquivos:</p>
-                  {appointmentFiles.map(file => {
-                    return <p key={file.id}>{file.file_name}</p>;
-                  })}
-                </div>
-              )}
-              <button type="button" onClick={() => setFiles(true)}>
-                Adicionar arquivos
-              </button>
 
-              <ButtonContainer>
-                <button type="button" onClick={previousSection}>
-                  Voltar
-                </button>
-                <button type="submit">Criar compromisso</button>
-              </ButtonContainer>
-            </>
-          )}
-        </Container>
-      </Form>
+                <ButtonContainer>
+                  <button type="button" onClick={previousSection}>
+                    Voltar
+                  </button>
+                  <button type="submit">Criar compromisso</button>
+                </ButtonContainer>
+              </>
+            )}
+          </Container>
+        </Form>
+        {participants && (
+          <SelectFriendWindowContainer>
+            <SelectFriendWindow
+              onHandleCloseWindow={() => nextSection()}
+              handleSelectedFriend={(e: IFriendDTO) => handleSelectedFriend(e)}
+            />
+          </SelectFriendWindowContainer>
+        )}
+      </WindowUnFormattedContainer>
       {selectDateWindow && (
         <SelectDate
           closeWindow={() => nextSection()}
           selectDate={(e: Date) => setSelectedDate(e)}
-        />
-      )}
-
-      {participants && (
-        <SelectFriendWindow
-          onHandleCloseWindow={() => nextSection()}
-          handleSelectedFriend={(e: IFriendDTO) => handleSelectedFriend(e)}
         />
       )}
       {files && (
@@ -356,7 +363,7 @@ const CreateEventAppointment: React.FC<IProps> = ({
           selectUserFile={(e: IUserFileDTO) => handleSelectedFile(e)}
         />
       )}
-    </WindowUnFormattedContainer>
+    </>
   );
 };
 

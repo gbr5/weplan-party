@@ -35,6 +35,13 @@ export const Container = styled.div`
   }
 `;
 
+export const SelectFriendWindowContainer = styled.div`
+  div {
+    span {
+    }
+  }
+`;
+
 export const ButtonContainer = styled.div`
   display: flex;
 
