@@ -24,11 +24,13 @@ interface IFormData {
 interface IProps {
   closeWindow: Function;
   getAppointments: Function;
+  addReminder: Function;
 }
 
 const CreateAppointmentForm: React.FC<IProps> = ({
   closeWindow,
   getAppointments,
+  addReminder,
 }: IProps) => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
@@ -72,6 +74,7 @@ const CreateAppointmentForm: React.FC<IProps> = ({
             appointment_id: appointment.data.id,
           });
         }
+        addReminder(appointment.data);
       } else {
         const appointment = await api.post('appointments', {
           subject,
@@ -89,6 +92,7 @@ const CreateAppointmentForm: React.FC<IProps> = ({
             appointment_id: appointment.data.id,
           });
         }
+        addReminder(appointment.data);
       }
 
       setSelectedDate(new Date());
@@ -116,6 +120,7 @@ const CreateAppointmentForm: React.FC<IProps> = ({
     appointmentParticipants,
     appointmentFiles,
     getAppointments,
+    addReminder,
   ]);
 
   const nextSection = useCallback(() => {

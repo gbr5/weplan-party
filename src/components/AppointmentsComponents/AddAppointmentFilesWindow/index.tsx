@@ -106,14 +106,14 @@ const AddAppointmentFilesWindow: React.FC<IProps> = ({
             return <p key={xFile.id}>{xFile.file_name}</p>;
           })
         ) : (
-          <p>Este compromisso ainda não tem filees</p>
+          <p>Este compromisso ainda não tem arquivos</p>
         )}
-        <strong>Filees selecionados:</strong>
+        <strong>Arquivos selecionados:</strong>
         {appointmentFiles.map(file => {
           return <p key={file.id}>{file.file_name}</p>;
         })}
         <button type="button" onClick={() => setFiles(true)}>
-          Adicionar filees
+          Adicionar arquivos
         </button>
         {appointmentFiles.length > 0 && (
           <button type="button" onClick={handleSubmit}>
