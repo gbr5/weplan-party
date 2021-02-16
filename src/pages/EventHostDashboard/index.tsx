@@ -885,6 +885,7 @@ const EventHostDashboard: React.FC = () => {
               myAvailableNumberOfGuests={myAvailableNumberOfGuests}
               myGuests={myGuests}
               eventId={eventId}
+              eventTrimmedName={pageEvent.trimmed_name}
               closeAllWindows={closeAllWindows}
               confirmedGuests={confirmedGuests}
               eventGuests={eventGuests}

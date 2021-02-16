@@ -43,6 +43,7 @@ interface IFormDTO extends IEventGuestDTO {
 interface IProps {
   onHandleCloseWindow: MouseEventHandler;
   eventId: string;
+  eventTrimmedName: string;
   eventGuest: IEventGuestDTO;
   handleCloseWindow: Function;
   handleGetGuests: Function;
@@ -51,6 +52,7 @@ interface IProps {
 const EditGuestWindow: React.FC<IProps> = ({
   onHandleCloseWindow,
   eventId,
+  eventTrimmedName,
   eventGuest,
   handleCloseWindow,
   handleGetGuests,
@@ -110,6 +112,7 @@ const EditGuestWindow: React.FC<IProps> = ({
   const [guestDefaultEmailId, setGuestDefaultEmailId] = useState('');
   const [guestDefaultAddress, setGuestDefaultAddress] = useState('Endereço');
   const [guestDefaultAddressId, setGuestDefaultAddressId] = useState('');
+  const [sendWhats, setSendWhats] = useState('');
 
   const updateGuest = useCallback(() => {
     try {
@@ -367,6 +370,14 @@ const EditGuestWindow: React.FC<IProps> = ({
     [guest, addToast, handleGetGuests, updateGuest],
   );
 
+  useEffect(() => {
+    if (guestDefaultWhatsapp !== 'Whatsapp') {
+      setSendWhats(
+        `https://wa.me/${guestDefaultWhatsapp}/?text=https://weplan.party/event/${eventTrimmedName}/${guest.id}`,
+      );
+    }
+  }, [guestDefaultWhatsapp, eventTrimmedName, guest]);
+
   return (
     <>
       {userToGuestMessageWindow && (
@@ -459,12 +470,23 @@ const EditGuestWindow: React.FC<IProps> = ({
                 )}
               </Section>
               <Section>
-                <button
-                  type="button"
-                  onClick={() => setUserToGuestMessageWindow(true)}
-                >
-                  Chat
-                </button>
+                {guest.weplanGuest && guest.weplanGuest.id && (
+                  <button
+                    type="button"
+                    onClick={() => setUserToGuestMessageWindow(true)}
+                  >
+                    Chat
+                  </button>
+                )}
+                {guest.guestContactInfos &&
+                  sendWhats !== '' &&
+                  guest.guestContactInfos.find(
+                    e => e.contactType.name === 'Whatsapp',
+                  ) && (
+                    <a target="blank" href={sendWhats}>
+                      Whatsapp
+                    </a>
+                  )}
                 <h2>Informações de contato</h2>
                 <InfoSection>
                   <InfoInputContainer>
