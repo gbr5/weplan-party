@@ -14,6 +14,7 @@ import EventHostDashboard from '../pages/EventHostDashboard';
 import WelcomePage from '../pages/WelcomePage';
 import ImageGallery from '../pages/ImageGallery';
 import CalendarPage from '../pages/CalendarPage';
+import EventExternalPage from '../pages/EventExternalPage';
 
 const Routes: React.FC = () => {
   return (
@@ -25,6 +26,12 @@ const Routes: React.FC = () => {
       <Route path="/forgot-password" exact component={ForgotPassword} />
       <Route path="/reset-password" exact component={ResetPassword} />
       <Route path="/wellcome" exact component={WelcomePage} />
+      <Route path="/event/:event_name" exact component={EventExternalPage} />
+      <Route
+        path="/event/:event_name/:guest_id"
+        exact
+        component={EventExternalPage}
+      />
 
       <Route
         path="/dashboard/my-event/:name"
