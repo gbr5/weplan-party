@@ -44,6 +44,7 @@ interface IProps {
   handleGetGuests: Function;
   handleGuestAllocationWindow: MouseEventHandler;
   eventId: string;
+  eventTrimmedName: string;
   isOwner: boolean;
   myAvailableNumberOfGuests: number;
   eventGuests: IEventGuestDTO[];
@@ -58,6 +59,7 @@ const EventGuestSection: React.FC<IProps> = ({
   handleGuestAllocationWindow,
   closeAllWindows,
   eventId,
+  eventTrimmedName,
   isOwner,
   myAvailableNumberOfGuests,
   eventGuests,
@@ -264,6 +266,7 @@ const EventGuestSection: React.FC<IProps> = ({
       {editGuestWindow && (
         <EditGuestWindow
           eventId={eventId}
+          eventTrimmedName={eventTrimmedName}
           eventGuest={selectedGuest}
           handleCloseWindow={handleEditGuestWindow}
           handleGetGuests={handleGetGuests}

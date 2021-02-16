@@ -48,6 +48,23 @@ export const EventContainer = styled.div`
       color: ${shade(0.2, '#ff9000')};
     }
   }
+
+  button {
+    background: transparent;
+    border: none;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+    gap: 16px;
+
+    &:hover {
+      color: var(--primary-color);
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+    }
+  }
 `;
 
 export const EventImageContainer = styled.div`
