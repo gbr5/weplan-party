@@ -5,7 +5,6 @@ import React, {
   useRef,
   useState,
 } from 'react';
-
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
@@ -44,6 +43,7 @@ interface IProps {
   onHandleCloseWindow: MouseEventHandler;
   eventId: string;
   eventTrimmedName: string;
+  eventName: string;
   eventGuest: IEventGuestDTO;
   handleCloseWindow: Function;
   handleGetGuests: Function;
@@ -53,6 +53,7 @@ const EditGuestWindow: React.FC<IProps> = ({
   onHandleCloseWindow,
   eventId,
   eventTrimmedName,
+  eventName,
   eventGuest,
   handleCloseWindow,
   handleGetGuests,
@@ -370,13 +371,47 @@ const EditGuestWindow: React.FC<IProps> = ({
     [guest, addToast, handleGetGuests, updateGuest],
   );
 
+  const sendEmailInvitation = useCallback(async () => {
+    try {
+      const email = guest.guestContactInfos.find(
+        e => e.contactType.name === 'Email',
+      )?.contact_info;
+      await api.post('/mass-invitation', {
+        eventName,
+        eventTrimmedName,
+        guests: [
+          {
+            id: guest.id,
+            email,
+            first_name: guest.first_name,
+            host_name:
+              (!!guest.host.personInfo && guest.host.personInfo.first_name) ||
+              guest.host.name,
+          },
+        ],
+      });
+      addToast({
+        type: 'success',
+        title: 'Convites enviados com sucesso!',
+      });
+    } catch (err) {
+      addToast({
+        type: 'error',
+        title: 'Ocorre um erro, tente novamente',
+        description: 'Verifique se o e-mail está correto!',
+      });
+      throw new Error(err);
+    }
+    return guest;
+  }, [eventTrimmedName, addToast, eventName, guest]);
+
   useEffect(() => {
     if (guestDefaultWhatsapp !== 'Whatsapp') {
-      setSendWhats(
-        `https://wa.me/${guestDefaultWhatsapp}/?text=https://weplan.party/event/${eventTrimmedName}/${guest.id}`,
-      );
+      const waMessage = `Ei ${guest.first_name}! Venha curtir a ${eventName} comigo, entra no link e confirma a sua presença https://weplan.party/event/${eventTrimmedName}/${guest.id}, lá também tem todas as informações necessárias.`;
+
+      setSendWhats(`https://wa.me/${guestDefaultWhatsapp}/?text=${waMessage}`);
     }
-  }, [guestDefaultWhatsapp, eventTrimmedName, guest]);
+  }, [guestDefaultWhatsapp, eventName, eventTrimmedName, guest]);
 
   return (
     <>
@@ -483,9 +518,20 @@ const EditGuestWindow: React.FC<IProps> = ({
                   guest.guestContactInfos.find(
                     e => e.contactType.name === 'Whatsapp',
                   ) && (
-                    <a target="blank" href={sendWhats}>
-                      Whatsapp
-                    </a>
+                    <button type="button">
+                      <a target="blank" href={sendWhats}>
+                        Enviar Whatsapp
+                      </a>
+                    </button>
+                  )}
+                {guest.guestContactInfos &&
+                  guestDefaultEmail !== '' &&
+                  guest.guestContactInfos.find(
+                    e => e.contactType.name === 'Email',
+                  ) && (
+                    <button type="button" onClick={sendEmailInvitation}>
+                      Enviar e-mail
+                    </button>
                   )}
                 <h2>Informações de contato</h2>
                 <InfoSection>
