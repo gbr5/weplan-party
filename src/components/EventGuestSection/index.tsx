@@ -9,7 +9,7 @@ import * as Yup from 'yup';
 import { FormHandles } from '@unform/core';
 import { FiCheckSquare, FiEdit3, FiSquare, FiUser } from 'react-icons/fi';
 
-import { MdPersonAdd } from 'react-icons/md';
+import { MdMail, MdPersonAdd } from 'react-icons/md';
 import AddEventGuestListWindow from '../AddEventGuestListWindow';
 
 import {
@@ -45,6 +45,7 @@ interface IProps {
   handleGuestAllocationWindow: MouseEventHandler;
   eventId: string;
   eventTrimmedName: string;
+  eventName: string;
   isOwner: boolean;
   myAvailableNumberOfGuests: number;
   eventGuests: IEventGuestDTO[];
@@ -59,6 +60,7 @@ const EventGuestSection: React.FC<IProps> = ({
   handleGuestAllocationWindow,
   closeAllWindows,
   eventId,
+  eventName,
   eventTrimmedName,
   isOwner,
   myAvailableNumberOfGuests,
@@ -212,6 +214,46 @@ const EventGuestSection: React.FC<IProps> = ({
     return wpguests;
   }, [eventGuests, myGuests, isOwner]);
 
+  const sendMassEmailInvitations = useCallback(async () => {
+    try {
+      const guests = eventGuests
+        .map(guest => {
+          const email =
+            (!!guest.guestContactInfos &&
+              guest.guestContactInfos.length > 0 &&
+              guest.guestContactInfos.find(
+                contact => contact.contactType.name === 'Email',
+              )?.contact_info) ||
+            '';
+          return {
+            id: guest.id,
+            email,
+            first_name: guest.first_name,
+            host_name:
+              (!!guest.host.personInfo && guest.host.personInfo.first_name) ||
+              guest.host.name,
+          };
+        })
+        .filter(e => e.email !== '');
+
+      await api.post('/mass-invitation', {
+        eventName,
+        eventTrimmedName,
+        guests,
+      });
+      addToast({
+        type: 'success',
+        title: 'Convites enviados com sucesso!',
+      });
+    } catch (err) {
+      addToast({
+        type: 'error',
+        title: 'Ocorreu um erro, tente novamente!',
+      });
+      throw new Error(err);
+    }
+  }, [eventGuests, eventTrimmedName, eventName, addToast]);
+
   return (
     <>
       {wpGuestInvitationWindow && (
@@ -266,6 +308,7 @@ const EventGuestSection: React.FC<IProps> = ({
       {editGuestWindow && (
         <EditGuestWindow
           eventId={eventId}
+          eventName={eventName}
           eventTrimmedName={eventTrimmedName}
           eventGuest={selectedGuest}
           handleCloseWindow={handleEditGuestWindow}
@@ -315,6 +358,10 @@ const EventGuestSection: React.FC<IProps> = ({
           </BooleanNavigationButton>
 
           <span>
+            <button type="button" onClick={sendMassEmailInvitations}>
+              Convite Virtual
+              <MdMail size={30} />
+            </button>
             <button type="button" onClick={handleAddGuestWindow}>
               Adicionar Convidado
               <MdPersonAdd size={30} />

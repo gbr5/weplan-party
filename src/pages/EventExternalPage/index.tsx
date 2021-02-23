@@ -45,7 +45,6 @@ const EventExternalPage: React.FC = () => {
     try {
       setLoading(true);
       api.get(`external-guests/${guest_id || guestId}`).then(response => {
-        console.log(response.data);
         setEventGuest(response.data);
         if (event_name !== response.data.trimmed_name) {
           history.push('/signin');
