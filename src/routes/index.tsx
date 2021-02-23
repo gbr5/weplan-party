@@ -19,6 +19,12 @@ import EventExternalPage from '../pages/EventExternalPage';
 const Routes: React.FC = () => {
   return (
     <Switch>
+      <Route
+        path="/event/:event_name/:guest_id"
+        exact
+        component={EventExternalPage}
+        isPrivate
+      />
       <Route path="/" exact component={Main} />
       <Route path="/signin" exact component={SignIn} />
       <Route path="/signup" exact component={SignUp} />
