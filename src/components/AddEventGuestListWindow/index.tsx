@@ -110,7 +110,7 @@ const AddEventGuestListWindow: React.FC<IProps> = ({
     [closeAllWindows],
   );
 
-  const handleGuestListUpload = useCallback(
+  const handleGuestListWithWhatsappAndEmailUpload = useCallback(
     async (e: ChangeEvent<HTMLInputElement>) => {
       try {
         if (e.target.files) {
@@ -118,7 +118,7 @@ const AddEventGuestListWindow: React.FC<IProps> = ({
 
           data.append('file', e.target.files[0]);
           await api.post(
-            `events/${eventId}/guests/import/${myAvailableNumberOfGuests}`,
+            `guest-list/whatsapp/email/${eventId}/${myAvailableNumberOfGuests}`,
             data,
           );
         }
@@ -158,7 +158,7 @@ const AddEventGuestListWindow: React.FC<IProps> = ({
               href="https://weplan-user.s3.amazonaws.com/planilha_de_convidados_WePlan-Exemplo.csv"
               target="blank"
             >
-              modelo.csv
+              Baixar planilha
               <MdFileDownload size={60} />
             </a>
             <JumpButton type="button" onClick={() => handleNextWindow(5)}>
@@ -273,7 +273,11 @@ const AddEventGuestListWindow: React.FC<IProps> = ({
             <label htmlFor="file">
               Upload
               <MdFileUpload size={30} />
-              <input type="file" id="file" onChange={handleGuestListUpload} />
+              <input
+                type="file"
+                id="file"
+                onChange={handleGuestListWithWhatsappAndEmailUpload}
+              />
             </label>
           </BodyContainer>
         </PageContainer>

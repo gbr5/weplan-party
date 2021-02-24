@@ -21,7 +21,7 @@ interface IProps {
   handleAddPlannerDrawer: Function;
   handleEventInfoWindow: Function;
   handleLatestActionsSection: Function;
-  handleMessagesSection: Function;
+  // handleMessagesSection: Function;
   eventName: string;
   owners: IEventOwnerDTO[];
   planners: IUserInfoDTO[];
@@ -40,7 +40,7 @@ const SideMenu: React.FC<IProps> = ({
   handleAddPlannerDrawer,
   handleEventInfoWindow,
   handleLatestActionsSection,
-  handleMessagesSection,
+  // handleMessagesSection,
   handleAddOwnerDrawer,
   eventName,
   owners,
@@ -155,9 +155,9 @@ const SideMenu: React.FC<IProps> = ({
       <button type="button" onClick={() => handleLatestActionsSection()}>
         Últimas Atualizações
       </button>
-      <button type="button" onClick={() => handleMessagesSection()}>
+      {/* <button type="button" onClick={() => handleMessagesSection()}>
         Mensagens
-      </button>
+      </button> */}
     </Container>
   );
 };

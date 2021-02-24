@@ -47,7 +47,7 @@ import EventInfoWindow from '../../components/EventInfoWindow';
 import MembersWindow from '../../components/MembersWindow';
 import EditEventInfoWindow from '../../components/EditEventInfoWindow';
 import AddPlannerWindow from '../../components/AddPlannerWindow';
-import MessageSection from '../../components/MessageSection';
+// import MessageSection from '../../components/MessageSection';
 import CreateEventInfoWindowForm from '../../components/CreateEventInfoWindowForm';
 import UpdateEventNumberOfGuestsWindow from '../../components/UpdateEventNumberOfGuestsWindow';
 import GuestAlocationWindow from '../../components/GuestAlocationWindow';
@@ -100,7 +100,7 @@ const EventHostDashboard: React.FC = () => {
   const [financeSection, setFinanceSection] = useState(false);
   const [supplierSection, setSupplierSection] = useState(false);
   const [checkListSection, setCheckListSection] = useState(false);
-  const [messagesSection, setMessagesSection] = useState(false);
+  // const [messagesSection, setMessagesSection] = useState(false);
   const [
     updateEventNumberOfGuestsWindow,
     setUpdateEventNumberOfGuestsWindow,
@@ -197,7 +197,7 @@ const EventHostDashboard: React.FC = () => {
     setFinanceSection(false);
     setCheckListSection(false);
     setSupplierSection(false);
-    setMessagesSection(false);
+    // setMessagesSection(false);
     setFirstRow(false);
     setSidebar(false);
   }, []);
@@ -302,10 +302,10 @@ const EventHostDashboard: React.FC = () => {
     closeAllSections();
     setSupplierSection(true);
   }, [closeAllSections]);
-  const handleMessagesSection = useCallback(() => {
-    closeAllSections();
-    setMessagesSection(true);
-  }, [closeAllSections]);
+  // const handleMessagesSection = useCallback(() => {
+  //   closeAllSections();
+  //   setMessagesSection(true);
+  // }, [closeAllSections]);
   const handleGetCheckListTasks = useCallback(() => {
     try {
       api
@@ -807,7 +807,7 @@ const EventHostDashboard: React.FC = () => {
             handleEventInfoWindow={handleEventInfoWindow}
             handleLatestActionsSection={handleLatestActionsSection}
             handleMembersWindow={handleMembersWindow}
-            handleMessagesSection={handleMessagesSection}
+            // handleMessagesSection={handleMessagesSection}
             handleOwnerProfileWindow={handleOwnerProfileWindow}
             handleSelectFriendAsMember={handleSelectFriendAsMember}
             isOwner={isOwner}
@@ -875,7 +875,7 @@ const EventHostDashboard: React.FC = () => {
               selectedSuppliers={selectedSuppliers}
             />
           )}
-          {!!messagesSection && <MessageSection />}
+          {/* {!!messagesSection && <MessageSection />} */}
           {!!guestsSection && (
             <EventGuestSection
               isOwner={isOwner}
