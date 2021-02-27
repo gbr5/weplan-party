@@ -201,9 +201,6 @@ const EventHostDashboard: React.FC = () => {
     setFirstRow(false);
     setSidebar(false);
   }, []);
-  const closeEventInfoWindowForm = useCallback(() => {
-    setCreateEventInfoWindowForm(false);
-  }, []);
   const openEventInfoWindowForm = useCallback(() => {
     setCreateEventInfoWindowForm(true);
   }, []);
@@ -632,6 +629,10 @@ const EventHostDashboard: React.FC = () => {
     }
   }, []);
 
+  const closeEventInfoWindowForm = useCallback(() => {
+    handleGetEventInfo();
+    setCreateEventInfoWindowForm(false);
+  }, [handleGetEventInfo]);
   return (
     <Container>
       <PageHeader updateMyEvents={updateEventMainDashboard} />

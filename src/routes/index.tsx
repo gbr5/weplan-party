@@ -15,6 +15,7 @@ import WelcomePage from '../pages/WelcomePage';
 import ImageGallery from '../pages/ImageGallery';
 import CalendarPage from '../pages/CalendarPage';
 import EventExternalPage from '../pages/EventExternalPage';
+import TestPage from '../pages/TestPage';
 
 const Routes: React.FC = () => {
   return (
@@ -26,6 +27,7 @@ const Routes: React.FC = () => {
         isPrivate
       />
       <Route path="/" exact component={Main} />
+      <Route path="/test/page" exact component={TestPage} />
       <Route path="/signin" exact component={SignIn} />
       <Route path="/signup" exact component={SignUp} />
 
