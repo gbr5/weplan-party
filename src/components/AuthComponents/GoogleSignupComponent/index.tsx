@@ -21,7 +21,7 @@ const GoogleSignupComponent: React.FC<IProps> = ({ buttonText }) => {
     createdefaultContactInfo,
     createPersonInfo,
   } = useAuth();
-  const url = process.env.PUBLIC_URL;
+  const url = process.env.REACT_APP_URL;
   // const back = process.env.REACT_APP_API_URL;
   const client = process.env.REACT_APP_URL_GOOGLE_CLIENT_ID;
   // console.log({ url });

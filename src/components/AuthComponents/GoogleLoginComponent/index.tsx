@@ -14,7 +14,7 @@ interface IProps {
 
 const GoogleLoginComponent: React.FC<IProps> = ({ buttonText }) => {
   const { signInWithGoogle } = useAuth();
-  const url = process.env.PUBLIC_URL;
+  const url = process.env.REACT_APP_URL;
   const client = process.env.REACT_APP_URL_GOOGLE_CLIENT_ID;
 
   const onSuccess = useCallback(
