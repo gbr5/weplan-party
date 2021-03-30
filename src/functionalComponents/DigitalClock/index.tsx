@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Panel from './Panel';
 
 import { Container } from './styles';
@@ -9,6 +9,8 @@ import { Container } from './styles';
 // }
 
 const DigitalClock: React.FC = () => {
+  const hours = Array.from({ length: 24 }, (_, i) => i);
+  const minutes = Array.from({ length: 60 }, (_, i) => i);
   const startHour = new Date().getHours();
   const startMinute = new Date().getMinutes();
   const [selectedHour, setSelectedHour] = useState(startHour);
@@ -62,21 +64,32 @@ const DigitalClock: React.FC = () => {
   //     ?.addEventListener('wheel', onScrollMinute, { passive: true });
   // }, [onScrollMinute]);
 
+  const sectionRef = useRef<HTMLElement>(null);
+  const strongRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    console.log(sectionRef.current?.id);
+    console.log(strongRef.current?.id);
+    console.log(strongRef.current?.hidden);
+  }, []);
+
   return (
     <Container>
-      <section>
+      <section id="oi" ref={sectionRef}>
         <Panel
+          xRef={strongRef}
           id="mainHour"
           onScroll={(e: WheelEvent) => onScrollHour(e)}
-          number={selectedHour}
+          number={hours}
         />
       </section>
       <p>:</p>
       <section>
         <Panel
+          xRef={strongRef}
           id="mainMinute"
           onScroll={(e: WheelEvent) => onScrollMinute(e)}
-          number={selectedMinute}
+          number={minutes}
         />
       </section>
     </Container>

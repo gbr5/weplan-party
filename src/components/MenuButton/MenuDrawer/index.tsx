@@ -3,6 +3,7 @@ import { ThemeContext } from 'styled-components';
 import Swicth from 'react-switch';
 import { FiPower } from 'react-icons/fi';
 import { MdAttachFile, MdGroup, MdImage } from 'react-icons/md';
+import { useGoogleLogout } from 'react-google-login';
 
 import { useHistory } from 'react-router-dom';
 import { useToggleTheme } from '../../../hooks/theme';
@@ -13,22 +14,23 @@ import {
   ToggleButton,
   LogoutButton,
 } from './styles';
+import { useAuth } from '../../../hooks/auth';
 
 interface IProps {
   handleCreateEventDrawer: Function;
-  signOut: Function;
   handleUploadFileWindow: Function;
   handleNavigateToFriends: Function;
 }
 
 const MenuDrawer: React.FC<IProps> = ({
   handleCreateEventDrawer,
-  signOut,
   handleUploadFileWindow,
   handleNavigateToFriends,
 }: IProps) => {
   const history = useHistory();
+  const { handleSignOut } = useAuth();
   const { colors } = useContext(ThemeContext);
+  const clientId = process.env.REACT_APP_URL_GOOGLE_CLIENT_ID;
 
   const { toggleTheme, themeBoolean } = useToggleTheme();
 
@@ -38,6 +40,15 @@ const MenuDrawer: React.FC<IProps> = ({
     },
     [history],
   );
+
+  const { signOut } = useGoogleLogout({
+    clientId: clientId || '',
+  });
+
+  const handleUserSignOut = useCallback(() => {
+    handleSignOut();
+    signOut();
+  }, [handleSignOut, signOut]);
 
   return (
     <Container>
@@ -97,7 +108,7 @@ const MenuDrawer: React.FC<IProps> = ({
           <h3>Ajuda</h3>
         </button>
       </MenuItemContainer>
-      <LogoutButton type="button" onClick={() => signOut()}>
+      <LogoutButton type="button" onClick={handleUserSignOut}>
         <h3>Logout</h3>
         <FiPower size={32} />
       </LogoutButton>

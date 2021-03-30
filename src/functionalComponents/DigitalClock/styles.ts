@@ -25,9 +25,6 @@ export const Container = styled.div`
     text-align: center;
     border-radius: 16px;
     max-height: 120px;
-
-    @media (max-width: 900px) {
-      overflow-y: scroll;
-    }
+    overflow-y: hidden;
   }
 `;

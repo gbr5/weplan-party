@@ -87,7 +87,7 @@ const PageHeader: React.FC<IProps> = ({ updateMyEvents }: IProps) => {
   const [profileWindow, setProfileWindow] = useState(false);
   const [settingsWindow, setSettingsWindow] = useState(false);
 
-  const { signOut, user } = useAuth();
+  const { handleSignOut, user } = useAuth();
   const { toggleTheme, themeBoolean } = useToggleTheme();
   const history = useHistory();
 
@@ -346,11 +346,11 @@ const PageHeader: React.FC<IProps> = ({ updateMyEvents }: IProps) => {
 
   useEffect(() => {
     if (!user) {
-      signOut();
+      handleSignOut();
     } else if (!user.id) {
-      signOut();
+      handleSignOut();
     }
-  }, [signOut, user]);
+  }, [handleSignOut, user]);
 
   const imageProfile = user.avatar_url ? user.avatar_url : profileImg;
 
@@ -359,7 +359,7 @@ const PageHeader: React.FC<IProps> = ({ updateMyEvents }: IProps) => {
       <Header>
         <HeaderContent>
           <h1>
-            <MenuButton updateMyEvents={updateMyEvents} signOut={signOut} />
+            <MenuButton updateMyEvents={updateMyEvents} />
           </h1>
 
           <button type="button" onClick={handleNavigateToDashboard}>

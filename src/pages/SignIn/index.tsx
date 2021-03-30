@@ -26,6 +26,7 @@ import {
 import IUserDTO from '../../dtos/IUserDTO';
 import api from '../../services/api';
 import WindowUnFormattedContainer from '../../components/WindowUnFormattedContainer';
+import GoogleLoginComponent from '../../components/AuthComponents/GoogleLoginComponent';
 
 interface SignInFormData {
   email: string;
@@ -171,6 +172,9 @@ const SignIn: React.FC = () => {
               <FiLogIn />
               Criar conta
             </Link>
+            <section>
+              <GoogleLoginComponent buttonText="Entre com o Google" />
+            </section>
           </AnimationContainer>
         </Content>
         <Background />

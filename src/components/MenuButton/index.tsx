@@ -12,7 +12,6 @@ import CreateEventInfoWindowForm from '../CreateEventInfoWindowForm';
 import IEventDTO from '../../dtos/IEventDTO';
 
 interface IProps {
-  signOut: Function;
   updateMyEvents: Function;
 }
 interface IEvent {
@@ -21,7 +20,7 @@ interface IEvent {
   trimmed_name: string;
 }
 
-const MenuButton: React.FC<IProps> = ({ signOut, updateMyEvents }: IProps) => {
+const MenuButton: React.FC<IProps> = ({ updateMyEvents }: IProps) => {
   const [menuDrawer, setMenuDrawer] = useState(false);
   const [friendsWindow, setFriendsWindow] = useState(false);
   const [createEventDrawer, setCreateEventDrawer] = useState(false);
@@ -103,7 +102,6 @@ const MenuButton: React.FC<IProps> = ({ signOut, updateMyEvents }: IProps) => {
         <MenuDrawer
           handleNavigateToFriends={handleNavigateToFriends}
           handleCreateEventDrawer={openCreateEventDrawer}
-          signOut={signOut}
           handleUploadFileWindow={() => setUploadFileWindow(!uploadFileWindow)}
         />
       )}
