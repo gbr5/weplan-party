@@ -24,6 +24,8 @@ import {
   QuestionTitle,
   LogoContainer,
 } from './styles';
+import { useAuth } from '../../hooks/auth';
+import GoogleSignupComponent from '../../components/AuthComponents/GoogleSignupComponent';
 
 interface SignUpForm {
   name: string;
@@ -38,6 +40,7 @@ interface IPersonUser {
 }
 
 const SignUp: React.FC = () => {
+  const { createdefaultContactInfo, createPersonInfo } = useAuth();
   const [userId, setUserId] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [options, setOptions] = useState(true);
@@ -61,29 +64,12 @@ const SignUp: React.FC = () => {
           abortEarly: false,
         });
 
-        const findFirstAndLastName = await api.get(
-          `person-info/${data.first_name}/${data.last_name}`,
-        );
-
-        if (findFirstAndLastName.data.id) {
-          return addToast({
-            type: 'error',
-            title: 'Erro no cadastro | [Informações de Usuário].',
-            description: `Nome e Sobrenome "${data.first_name} ${data.last_name}" já cadastrado em outro perfil, tente novamente.`,
-          });
-        }
-
-        await api.post(`/person-info/${userId}`, {
-          person_id: userId,
+        createPersonInfo({
+          userId,
           first_name: data.first_name,
           last_name: data.last_name,
         });
 
-        addToast({
-          type: 'success',
-          title: 'Cadastro realizado!',
-          description: 'Yuhuu!! Vamos fazer a festaaa!!',
-        });
         await api.post('user/activation', {
           email: userEmail,
         });
@@ -112,7 +98,7 @@ const SignUp: React.FC = () => {
         setLoading(false);
       }
     },
-    [addToast, history, userId, userEmail],
+    [addToast, history, userId, userEmail, createPersonInfo],
   );
 
   const handleSubmit = useCallback(
@@ -167,48 +153,13 @@ const SignUp: React.FC = () => {
         const response = await api.post('/users', validatedData);
         setUserId(response.data.id);
         setUserEmail(response.data.email);
-
-        Promise.all([
-          api.post(`/profile/contact-info/add/${response.data.id}`, {
-            contact_info: `n/a - ${response.data.id}1`,
-            contact_type: 'Whatsapp',
-          }),
-          api.post(`/profile/contact-info/add/${response.data.id}`, {
-            contact_info: `n/a - ${response.data.id}2`,
-            contact_type: 'Phone',
-          }),
-          api.post(`/profile/contact-info/add/${response.data.id}`, {
-            contact_info: `n/a - ${response.data.id}3`,
-            contact_type: 'Email',
-          }),
-          api.post(`/profile/contact-info/add/${response.data.id}`, {
-            contact_info: `n/a - ${response.data.id}4`,
-            contact_type: 'Address',
-          }),
-          api.post(`/profile/contact-info/add/${response.data.id}`, {
-            contact_info: `n/a - ${response.data.id}5`,
-            contact_type: 'Instagram',
-          }),
-          api.post(`/profile/contact-info/add/${response.data.id}`, {
-            contact_info: `n/a - ${response.data.id}6`,
-            contact_type: 'Facebook',
-          }),
-          api.post(`/profile/contact-info/add/${response.data.id}`, {
-            contact_info: `n/a - ${response.data.id}7`,
-            contact_type: 'Linkedin',
-          }),
-          api.post(`/profile/contact-info/add/${response.data.id}`, {
-            contact_info: `n/a - ${response.data.id}8`,
-            contact_type: 'Website',
-          }),
-        ]);
-
+        createdefaultContactInfo(response.data.id);
         setOptions(false);
 
         return addToast({
           type: 'success',
           title: 'Sucesso!',
-          description: 'Agora só falta você nos dizer o ser nome completo.',
+          description: 'Agora só falta você nos dizer o seu nome completo.',
         });
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
@@ -226,7 +177,7 @@ const SignUp: React.FC = () => {
         setLoading(false);
       }
     },
-    [addToast],
+    [addToast, createdefaultContactInfo],
   );
 
   return (
@@ -237,6 +188,7 @@ const SignUp: React.FC = () => {
             <img src={weplanLogo} alt="WePlan - Party" />
             <h1>WePlan</h1>
           </LogoContainer>
+          <GoogleSignupComponent buttonText="Cadastre com o Google" />
 
           {!!options && (
             <Form ref={formRef} onSubmit={handleSubmit}>

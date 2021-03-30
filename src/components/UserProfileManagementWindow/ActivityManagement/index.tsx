@@ -11,7 +11,7 @@ interface IProps {
 }
 
 const ActivityManagement: React.FC<IProps> = ({ closeWindow }: IProps) => {
-  const { user, signOut } = useAuth();
+  const { user, handleSignOut } = useAuth();
   const [suspendProfileConfirmation, setSuspendProfileConfirmation] = useState(
     false,
   );
@@ -24,19 +24,19 @@ const ActivityManagement: React.FC<IProps> = ({ closeWindow }: IProps) => {
       await api.put(`user/suspend/${user.id}`, {
         isActive: false,
       });
-      signOut();
+      handleSignOut();
     } catch (err) {
       throw new Error(err);
     }
-  }, [user, signOut]);
+  }, [user, handleSignOut]);
   const deleteProfile = useCallback(async () => {
     try {
       await api.put(`user/delete/${user.id}`);
-      signOut();
+      handleSignOut();
     } catch (err) {
       throw new Error(err);
     }
-  }, [user, signOut]);
+  }, [user, handleSignOut]);
 
   const handleSuspendConfirmation = useCallback(
     (props: boolean) => {
