@@ -11,16 +11,13 @@ import Backdrop from '../Backdrop';
 import CreateEventInfoWindowForm from '../CreateEventInfoWindowForm';
 import IEventDTO from '../../dtos/IEventDTO';
 
-interface IProps {
-  updateMyEvents: Function;
-}
 interface IEvent {
   id: string;
   name: string;
   trimmed_name: string;
 }
 
-const MenuButton: React.FC<IProps> = ({ updateMyEvents }: IProps) => {
+const MenuButton: React.FC = () => {
   const [menuDrawer, setMenuDrawer] = useState(false);
   const [friendsWindow, setFriendsWindow] = useState(false);
   const [createEventDrawer, setCreateEventDrawer] = useState(false);
@@ -114,7 +111,6 @@ const MenuButton: React.FC<IProps> = ({ updateMyEvents }: IProps) => {
           eventType={eventType}
           handleEventInfoDrawer={handleEventInfoDrawer}
           handleEventTypeDrawer={handleEventTypeDrawer}
-          handleGetMyEvents={updateMyEvents}
           onHandleCloseWindow={() => closeAll()}
           tipoDeEvento={tipoDeEvento}
           setEventCreated={(e: IEventDTO) => setEventCreated(e)}
@@ -128,7 +124,6 @@ const MenuButton: React.FC<IProps> = ({ updateMyEvents }: IProps) => {
       )}
       {!!eventInfoDrawer && (
         <CreateEventInfoWindowForm
-          updateEvent={() => updateMyEvents()}
           eventId={eventCreated.id}
           getEventInfo={() => setEventInfoDrawer(false)}
           handleCloseWindow={() => setEventInfoDrawer(false)}

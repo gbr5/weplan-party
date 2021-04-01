@@ -20,19 +20,26 @@ import IEventDTO from '../../dtos/IEventDTO';
 import formatStringToDate from '../../utils/formatDateToString';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
-import IEventOwnerDTO from '../../dtos/IEventOwnerDTO';
-import IEventMemberDTO from '../../dtos/IEventMemberDTO';
 import IEventGuestDTO from '../../dtos/IEventGuestDTO';
-import IShowEventDTO from '../../dtos/IShowEventDTO';
 import MyNextEventSection from '../../components/EventComponents/MyNextEventSection';
 import IPersonInfoDTO from '../../dtos/IPersonInfoDTO';
 import CreatePersonInfoWindowForm from '../../components/CreatePersonInfoWindowForm';
 import FriendsEventsSection from '../../components/MainDashboardBottomSection/FriendsEventsSection';
 import GuestToUserMessageWindow from '../../components/GuestToUserMessageWindow';
 import DeleteEventQuestionWindow from './DeleteEventQuestionWindow';
+import { useEvent } from '../../hooks/event';
 
 const Dashboard: React.FC = () => {
   const { user, handleSignOut } = useAuth();
+  const {
+    eventsAsGuest,
+    eventsAsMember,
+    eventsAsOwner,
+    getEventsAsOwner,
+    getEventsAsMember,
+    getEventsAsGuest,
+    selectEvent,
+  } = useEvent();
   const { addToast } = useToast();
   const history = useHistory();
 
@@ -40,38 +47,17 @@ const Dashboard: React.FC = () => {
   const [guestToUserMessageWindow, setGuestToUserMessageWindow] = useState(
     false,
   );
-
-  const [eventsAsOwner, setEventsAsOwner] = useState<IEventOwnerDTO[]>([]);
-  const [eventsAsMember, setEventsAsMember] = useState<IEventMemberDTO[]>([]);
   const [selectedEventAsGuest, setSelectedEventAsGuest] = useState(
     {} as IEventGuestDTO,
   );
-  const [eventsAsGuest, setEventsAsGuest] = useState<IEventGuestDTO[]>([]);
   const [personInfo, setPersonInfo] = useState<IPersonInfoDTO>(
     {} as IPersonInfoDTO,
   );
 
-  const [myNextEvent, setMyNextEvent] = useState<IShowEventDTO>(
-    {} as IShowEventDTO,
-  );
   const [eventToDelete, setEventToDelete] = useState('');
   const [thisEvent, setThisEvent] = useState('');
   const [eventOwner, setEventOwner] = useState(true);
   const [deleteEventWindow, setDeleteEventWindow] = useState(false);
-
-  const getMyNextEvent = useCallback(() => {
-    try {
-      api.get<IShowEventDTO>('/my-next-event').then(response => {
-        setMyNextEvent(response.data);
-      });
-    } catch (err) {
-      throw new Error(err);
-    }
-  }, []);
-
-  useEffect(() => {
-    getMyNextEvent();
-  }, [getMyNextEvent]);
 
   const closeCreatePersonInfoWindow = useCallback(() => {
     setCreatePersonInfoWindow(false);
@@ -105,19 +91,16 @@ const Dashboard: React.FC = () => {
     setDeleteEventWindow(true);
   }, []);
 
-  const handleDeleteOwnerEventWindow = useCallback((props: IEventOwnerDTO) => {
-    setEventToDelete(props.event.id);
+  const handleDeleteOwnerEventWindow = useCallback((props: string) => {
+    setEventToDelete(props);
     setThisEvent('owner');
     setDeleteEventWindow(true);
   }, []);
-  const handleDeleteMemberEventWindow = useCallback(
-    (props: IEventMemberDTO) => {
-      setEventToDelete(props.event.id);
-      setThisEvent('member');
-      setDeleteEventWindow(true);
-    },
-    [],
-  );
+  const handleDeleteMemberEventWindow = useCallback((props: string) => {
+    setEventToDelete(props);
+    setThisEvent('member');
+    setDeleteEventWindow(true);
+  }, []);
   const handleDeleteGuestEventWindow = useCallback((props: string) => {
     setEventToDelete(props);
     setThisEvent('guest');
@@ -126,11 +109,12 @@ const Dashboard: React.FC = () => {
 
   const handleMyEventDashboard = useCallback(
     (event: IEventDTO) => {
+      selectEvent(event);
       history.push(`/dashboard/my-event/${event.trimmed_name}`, {
         params: event,
       });
     },
-    [history],
+    [history, selectEvent],
   );
 
   const handleSelectedEventAsGuest = useCallback((props: IEventGuestDTO) => {
@@ -138,68 +122,36 @@ const Dashboard: React.FC = () => {
     setGuestToUserMessageWindow(true);
   }, []);
 
-  const getEventsAsOwner = useCallback(() => {
-    try {
-      api.get<IEventOwnerDTO[]>('list/events/user-as-owner/').then(response => {
-        setEventsAsOwner(response.data);
-      });
-    } catch (err) {
-      throw new Error(err);
-    }
-  }, []);
-
-  const getEventsAsMember = useCallback(() => {
-    try {
-      api
-        .get<IEventMemberDTO[]>('list/events/user-as-member/')
-        .then(response => {
-          setEventsAsMember(response.data);
-        });
-    } catch (err) {
-      throw new Error(err);
-    }
-  }, []);
-
-  const getEventsAsGuest = useCallback(() => {
-    try {
-      api
-        .get<IEventGuestDTO[]>(`/event/weplan-guests/user/${user.id}`)
-        .then(response => {
-          setEventsAsGuest(response.data);
-        });
-    } catch (err) {
-      throw new Error(err);
-    }
-  }, [user]);
-
-  const getMyEvents = useCallback(() => {
-    getEventsAsMember();
-    getEventsAsOwner();
-    getEventsAsGuest();
-    getMyNextEvent();
-  }, [getEventsAsMember, getMyNextEvent, getEventsAsOwner, getEventsAsGuest]);
-
   useEffect(() => {
-    getMyEvents();
-  }, [getMyEvents]);
+    getEventsAsMember();
+  }, [getEventsAsMember]);
+  useEffect(() => {
+    getEventsAsOwner();
+  }, [getEventsAsOwner]);
+  useEffect(() => {
+    getEventsAsGuest();
+  }, [getEventsAsGuest]);
 
   const handleDeleteEvent = useCallback(
     async props => {
       try {
         if (thisEvent === 'master') {
           await api.delete(`/events/${props}`);
+          getEventsAsOwner();
         }
         if (thisEvent === 'owner') {
           await api.delete(`/events/${props}/event-owners/${user.id}`);
+          getEventsAsOwner();
         }
         if (thisEvent === 'member') {
           await api.delete(`/events/${props}/event-members/${user.id}`);
+          getEventsAsMember();
         }
         if (thisEvent === 'guest') {
           await api.delete(`/events/guests/${props}`);
+          getEventsAsGuest();
         }
 
-        getMyEvents();
         setDeleteEventWindow(false);
         addToast({
           type: 'success',
@@ -216,7 +168,14 @@ const Dashboard: React.FC = () => {
         throw new Error(err);
       }
     },
-    [addToast, getMyEvents, thisEvent, user],
+    [
+      addToast,
+      getEventsAsOwner,
+      getEventsAsMember,
+      getEventsAsGuest,
+      thisEvent,
+      user,
+    ],
   );
 
   const handleEventOwnerOrMember = useCallback(props => {
@@ -236,7 +195,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <Container>
-      <PageHeader updateMyEvents={getMyEvents} />
+      <PageHeader />
       {!!createPersonInfoWindow && (
         <CreatePersonInfoWindowForm
           getPersonInfo={getPersonInfo}
@@ -259,10 +218,7 @@ const Dashboard: React.FC = () => {
       )}
       <Content>
         <MiddlePage>
-          <MyNextEventSection
-            nextEvent={myNextEvent}
-            handleMyEventDashboard={handleMyEventDashboard}
-          />
+          <MyNextEventSection handleMyEventDashboard={handleMyEventDashboard} />
           <BottomPage>
             <BottomSection>
               <div>
@@ -309,9 +265,7 @@ const Dashboard: React.FC = () => {
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    handleDeleteMasterEventWindow(
-                                      event.event.id,
-                                    )
+                                    handleDeleteMasterEventWindow(event.id)
                                   }
                                 >
                                   <FiSettings size={20} />
@@ -320,7 +274,7 @@ const Dashboard: React.FC = () => {
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    handleDeleteOwnerEventWindow(event)
+                                    handleDeleteOwnerEventWindow(event.event.id)
                                   }
                                 >
                                   <FiSettings size={20} />
@@ -346,7 +300,7 @@ const Dashboard: React.FC = () => {
                             type="button"
                             onClick={() => handleMyEventDashboard(event.event)}
                           >
-                            <h3>{event.userEventMember.name}</h3>
+                            <h3>{event.event.name}</h3>
                           </button>
                           <div>
                             <DateSection>
@@ -356,7 +310,7 @@ const Dashboard: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleDeleteMemberEventWindow(event)
+                                  handleDeleteMemberEventWindow(event.event.id)
                                 }
                               >
                                 <FiSettings size={20} />

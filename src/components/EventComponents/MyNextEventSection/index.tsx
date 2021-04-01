@@ -1,25 +1,28 @@
 import { differenceInDays } from 'date-fns';
 import React, { useEffect, useState } from 'react';
-import IShowEventDTO from '../../../dtos/IShowEventDTO';
 import formatStringToDate from '../../../utils/formatDateToString';
 import { Container, Fields, MyNextEventTitle, Section } from './styles';
 import placeholder from '../../../assets/WePlanLogo.svg';
+import { useEvent } from '../../../hooks/event';
 
 interface IProps {
   handleMyEventDashboard: Function;
-  nextEvent: IShowEventDTO;
 }
 
 const MyNextEventSection: React.FC<IProps> = ({
   handleMyEventDashboard,
-  nextEvent,
 }: IProps) => {
+  const { nextEvent, getNextEvent } = useEvent();
   const [confirmedGuests, setConfirmedGuests] = useState(0);
   const [totalNumberOfGuests, setTotalNumberOfGuests] = useState(0);
   const [checkListTasks, setCheckListTasks] = useState(0);
   const [checkListResolvedTasks, setCheckListResolvedTasks] = useState(0);
   const [eventCostPercentage, setEventCostPercentage] = useState(0);
   const [daysToDate, setDaysToDate] = useState(0);
+
+  useEffect(() => {
+    getNextEvent();
+  }, [getNextEvent]);
 
   useEffect(() => {
     if (nextEvent.event) {

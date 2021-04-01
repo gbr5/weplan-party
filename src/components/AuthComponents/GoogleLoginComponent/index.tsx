@@ -5,6 +5,7 @@ import {
   GoogleLoginResponseOffline,
 } from 'react-google-login';
 import { useAuth } from '../../../hooks/auth';
+import { refreshGoogleTokenSetup } from '../../../utils/refreshGoogleTokenSetup';
 
 import { Container } from './styles';
 
@@ -25,6 +26,7 @@ const GoogleLoginComponent: React.FC<IProps> = ({ buttonText }) => {
           email: res.profileObj.email,
           googleToken: res.tokenId,
         });
+        refreshGoogleTokenSetup(res);
       }
     },
     [signInWithGoogle],

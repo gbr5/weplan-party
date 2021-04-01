@@ -144,6 +144,7 @@ const SignIn: React.FC = () => {
               <img src={weplanLogo} alt="WePlan - Party" />
               <h1>WePlan</h1>
             </LogoContainer>
+            <GoogleLoginComponent buttonText="Entre com o Google" />
             <Form ref={formRef} onSubmit={handleSubmit}>
               <h1>Faça seu login</h1>
 
@@ -172,9 +173,6 @@ const SignIn: React.FC = () => {
               <FiLogIn />
               Criar conta
             </Link>
-            <section>
-              <GoogleLoginComponent buttonText="Entre com o Google" />
-            </section>
           </AnimationContainer>
         </Content>
         <Background />
