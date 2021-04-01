@@ -139,7 +139,7 @@ const ImageGallery: React.FC = () => {
 
   return (
     <Container>
-      <PageHeader updateMyEvents={() => getImages()} />
+      <PageHeader />
       {allImageSection && <Gallery gridView={gridView} images={userImages} />}
       {eventImageSection && (
         <EventImageGallery gridView={gridView} eventImages={eventImages} />

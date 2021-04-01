@@ -1,6 +1,7 @@
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import React, { MouseEventHandler, useCallback, useRef, useState } from 'react';
+import { useEvent } from '../../hooks/event';
 import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
 import BooleanQuestionWindow from '../BooleanQuestionWindow';
@@ -16,7 +17,6 @@ import {
 } from './styles';
 
 interface IProps {
-  handleGetMyEvents: Function;
   setEventCreated: Function;
   handleEventTypeDrawer: Function;
   handleEventInfoDrawer: Function;
@@ -26,7 +26,6 @@ interface IProps {
 }
 
 const CreateEventWindow: React.FC<IProps> = ({
-  handleGetMyEvents,
   setEventCreated,
   handleEventTypeDrawer,
   handleEventInfoDrawer,
@@ -36,6 +35,7 @@ const CreateEventWindow: React.FC<IProps> = ({
 }: IProps) => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
+  const { getEventsAsOwner } = useEvent();
 
   const newDate = new Date();
 
@@ -84,7 +84,7 @@ const CreateEventWindow: React.FC<IProps> = ({
         setEventName(event.data.name);
         setEventCreated(event.data);
       }
-      handleGetMyEvents();
+      getEventsAsOwner();
       addToast({
         type: 'success',
         title: 'Evento Criado com Sucesso',
@@ -104,7 +104,7 @@ const CreateEventWindow: React.FC<IProps> = ({
     eventType,
     setEventCreated,
     handleEventInfoDrawer,
-    handleGetMyEvents,
+    getEventsAsOwner,
     selectedDate,
     isDateDefined,
   ]);

@@ -11,22 +11,22 @@ import { useToast } from '../../hooks/toast';
 import getValidationErrors from '../../utils/getValidationErros';
 import WindowUnFormattedContainer from '../WindowUnFormattedContainer';
 import SetTimeWindow from '../SetTimeWindow';
+import { useEvent } from '../../hooks/event';
 
 interface IProps {
   eventId: string;
   getEventInfo: Function;
   handleCloseWindow: Function;
-  updateEvent: Function;
 }
 
 const CreateEventInfoWindowForm: React.FC<IProps> = ({
   handleCloseWindow,
   eventId,
   getEventInfo,
-  updateEvent,
 }: IProps) => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
+  const { getEventsAsOwner } = useEvent();
 
   const [eventDurationWindow, setEventDurationWindow] = useState(true);
   const [eventDuration, setEventDuration] = useState('');
@@ -67,7 +67,7 @@ const CreateEventInfoWindowForm: React.FC<IProps> = ({
         });
 
         getEventInfo();
-        updateEvent();
+        getEventsAsOwner();
 
         addToast({
           type: 'success',
@@ -92,7 +92,7 @@ const CreateEventInfoWindowForm: React.FC<IProps> = ({
     [
       addToast,
       handleCloseWindow,
-      updateEvent,
+      getEventsAsOwner,
       getEventInfo,
       eventDuration,
       eventId,

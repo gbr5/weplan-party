@@ -64,11 +64,7 @@ interface IAppointmentDTO {
   appointment_type: string;
 }
 
-interface IProps {
-  updateMyEvents: Function;
-}
-
-const PageHeader: React.FC<IProps> = ({ updateMyEvents }: IProps) => {
+const PageHeader: React.FC = () => {
   const { colors } = useContext(ThemeContext);
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
@@ -359,7 +355,7 @@ const PageHeader: React.FC<IProps> = ({ updateMyEvents }: IProps) => {
       <Header>
         <HeaderContent>
           <h1>
-            <MenuButton updateMyEvents={updateMyEvents} />
+            <MenuButton />
           </h1>
 
           <button type="button" onClick={handleNavigateToDashboard}>

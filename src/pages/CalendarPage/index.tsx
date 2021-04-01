@@ -123,7 +123,7 @@ const CalendarPage: React.FC = () => {
           appointment={selectedAppointment}
         />
       )}
-      <PageHeader updateMyEvents={() => setSelectedDate(today)} />
+      <PageHeader />
       <Body>
         <AddAppointmentButton
           type="button"

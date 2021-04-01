@@ -619,26 +619,15 @@ const EventHostDashboard: React.FC = () => {
     handleGetHiredSuppliers();
   }, [handleGetHiredSuppliers]);
 
-  const updateEventMainDashboard = useCallback(() => {
-    try {
-      setEventMainDashboardSection(false);
-    } catch (err) {
-      throw new Error(err);
-    } finally {
-      setEventMainDashboardSection(true);
-    }
-  }, []);
-
   const closeEventInfoWindowForm = useCallback(() => {
     handleGetEventInfo();
     setCreateEventInfoWindowForm(false);
   }, [handleGetEventInfo]);
   return (
     <Container>
-      <PageHeader updateMyEvents={updateEventMainDashboard} />
+      <PageHeader />
       {!!createEventInfoWindowForm && !pageEvent.eventInfo && (
         <CreateEventInfoWindowForm
-          updateEvent={updateEventMainDashboard}
           eventId={eventId}
           getEventInfo={handleGetEventInfo}
           handleCloseWindow={closeEventInfoWindowForm}
