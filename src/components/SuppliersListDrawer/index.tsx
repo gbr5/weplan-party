@@ -31,7 +31,7 @@ const SuppliersListDrawer: React.FC<IPropsDTO> = ({
     try {
       api
         .get<ISupplierDTO[]>(
-          `suppliers/categories/weplan/${category}/${sub_category}`,
+          `suppliers/categories/list-weplan/${category}/${sub_category}`,
         )
         .then(response => {
           setSuppliers(response.data);
