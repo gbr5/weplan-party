@@ -33,7 +33,6 @@ const EventProvider: React.FC = ({ children }) => {
       const response = await api.get<IEventOwnerDTO[]>(
         '/list/events/user-as-owner/',
       );
-      console.log(response.data);
       setEventsAsOwner(response.data);
     } catch (err) {
       throw new Error(err);

@@ -41,6 +41,11 @@ const GoogleSignupComponent: React.FC<IProps> = ({ buttonText }) => {
           signInWithGoogle({
             email,
             googleToken: res.tokenId,
+            name: res.profileObj.name,
+            givenName: res.profileObj.givenName,
+            familyName: res.profileObj.familyName,
+            imageUrl: res.profileObj.imageUrl,
+            googleId: res.profileObj.googleId,
           });
         }
         if (findByNameOrEmail.data.name === name) {
@@ -106,6 +111,11 @@ const GoogleSignupComponent: React.FC<IProps> = ({ buttonText }) => {
         signInWithGoogle({
           email,
           googleToken: res.tokenId,
+          name: res.profileObj.name,
+          givenName: res.profileObj.givenName,
+          familyName: res.profileObj.familyName,
+          imageUrl: res.profileObj.imageUrl,
+          googleId: res.profileObj.googleId,
         });
         addToast({
           type: 'success',

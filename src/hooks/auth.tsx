@@ -23,6 +23,11 @@ interface ISignInCredentials {
 interface IGoogleSignInCredentials {
   email: string;
   googleToken: string;
+  name: string;
+  givenName: string;
+  familyName: string;
+  imageUrl: string;
+  googleId: string;
 }
 
 interface ICreateUserDTO {
@@ -87,21 +92,37 @@ const AuthProvider: React.FC = ({ children }) => {
     setData({ token, user });
   }, []);
 
-  const signInWithGoogle = useCallback(async ({ email, googleToken }) => {
-    const response = await api.post('google-sessions', {
+  const signInWithGoogle = useCallback(
+    async ({
       email,
-      token: googleToken,
-    });
+      googleToken,
+      googleId,
+      imageUrl,
+      familyName,
+      givenName,
+      name,
+    }: IGoogleSignInCredentials) => {
+      const response = await api.post('google-sessions', {
+        email,
+        token: googleToken,
+        googleId,
+        name,
+        familyName,
+        givenName,
+        imageUrl,
+      });
 
-    const { token, user } = response.data;
+      const { token, user } = response.data;
 
-    localStorage.setItem('@WePlan-Party:token', token);
-    localStorage.setItem('@WePlan-Party:user', JSON.stringify(user));
+      localStorage.setItem('@WePlan-Party:token', token);
+      localStorage.setItem('@WePlan-Party:user', JSON.stringify(user));
 
-    api.defaults.headers.authorization = `Bearer ${token}`;
+      api.defaults.headers.authorization = `Bearer ${token}`;
 
-    setData({ token, user });
-  }, []);
+      setData({ token, user });
+    },
+    [],
+  );
 
   const createPersonInfo = useCallback(
     async (personData: ICreatePersonInfoDTO) => {

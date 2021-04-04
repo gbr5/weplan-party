@@ -22,9 +22,22 @@ const GoogleLoginComponent: React.FC<IProps> = ({ buttonText }) => {
     (res: GoogleLoginResponse | GoogleLoginResponseOffline) => {
       if ('googleId' in res) {
         // console.log('[Google Success] user =>', res);
+        const {
+          email,
+          name,
+          givenName,
+          familyName,
+          imageUrl,
+          googleId,
+        } = res.profileObj;
         signInWithGoogle({
-          email: res.profileObj.email,
+          email,
           googleToken: res.tokenId,
+          name,
+          givenName,
+          familyName,
+          imageUrl,
+          googleId,
         });
         refreshGoogleTokenSetup(res);
       }
