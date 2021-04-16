@@ -33,7 +33,7 @@ const Routes: React.FC = () => {
 
       <Route path="/forgot-password" exact component={ForgotPassword} />
       <Route path="/reset-password" exact component={ResetPassword} />
-      <Route path="/wellcome" exact component={WelcomePage} />
+      <Route path="/welcome" exact component={WelcomePage} />
       <Route path="/event/:event_name" exact component={EventExternalPage} />
       <Route
         path="/event/:event_name/:guest_id"
