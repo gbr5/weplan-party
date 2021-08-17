@@ -54,7 +54,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
 
   const handleAddAllFriendGroup = useCallback(async () => {
     try {
-      const newAllGroupFriend = await api.post('user-friend-groups', {
+      const newAllGroupFriend = await api.post('friend-groups', {
         name: 'All',
       });
 
@@ -66,7 +66,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
 
   const getFriendGroups = useCallback(() => {
     try {
-      api.get<IFriendGroupDTO[]>('/user-friend-groups/').then(response => {
+      api.get<IFriendGroupDTO[]>('/friend-groups/').then(response => {
         setFriendGroups(response.data.filter(group => group.name !== 'All'));
         const allGroupId = response.data.filter(group => group.name === 'All');
         if (allGroupId.length <= 0) {
@@ -117,7 +117,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
 
   const handleCreateFriendGroup = useCallback(async () => {
     try {
-      await api.post('user-friend-groups', {
+      await api.post('friend-groups', {
         name: groupName,
       });
       getFriendGroups();
