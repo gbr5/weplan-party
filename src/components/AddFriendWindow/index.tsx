@@ -60,7 +60,7 @@ const AddFriendWindow: React.FC<IPropsDTO> = ({
 
   const handleAddFriend = useCallback(async () => {
     try {
-      await api.post('/users/friends', {
+      await api.post('/user-friends', {
         friend_id: friendId,
         friend_group: allFriendGroupId.id,
       });

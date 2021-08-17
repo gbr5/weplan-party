@@ -44,18 +44,15 @@ const EditEventOwnerWindow: React.FC<IProps> = ({
   const handleUpdateOwner = useCallback(async () => {
     try {
       if (eventMaster === owner.userEventOwner.id) {
-        await api.put(`events/master-number-of-guests/${eventId}`, {
+        await api.put(`event-owners/master-number-of-guests/${eventId}`, {
           description: ownerUpdatedDescription,
           number_of_guests: ownerUpdatedNumberOfGuests,
         });
       } else {
-        await api.put(
-          `events/${eventId}/event-owners/${owner.userEventOwner.id}`,
-          {
-            description: ownerUpdatedDescription,
-            number_of_guests: ownerUpdatedNumberOfGuests,
-          },
-        );
+        await api.put(`event-owners/${eventId}${owner.userEventOwner.id}`, {
+          description: ownerUpdatedDescription,
+          number_of_guests: ownerUpdatedNumberOfGuests,
+        });
       }
       getEventInfo();
       getOwners();

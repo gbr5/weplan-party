@@ -139,14 +139,6 @@ const Dashboard: React.FC = () => {
           await api.delete(`/events/${props}`);
           getEventsAsOwner();
         }
-        if (thisEvent === 'owner') {
-          await api.delete(`/events/${props}/event-owners/${user.id}`);
-          getEventsAsOwner();
-        }
-        if (thisEvent === 'member') {
-          await api.delete(`/events/${props}/event-members/${user.id}`);
-          getEventsAsMember();
-        }
         if (thisEvent === 'guest') {
           await api.delete(`/events/guests/${props}`);
           getEventsAsGuest();
@@ -168,14 +160,7 @@ const Dashboard: React.FC = () => {
         throw new Error(err);
       }
     },
-    [
-      addToast,
-      getEventsAsOwner,
-      getEventsAsMember,
-      getEventsAsGuest,
-      thisEvent,
-      user,
-    ],
+    [addToast, getEventsAsGuest, getEventsAsOwner, thisEvent],
   );
 
   const handleEventOwnerOrMember = useCallback(props => {

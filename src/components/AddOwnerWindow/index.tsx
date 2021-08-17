@@ -58,7 +58,7 @@ const AddOwnerWindow: React.FC<IProps> = ({
           throw new Error('Number of guests is higher than allowed!');
         }
 
-        await api.post(`events/${eventId}/event-owners`, {
+        await api.post(`event-owners/${eventId}`, {
           owner_id: selectedFriend.friend_id,
           description: data.description,
           number_of_guests: data.number_of_guests,

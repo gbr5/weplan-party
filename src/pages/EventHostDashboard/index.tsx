@@ -55,6 +55,7 @@ import IEventGuestDTO from '../../dtos/IEventGuestDTO';
 import EditEventBudgetWindow from '../../components/EditEventBudgetWindow';
 import EventMainDashboard from '../../components/EventHostComponents/EventMainDashboard';
 import IUserDTO from '../../dtos/IUserDTO';
+import { useEvent } from '../../hooks/event';
 
 interface IUserInfoDTO {
   id: string;
@@ -68,9 +69,10 @@ interface IParams {
 
 const EventHostDashboard: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
+  const { eventBudgetWindow, handleEventBudgetWindow } = useEvent();
+  const { user } = useAuth();
   const { addToast } = useToast();
   const location = useLocation<IParams>();
-  const { user } = useAuth();
   const pageEvent = location.state.params;
   const eventId = pageEvent.id;
   const [eventName, setEventName] = useState(pageEvent.name);
@@ -80,7 +82,6 @@ const EventHostDashboard: React.FC = () => {
   const [membersWindow, setMembersWindow] = useState(false);
   const [eventInfoDrawer, setEventInfoDrawer] = useState(false);
   const [editEventInfoDrawer, setEditEventInfoDrawer] = useState(false);
-  const [budgetDrawer, setBudgetDrawer] = useState(false);
   const [editEventNameDrawer, setEditEventNameDrawer] = useState(false);
   const [addPlannerDrawer, setAddPlannerDrawer] = useState(false);
   const [addOwnerDrawer, setAddOwnerDrawer] = useState(false);
@@ -177,7 +178,7 @@ const EventHostDashboard: React.FC = () => {
     setDeleteOwnerDrawer(false);
     setEventInfoDrawer(false);
     setFirstRow(false);
-    setBudgetDrawer(false);
+    handleEventBudgetWindow();
     setAddMemberWindowForm(false);
     setAddOwnerDrawer(false);
     setEditEventNameDrawer(false);
@@ -186,7 +187,7 @@ const EventHostDashboard: React.FC = () => {
     setDeleteMemberDrawer(false);
     setNumberOfGuestDrawer(false);
     setSidebar(false);
-  }, []);
+  }, [handleEventBudgetWindow]);
   const closeAllSections = useCallback(() => {
     setSelectedFriend({} as IFriendDTO);
     setOwner({} as IEventOwnerDTO);
@@ -253,10 +254,6 @@ const EventHostDashboard: React.FC = () => {
     closeAllWindows();
     setMembersWindow(!membersWindow);
   }, [membersWindow, closeAllWindows]);
-  const handleBudgetDrawer = useCallback(() => {
-    closeAllWindows();
-    setBudgetDrawer(!budgetDrawer);
-  }, [budgetDrawer, closeAllWindows]);
   const handleEditEventNameDrawer = useCallback(() => {
     closeAllWindows();
     setEditEventNameDrawer(!editEventNameDrawer);
@@ -337,16 +334,14 @@ const EventHostDashboard: React.FC = () => {
   }, [eventId]);
   const handleGetOwners = useCallback(() => {
     try {
-      api
-        .get<IEventOwnerDTO[]>(`events/${eventId}/event-owners`)
-        .then(response => {
-          response.data.map(xOwner => {
-            xOwner.userEventOwner.id === user.id && setIsOwner(true);
-            return xOwner;
-          });
-          setOwners(response.data);
-          setNumberOfOwners(response.data.length);
+      api.get<IEventOwnerDTO[]>(`event-owners/${eventId}`).then(response => {
+        response.data.map(xOwner => {
+          xOwner.userEventOwner.id === user.id && setIsOwner(true);
+          return xOwner;
         });
+        setOwners(response.data);
+        setNumberOfOwners(response.data.length);
+      });
     } catch (err) {
       throw new Error(err);
     }
@@ -376,7 +371,7 @@ const EventHostDashboard: React.FC = () => {
   const handleGetFriends = useCallback(() => {
     try {
       eventId &&
-        api.get<IFriendDTO[]>(`/users/friends/list`).then(response => {
+        api.get<IFriendDTO[]>(`/user-friends`).then(response => {
           setFriends(
             response.data.filter(friend => friend.friendGroup.name === 'All'),
           );
@@ -525,9 +520,7 @@ const EventHostDashboard: React.FC = () => {
   }, [eventId, member, addToast, handleGetMembers]);
   const handleDeleteOwner = useCallback(async () => {
     try {
-      await api.delete(
-        `/events/${eventId}/event-owners/${owner.userEventOwner.id}`,
-      );
+      await api.delete(`/event-owners/${owner.id}`);
 
       addToast({
         type: 'success',
@@ -551,7 +544,7 @@ const EventHostDashboard: React.FC = () => {
         description: 'Erro ao excluir o convidado, tente novamente.',
       });
     }
-  }, [eventId, owner, addToast, handleGetOwners]);
+  }, [owner, addToast, handleGetOwners]);
   const totalEventCost = useMemo(() => {
     const totalCost: number = hiredSuppliers
       .map(supplier => {
@@ -827,7 +820,6 @@ const EventHostDashboard: React.FC = () => {
               confirmedGuests={confirmedGuests}
               eventGuests={eventGuests}
               eventInfo={eventInfo}
-              handleBudgetDrawer={handleBudgetDrawer}
               handleCheckListSection={handleCheckListSection}
               handleFinanceSection={handleFinanceSection}
               handleGuestsSection={handleGuestsSection}
@@ -839,14 +831,7 @@ const EventHostDashboard: React.FC = () => {
               totalEventCost={totalEventCost}
             />
           )}
-          {!!budgetDrawer && (
-            <EditEventBudgetWindow
-              eventId={eventId}
-              eventInfo={eventInfo}
-              handleGetEventInfo={handleGetEventInfo}
-              setBudgetDrawer={(e: boolean) => setBudgetDrawer(e)}
-            />
-          )}
+          {!!eventBudgetWindow && <EditEventBudgetWindow />}
           {/* {!!latestActionsSection && <LatestNewsSection />} */}
           {!!eventMainDashboardSection && (
             <EventMainDashboard

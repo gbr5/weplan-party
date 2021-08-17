@@ -121,7 +121,7 @@ const EventSupplierSection: React.FC<IProps> = ({
     try {
       api
         .get<ISupplierSubCategoryDTO[]>(
-          `/suppliers/categories/sub-categories/${supplierCategory}`,
+          `/supplier-sub-categories/${supplierCategory}`,
         )
         .then(response => {
           setSupplierSubCategories(response.data);

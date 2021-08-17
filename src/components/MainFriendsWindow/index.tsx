@@ -54,7 +54,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
 
   const handleAddAllFriendGroup = useCallback(async () => {
     try {
-      const newAllGroupFriend = await api.post('users/friend-groups', {
+      const newAllGroupFriend = await api.post('user-friend-groups', {
         name: 'All',
       });
 
@@ -66,7 +66,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
 
   const getFriendGroups = useCallback(() => {
     try {
-      api.get<IFriendGroupDTO[]>('/users/friend-groups/list').then(response => {
+      api.get<IFriendGroupDTO[]>('/user-friend-groups/').then(response => {
         setFriendGroups(response.data.filter(group => group.name !== 'All'));
         const allGroupId = response.data.filter(group => group.name === 'All');
         if (allGroupId.length <= 0) {
@@ -104,7 +104,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
 
   const getFriends = useCallback(() => {
     try {
-      api.get<IFriendDTO[]>('/users/friends/list').then(response => {
+      api.get<IFriendDTO[]>('/user-friends').then(response => {
         setFriends(response.data);
         setAllFriends(
           response.data.filter(friend => friend.friendGroup.name === 'All'),
@@ -117,7 +117,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
 
   const handleCreateFriendGroup = useCallback(async () => {
     try {
-      await api.post('users/friend-groups', {
+      await api.post('user-friend-groups', {
         name: groupName,
       });
       getFriendGroups();
@@ -141,7 +141,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
   const handleDeleteFriendFromGroup = useCallback(
     async (props: string) => {
       try {
-        await api.delete(`users/friends/${props}`);
+        await api.delete(`user-friends/${props}`);
         handleFriendLists(selectedGroupId);
 
         addToast({
@@ -168,7 +168,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
         );
         await Promise.all([
           allGroups.map(async group => {
-            await api.delete(`users/friends/${group.id}`);
+            await api.delete(`user-friends/${group.id}`);
           }),
         ]);
         handleFriendLists(selectedGroupId);
@@ -191,7 +191,7 @@ const MainFriendsWindow: React.FC<IProps> = ({
   const handleAddFriendToGroup = useCallback(
     async props => {
       try {
-        await api.post('/users/friends', {
+        await api.post('/user-friends', {
           friend_id: friendId,
           friend_group: props,
         });

@@ -55,7 +55,7 @@ const OwnerProfileDrawer: React.FC<IPropsDTO> = ({
   const deleteOwner = useCallback(async () => {
     try {
       if (eventMaster !== owner.id) {
-        await api.delete(`events/${eventId}/event-owners/${owner.id}`);
+        await api.delete(`event-owners/${owner.id}`);
       }
       getOwners();
       handleCloseWindow();
@@ -72,7 +72,7 @@ const OwnerProfileDrawer: React.FC<IPropsDTO> = ({
       });
       throw new Error(err);
     }
-  }, [owner, eventMaster, eventId, addToast, getOwners, handleCloseWindow]);
+  }, [owner, eventMaster, addToast, getOwners, handleCloseWindow]);
 
   useEffect(() => {
     if (owner.userEventOwner.avatar_url) {

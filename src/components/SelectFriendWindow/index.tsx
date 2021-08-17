@@ -30,7 +30,7 @@ const SelectFriendWindow: React.FC<IPropsDTO> = ({
 
   const getFriends = useCallback(() => {
     try {
-      api.get<IFriendDTO[]>('users/friends/list').then(response => {
+      api.get<IFriendDTO[]>('user-friends').then(response => {
         const xfriends: IFriendDTO[] = [];
         if (alreadySelected && alreadySelected.length > 0) {
           response.data.map(xF => {

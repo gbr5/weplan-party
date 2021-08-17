@@ -3,13 +3,13 @@ import IEventCheckListDTO from '../../../dtos/IEventCheckListDTO';
 import IEventGuestDTO from '../../../dtos/IEventGuestDTO';
 import IEventInfoDTO from '../../../dtos/IEventInfoDTO';
 import IEventSupplierDTO from '../../../dtos/IEventSupplierDTO';
+import { useEvent } from '../../../hooks/event';
 import { numberFormat } from '../../../utils/numberFormat';
 
 import { Container } from './styles';
 
 interface IProps {
   handleGuestsSection: Function;
-  handleBudgetDrawer: Function;
   handleCheckListSection: Function;
   handleSupplierSection: Function;
   handleFinanceSection: Function;
@@ -28,7 +28,6 @@ const FirstRow: React.FC<IProps> = ({
   handleGuestsSection,
   confirmedGuests,
   eventGuests,
-  handleBudgetDrawer,
   eventInfo,
   handleSupplierSection,
   handleFinanceSection,
@@ -40,6 +39,7 @@ const FirstRow: React.FC<IProps> = ({
   checkListTasks,
   isOwner,
 }: IProps) => {
+  const { handleEventBudgetWindow } = useEvent();
   return (
     <Container>
       <div>
@@ -52,7 +52,7 @@ const FirstRow: React.FC<IProps> = ({
       </div>
       <div>
         {isOwner ? (
-          <button type="button" onClick={() => handleBudgetDrawer()}>
+          <button type="button" onClick={handleEventBudgetWindow}>
             <h2>Orçamento</h2>
             <p>{eventInfo ? numberFormat(eventInfo.budget) : ''}</p>
           </button>

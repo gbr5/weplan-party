@@ -8,28 +8,25 @@ import Input from '../Input';
 import { Container } from './styles';
 import { useToast } from '../../hooks/toast';
 import getValidationErrors from '../../utils/getValidationErros';
-import api from '../../services/api';
 import WindowUnFormattedContainer from '../WindowUnFormattedContainer';
-import IEventInfoDTO from '../../dtos/IEventInfoDTO';
+import { useEvent } from '../../hooks/event';
 
-interface IProps {
-  handleGetEventInfo: Function;
-  setBudgetDrawer: Function;
-  eventId: string;
-  eventInfo: IEventInfoDTO;
+interface IFormProps {
+  budget: number;
 }
 
-const EditEventBudgetWindow: React.FC<IProps> = ({
-  handleGetEventInfo,
-  setBudgetDrawer,
-  eventInfo,
-  eventId,
-}: IProps) => {
+const EditEventBudgetWindow: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
+  const {
+    updateEventBudget,
+    eventBudget,
+    createEventBudget,
+    handleEventBudgetWindow,
+  } = useEvent();
 
-  const handleEditBudget = useCallback(
-    async (data: IEventInfoDTO) => {
+  const handleSubmit = useCallback(
+    async (data: IFormProps) => {
       try {
         formRef.current?.setErrors([]);
 
@@ -41,19 +38,20 @@ const EditEventBudgetWindow: React.FC<IProps> = ({
           abortEarly: false,
         });
 
-        await api.put(`events/${eventId}/event-info`, {
-          duration: eventInfo.duration,
-          number_of_guests: eventInfo.number_of_guests,
-          budget: Number(data.budget),
-          description: eventInfo.description,
-          country: eventInfo.country,
-          local_state: eventInfo.local_state,
-          city: eventInfo.city,
-          address: eventInfo.address,
-        });
+        const { budget } = data;
 
-        setBudgetDrawer(false);
-        handleGetEventInfo();
+        if (eventBudget && eventBudget.id) {
+          const { id, event_id } = eventBudget;
+          await updateEventBudget({
+            budget,
+            id,
+            event_id,
+          });
+        } else {
+          await createEventBudget(budget);
+        }
+
+        handleEventBudgetWindow();
         addToast({
           type: 'success',
           title: 'Informações editadas com sucesso',
@@ -72,12 +70,18 @@ const EditEventBudgetWindow: React.FC<IProps> = ({
         });
       }
     },
-    [addToast, eventId, eventInfo, setBudgetDrawer, handleGetEventInfo],
+    [
+      addToast,
+      eventBudget,
+      handleEventBudgetWindow,
+      updateEventBudget,
+      createEventBudget,
+    ],
   );
 
   return (
     <WindowUnFormattedContainer
-      onHandleCloseWindow={() => setBudgetDrawer(false)}
+      onHandleCloseWindow={handleEventBudgetWindow}
       containerStyle={{
         zIndex: 10,
         top: '29vh',
@@ -86,7 +90,7 @@ const EditEventBudgetWindow: React.FC<IProps> = ({
         width: '90%',
       }}
     >
-      <Form ref={formRef} onSubmit={handleEditBudget}>
+      <Form ref={formRef} onSubmit={handleSubmit}>
         <Container>
           <span>
             <h2>Novo Orçamento</h2>
@@ -94,7 +98,9 @@ const EditEventBudgetWindow: React.FC<IProps> = ({
             <Input
               name="budget"
               placeholder="Orçamento"
-              defaultValue={eventInfo.budget}
+              defaultValue={
+                eventBudget && eventBudget.id ? eventBudget.budget : 0
+              }
               type="text"
             />
 
