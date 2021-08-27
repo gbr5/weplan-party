@@ -15,22 +15,22 @@ import {
   LogoutButton,
 } from './styles';
 import { useAuth } from '../../../hooks/auth';
+import { useFriends } from '../../../hooks/friends';
 
 interface IProps {
   handleCreateEventDrawer: Function;
   handleUploadFileWindow: Function;
-  handleNavigateToFriends: Function;
 }
 
 const MenuDrawer: React.FC<IProps> = ({
   handleCreateEventDrawer,
   handleUploadFileWindow,
-  handleNavigateToFriends,
 }: IProps) => {
   const history = useHistory();
   const { handleSignOut } = useAuth();
   const { colors } = useContext(ThemeContext);
   const clientId = process.env.REACT_APP_URL_GOOGLE_CLIENT_ID;
+  const { getFriends, getFriendRequests } = useFriends();
 
   const { toggleTheme, themeBoolean } = useToggleTheme();
 
@@ -40,6 +40,12 @@ const MenuDrawer: React.FC<IProps> = ({
     },
     [history],
   );
+
+  async function navigateToFriendsPage(): Promise<void> {
+    await getFriends();
+    await getFriendRequests();
+    navigateTo('/friends');
+  }
 
   const { signOut } = useGoogleLogout({
     clientId: clientId || '',
@@ -74,7 +80,7 @@ const MenuDrawer: React.FC<IProps> = ({
         </button>
       </MenuItemContainer>
       <MenuItemContainer>
-        <button type="button" onClick={() => handleNavigateToFriends()}>
+        <button type="button" onClick={navigateToFriendsPage}>
           <MdGroup /> <h3>Contatos</h3>
         </button>
       </MenuItemContainer>

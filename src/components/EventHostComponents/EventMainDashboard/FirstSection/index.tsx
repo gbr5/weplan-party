@@ -1,5 +1,6 @@
 import React, {
   ChangeEvent,
+  ReactElement,
   useCallback,
   useEffect,
   useMemo,
@@ -9,13 +10,10 @@ import { FiCamera, FiEdit } from 'react-icons/fi';
 import { MdAdd } from 'react-icons/md';
 
 import placeholder from '../../../../assets/WePlanLogo.svg';
-import IEventDTO from '../../../../dtos/IEventDTO';
-import IUserDTO from '../../../../dtos/IUserDTO';
 import { useToast } from '../../../../hooks/toast';
 import api from '../../../../services/api';
 import formatDateToString from '../../../../utils/formatDateToString';
 import { getEventType } from '../../../../utils/getEventType';
-import EditEventInfoWindow from '../../../EditEventInfoWindow';
 import SelectMultipleDates from '../../../SelectMultipleDates';
 import SetEventDate from '../SetEventDate';
 import PossibleDates from './PossibleDatesSection';
@@ -30,30 +28,22 @@ import {
   EditButton,
   PossibleDatesHeader,
 } from './styles';
+import { useEventVariables } from '../../../../hooks/eventVariables';
 
-interface IProps {
-  event: IEventDTO;
-  master: IUserDTO;
-  currentNumberOfGuests: number;
-}
-
-const FirstSection: React.FC<IProps> = ({
-  event,
-  master,
-  currentNumberOfGuests,
-}: IProps) => {
+export function FirstSection(): ReactElement {
   const { addToast } = useToast();
+  const { selectedEvent, master } = useEventVariables();
 
   const [eventDateWindow, setEventDateWindow] = useState(false);
   const [editEventInfoDrawer, setEditEventInfoDrawer] = useState(false);
-  const [avatar, setAvatar] = useState(event.avatar_url || placeholder);
+  const [avatar, setAvatar] = useState(selectedEvent.avatar_url || placeholder);
   const [alreadySelectedDates, setAlreadySelectedDates] = useState<Date[]>([]);
   const [createEventDatesWindow, setCreateEventDatesWindow] = useState(false);
-  const [updatedEvent, setUpdatedEvent] = useState(event);
+  const [updatedEvent, setUpdatedEvent] = useState(selectedEvent);
 
   const updateEvent = useCallback(() => {
     try {
-      api.get(`events/${event.id}`).then(response => {
+      api.get(`events/${selectedEvent.id}`).then(response => {
         setUpdatedEvent(response.data.event);
         response.data.avatar_url &&
           response.data.avatar_url !== avatar &&
@@ -66,7 +56,7 @@ const FirstSection: React.FC<IProps> = ({
     } catch (err) {
       throw new Error(err);
     }
-  }, [event, addToast, avatar]);
+  }, [selectedEvent, addToast, avatar]);
 
   useEffect(() => {
     const dates =
@@ -119,7 +109,7 @@ const FirstSection: React.FC<IProps> = ({
 
   const handleEventIsPublished = useCallback(async () => {
     try {
-      await api.put(`event/is-published/${event.id}`);
+      await api.put(`event/is-published/${selectedEvent.id}`);
 
       updateEvent();
       addToast({
@@ -134,7 +124,7 @@ const FirstSection: React.FC<IProps> = ({
       });
       throw new Error(err);
     }
-  }, [event, updateEvent, addToast]);
+  }, [selectedEvent, updateEvent, addToast]);
 
   const handleCreateEventDates = useCallback(
     (props: Date[]) => {
@@ -160,19 +150,15 @@ const FirstSection: React.FC<IProps> = ({
     [updatedEvent, updateEvent, addToast],
   );
 
-  const handleCloseWindow = useCallback(() => {
-    setEditEventInfoDrawer(false);
-    updateEvent();
-  }, [updateEvent]);
+  // const handleCloseWindow = useCallback(() => {
+  //   setEditEventInfoDrawer(false);
+  //   updateEvent();
+  // }, [updateEvent]);
 
   return (
     <Container>
       {eventDateWindow && (
-        <SetEventDate
-          closeWindow={() => setEventDateWindow(false)}
-          event={event}
-          getEvent={() => updateEvent()}
-        />
+        <SetEventDate closeWindow={() => setEventDateWindow(false)} />
       )}
       {createEventDatesWindow && (
         <SelectMultipleDates
@@ -181,7 +167,7 @@ const FirstSection: React.FC<IProps> = ({
           selectDates={(e: Date[]) => handleCreateEventDates(e)}
         />
       )}
-      {!!editEventInfoDrawer && (
+      {/* {!!editEventInfoDrawer && (
         <EditEventInfoWindow
           eventId={event.id}
           eventInfo={event.eventInfo}
@@ -189,7 +175,7 @@ const FirstSection: React.FC<IProps> = ({
           handleCloseWindow={handleCloseWindow}
           onHandleCloseWindow={() => setEditEventInfoDrawer(false)}
         />
-      )}
+      )} */}
 
       <AvatarInput>
         <img src={avatar} alt="WePlan" />
@@ -254,6 +240,4 @@ const FirstSection: React.FC<IProps> = ({
       />
     </Container>
   );
-};
-
-export default FirstSection;
+}

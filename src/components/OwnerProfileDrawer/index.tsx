@@ -8,36 +8,28 @@ import avatar_placeholder from '../../assets/WePlanLogo.svg';
 import { useAuth } from '../../hooks/auth';
 
 import WindowContainer from '../WindowContainer';
-import IEventOwnerDTO from '../../dtos/IEventOwnerDTO';
-import api from '../../services/api';
 import EditEventOwnerWindow from '../EditEventOwnerWindow';
 import { useToast } from '../../hooks/toast';
+import { useEventOwners } from '../../hooks/eventOwners';
+import { useEventVariables } from '../../hooks/eventVariables';
 
 interface IPropsDTO {
-  eventMaster: string;
-  isOwner: boolean;
   onHandleCloseWindow: MouseEventHandler;
   handleCloseWindow: Function;
-  getOwners: Function;
   getEventInfo: Function;
-  owner: IEventOwnerDTO;
   availableNumberOfGuests: number;
-  eventId: string;
 }
 
 const OwnerProfileDrawer: React.FC<IPropsDTO> = ({
-  eventMaster,
-  isOwner,
   onHandleCloseWindow,
   handleCloseWindow,
-  getOwners,
   getEventInfo,
-  owner,
   availableNumberOfGuests,
-  eventId,
 }: IPropsDTO) => {
   const { user } = useAuth();
   const { addToast } = useToast();
+  const { selectedEventOwner, selectedEvent, isOwner } = useEventVariables();
+  const { deleteEventOwner } = useEventOwners();
 
   const [editOwnerWindow, setEditOwnerWindow] = useState(false);
 
@@ -54,10 +46,8 @@ const OwnerProfileDrawer: React.FC<IPropsDTO> = ({
 
   const deleteOwner = useCallback(async () => {
     try {
-      if (eventMaster !== owner.id) {
-        await api.delete(`event-owners/${owner.id}`);
-      }
-      getOwners();
+      if (selectedEvent.user_id !== selectedEventOwner.id)
+        await deleteEventOwner(selectedEventOwner.id);
       handleCloseWindow();
       addToast({
         type: 'success',
@@ -72,26 +62,28 @@ const OwnerProfileDrawer: React.FC<IPropsDTO> = ({
       });
       throw new Error(err);
     }
-  }, [owner, eventMaster, addToast, getOwners, handleCloseWindow]);
+  }, [
+    selectedEventOwner,
+    selectedEvent,
+    addToast,
+    handleCloseWindow,
+    deleteEventOwner,
+  ]);
 
   useEffect(() => {
-    if (owner.userEventOwner.avatar_url) {
-      setAvatar(owner.userEventOwner.avatar_url);
+    if (selectedEventOwner.userEventOwner.avatar_url) {
+      setAvatar(selectedEventOwner.userEventOwner.avatar_url);
     }
-  }, [owner]);
+  }, [selectedEventOwner]);
 
   return (
     <>
       {editOwnerWindow && (
         <EditEventOwnerWindow
-          eventMaster={eventMaster}
           handleCloseWindow={closeEditOwnerWindow}
           onHandleCloseWindow={() => closeEditOwnerWindow()}
           availableNumberOfGuests={availableNumberOfGuests}
-          owner={owner}
-          getOwners={getOwners}
           getEventInfo={getEventInfo}
-          eventId={eventId}
         />
       )}
       <WindowContainer
@@ -107,7 +99,11 @@ const OwnerProfileDrawer: React.FC<IPropsDTO> = ({
         <Container>
           <img
             src={avatar}
-            alt={owner ? owner.userEventOwner.name : 'WePlan'}
+            alt={
+              selectedEventOwner
+                ? selectedEventOwner.userEventOwner.name
+                : 'WePlan'
+            }
           />
           {isOwner ? (
             <>
@@ -116,75 +112,101 @@ const OwnerProfileDrawer: React.FC<IPropsDTO> = ({
 
                 <h1>
                   username:
-                  <strong>{owner && owner.userEventOwner.name}</strong>
+                  <strong>
+                    {selectedEventOwner &&
+                      selectedEventOwner.userEventOwner.name}
+                  </strong>
                 </h1>
-                {owner && owner.userEventOwner.personInfo && (
-                  <h1>
-                    Nome:
-                    <strong>
-                      {owner && owner.userEventOwner.personInfo
-                        ? owner.userEventOwner.personInfo.first_name
-                        : '0'}
-                    </strong>
-                    Sobrenome:
-                    <strong>
-                      {owner && owner.userEventOwner.personInfo
-                        ? owner.userEventOwner.personInfo.last_name
-                        : '0'}
-                    </strong>
-                  </h1>
-                )}
+                {selectedEventOwner &&
+                  selectedEventOwner.userEventOwner.personInfo && (
+                    <h1>
+                      Nome:
+                      <strong>
+                        {selectedEventOwner &&
+                        selectedEventOwner.userEventOwner.personInfo
+                          ? selectedEventOwner.userEventOwner.personInfo
+                              .first_name
+                          : '0'}
+                      </strong>
+                      Sobrenome:
+                      <strong>
+                        {selectedEventOwner &&
+                        selectedEventOwner.userEventOwner.personInfo
+                          ? selectedEventOwner.userEventOwner.personInfo
+                              .last_name
+                          : '0'}
+                      </strong>
+                    </h1>
+                  )}
                 <div>
                   <h2>
                     Descrição:{' '}
-                    <strong>{owner ? owner.description : '0'}</strong>
+                    <strong>
+                      {selectedEventOwner
+                        ? selectedEventOwner.description
+                        : '0'}
+                    </strong>
                   </h2>
                   <h2>
                     Número de convidados:{' '}
-                    <strong>{owner ? owner.number_of_guests : '0'}</strong>
+                    <strong>
+                      {selectedEventOwner
+                        ? selectedEventOwner.number_of_guests
+                        : '0'}
+                    </strong>
                   </h2>
                 </div>
               </button>
-              {eventMaster !== owner.id && eventMaster !== user.id && (
-                <div>
-                  <DeleteOwnerButton type="button" onClick={deleteOwner}>
-                    Deletar
-                    <MdDelete size={24} />
-                  </DeleteOwnerButton>
-                </div>
-              )}
+              {selectedEvent.user_id !== selectedEventOwner.id &&
+                selectedEvent.user_id !== user.id && (
+                  <div>
+                    <DeleteOwnerButton type="button" onClick={deleteOwner}>
+                      Deletar
+                      <MdDelete size={24} />
+                    </DeleteOwnerButton>
+                  </div>
+                )}
             </>
           ) : (
             <>
               <button type="button">
                 <h1>
                   username:
-                  <strong>{owner.userEventOwner.name}</strong>
+                  <strong>{selectedEventOwner.userEventOwner.name}</strong>
                 </h1>
-                {owner && owner.userEventOwner.personInfo && (
-                  <h1>
-                    Nome:
-                    <strong>
-                      {owner ? owner.userEventOwner.personInfo.first_name : '0'}
-                    </strong>
-                    Sobrenome:
-                    <strong>
-                      {owner ? owner.userEventOwner.personInfo.last_name : '0'}
-                    </strong>
-                  </h1>
-                )}
+                {selectedEventOwner &&
+                  selectedEventOwner.userEventOwner.personInfo && (
+                    <h1>
+                      Nome:
+                      <strong>
+                        {selectedEventOwner
+                          ? selectedEventOwner.userEventOwner.personInfo
+                              .first_name
+                          : '0'}
+                      </strong>
+                      Sobrenome:
+                      <strong>
+                        {selectedEventOwner
+                          ? selectedEventOwner.userEventOwner.personInfo
+                              .last_name
+                          : '0'}
+                      </strong>
+                    </h1>
+                  )}
                 <div>
                   <h2>
                     Descrição:{' '}
                     <strong>
-                      {owner && owner.description ? owner.description : '0'}
+                      {selectedEventOwner && selectedEventOwner.description
+                        ? selectedEventOwner.description
+                        : '0'}
                     </strong>
                   </h2>
                   <h2>
                     Número de convidados:{' '}
                     <strong>
-                      {owner && owner.number_of_guests
-                        ? owner.number_of_guests
+                      {selectedEventOwner && selectedEventOwner.number_of_guests
+                        ? selectedEventOwner.number_of_guests
                         : 0}
                     </strong>
                   </h2>

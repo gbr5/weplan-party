@@ -1,5 +1,6 @@
 import React, {
   MouseEventHandler,
+  ReactElement,
   useCallback,
   useEffect,
   useMemo,
@@ -31,6 +32,7 @@ import IFriendDTO from '../../dtos/IFriendDTO';
 import WindowUnFormattedContainer from '../WindowUnFormattedContainer';
 import IContactTypeDTO from '../../dtos/IContactTypeDTO';
 import BooleanQuestionWindow from '../BooleanQuestionWindow';
+import { useEventVariables } from '../../hooks/eventVariables';
 
 interface ICreateGuest {
   first_name: string;
@@ -45,9 +47,7 @@ interface ICreateGuest {
 }
 
 interface IProps {
-  eventId: string;
   weplanUser: boolean;
-  isOwner: boolean;
   myAvailableNumberOfGuests: number;
   handleCloseWindow: Function;
   handleGuestAllocationWindow: MouseEventHandler;
@@ -59,10 +59,8 @@ interface IProps {
   guestConfirmed: boolean;
 }
 
-const AddGuestWindow: React.FC<IProps> = ({
-  eventId,
+export function AddGuestWindow({
   weplanUser,
-  isOwner,
   myAvailableNumberOfGuests,
   handleCloseWindow,
   handleGuestAllocationWindow,
@@ -72,9 +70,10 @@ const AddGuestWindow: React.FC<IProps> = ({
   openWPGuestQuestionWindow,
   handleGuestConfirmedWindow,
   guestConfirmed,
-}: IProps) => {
+}: IProps): ReactElement {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
+  const { isOwner, selectedEvent } = useEventVariables();
 
   const [whatsappField, setWhatsappField] = useState(false);
   const [phoneField, setPhoneField] = useState(false);
@@ -99,9 +98,9 @@ const AddGuestWindow: React.FC<IProps> = ({
     {} as IContactTypeDTO,
   );
 
-  const getContactTypes = useCallback(() => {
+  const getContactTypes = useCallback(async () => {
     try {
-      api.get<IContactTypeDTO[]>('/contact-types').then(response => {
+      await api.get<IContactTypeDTO[]>('/contact-types').then(response => {
         response.data.map(type => {
           type.name === 'Phone' && setPhoneContactType(type);
           type.name === 'Whatsapp' && setWhatsappContactType(type);
@@ -172,7 +171,7 @@ const AddGuestWindow: React.FC<IProps> = ({
             abortEarly: false,
           });
 
-          const guest = await api.post(`events/${eventId}/guests`, {
+          const guest = await api.post(`events/${selectedEvent.id}/guests`, {
             first_name: selectedFriend.friend.personInfo.first_name,
             last_name: selectedFriend.friend.personInfo.last_name,
             description: data.description,
@@ -251,7 +250,7 @@ const AddGuestWindow: React.FC<IProps> = ({
             abortEarly: false,
           });
 
-          const guest = await api.post(`events/${eventId}/guests`, {
+          const guest = await api.post(`events/${selectedEvent.id}/guests`, {
             first_name: data.first_name,
             last_name: data.last_name,
             description: data.description,
@@ -305,7 +304,7 @@ const AddGuestWindow: React.FC<IProps> = ({
     },
     [
       addToast,
-      eventId,
+      selectedEvent.id,
       weplanUser,
       guestConfirmed,
       handleGetGuests,
@@ -555,6 +554,4 @@ const AddGuestWindow: React.FC<IProps> = ({
       </WindowUnFormattedContainer>
     </>
   );
-};
-
-export default AddGuestWindow;
+}

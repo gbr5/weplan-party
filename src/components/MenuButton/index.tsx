@@ -50,11 +50,6 @@ const MenuButton: React.FC = () => {
     setEventTypeDrawer(!eventTypeDrawer);
   }, [eventTypeDrawer]);
 
-  const handleNavigateToFriends = useCallback(() => {
-    setBackdrop(true);
-    setFriendsWindow(true);
-  }, []);
-
   const handleEventTypeChange = useCallback(
     (option: string) => {
       setEventType(option);
@@ -97,15 +92,12 @@ const MenuButton: React.FC = () => {
       </Button>
       {menuDrawer && (
         <MenuDrawer
-          handleNavigateToFriends={handleNavigateToFriends}
           handleCreateEventDrawer={openCreateEventDrawer}
           handleUploadFileWindow={() => setUploadFileWindow(!uploadFileWindow)}
         />
       )}
       {backdrop && <Backdrop onClick={() => closeAll()} />}
-      {!!friendsWindow && (
-        <MainFriendsWindow onHandleCloseWindow={() => closeAll()} />
-      )}
+      {!!friendsWindow && <MainFriendsWindow />}
       {!!createEventDrawer && (
         <CreateEventWindow
           eventType={eventType}

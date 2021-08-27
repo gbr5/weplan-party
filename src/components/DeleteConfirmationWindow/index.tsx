@@ -25,7 +25,7 @@ const DeleteConfirmationWindow: React.FC<IProps> = ({
       }}
     >
       <Container>
-        <h1>Deseja mesmo deletar o membro?</h1>
+        <h1>Confirma que deseja deletar?</h1>
         <div>
           <button type="button" onClick={handleDelete}>
             Sim

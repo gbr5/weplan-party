@@ -1,25 +1,23 @@
-import React, { useCallback, useState } from 'react';
-import IEventDTO from '../../../../dtos/IEventDTO';
+import React, { ReactElement, useCallback, useState } from 'react';
+import { useEventVariables } from '../../../../hooks/eventVariables';
 import { useToast } from '../../../../hooks/toast';
 import api from '../../../../services/api';
 import EventAppointmentSection from './EventAppointmentSection';
 import EventFileSection from './EventFileSection';
 import EventImageSection from './EventImageSection';
-import EventInspirationImageSection from './EventInspirationImageSection';
+import { EventInspirationImageSection } from './EventInspirationImageSection';
 
 import { Container, Section } from './styles';
 
-interface IProps {
-  event: IEventDTO;
-}
-
-const SecondSection: React.FC<IProps> = ({ event }: IProps) => {
+export function SecondSection(): ReactElement {
   const { addToast } = useToast();
-  const [updatedEvent, setUpdatedEvent] = useState(event);
+  const { selectedEvent } = useEventVariables();
+
+  const [updatedEvent, setUpdatedEvent] = useState(selectedEvent);
 
   const updateEvent = useCallback(() => {
     try {
-      api.get(`events/${event.id}`).then(response => {
+      api.get(`events/${selectedEvent.id}`).then(response => {
         setUpdatedEvent(response.data.event);
         addToast({
           type: 'success',
@@ -29,22 +27,20 @@ const SecondSection: React.FC<IProps> = ({ event }: IProps) => {
     } catch (err) {
       throw new Error(err);
     }
-  }, [event, addToast]);
+  }, [selectedEvent, addToast]);
 
   return (
     <Container>
       <EventFileSection
         updateEvent={updateEvent}
-        eventId={event.id}
         files={updatedEvent.eventFiles}
       />
-      <EventImageSection
-        eventId={event.id}
+      {/* <EventImageSection
         images={updatedEvent.eventImages}
         updateEvent={updateEvent}
-      />
-      <EventInspirationImageSection eventId={event.id} />
-      <EventAppointmentSection eventId={event.id} />
+      /> */}
+      <EventInspirationImageSection />
+      <EventAppointmentSection />
       <Section>
         <h1>A Pagar</h1>
       </Section>
@@ -56,6 +52,4 @@ const SecondSection: React.FC<IProps> = ({ event }: IProps) => {
       </Section>
     </Container>
   );
-};
-
-export default SecondSection;
+}

@@ -14,6 +14,7 @@ import ISupplierDTO from '../../dtos/ISupplierDTO';
 import WindowUnFormattedContainer from '../WindowUnFormattedContainer';
 import SuppliersListDrawer from '../SuppliersListDrawer';
 import SupplierServiceOrderFormWindow from '../SupplierServiceOrderFormWindow';
+import { useEventVariables } from '../../hooks/eventVariables';
 
 interface ICreateSupplier {
   name: string;
@@ -22,7 +23,6 @@ interface ICreateSupplier {
 
 interface IProps {
   onHandleCloseWindow: MouseEventHandler;
-  eventId: string;
   isHiredMessage: string;
   supplierSubCategory: string;
   supplierCategory: string;
@@ -34,7 +34,6 @@ interface IProps {
 
 const AddSupplierWindow: React.FC<IProps> = ({
   onHandleCloseWindow,
-  eventId,
   isHiredMessage,
   supplierSubCategory,
   isHired,
@@ -45,6 +44,7 @@ const AddSupplierWindow: React.FC<IProps> = ({
 }: IProps) => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
+  const { selectedEvent } = useEventVariables();
 
   const [weplanSupplier, setWePlanSupplier] = useState(false);
   const [supplierServiceOrderWindow, setSupplierServiceOrderWindow] = useState(
@@ -75,7 +75,7 @@ const AddSupplierWindow: React.FC<IProps> = ({
           selectedWeplanSupplier.userBySupplierCategory
         ) {
           const newSupplier = await api.post(
-            `events/event-suppliers/${eventId}`,
+            `events/event-suppliers/${selectedEvent.id}`,
             {
               name: selectedWeplanSupplier.userBySupplierCategory.name,
               supplier_sub_category: supplierSubCategory,
@@ -83,7 +83,7 @@ const AddSupplierWindow: React.FC<IProps> = ({
               weplanUser: weplanSupplier,
             },
           );
-          await api.post(`events/${eventId}/event-weplan-suppliers`, {
+          await api.post(`events/${selectedEvent.id}/event-weplan-suppliers`, {
             user_id: selectedWeplanSupplier.userBySupplierCategory.id,
             event_supplier_id: newSupplier.data.id,
           });
@@ -101,7 +101,7 @@ const AddSupplierWindow: React.FC<IProps> = ({
           handleCloseWindow();
         } else {
           const newSupplier = await api.post(
-            `events/event-suppliers/${eventId}`,
+            `events/event-suppliers/${selectedEvent.id}`,
             {
               name: data.name,
               supplier_sub_category: supplierSubCategory,
@@ -140,7 +140,7 @@ const AddSupplierWindow: React.FC<IProps> = ({
       handleCreateTransactionWindow,
       selectedWeplanSupplier,
       weplanSupplier,
-      eventId,
+      selectedEvent.id,
       handleCloseWindow,
     ],
   );
@@ -153,7 +153,7 @@ const AddSupplierWindow: React.FC<IProps> = ({
     <>
       {supplierServiceOrderWindow && (
         <SupplierServiceOrderFormWindow
-          event_id={eventId}
+          event_id={selectedEvent.id}
           supplier_id={selectedWeplanSupplier.userBySupplierCategory.id}
           handleCloseWindow={() => setSupplierServiceOrderWindow(false)}
           onHandleCloseWindow={() => setSupplierServiceOrderWindow(false)}

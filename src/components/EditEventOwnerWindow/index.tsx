@@ -5,57 +5,62 @@ import WindowContainer from '../WindowContainer';
 import { NumberOfGuestWindow } from './styles';
 import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
-import IEventOwnerDTO from '../../dtos/IEventOwnerDTO';
+import { useCurrentEvent } from '../../hooks/currentEvent';
+import { useEventVariables } from '../../hooks/eventVariables';
 
 interface IProps {
-  eventMaster: string;
   onHandleCloseWindow: MouseEventHandler;
   handleCloseWindow: Function;
-  getOwners: Function;
   getEventInfo: Function;
-  owner: IEventOwnerDTO;
   availableNumberOfGuests: number;
-  eventId: string;
 }
 
 const EditEventOwnerWindow: React.FC<IProps> = ({
-  eventMaster,
   onHandleCloseWindow,
   handleCloseWindow,
-  getOwners,
   getEventInfo,
-  owner,
   availableNumberOfGuests,
-  eventId,
 }: IProps) => {
   const { addToast } = useToast();
+  const { selectedEvent, selectedEventOwner } = useEventVariables();
+  const { getEventOwners } = useCurrentEvent();
 
   const ownerNumberOfGuests =
-    owner && owner.number_of_guests ? owner.number_of_guests : 0;
+    selectedEventOwner && selectedEventOwner.number_of_guests
+      ? selectedEventOwner.number_of_guests
+      : 0;
 
   const [ownerUpdatedNumberOfGuests, setOwnerUpdatedNumberOfGuests] = useState(
     0,
   );
 
   const [ownerUpdatedDescription, setOwnerUpdatedDescription] = useState(
-    owner && owner.description ? owner.description : '0',
+    selectedEventOwner && selectedEventOwner.description
+      ? selectedEventOwner.description
+      : '0',
   );
 
   const handleUpdateOwner = useCallback(async () => {
     try {
-      if (eventMaster === owner.userEventOwner.id) {
-        await api.put(`event-owners/master-number-of-guests/${eventId}`, {
-          description: ownerUpdatedDescription,
-          number_of_guests: ownerUpdatedNumberOfGuests,
-        });
+      if (selectedEvent.user_id === selectedEventOwner.userEventOwner.id) {
+        await api.put(
+          `event-owners/master-number-of-guests/${selectedEvent.id}`,
+          {
+            description: ownerUpdatedDescription,
+            number_of_guests: ownerUpdatedNumberOfGuests,
+          },
+        );
       } else {
-        await api.put(`event-owners/${eventId}${owner.userEventOwner.id}`, {
-          description: ownerUpdatedDescription,
-          number_of_guests: ownerUpdatedNumberOfGuests,
-        });
+        await api.put(
+          `event-owners/${selectedEvent.id}${selectedEventOwner.userEventOwner.id}`,
+          {
+            description: ownerUpdatedDescription,
+            number_of_guests: ownerUpdatedNumberOfGuests,
+          },
+        );
       }
       getEventInfo();
-      getOwners();
+      await getEventOwners(selectedEvent.id);
       handleCloseWindow();
       addToast({
         type: 'success',
@@ -72,15 +77,14 @@ const EditEventOwnerWindow: React.FC<IProps> = ({
       throw new Error(err);
     }
   }, [
-    getOwners,
+    getEventOwners,
+    selectedEvent,
     getEventInfo,
     addToast,
     handleCloseWindow,
-    eventId,
     ownerUpdatedDescription,
     ownerUpdatedNumberOfGuests,
-    owner,
-    eventMaster,
+    selectedEventOwner,
   ]);
 
   const handleOwnersUpdatedNumberOfGuests = useCallback((props: number) => {
@@ -112,7 +116,7 @@ const EditEventOwnerWindow: React.FC<IProps> = ({
             defaultValue={ownerUpdatedDescription || ''}
             onChange={e => handleOwnersUpdatedDescription(e.target.value)}
           />
-          {eventMaster !== owner.userEventOwner.id && (
+          {selectedEvent.user_id !== selectedEventOwner.userEventOwner.id && (
             <>
               <p>Com o número de convidados do evento,</p>
               <p>

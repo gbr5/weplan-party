@@ -5,13 +5,13 @@ import WindowContainer from '../WindowContainer';
 
 import { Container, EventInfo } from './styles';
 import IEventInfoDTO from '../../dtos/IEventInfoDTO';
+import { useEventVariables } from '../../hooks/eventVariables';
 
 interface IProps {
   onHandleCloseWindow: MouseEventHandler;
   handleEditEventInfo: Function;
   eventName: string;
   eventInfo: IEventInfoDTO;
-  isOwner: boolean;
 }
 
 const EventInfoWindow: React.FC<IProps> = ({
@@ -19,8 +19,8 @@ const EventInfoWindow: React.FC<IProps> = ({
   eventInfo,
   eventName,
   handleEditEventInfo,
-  isOwner,
 }: IProps) => {
+  const { isOwner } = useEventVariables();
   const eventDuration = useMemo(() => {
     if (eventInfo) {
       const durationSplitted = (eventInfo.duration / 60).toString().split('.');

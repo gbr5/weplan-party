@@ -1,30 +1,28 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { ReactElement } from 'react';
 import IEventInspirationImageDTO from '../../../../../dtos/IEventInspirationImageDTO';
+import { useEventVariables } from '../../../../../hooks/eventVariables';
 import api from '../../../../../services/api';
 import EventInspirationImage from '../EventInspirationImage';
 
 import { Container } from './styles';
 
-interface IProps {
-  eventId: string;
-}
+export function EventInspirationImageSection(): ReactElement {
+  const { selectedEvent } = useEventVariables();
 
-const EventInspirationImageSection: React.FC<IProps> = ({
-  eventId,
-}: IProps) => {
   const [eventInspirationImages, setEventInspirationImages] = useState<
     IEventInspirationImageDTO[]
   >([]);
 
   const getEventInspirationImages = useCallback(() => {
     try {
-      api.get(`event/inspiration/images/${eventId}`).then(response => {
+      api.get(`event/inspiration/images/${selectedEvent.id}`).then(response => {
         setEventInspirationImages(response.data);
       });
     } catch (err) {
       throw new Error(err);
     }
-  }, [eventId]);
+  }, [selectedEvent.id]);
 
   useEffect(() => {
     getEventInspirationImages();
@@ -40,6 +38,4 @@ const EventInspirationImageSection: React.FC<IProps> = ({
       </Container>
     </>
   );
-};
-
-export default EventInspirationImageSection;
+}

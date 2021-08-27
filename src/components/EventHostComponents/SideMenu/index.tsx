@@ -1,7 +1,8 @@
 import React from 'react';
+import { useMemo } from 'react';
 import { FiEdit, FiEdit3 } from 'react-icons/fi';
 import { MdGroupAdd, MdPersonAdd } from 'react-icons/md';
-import IEventOwnerDTO from '../../../dtos/IEventOwnerDTO';
+import { useEventVariables } from '../../../hooks/eventVariables';
 
 import { Container } from './styles';
 
@@ -23,12 +24,8 @@ interface IProps {
   handleLatestActionsSection: Function;
   // handleMessagesSection: Function;
   eventName: string;
-  owners: IEventOwnerDTO[];
   planners: IUserInfoDTO[];
-  numberOfOwners: number;
-  numberOfMembers: number;
   numberOfPlanners: number;
-  isOwner: boolean;
 }
 
 const SideMenu: React.FC<IProps> = ({
@@ -43,13 +40,14 @@ const SideMenu: React.FC<IProps> = ({
   // handleMessagesSection,
   handleAddOwnerDrawer,
   eventName,
-  owners,
   planners,
-  numberOfOwners,
-  numberOfMembers,
   numberOfPlanners,
-  isOwner,
 }: IProps) => {
+  const { eventOwners, eventMembers, isOwner } = useEventVariables();
+
+  const numberOfOwners = useMemo(() => eventOwners.length, [eventOwners]);
+  const numberOfMembers = useMemo(() => eventMembers.length, [eventMembers]);
+
   return (
     <Container>
       <button type="button" onClick={() => handleLatestActionsSection()}>
@@ -83,9 +81,9 @@ const SideMenu: React.FC<IProps> = ({
         </button>
       )}
 
-      {owners.length > 4 ? (
+      {eventOwners.length > 4 ? (
         <span style={{ overflowY: 'scroll', height: '200px' }}>
-          {owners.map(eventOwner => (
+          {eventOwners.map(eventOwner => (
             <button
               key={eventOwner.id}
               type="button"
@@ -97,7 +95,7 @@ const SideMenu: React.FC<IProps> = ({
         </span>
       ) : (
         <span>
-          {owners.map(eventOwner => (
+          {eventOwners.map(eventOwner => (
             <button
               key={eventOwner.id}
               type="button"

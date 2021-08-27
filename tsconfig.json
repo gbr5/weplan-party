@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "noFallthroughCasesInSwitch": true,
     "target": "es5",
     "lib": [
       "dom",
@@ -25,4 +26,5 @@
   "files": [
     "src/styles/styled.d.ts"
   ]
+
 }

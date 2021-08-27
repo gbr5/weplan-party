@@ -31,6 +31,7 @@ import IContactTypeDTO from '../../dtos/IContactTypeDTO';
 import IFriendDTO from '../../dtos/IFriendDTO';
 import SelectFriendWindow from '../SelectFriendWindow';
 import UserToGuestMessageWindow from '../UserToGuestMessageWindow';
+import { useEventVariables } from '../../hooks/eventVariables';
 
 interface IFormDTO extends IEventGuestDTO {
   whatsapp: string;
@@ -41,9 +42,6 @@ interface IFormDTO extends IEventGuestDTO {
 
 interface IProps {
   onHandleCloseWindow: MouseEventHandler;
-  eventId: string;
-  eventTrimmedName: string;
-  eventName: string;
   eventGuest: IEventGuestDTO;
   handleCloseWindow: Function;
   handleGetGuests: Function;
@@ -51,15 +49,13 @@ interface IProps {
 
 const EditGuestWindow: React.FC<IProps> = ({
   onHandleCloseWindow,
-  eventId,
-  eventTrimmedName,
-  eventName,
   eventGuest,
   handleCloseWindow,
   handleGetGuests,
 }: IProps) => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
+  const { selectedEvent } = useEventVariables();
 
   const [whatsappField, setWhatsappField] = useState(false);
   const [phoneField, setPhoneField] = useState(false);
@@ -200,7 +196,7 @@ const EditGuestWindow: React.FC<IProps> = ({
             abortEarly: false,
           });
 
-          await api.put(`events/${eventId}/guests/${guest.id}`, {
+          await api.put(`events/${selectedEvent.id}/guests/${guest.id}`, {
             first_name: guest.first_name,
             last_name: guest.last_name,
             description: data.description,
@@ -217,7 +213,7 @@ const EditGuestWindow: React.FC<IProps> = ({
             abortEarly: false,
           });
 
-          await api.put(`events/${eventId}/guests/${guest.id}`, {
+          await api.put(`events/${selectedEvent.id}/guests/${guest.id}`, {
             first_name: data.first_name,
             last_name: data.last_name,
             description: data.description,
@@ -249,7 +245,7 @@ const EditGuestWindow: React.FC<IProps> = ({
     },
     [
       addToast,
-      eventId,
+      selectedEvent,
       guest,
       handleGetGuests,
       addressContactType,
@@ -377,8 +373,8 @@ const EditGuestWindow: React.FC<IProps> = ({
         e => e.contactType.name === 'Email',
       )?.contact_info;
       await api.post('/mass-invitation', {
-        eventName,
-        eventTrimmedName,
+        eventName: selectedEvent.name,
+        eventTrimmedName: selectedEvent.trimmed_name,
         guests: [
           {
             id: guest.id,
@@ -403,15 +399,15 @@ const EditGuestWindow: React.FC<IProps> = ({
       throw new Error(err);
     }
     return guest;
-  }, [eventTrimmedName, addToast, eventName, guest]);
+  }, [addToast, selectedEvent, guest]);
 
   useEffect(() => {
     if (guestDefaultWhatsapp !== 'Whatsapp') {
-      const waMessage = `Ei ${guest.first_name}! Venha curtir a ${eventName} comigo, entra no link e confirma a sua presença https://weplan.party/event/${eventTrimmedName}/${guest.id}, lá também tem todas as informações necessárias.`;
+      const waMessage = `Ei ${guest.first_name}! Venha curtir a ${selectedEvent.name} comigo, entra no link e confirma a sua presença https://weplan.party/event/${selectedEvent.trimmed_name}/${guest.id}, lá também tem todas as informações necessárias.`;
 
       setSendWhats(`https://wa.me/${guestDefaultWhatsapp}/?text=${waMessage}`);
     }
-  }, [guestDefaultWhatsapp, eventName, eventTrimmedName, guest]);
+  }, [guestDefaultWhatsapp, selectedEvent, guest]);
 
   return (
     <>

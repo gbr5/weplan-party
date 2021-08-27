@@ -7,6 +7,7 @@ import React, {
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { MdFileDownload, MdFileUpload } from 'react-icons/md';
 
+import { ReactElement } from 'react';
 import WindowContainer from '../WindowContainer';
 
 import guestListImage from '../../assets/guestList_0.svg';
@@ -26,21 +27,21 @@ import {
 } from './styles';
 import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
+import { useEventVariables } from '../../hooks/eventVariables';
 
 interface IProps {
   onHandleCloseWindow: MouseEventHandler;
-  eventId: string;
   myAvailableNumberOfGuests: number;
   handleCloseWindow: Function;
 }
 
-const AddEventGuestListWindow: React.FC<IProps> = ({
+export function AddEventGuestListWindow({
   onHandleCloseWindow,
-  eventId,
   myAvailableNumberOfGuests,
   handleCloseWindow,
-}: IProps) => {
+}: IProps): ReactElement {
   const { addToast } = useToast();
+  const { selectedEvent } = useEventVariables();
 
   const [firstWindow, setFirstWindow] = useState(true);
   const [secondWindow, setSecondWindow] = useState(false);
@@ -118,7 +119,7 @@ const AddEventGuestListWindow: React.FC<IProps> = ({
 
           data.append('file', e.target.files[0]);
           await api.post(
-            `guest-list/whatsapp/email/${eventId}/${myAvailableNumberOfGuests}`,
+            `guest-list/whatsapp/email/${selectedEvent.id}/${myAvailableNumberOfGuests}`,
             data,
           );
         }
@@ -137,7 +138,7 @@ const AddEventGuestListWindow: React.FC<IProps> = ({
         throw new Error(err);
       }
     },
-    [addToast, eventId, myAvailableNumberOfGuests, handleCloseWindow],
+    [addToast, selectedEvent.id, myAvailableNumberOfGuests, handleCloseWindow],
   );
 
   return (
@@ -284,6 +285,4 @@ const AddEventGuestListWindow: React.FC<IProps> = ({
       )}
     </WindowContainer>
   );
-};
-
-export default AddEventGuestListWindow;
+}

@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { ReactElement, useCallback, useRef, useState } from 'react';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import Input from '../../Input';
@@ -18,22 +18,22 @@ import IFriendDTO from '../../../dtos/IFriendDTO';
 import SelectFriendWindow from '../../SelectFriendWindow';
 import IUserFileDTO from '../../../dtos/IUserFileDTO';
 import SelectUserFileWindow from '../../SelectUserFileWindow';
+import { useEventVariables } from '../../../hooks/eventVariables';
 
 interface IProps {
   closeWindow: Function;
   getAppointments: Function;
   addReminder: Function;
-  eventId: string;
 }
 
-const CreateEventAppointment: React.FC<IProps> = ({
+export function CreateEventAppointment({
   closeWindow,
   addReminder,
   getAppointments,
-  eventId,
-}: IProps) => {
+}: IProps): ReactElement {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
+  const { selectedEvent } = useEventVariables();
 
   const today = new Date();
 
@@ -76,7 +76,7 @@ const CreateEventAppointment: React.FC<IProps> = ({
           });
         }
         await api.post('appointments/event-appointments', {
-          event_id: eventId,
+          event_id: selectedEvent.id,
           appointment_id: appointment.data.id,
         });
         addReminder(appointment.data);
@@ -98,7 +98,7 @@ const CreateEventAppointment: React.FC<IProps> = ({
           });
         }
         await api.post('appointments/event-appointments', {
-          event_id: eventId,
+          event_id: selectedEvent.id,
           appointment_id: appointment.data.id,
         });
         addReminder(appointment.data);
@@ -129,7 +129,7 @@ const CreateEventAppointment: React.FC<IProps> = ({
     appointmentParticipants,
     appointmentFiles,
     getAppointments,
-    eventId,
+    selectedEvent.id,
     addReminder,
   ]);
 
@@ -365,6 +365,4 @@ const CreateEventAppointment: React.FC<IProps> = ({
       )}
     </>
   );
-};
-
-export default CreateEventAppointment;
+}

@@ -7,29 +7,24 @@ import { Container, Contracts, DeleteButton } from './styles';
 import avatar_placeholder from '../../assets/WePlanLogo.svg';
 
 import WindowContainer from '../WindowContainer';
-import IEventSupplierDTO from '../../dtos/IEventSupplierDTO';
 import TransactionAgreementForm from '../TransactionAgreementForm';
 import ITransactionAgreementDTO from '../../dtos/ITransactionAgreementDTO';
+import { useCurrentEvent } from '../../hooks/currentEvent';
+import { useEventVariables } from '../../hooks/eventVariables';
 
 interface IPropsDTO {
-  isOwner: boolean;
-  eventSupplier: IEventSupplierDTO;
   onHandleEventSupplierDrawer: MouseEventHandler;
   onHandleEventSupplierUpdate: MouseEventHandler;
   onHandleDeleteEventSupplierDrawer: MouseEventHandler;
-  handleGetSuppliers: Function;
-  getHiredSuppliers: Function;
 }
 
 const EventSupplierWindow: React.FC<IPropsDTO> = ({
-  isOwner,
-  eventSupplier,
   onHandleEventSupplierDrawer,
   onHandleEventSupplierUpdate,
   onHandleDeleteEventSupplierDrawer,
-  handleGetSuppliers,
-  getHiredSuppliers,
 }: IPropsDTO) => {
+  const { selectedEventSupplier, isOwner } = useEventVariables();
+  const { getEventSuppliers } = useCurrentEvent();
   const [editSupplierWindow, setEditSupplierWindow] = useState(false);
   const [thisAgreement, setThisAgreement] = useState<ITransactionAgreementDTO>(
     {} as ITransactionAgreementDTO,
@@ -50,9 +45,9 @@ const EventSupplierWindow: React.FC<IPropsDTO> = ({
         <TransactionAgreementForm
           handleCloseWindow={() => setEditSupplierWindow(false)}
           agreement={thisAgreement}
-          handleGetSuppliers={handleGetSuppliers}
-          getHiredSuppliers={getHiredSuppliers}
-          hiredSupplier={eventSupplier}
+          handleGetSuppliers={getEventSuppliers}
+          getHiredSuppliers={getEventSuppliers}
+          hiredSupplier={selectedEventSupplier}
           onHandleCloseWindow={() => setEditSupplierWindow(false)}
         />
       )}
@@ -69,32 +64,32 @@ const EventSupplierWindow: React.FC<IPropsDTO> = ({
         <Container>
           <div>
             <div>
-              <img src={avatar_placeholder} alt={eventSupplier.name} />
+              <img src={avatar_placeholder} alt={selectedEventSupplier.name} />
 
               {isOwner ? (
                 <button type="button" onClick={onHandleEventSupplierUpdate}>
                   <FiEdit3 size={24} />
 
-                  <h1>{eventSupplier.name}</h1>
+                  <h1>{selectedEventSupplier.name}</h1>
                 </button>
               ) : (
                 <button type="button">
-                  <h1>{eventSupplier.name}</h1>
+                  <h1>{selectedEventSupplier.name}</h1>
                 </button>
               )}
             </div>
 
-            {eventSupplier.transactionAgreements &&
-              (eventSupplier.transactionAgreements.length > 1 ? (
+            {selectedEventSupplier.transactionAgreements &&
+              (selectedEventSupplier.transactionAgreements.length > 1 ? (
                 <h2>Contratos:</h2>
               ) : (
                 <h2>Contrato:</h2>
               ))}
           </div>
 
-          {eventSupplier.transactionAgreements && (
+          {selectedEventSupplier.transactionAgreements && (
             <Contracts>
-              {eventSupplier.transactionAgreements.map(agreement => {
+              {selectedEventSupplier.transactionAgreements.map(agreement => {
                 iAgreement += 1;
                 return (
                   <button

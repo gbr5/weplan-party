@@ -87,6 +87,7 @@ export const Container = styled.div`
     background: var(--header-background-color);
     border-radius: 8px;
     overflow-y: scroll;
+    padding-bottom: 24px;
 
     @media (max-width: 1000px) {
       display: block;
@@ -118,14 +119,14 @@ export const BooleanNavigationButton = styled.button<ButtonProps>`
     color: var(--text-color);
     opacity: 1;
     border-radius: 15px;
-    background: var(--header-background-color-hover);
+    background: var(--background-color);
   }
   > svg {
     color: var(--primary-color);
   }
 
   ${props =>
-    props.booleanActiveButton &&
+    !props.booleanActiveButton &&
     css`
       color: var(--text-color);
       opacity: 1;
@@ -133,7 +134,7 @@ export const BooleanNavigationButton = styled.button<ButtonProps>`
 
       &:hover {
         opacity: 0.8;
-        background: var(--background-color);
+        background: var(--header-background-color-hover);
       }
     `}
 `;
@@ -244,124 +245,6 @@ export const MembersContainer = styled.div`
     &:hover {
       box-shadow: 4px 4px 6px 2px rgba(255, 150, 10, 0.3);
       opacity: 0.8;
-    }
-  }
-`;
-
-export const Supplier = styled.div`
-  width: 100%;
-  height: 56px;
-  margin: 0 auto;
-  padding: 8px;
-  padding-right: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--background-color);
-  border-radius: 4px;
-  transition: 0.25s;
-
-  @media (max-width: 1000px) {
-    margin-bottom: 2vh;
-  }
-  &:last-child {
-    margin-bottom: 16px;
-  }
-
-  &:hover {
-    box-shadow: 1px 1px 3px 2px rgba(255, 150, 10, 0.3);
-    background: var(--card-color);
-
-    p {
-      color: var(--title-color);
-    }
-  }
-
-  > span {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    width: 100%;
-
-    > p {
-      color: var(--text-color);
-      font-size: 16px;
-      margin-left: 8px;
-    }
-
-    > button {
-      background: transparent;
-      border: none;
-      font-size: 16px;
-      color: var(--text-color);
-      margin: 0 24px;
-      transition: 0.25s;
-      width: 100%;
-      display: flex;
-
-      &:hover {
-        opacity: 0.8;
-        color: var(--title-color);
-
-        svg {
-          opacity: 1;
-          color: var(--title-color);
-        }
-      }
-
-      > strong {
-        font-weight: 500;
-        margin-right: auto;
-      }
-
-      > svg {
-        opacity: 0.3;
-        color: var(--text-color);
-        transition: 0.25s;
-        margin-left: auto;
-      }
-    }
-  }
-
-  > button {
-    background: transparent;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-color);
-    margin: 0 auto;
-    transition: 0.25s;
-    border-radius: 4px;
-
-    &:hover {
-      opacity: 0.8;
-      box-shadow: 1px 1px 3px 2px rgba(255, 150, 10, 0.3);
-    }
-  }
-
-  > div {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-left: auto;
-    transition: 0.25s;
-    border-radius: 4px;
-
-    button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: transparent;
-      border: none;
-      color: var(--text-color);
-      transition: 0.25s;
-
-      &:hover {
-        opacity: 0.8;
-        color: var(--primary-color);
-      }
     }
   }
 `;

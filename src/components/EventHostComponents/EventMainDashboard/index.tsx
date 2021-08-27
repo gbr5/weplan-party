@@ -1,33 +1,19 @@
-import React from 'react';
-import IEventDTO from '../../../dtos/IEventDTO';
-import IUserDTO from '../../../dtos/IUserDTO';
+import React, { ReactElement } from 'react';
 
-import FirstSection from './FirstSection';
-import SecondSection from './SecondSection';
+import { FirstSection } from './FirstSection';
+import { SecondSection } from './SecondSection';
 
 import { Container } from './styles';
 
 interface IProps {
-  event: IEventDTO;
-  master: IUserDTO;
   currentNumberOfGuests: number;
 }
 
-const EventMainDashboard: React.FC<IProps> = ({
-  event,
-  master,
-  currentNumberOfGuests,
-}: IProps) => {
+export function EventMainDashboard(): ReactElement {
   return (
     <Container>
-      <FirstSection
-        currentNumberOfGuests={currentNumberOfGuests}
-        event={event}
-        master={master}
-      />
-      <SecondSection event={event} />
+      <FirstSection />
+      <SecondSection />
     </Container>
   );
-};
-
-export default EventMainDashboard;
+}

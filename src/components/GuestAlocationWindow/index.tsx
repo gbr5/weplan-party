@@ -4,42 +4,29 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import IEventGuestDTO from '../../dtos/IEventGuestDTO';
 import IEventInfoDTO from '../../dtos/IEventInfoDTO';
-import IEventMemberDTO from '../../dtos/IEventMemberDTO';
-import IEventOwnerDTO from '../../dtos/IEventOwnerDTO';
 import WindowUnFormattedContainer from '../WindowUnFormattedContainer';
 import BooleanButtonContainer from '../BooleanButtonContainer';
 
 import { Container, SubTitle, Body } from './styles';
 import HostListSection from './HostListSection';
 import IHostDTO from '../../dtos/IHostDTO';
+import { useEventVariables } from '../../hooks/eventVariables';
 
 interface IProps {
   onHandleCloseWindow: MouseEventHandler;
   availableNumberOfGuests: number;
-  masterId: string;
-  getOwners: Function;
-  getMembers: Function;
   handleUpdateEventNumberOfGuests: MouseEventHandler;
-  owners: IEventOwnerDTO[];
-  members: IEventMemberDTO[];
-  guests: IEventGuestDTO[];
   eventInfo: IEventInfoDTO;
 }
 
 const GuestAlocationWindow: React.FC<IProps> = ({
   onHandleCloseWindow,
   availableNumberOfGuests,
-  masterId,
-  getOwners,
-  getMembers,
   handleUpdateEventNumberOfGuests,
-  owners,
-  members,
-  guests,
   eventInfo,
 }: IProps) => {
+  const { eventMembers, eventOwners, eventGuests } = useEventVariables();
   const [ownersSection, setOwnersSection] = useState(true);
   const [ownersNumberOfGuests, setOwnersNumberOfGuests] = useState(0);
   const [membersNumberOfGuests, setMembersNumberOfGuests] = useState(0);
@@ -48,19 +35,26 @@ const GuestAlocationWindow: React.FC<IProps> = ({
 
   const handleOwnersHosts = useCallback(() => {
     setOwnersNumberOfGuests(
-      owners
+      eventOwners
         .map(owner => owner.number_of_guests)
         .reduce((a, b) => Number(a) + Number(b), 0),
     );
     setOwnersHosts(
-      owners.map(owner => {
-        const invited_guests = guests.filter(
+      eventOwners.map(owner => {
+        const invited_guests = eventGuests.filter(
           guest => guest.host_id === owner.userEventOwner.id,
         );
+        const userOwner = owner.userEventOwner;
+        const first_name = userOwner.personInfo
+          ? userOwner.personInfo.first_name
+          : userOwner.name;
+        const last_name = userOwner.personInfo
+          ? userOwner.personInfo.last_name
+          : '';
         return {
           id: owner.id,
-          first_name: owner.userEventOwner.personInfo.first_name,
-          last_name: owner.userEventOwner.personInfo.last_name,
+          first_name,
+          last_name,
           isOwner: true,
           number_of_guests: owner.number_of_guests,
           user_id: owner.userEventOwner.id,
@@ -69,7 +63,7 @@ const GuestAlocationWindow: React.FC<IProps> = ({
         };
       }),
     );
-  }, [owners, guests]);
+  }, [eventOwners, eventGuests]);
 
   useEffect(() => {
     handleOwnersHosts();
@@ -77,19 +71,26 @@ const GuestAlocationWindow: React.FC<IProps> = ({
 
   const handleMembersHosts = useCallback(() => {
     setMembersNumberOfGuests(
-      members
+      eventMembers
         .map(member => member.number_of_guests)
         .reduce((a, b) => Number(a) + Number(b), 0),
     );
     setMembersHosts(
-      members.map(member => {
-        const invited_guests = guests.filter(
+      eventMembers.map(member => {
+        const invited_guests = eventGuests.filter(
           guest => guest.host_id === member.userEventMember.id,
         );
+        const userMember = member.userEventMember;
+        const first_name = userMember.personInfo
+          ? userMember.personInfo.first_name
+          : userMember.name;
+        const last_name = userMember.personInfo
+          ? userMember.personInfo.last_name
+          : '';
         return {
           id: member.id,
-          first_name: member.userEventMember.personInfo.first_name,
-          last_name: member.userEventMember.personInfo.last_name,
+          first_name,
+          last_name,
           isOwner: false,
           number_of_guests: member.number_of_guests,
           user_id: member.userEventMember.id,
@@ -98,7 +99,7 @@ const GuestAlocationWindow: React.FC<IProps> = ({
         };
       }),
     );
-  }, [members, guests]);
+  }, [eventMembers, eventGuests]);
 
   useEffect(() => {
     handleMembersHosts();
@@ -143,7 +144,7 @@ const GuestAlocationWindow: React.FC<IProps> = ({
         </SubTitle>
         <Body>
           <BooleanButtonContainer
-            firstActive={ownersSection}
+            firstActive={!ownersSection}
             firstClick={() => setOwnersSection(true)}
             firstLabel="Anfitriões"
             secondClick={() => setOwnersSection(false)}
@@ -153,18 +154,14 @@ const GuestAlocationWindow: React.FC<IProps> = ({
           {ownersSection ? (
             <HostListSection
               availableNumberOfGuests={availableNumberOfGuests}
-              getHosts={getOwners}
               handleUpdateEventNumberOfGuests={handleUpdateEventNumberOfGuests}
               hosts={ownersHosts}
-              masterId={masterId}
             />
           ) : (
             <HostListSection
               availableNumberOfGuests={availableNumberOfGuests}
-              getHosts={getMembers}
               handleUpdateEventNumberOfGuests={handleUpdateEventNumberOfGuests}
               hosts={membersHosts}
-              masterId={masterId}
             />
           )}
         </Body>

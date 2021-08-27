@@ -6,27 +6,24 @@ import { FiEdit } from 'react-icons/fi';
 import { MemberDrawer, EditMemberButton, DeleteMemberButton } from './styles';
 import avatar_placeholder from '../../assets/WePlanLogo.svg';
 import WindowContainer from '../WindowContainer';
-import IEventMemberDTO from '../../dtos/IEventMemberDTO';
+import { useEventVariables } from '../../hooks/eventVariables';
 
 interface IPropsDTO {
-  isOwner: boolean;
-  member: IEventMemberDTO;
   onHandleMemberDrawer: MouseEventHandler;
   onHandleNumberOfGuestDrawer: MouseEventHandler;
   onHandleDeleteMemberDrawer: MouseEventHandler;
 }
 
 const MemberProfileDrawer: React.FC<IPropsDTO> = ({
-  isOwner,
-  member,
   onHandleMemberDrawer,
   onHandleNumberOfGuestDrawer,
   onHandleDeleteMemberDrawer,
 }: IPropsDTO) => {
+  const { selectedEventMember, isOwner } = useEventVariables();
   const avatar =
-    member.userEventMember.avatar_url === ''
+    selectedEventMember.userEventMember.avatar_url === ''
       ? avatar_placeholder
-      : member.userEventMember.avatar_url;
+      : selectedEventMember.userEventMember.avatar_url;
 
   return (
     <WindowContainer
@@ -40,9 +37,9 @@ const MemberProfileDrawer: React.FC<IPropsDTO> = ({
       }}
     >
       <MemberDrawer>
-        <img src={avatar} alt={member.userEventMember.name} />
+        <img src={avatar} alt={selectedEventMember.userEventMember.name} />
 
-        <h1>{member.userEventMember.name}</h1>
+        <h1>{selectedEventMember.userEventMember.name}</h1>
 
         <div>
           {isOwner ? (
@@ -52,7 +49,11 @@ const MemberProfileDrawer: React.FC<IPropsDTO> = ({
                 onClick={onHandleNumberOfGuestDrawer}
               >
                 Número de convidados:
-                <strong>{member ? member.number_of_guests : 0}</strong>
+                <strong>
+                  {selectedEventMember
+                    ? selectedEventMember.number_of_guests
+                    : 0}
+                </strong>
                 <FiEdit size={24} />
               </EditMemberButton>
               <DeleteMemberButton
@@ -67,7 +68,11 @@ const MemberProfileDrawer: React.FC<IPropsDTO> = ({
             <>
               <EditMemberButton type="button">
                 Número de convidados:
-                <strong>{member ? member.number_of_guests : 0}</strong>
+                <strong>
+                  {selectedEventMember
+                    ? selectedEventMember.number_of_guests
+                    : 0}
+                </strong>
               </EditMemberButton>
             </>
           )}

@@ -10,7 +10,7 @@ import { FormHandles } from '@unform/core';
 import { FiCheckSquare, FiEdit3, FiSquare, FiUser } from 'react-icons/fi';
 
 import { MdMail, MdPersonAdd } from 'react-icons/md';
-import AddEventGuestListWindow from '../AddEventGuestListWindow';
+import { AddEventGuestListWindow } from '../AddEventGuestListWindow';
 
 import {
   Container,
@@ -27,51 +27,30 @@ import BooleanQuestionWindow from '../BooleanQuestionWindow';
 import FriendsListWindow from '../FriendsListWindow';
 import IFriendDTO from '../../dtos/IFriendDTO';
 import IEventGuestDTO from '../../dtos/IEventGuestDTO';
-import AddGuestWindow from '../AddGuestWindow ';
+import { AddGuestWindow } from '../AddGuestWindow ';
 import EditGuestWindow from '../EditGuestWindow';
 import EventInvitationWindow from '../EventInvitationWindow';
 import IWeplanGuestDTO from '../../dtos/IWeplanGuestDTO';
+import { useEventVariables } from '../../hooks/eventVariables';
+import { useCurrentEvent } from '../../hooks/currentEvent';
+import { useFriends } from '../../hooks/friends';
 
-interface ICreateGuest {
-  first_name: string;
-  last_name: string;
-  description: string;
-  confirmed: boolean;
-  weplanUser: boolean;
-}
 interface IProps {
   closeAllWindows: Function;
-  handleGetGuests: Function;
   handleGuestAllocationWindow: MouseEventHandler;
-  eventId: string;
-  eventTrimmedName: string;
-  eventName: string;
-  isOwner: boolean;
   myAvailableNumberOfGuests: number;
-  eventGuests: IEventGuestDTO[];
-  confirmedGuests: number;
-  myGuests: IEventGuestDTO[];
-  myGuestsConfirmed: number;
-  friends: IFriendDTO[];
 }
 
 const EventGuestSection: React.FC<IProps> = ({
-  handleGetGuests,
   handleGuestAllocationWindow,
   closeAllWindows,
-  eventId,
-  eventName,
-  eventTrimmedName,
-  isOwner,
   myAvailableNumberOfGuests,
-  eventGuests,
-  confirmedGuests,
-  myGuests,
-  myGuestsConfirmed,
-  friends,
 }: IProps) => {
   const { user } = useAuth();
   const { addToast } = useToast();
+  const { friends } = useFriends();
+  const { getEventGuests } = useCurrentEvent();
+  const { eventGuests, isOwner, selectedEvent } = useEventVariables();
   const formRef = useRef<FormHandles>(null);
 
   const [selectedGuest, setSelectedGuest] = useState<IEventGuestDTO>(
@@ -118,8 +97,7 @@ const EventGuestSection: React.FC<IProps> = ({
   }, []);
   const handleCloseAddGuestListWindow = useCallback(() => {
     closeAllWindows();
-    handleGetGuests();
-  }, [closeAllWindows, handleGetGuests]);
+  }, [closeAllWindows]);
 
   const handleAddGuestWindow = useCallback(() => {
     closeAllWindows();
@@ -150,7 +128,7 @@ const EventGuestSection: React.FC<IProps> = ({
   const handleEditConfirmedGuest = useCallback(
     async (props: IEventGuestDTO) => {
       try {
-        await api.put(`events/${eventId}/guests/${props.id}`, {
+        await api.put(`events/${selectedEvent.id}/guests/${props.id}`, {
           first_name: props.first_name,
           last_name: props.last_name,
           description: props.description,
@@ -162,7 +140,7 @@ const EventGuestSection: React.FC<IProps> = ({
           title: 'Convidado editado com sucesso',
           description: 'As mudanças já foram atualizadas no seu evento.',
         });
-        handleGetGuests();
+        await getEventGuests(selectedEvent.id);
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const error = getValidationErrors(err);
@@ -177,7 +155,7 @@ const EventGuestSection: React.FC<IProps> = ({
         });
       }
     },
-    [addToast, eventId, handleGetGuests],
+    [addToast, selectedEvent.id, getEventGuests],
   );
   const handleWeplanUserQuestion = useCallback(
     (weplan_user: boolean) => {
@@ -193,6 +171,18 @@ const EventGuestSection: React.FC<IProps> = ({
     },
     [handleWeplanGuestWindow],
   );
+
+  const myGuests = useMemo(() => {
+    return eventGuests.filter(guest => guest.host_id === user.id);
+  }, [eventGuests, user]);
+
+  const myGuestsConfirmed = useMemo(() => {
+    return myGuests.length;
+  }, [myGuests]);
+
+  const confirmedGuests = useMemo(() => {
+    return eventGuests.length;
+  }, [eventGuests]);
 
   let guestCount = 0;
   let myGuestCount = 0;
@@ -237,8 +227,8 @@ const EventGuestSection: React.FC<IProps> = ({
         .filter(e => e.email !== '');
 
       await api.post('/mass-invitation', {
-        eventName,
-        eventTrimmedName,
+        name: selectedEvent.name,
+        eventTrimmedName: selectedEvent.trimmed_name,
         guests,
       });
       addToast({
@@ -252,14 +242,14 @@ const EventGuestSection: React.FC<IProps> = ({
       });
       throw new Error(err);
     }
-  }, [eventGuests, eventTrimmedName, eventName, addToast]);
+  }, [eventGuests, selectedEvent, addToast]);
 
   return (
     <>
       {wpGuestInvitationWindow && (
         <EventInvitationWindow
           handleCloseWindow={() => setWpGuestInvitationWindow(false)}
-          handleGetGuests={handleGetGuests}
+          handleGetGuests={getEventGuests}
           onHandleCloseWindow={() => setWpGuestInvitationWindow(false)}
           wpGuests={wpGuests}
         />
@@ -288,11 +278,9 @@ const EventGuestSection: React.FC<IProps> = ({
           openWPGuestQuestionWindow={() => setWpGuestQuestionWindow(true)}
           handleAddGuestListWindow={handleAddGuestListWindow}
           handleGuestConfirmedWindow={handleGuestConfirmationWindow}
-          eventId={eventId}
           handleCloseWindow={closeAddGuestWindow}
-          handleGetGuests={handleGetGuests}
+          handleGetGuests={getEventGuests}
           handleGuestAllocationWindow={handleGuestAllocationWindow}
-          isOwner={isOwner}
           myAvailableNumberOfGuests={myAvailableNumberOfGuests}
           selectedFriend={selectedFriend}
         />
@@ -300,19 +288,15 @@ const EventGuestSection: React.FC<IProps> = ({
       {!!addGuestListWindow && (
         <AddEventGuestListWindow
           handleCloseWindow={handleCloseAddGuestListWindow}
-          eventId={eventId}
           myAvailableNumberOfGuests={myAvailableNumberOfGuests}
           onHandleCloseWindow={() => setAddGuestListWindow(false)}
         />
       )}
       {editGuestWindow && (
         <EditGuestWindow
-          eventId={eventId}
-          eventName={eventName}
-          eventTrimmedName={eventTrimmedName}
           eventGuest={selectedGuest}
           handleCloseWindow={handleEditGuestWindow}
-          handleGetGuests={handleGetGuests}
+          handleGetGuests={getEventGuests}
           onHandleCloseWindow={() => setEditGuestWindow(false)}
         />
       )}

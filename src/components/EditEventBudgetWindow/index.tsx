@@ -10,6 +10,8 @@ import { useToast } from '../../hooks/toast';
 import getValidationErrors from '../../utils/getValidationErros';
 import WindowUnFormattedContainer from '../WindowUnFormattedContainer';
 import { useEvent } from '../../hooks/event';
+import { useEventVariables } from '../../hooks/eventVariables';
+import { useCurrentEvent } from '../../hooks/currentEvent';
 
 interface IFormProps {
   budget: number;
@@ -18,12 +20,9 @@ interface IFormProps {
 const EditEventBudgetWindow: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
-  const {
-    updateEventBudget,
-    eventBudget,
-    createEventBudget,
-    handleEventBudgetWindow,
-  } = useEvent();
+  const { eventBudget } = useEventVariables();
+  const { updateEventBudget, createEventBudget } = useCurrentEvent();
+  const { handleEventBudgetWindow } = useEvent();
 
   const handleSubmit = useCallback(
     async (data: IFormProps) => {

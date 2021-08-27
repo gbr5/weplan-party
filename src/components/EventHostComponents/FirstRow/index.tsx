@@ -1,9 +1,9 @@
 import React from 'react';
-import IEventCheckListDTO from '../../../dtos/IEventCheckListDTO';
-import IEventGuestDTO from '../../../dtos/IEventGuestDTO';
+import { useMemo } from 'react';
 import IEventInfoDTO from '../../../dtos/IEventInfoDTO';
-import IEventSupplierDTO from '../../../dtos/IEventSupplierDTO';
 import { useEvent } from '../../../hooks/event';
+import { useEventVariables } from '../../../hooks/eventVariables';
+import { formatBrlCurrency } from '../../../utils/formatBrlCurrency';
 import { numberFormat } from '../../../utils/numberFormat';
 
 import { Container } from './styles';
@@ -13,40 +13,79 @@ interface IProps {
   handleCheckListSection: Function;
   handleSupplierSection: Function;
   handleFinanceSection: Function;
-  confirmedGuests: number;
-  eventGuests: IEventGuestDTO[];
   eventInfo: IEventInfoDTO;
-  hiredSuppliers: IEventSupplierDTO[];
-  selectedSuppliers: IEventSupplierDTO[];
-  totalEventCost: number;
-  resolvedCheckListTasks: IEventCheckListDTO[];
-  checkListTasks: number;
-  isOwner: boolean;
 }
 
 const FirstRow: React.FC<IProps> = ({
   handleGuestsSection,
-  confirmedGuests,
-  eventGuests,
   eventInfo,
   handleSupplierSection,
   handleFinanceSection,
-  hiredSuppliers,
-  selectedSuppliers,
-  totalEventCost,
   handleCheckListSection,
-  resolvedCheckListTasks,
-  checkListTasks,
-  isOwner,
 }: IProps) => {
   const { handleEventBudgetWindow } = useEvent();
+  const {
+    isOwner,
+    eventBudget,
+    eventGuests,
+    eventTasks,
+    eventNotes,
+    eventSuppliers,
+  } = useEventVariables();
+
+  const budget = useMemo(() => {
+    return eventBudget && eventBudget.id
+      ? formatBrlCurrency(eventBudget.budget)
+      : formatBrlCurrency(0);
+  }, [eventBudget]);
+
+  const numberOfConfirmedGuests = useMemo(() => {
+    return eventGuests.filter(guest => guest.confirmed).length;
+  }, [eventGuests]);
+
+  const eventTaskInfo = useMemo(() => {
+    const resolved = eventTasks.filter(task => task.status === 'finnished');
+    return `${resolved.length} / ${eventTasks.length}`;
+  }, [eventTasks]);
+
+  const hiredSuppliers = useMemo(() => {
+    return eventSuppliers.filter(
+      supplier => !supplier.isDischarged && supplier.isHired,
+    );
+  }, [eventSuppliers]);
+
+  const totalEventCost = useMemo(() => {
+    const total: number[] = [];
+    hiredSuppliers.map(supplier => {
+      supplier.transactionAgreements.map(agreement => {
+        total.push(Number(agreement.amount));
+        return agreement;
+      });
+      return supplier;
+    });
+    return total.reduce((acc, cv) => acc + cv, 0);
+  }, [hiredSuppliers]);
+
+  const suppliersInfo = useMemo(() => {
+    const suppliers = eventSuppliers.filter(supplier => !supplier.isDischarged);
+    return `${hiredSuppliers.length} / ${suppliers.length}`;
+  }, [hiredSuppliers, eventSuppliers]);
+
+  const notesInfo = useMemo(() => `${eventNotes.length}`, [eventNotes]);
+
   return (
     <Container>
       <div>
         <button type="button" onClick={() => handleGuestsSection()}>
+          <h2>Notas</h2>
+          <p>{notesInfo}</p>
+        </button>
+      </div>
+      <div>
+        <button type="button" onClick={() => handleGuestsSection()}>
           <h2>Convidados</h2>
           <p>
-            {confirmedGuests}/{eventGuests.length}
+            {numberOfConfirmedGuests}/{eventGuests.length}
           </p>
         </button>
       </div>
@@ -54,7 +93,7 @@ const FirstRow: React.FC<IProps> = ({
         {isOwner ? (
           <button type="button" onClick={handleEventBudgetWindow}>
             <h2>Orçamento</h2>
-            <p>{eventInfo ? numberFormat(eventInfo.budget) : ''}</p>
+            <p>{budget}</p>
           </button>
         ) : (
           <button type="button">
@@ -66,10 +105,7 @@ const FirstRow: React.FC<IProps> = ({
       <div>
         <button type="button" onClick={() => handleSupplierSection()}>
           <h2>Fornecedores</h2>
-          <p>
-            {hiredSuppliers.length}/
-            {selectedSuppliers.length + hiredSuppliers.length}
-          </p>
+          <p>{suppliersInfo}</p>
         </button>
       </div>
       <div>
@@ -81,9 +117,7 @@ const FirstRow: React.FC<IProps> = ({
       <div>
         <button type="button" onClick={() => handleCheckListSection()}>
           <h2>Check-List</h2>
-          <p>
-            {resolvedCheckListTasks.length}/{checkListTasks}
-          </p>
+          <p>{eventTaskInfo}</p>
         </button>
       </div>
     </Container>

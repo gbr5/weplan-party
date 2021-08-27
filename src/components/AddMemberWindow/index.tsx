@@ -12,27 +12,26 @@ import { Container } from './styles';
 import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
 import getValidationErrors from '../../utils/getValidationErros';
-import IFriendDTO from '../../dtos/IFriendDTO';
+import { useFriends } from '../../hooks/friends';
+import { useEventVariables } from '../../hooks/eventVariables';
 
 interface IProps {
   onHandleCloseWindow: MouseEventHandler;
-  eventId: string;
   availableNumberOfGuests: number;
   handleCloseWindow: Function;
-  selectedFriend: IFriendDTO;
   handleFriendsWindow: Function;
 }
 
 const AddMemberWindow: React.FC<IProps> = ({
   onHandleCloseWindow,
-  eventId,
   availableNumberOfGuests,
   handleCloseWindow,
-  selectedFriend,
   handleFriendsWindow,
 }: IProps) => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
+  const { selectedFriend } = useFriends();
+  const { selectedEvent } = useEventVariables();
 
   const handleAddMember = useCallback(
     async (data: IEventMemberDTO) => {
@@ -57,7 +56,7 @@ const AddMemberWindow: React.FC<IProps> = ({
           throw new Error('Number of guests is higher than allowed!');
         }
 
-        await api.post(`events/${eventId}/event-members`, {
+        await api.post(`events/${selectedEvent.id}/event-members`, {
           number_of_guests: Number(data.number_of_guests),
           member_id: selectedFriend.friend_id,
         });
@@ -84,7 +83,7 @@ const AddMemberWindow: React.FC<IProps> = ({
     },
     [
       addToast,
-      eventId,
+      selectedEvent.id,
       selectedFriend,
       handleCloseWindow,
       availableNumberOfGuests,

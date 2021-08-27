@@ -28,6 +28,7 @@ import FriendsEventsSection from '../../components/MainDashboardBottomSection/Fr
 import GuestToUserMessageWindow from '../../components/GuestToUserMessageWindow';
 import DeleteEventQuestionWindow from './DeleteEventQuestionWindow';
 import { useEvent } from '../../hooks/event';
+import { useCurrentEvent } from '../../hooks/currentEvent';
 
 const Dashboard: React.FC = () => {
   const { user, handleSignOut } = useAuth();
@@ -38,8 +39,8 @@ const Dashboard: React.FC = () => {
     getEventsAsOwner,
     getEventsAsMember,
     getEventsAsGuest,
-    selectEvent,
   } = useEvent();
+  const { handleSelectedEvent } = useCurrentEvent();
   const { addToast } = useToast();
   const history = useHistory();
 
@@ -109,12 +110,12 @@ const Dashboard: React.FC = () => {
 
   const handleMyEventDashboard = useCallback(
     (event: IEventDTO) => {
-      selectEvent(event);
+      handleSelectedEvent(event);
       history.push(`/dashboard/my-event/${event.trimmed_name}`, {
         params: event,
       });
     },
-    [history, selectEvent],
+    [history, handleSelectedEvent],
   );
 
   const handleSelectedEventAsGuest = useCallback((props: IEventGuestDTO) => {

@@ -10,24 +10,20 @@ import {
 } from './styles';
 import avatar_placeholder from '../../assets/WePlanLogo.svg';
 import WindowContainer from '../WindowContainer';
-
-import IEventSupplierDTO from '../../dtos/IEventSupplierDTO';
+import { useEventVariables } from '../../hooks/eventVariables';
 
 interface IPropsDTO {
-  isOwner: boolean;
-  selectedSupplier: IEventSupplierDTO;
   onHandleSelectedSupplierDrawer: MouseEventHandler;
   onUpdateSelectedSupplierDrawer: MouseEventHandler;
   onDeleteSelectedSupplierDrawer: MouseEventHandler;
 }
 
 const SelectedSupplierWindow: React.FC<IPropsDTO> = ({
-  isOwner,
-  selectedSupplier,
   onHandleSelectedSupplierDrawer,
   onUpdateSelectedSupplierDrawer,
   onDeleteSelectedSupplierDrawer,
 }: IPropsDTO) => {
+  const { selectedEventSupplier, isOwner } = useEventVariables();
   return (
     <WindowContainer
       onHandleCloseWindow={onHandleSelectedSupplierDrawer}
@@ -42,26 +38,26 @@ const SelectedSupplierWindow: React.FC<IPropsDTO> = ({
       <SelectedSupplierDrawer>
         <h1>Fornecedor Selecionado</h1>
         <div>
-          {!selectedSupplier.eventWeplanSupplier && (
+          {!selectedEventSupplier.eventWeplanSupplier && (
             <>
-              <h1>{selectedSupplier.name}</h1>
-              <strong>{selectedSupplier.supplier_sub_category}</strong>
+              <h1>{selectedEventSupplier.name}</h1>
+              <strong>{selectedEventSupplier.supplier_sub_category}</strong>
             </>
           )}
-          {selectedSupplier.eventWeplanSupplier &&
-            selectedSupplier.eventWeplanSupplier.weplanEventSupplier && (
+          {selectedEventSupplier.eventWeplanSupplier &&
+            selectedEventSupplier.eventWeplanSupplier.weplanEventSupplier && (
               <>
-                <h1>{selectedSupplier.name}</h1>
-                <strong>{selectedSupplier.supplier_sub_category}</strong>
+                <h1>{selectedEventSupplier.name}</h1>
+                <strong>{selectedEventSupplier.supplier_sub_category}</strong>
                 <img
                   src={
-                    selectedSupplier.eventWeplanSupplier.weplanEventSupplier
-                      .avatar_url
-                      ? selectedSupplier.eventWeplanSupplier.weplanEventSupplier
-                          .avatar_url
+                    selectedEventSupplier.eventWeplanSupplier
+                      .weplanEventSupplier.avatar_url
+                      ? selectedEventSupplier.eventWeplanSupplier
+                          .weplanEventSupplier.avatar_url
                       : avatar_placeholder
                   }
-                  alt={selectedSupplier.name}
+                  alt={selectedEventSupplier.name}
                 />
               </>
             )}

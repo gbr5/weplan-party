@@ -20,6 +20,7 @@ declare module 'styled-components' {
       letter3: string;
       letter4: string;
       letter5: string;
+      letter6: string;
 
       toastInfoColor: string;
       toastInfoBackgroundColor: string;

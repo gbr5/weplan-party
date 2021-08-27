@@ -1,7 +1,8 @@
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import React, { useCallback, useRef, useState } from 'react';
-import IEventDTO from '../../../../dtos/IEventDTO';
+import { useCurrentEvent } from '../../../../hooks/currentEvent';
+import { useEventVariables } from '../../../../hooks/eventVariables';
 import { useToast } from '../../../../hooks/toast';
 import api from '../../../../services/api';
 import dateToFormattedDate from '../../../../utils/dateToFormattedDate';
@@ -13,16 +14,12 @@ import { Container } from './styles';
 
 interface IProps {
   closeWindow: Function;
-  getEvent: Function;
-  event: IEventDTO;
 }
 
-const SetEventDate: React.FC<IProps> = ({
-  event,
-  getEvent,
-  closeWindow,
-}: IProps) => {
+const SetEventDate: React.FC<IProps> = ({ closeWindow }: IProps) => {
   const { addToast } = useToast();
+  const { selectedEvent } = useEventVariables();
+  const { getEvent } = useCurrentEvent();
   const formRef = useRef<FormHandles>(null);
 
   const [timeWindow, setTimeWindow] = useState(false);
@@ -31,7 +28,7 @@ const SetEventDate: React.FC<IProps> = ({
 
   const handleSubmit = useCallback(async () => {
     try {
-      if (updatedDate.length >= 8 && time.length >= 5 && event) {
+      if (updatedDate.length >= 8 && time.length >= 5 && selectedEvent) {
         const day = `${updatedDate.split('')[0]}${updatedDate.split('')[1]}`;
         const month = `${updatedDate.split('')[2]}${updatedDate.split('')[3]}`;
         const year = `${updatedDate.split('')[4]}${updatedDate.split('')[5]}${
@@ -44,12 +41,12 @@ const SetEventDate: React.FC<IProps> = ({
         );
         date.setHours(Number(hour));
         date.setMinutes(Number(minute));
-        await api.put(`event/is-date-defined/${event.id}`, {
+        await api.put(`event/is-date-defined/${selectedEvent.id}`, {
           isDateDefined: true,
           date,
         });
 
-        getEvent();
+        await getEvent(selectedEvent.id);
         closeWindow();
         setTimeWindow(false);
 
@@ -64,7 +61,7 @@ const SetEventDate: React.FC<IProps> = ({
         title: 'Erro ao atualizar data do evento.',
       });
     }
-  }, [addToast, closeWindow, event, getEvent, time, updatedDate]);
+  }, [addToast, closeWindow, selectedEvent, getEvent, time, updatedDate]);
 
   const handleSetTime = useCallback(
     (props: string) => {
@@ -89,11 +86,11 @@ const SetEventDate: React.FC<IProps> = ({
         <Container>
           <h1>Defina a data</h1>
 
-          {event !== undefined && (
+          {selectedEvent !== undefined && (
             <Input
               onChange={e => setUpdatedDate(e.target.value)}
               mask="brlDateFormat"
-              placeholder={dateToFormattedDate(String(event.date))}
+              placeholder={dateToFormattedDate(String(selectedEvent.date))}
               name="date"
               type="text"
               pattern="\d*"

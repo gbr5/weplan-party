@@ -161,6 +161,18 @@ const UserToGuestMessageWindow: React.FC<IPropsDTO> = ({
     return xAvatar;
   }, [eventGuest]);
 
+  const guestName = useMemo(() => {
+    const guest = updatedEventGuest.weplanGuest.weplanUserGuest;
+    const firstName = guest.personInfo
+      ? guest.personInfo.first_name
+      : guest.name;
+    const lastName = guest.personInfo ? guest.personInfo.last_name : '';
+    return `${firstName} ${lastName}`;
+  }, [updatedEventGuest]);
+  const messageDate = useMemo(() => {
+    return formatStringToDate(String(updatedEventGuest.weplanGuest.event.date));
+  }, [updatedEventGuest]);
+
   return (
     <WindowUnFormattedContainer
       onHandleCloseWindow={onHandleCloseWindow}
@@ -177,21 +189,13 @@ const UserToGuestMessageWindow: React.FC<IPropsDTO> = ({
           <img src={avatar} alt="WePlan User Avatar" />
           <h1>@{updatedEventGuest.weplanGuest.weplanUserGuest.trimmed_name}</h1>
           <h2>
-            <strong>Convidado:</strong>{' '}
-            {
-              updatedEventGuest.weplanGuest.weplanUserGuest.personInfo
-                .first_name
-            }{' '}
-            {updatedEventGuest.weplanGuest.weplanUserGuest.personInfo.last_name}
+            <strong>Convidado:</strong> {guestName}
           </h2>
           <h2>
             <strong>Evento:</strong> {updatedEventGuest.weplanGuest.event.name}
           </h2>
           <h2>
-            <strong>Data:</strong>{' '}
-            {formatStringToDate(
-              String(updatedEventGuest.weplanGuest.event.date),
-            )}
+            <strong>Data:</strong> {messageDate}
           </h2>
           <h2>
             <strong>Traje:</strong>{' '}

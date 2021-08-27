@@ -13,7 +13,6 @@ const appearFromTop = keyframes`
 `;
 
 export const Container = styled.div`
-  position: absolute;
   top: -100px;
   width: 100%;
   display: flex;
@@ -30,9 +29,9 @@ export const Container = styled.div`
     overflow-x: scroll;
     display: inline-flexbox;
     width: 100%;
-    border-radius: 0;
     align-items: stretch;
     justify-content: center;
+    border-radius: 0;
   }
   div {
     display: flex;

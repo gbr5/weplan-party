@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import IEventImageDTO from '../../../../../dtos/IEventImageDTO';
 import IUserImageDTO from '../../../../../dtos/IUserImageDTO';
+import { useEventVariables } from '../../../../../hooks/eventVariables';
 import { useToast } from '../../../../../hooks/toast';
 import api from '../../../../../services/api';
 import AddButton from '../../../../UserComponents/AddButton';
@@ -12,16 +13,16 @@ import { Container } from './styles';
 
 interface IProps {
   images: IEventImageDTO[];
-  eventId: string;
   updateEvent: Function;
 }
 
 const EventImageSection: React.FC<IProps> = ({
   images,
-  eventId,
   updateEvent,
 }: IProps) => {
   const { addToast } = useToast();
+  const { selectedEvent } = useEventVariables();
+
   const [selectUserImageWindow, setSelectUserImageWindow] = useState(false);
   const [addImageQuestion, setAddImageQuestion] = useState(false);
 
@@ -29,7 +30,7 @@ const EventImageSection: React.FC<IProps> = ({
     async (e: IUserImageDTO) => {
       try {
         await api.post('event/images', {
-          event_id: eventId,
+          event_id: selectedEvent.id,
           image_id: e.id,
         });
         updateEvent();
@@ -46,7 +47,7 @@ const EventImageSection: React.FC<IProps> = ({
         throw new Error(err);
       }
     },
-    [eventId, updateEvent, addToast],
+    [selectedEvent.id, updateEvent, addToast],
   );
 
   return (

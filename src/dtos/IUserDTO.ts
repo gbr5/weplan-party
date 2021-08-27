@@ -15,7 +15,7 @@ export default interface IUserDTO {
   avatar_url: string;
   isActive: boolean;
   isDeleted: boolean;
-  personInfo: IPersonInfoDTO;
-  companyInfo: ICompanyInfoDTO;
+  personInfo?: IPersonInfoDTO;
+  companyInfo?: ICompanyInfoDTO;
   userContacts: IUserContactDTO[];
 }

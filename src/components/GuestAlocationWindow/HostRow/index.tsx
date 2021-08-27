@@ -6,6 +6,8 @@ import { MdCheck, MdClose } from 'react-icons/md';
 import * as Yup from 'yup';
 
 import IHostDTO from '../../../dtos/IHostDTO';
+import { useCurrentEvent } from '../../../hooks/currentEvent';
+import { useEventVariables } from '../../../hooks/eventVariables';
 import { useToast } from '../../../hooks/toast';
 import api from '../../../services/api';
 import getValidationErrors from '../../../utils/getValidationErros';
@@ -19,21 +21,19 @@ interface IFormData {
 
 interface IProps {
   availableNumberOfGuests: number;
-  masterId: string;
-  getHosts: Function;
   handleUpdateEventNumberOfGuests: Function;
   host: IHostDTO;
 }
 
 const HostRow: React.FC<IProps> = ({
   availableNumberOfGuests,
-  masterId,
-  getHosts,
   handleUpdateEventNumberOfGuests,
   host,
 }: IProps) => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
+  const { selectedEvent } = useEventVariables();
+  const { getEventOwners } = useCurrentEvent();
 
   const [isSelected, setIsSelected] = useState(false);
 
@@ -43,7 +43,7 @@ const HostRow: React.FC<IProps> = ({
 
   const onSubmit = useCallback(
     async (data: IFormData) => {
-      if (masterId === host.user_id) {
+      if (selectedEvent.user_id === host.user_id) {
         try {
           formRef.current?.setErrors([]);
 
@@ -58,7 +58,7 @@ const HostRow: React.FC<IProps> = ({
             number_of_guests: data.number_of_guests,
           });
           handleIsSelected();
-          getHosts();
+          await getEventOwners(selectedEvent.id);
           return addToast({
             type: 'success',
             title: `Número de convidados de ${host.first_name} alterado com sucesso`,
@@ -101,7 +101,7 @@ const HostRow: React.FC<IProps> = ({
             number_of_guests: data.number_of_guests,
           });
           handleIsSelected();
-          getHosts();
+          await getEventOwners(selectedEvent.id);
           return addToast({
             type: 'success',
             title: 'Convidados criados com sucesso',
@@ -144,7 +144,7 @@ const HostRow: React.FC<IProps> = ({
             number_of_guests: data.number_of_guests,
           });
           handleIsSelected();
-          getHosts();
+          await getEventOwners(selectedEvent.id);
           return addToast({
             type: 'success',
             title: 'Convidados criados com sucesso',
@@ -168,10 +168,10 @@ const HostRow: React.FC<IProps> = ({
     [
       availableNumberOfGuests,
       handleIsSelected,
-      masterId,
-      getHosts,
+      getEventOwners,
       host,
       addToast,
+      selectedEvent,
       handleUpdateEventNumberOfGuests,
     ],
   );

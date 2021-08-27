@@ -1,21 +1,20 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { ReactElement, useCallback, useState } from 'react';
 import IAppointmentDTO from '../../../../../dtos/IAppointmentDTO';
 import IEventAppointmentDTO from '../../../../../dtos/IEventAppointmentDTO';
+import { useEventVariables } from '../../../../../hooks/eventVariables';
 import { useToast } from '../../../../../hooks/toast';
 import api from '../../../../../services/api';
 import AddAppointmentReminderWindow from '../../../../AppointmentsComponents/AddAppointmentReminderWindow';
-import CreateEventAppointment from '../../../../AppointmentsComponents/CreateEventAppointment';
+import { CreateEventAppointment } from '../../../../AppointmentsComponents/CreateEventAppointment';
 import AddButton from '../../../../UserComponents/AddButton';
 import EventAppointment from '../EventAppointment';
 
 import { Container } from './styles';
 
-interface IProps {
-  eventId: string;
-}
-
-const EventAppointmentSection: React.FC<IProps> = ({ eventId }: IProps) => {
+export function EventAppointmentSection(): ReactElement {
   const { addToast } = useToast();
+  const { selectedEvent } = useEventVariables();
+
   const [eventAppointments, setEventAppointments] = useState<
     IEventAppointmentDTO[]
   >([]);
@@ -27,11 +26,13 @@ const EventAppointmentSection: React.FC<IProps> = ({ eventId }: IProps) => {
   );
   const [createAppointmentWindow, setCreateAppointmentWindow] = useState(false);
 
-  const getEventAppointments = useCallback(() => {
+  async function getEventAppointments(): Promise<void> {
     try {
-      api.get(`appointments/event-appointments/${eventId}`).then(response => {
-        setEventAppointments(response.data);
-      });
+      await api
+        .get(`appointments/event-appointments/${selectedEvent.id}`)
+        .then(response => {
+          setEventAppointments(response.data);
+        });
     } catch (err) {
       addToast({
         type: 'error',
@@ -39,11 +40,7 @@ const EventAppointmentSection: React.FC<IProps> = ({ eventId }: IProps) => {
       });
       throw new Error(err);
     }
-  }, [eventId, addToast]);
-
-  useEffect(() => {
-    getEventAppointments();
-  }, [getEventAppointments]);
+  }
 
   const addReminder = useCallback((e: IAppointmentDTO) => {
     setSelectedAppointment(e);
@@ -55,7 +52,6 @@ const EventAppointmentSection: React.FC<IProps> = ({ eventId }: IProps) => {
       {createAppointmentWindow && (
         <CreateEventAppointment
           addReminder={(e: IAppointmentDTO) => addReminder(e)}
-          eventId={eventId}
           closeWindow={() => setCreateAppointmentWindow(false)}
           getAppointments={getEventAppointments}
         />
@@ -74,6 +70,6 @@ const EventAppointmentSection: React.FC<IProps> = ({ eventId }: IProps) => {
       )}
     </Container>
   );
-};
+}
 
 export default EventAppointmentSection;

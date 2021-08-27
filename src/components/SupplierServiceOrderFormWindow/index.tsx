@@ -108,7 +108,7 @@ const SupplierServiceOrderFormWindow: React.FC<IPropsDTO> = ({
               description: 'Cliente Weplan',
               company_contact_type: 'Customer',
               weplanUser: true,
-              isCompany: user.isCompany,
+              isCompany: !!user.companyInfo,
             });
             Promise.all([
               api.post('company/contacts/info/', {
@@ -129,7 +129,7 @@ const SupplierServiceOrderFormWindow: React.FC<IPropsDTO> = ({
               description: 'Cliente Weplan',
               company_contact_type: 'Customer',
               weplanUser: true,
-              isCompany: user.isCompany,
+              isCompany: !!user.companyInfo,
             });
             Promise.all([
               api.post('company/contacts/info/', {

@@ -7,16 +7,12 @@ import { Container } from './styles';
 
 interface IProps {
   availableNumberOfGuests: number;
-  masterId: string;
-  getHosts: Function;
   handleUpdateEventNumberOfGuests: Function;
   hosts: IHostDTO[];
 }
 
 const HostListSection: React.FC<IProps> = ({
   availableNumberOfGuests,
-  masterId,
-  getHosts,
   handleUpdateEventNumberOfGuests,
   hosts,
 }: IProps) => {
@@ -27,10 +23,8 @@ const HostListSection: React.FC<IProps> = ({
           <HostRow
             key={host.id}
             availableNumberOfGuests={availableNumberOfGuests}
-            getHosts={getHosts}
             handleUpdateEventNumberOfGuests={handleUpdateEventNumberOfGuests}
             host={host}
-            masterId={masterId}
           />
         );
       })}

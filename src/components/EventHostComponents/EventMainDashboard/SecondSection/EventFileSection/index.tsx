@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import IEventFileDTO from '../../../../../dtos/IEventFileDTO';
 import IUserFileDTO from '../../../../../dtos/IUserFileDTO';
+import { useEventVariables } from '../../../../../hooks/eventVariables';
 import { useToast } from '../../../../../hooks/toast';
 import api from '../../../../../services/api';
 import SelectUserFileWindow from '../../../../SelectUserFileWindow';
@@ -11,23 +12,20 @@ import { Container } from './styles';
 
 interface IProps {
   files: IEventFileDTO[];
-  eventId: string;
   updateEvent: Function;
 }
 
-const EventFileSection: React.FC<IProps> = ({
-  files,
-  eventId,
-  updateEvent,
-}: IProps) => {
+const EventFileSection: React.FC<IProps> = ({ files, updateEvent }: IProps) => {
   const { addToast } = useToast();
+  const { selectedEvent } = useEventVariables();
+
   const [selectUserFileWindow, setSelectUserFileWindow] = useState(false);
 
   const selectUserFile = useCallback(
     async (e: IUserFileDTO) => {
       try {
         await api.post('event/files', {
-          event_id: eventId,
+          event_id: selectedEvent.id,
           file_id: e.id,
         });
         updateEvent();
@@ -44,7 +42,7 @@ const EventFileSection: React.FC<IProps> = ({
         throw new Error(err);
       }
     },
-    [eventId, updateEvent, addToast],
+    [selectedEvent.id, updateEvent, addToast],
   );
 
   return (

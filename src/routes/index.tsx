@@ -15,7 +15,7 @@ import WelcomePage from '../pages/WelcomePage';
 import ImageGallery from '../pages/ImageGallery';
 import CalendarPage from '../pages/CalendarPage';
 import EventExternalPage from '../pages/EventExternalPage';
-import TestPage from '../pages/TestPage';
+import { FriendsPage } from '../pages/FriendsPage';
 
 const Routes: React.FC = () => {
   return (
@@ -27,7 +27,6 @@ const Routes: React.FC = () => {
         isPrivate
       />
       <Route path="/" exact component={Main} />
-      <Route path="/test/page" exact component={TestPage} />
       <Route path="/signin" exact component={SignIn} />
       <Route path="/signup" exact component={SignUp} />
 
@@ -49,6 +48,7 @@ const Routes: React.FC = () => {
       />
       <Route path="/dashboard" exact component={HostDashboard} isPrivate />
       <Route path="/images" exact component={ImageGallery} isPrivate />
+      <Route path="/friends" exact component={FriendsPage} isPrivate />
       <Route path="/calendar" exact component={CalendarPage} isPrivate />
     </Switch>
   );

@@ -1,18 +1,11 @@
 import React, { createContext, useCallback, useState, useContext } from 'react';
+import IUserDTO from '../dtos/IUserDTO';
 import api from '../services/api';
 import { useToast } from './toast';
 
-interface IUser {
-  id: string;
-  name: string;
-  email: string;
-  avatar_url?: string;
-  isCompany: boolean;
-}
-
 interface IAuthState {
   token: string;
-  user: IUser;
+  user: IUserDTO;
 }
 
 interface ISignInCredentials {
@@ -30,12 +23,6 @@ interface IGoogleSignInCredentials {
   googleId: string;
 }
 
-interface ICreateUserDTO {
-  name: string;
-  email: string;
-  password: string;
-}
-
 interface ICreatePersonInfoDTO {
   userId: string;
   first_name: string;
@@ -43,13 +30,15 @@ interface ICreatePersonInfoDTO {
 }
 
 interface IAuthContextData {
-  user: IUser;
+  user: IUserDTO;
   signIn(credentials: ISignInCredentials): Promise<void>;
   signInWithGoogle(credentials: IGoogleSignInCredentials): Promise<void>;
   handleSignOut(): void;
   createdefaultContactInfo(id: string): void;
-  updateUser(user: IUser): void;
+  updateUser(user: IUserDTO): void;
   createPersonInfo(personInfo: ICreatePersonInfoDTO): void;
+  resetPassword: (email: string) => Promise<void>;
+  getUser: (id: string) => Promise<IUserDTO | undefined>;
 }
 
 const AuthContext = createContext<IAuthContextData>({} as IAuthContextData);
@@ -72,6 +61,8 @@ const AuthProvider: React.FC = ({ children }) => {
   const handleSignOut = useCallback(() => {
     localStorage.removeItem('@WePlan-Party:token');
     localStorage.removeItem('@WePlan-Party:user');
+    localStorage.removeItem('@WePlan-Party:friends');
+    localStorage.removeItem('@WePlan-Party:friend-requests');
 
     setData({} as IAuthState);
   }, []);
@@ -197,7 +188,7 @@ const AuthProvider: React.FC = ({ children }) => {
   }, []);
 
   const updateUser = useCallback(
-    (updatedUser: IUser) => {
+    (updatedUser: IUserDTO) => {
       localStorage.setItem('@WePlan-Party:user', JSON.stringify(updatedUser));
 
       setData({
@@ -207,6 +198,23 @@ const AuthProvider: React.FC = ({ children }) => {
     },
     [data],
   );
+
+  async function resetPassword(email: string): Promise<void> {
+    try {
+      await api.post('/password/forgot', {
+        email,
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+
+  async function getUser(id: string): Promise<IUserDTO | undefined> {
+    const response = await api.get(`/users/${id}`);
+
+    if (response.data) return response.data;
+    return undefined;
+  }
 
   return (
     <AuthContext.Provider
@@ -218,6 +226,8 @@ const AuthProvider: React.FC = ({ children }) => {
         createdefaultContactInfo,
         updateUser,
         createPersonInfo,
+        getUser,
+        resetPassword,
       }}
     >
       {children}

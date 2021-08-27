@@ -18,6 +18,7 @@ export default {
     letter3: 'rgb(179, 182, 178)',
     letter4: '#f9f9f9',
     letter5: 'rgb(20, 22, 25)',
+    letter6: 'rgb(20, 22, 25)',
 
     toastInfoColor: '#3172b7',
     toastInfoBackgroundColor: '#ebf8ff',

@@ -248,7 +248,10 @@ const EventInvitationWindow: React.FC<IProps> = ({
                       wpGuest.weplanUserGuest.avatar_url || weplanLogo;
 
                     const userName = wpGuest.weplanUserGuest.name;
-                    const personName = `${wpGuest.weplanUserGuest.personInfo.first_name} ${wpGuest.weplanUserGuest.personInfo.last_name}`;
+                    const thisGuest = wpGuest.weplanUserGuest;
+                    const personName = thisGuest.personInfo
+                      ? `${thisGuest.personInfo.first_name} ${thisGuest.personInfo.last_name}`
+                      : thisGuest.name;
                     const isSelected = selectedWPGuests.find(
                       guest => guest.id === wpGuest.id,
                     );

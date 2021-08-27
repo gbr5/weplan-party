@@ -44,7 +44,7 @@ export const BooleanButton = styled.button<IButtonProps>`
   }
 
   ${props =>
-    props.isActive &&
+    !props.isActive &&
     css`
       background: var(--primary-color);
       color: var(--secondary-color);

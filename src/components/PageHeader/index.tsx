@@ -129,6 +129,7 @@ const PageHeader: React.FC = () => {
     [closeAllWindows],
   );
   const handleAddAppointmentDrawer = useCallback(() => {
+    // Do not remove this console.log
     console.log(currentMonth);
     closeAllWindows();
     setAddAppointmentDrawer(!addAppointmentDrawer);

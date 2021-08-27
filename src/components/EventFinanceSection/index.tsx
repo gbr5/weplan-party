@@ -1,9 +1,6 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { differenceInDays } from 'date-fns';
+import React, { useCallback, useMemo, useState } from 'react';
 import IEventSupplierDTO from '../../dtos/IEventSupplierDTO';
 import PageContainer from '../PageContainer';
-
-import ITransactionDTO from '../../dtos/ITransactionDTO';
 
 import {
   Container,
@@ -12,32 +9,24 @@ import {
   MenuButton,
   SupplierTransactionAgreementsWindow,
 } from './styles';
-import ITransactionAgreementDTO from '../../dtos/ITransactionAgreementDTO';
-import formatDateToString from '../../utils/formatDateToString';
 import { numberFormat } from '../../utils/numberFormat';
-import Transaction from '../Transaction';
-import TransactionAgreement from '../TransactionAgreement';
+import { EventTransactionButton } from '../EventsComponents/FinancialComponents/EventTransaction';
 import TransactionsWindow from '../TransactionsWindow';
+import IEventTransactionDTO from '../../dtos/IEventTransactionDTO';
+import { useEventVariables } from '../../hooks/eventVariables';
 
 interface IPropsDTO {
-  isOwner: boolean;
   hiredSuppliers: IEventSupplierDTO[];
-  refreshHiredSuppliers: Function;
 }
 
 const EventFinanceSection: React.FC<IPropsDTO> = ({
-  isOwner,
   hiredSuppliers,
-  refreshHiredSuppliers,
 }: IPropsDTO) => {
+  const { eventTransactions, selectedEvent } = useEventVariables();
   const [supplierTransactions, setSupplierTransactions] = useState(false);
   const [selectedSupplier, setSelectedSupplier] = useState<IEventSupplierDTO>(
     {} as IEventSupplierDTO,
   );
-  const [totalEventCost, setTotalEventCost] = useState(0);
-  const [totalPaid, setTotalPaid] = useState(0);
-  const [totalToPay, setTotalToPay] = useState(0);
-  const [totalOverdue, setTotalOverdue] = useState(0);
   const [allTransactionsWindow, setAllTransactionsWindow] = useState(true);
   const [paidTransactionsWindow, setPaidTransactionsWindow] = useState(false);
   const [notPaidTransactionsWindow, setNotPaidTransactionsWindow] = useState(
@@ -46,14 +35,6 @@ const EventFinanceSection: React.FC<IPropsDTO> = ({
   const [overdueTransactionsWindow, setOverdueTransactionsWindow] = useState(
     false,
   );
-
-  const transactions = [] as ITransactionDTO[];
-  const paidTransactions = [] as ITransactionDTO[];
-  const notPaidTransactions = [] as ITransactionDTO[];
-  const overdueTransactions = [] as ITransactionDTO[];
-  const agreements = [] as ITransactionAgreementDTO[];
-
-  const today = new Date();
 
   const closeAllWindow = useCallback(() => {
     setSupplierTransactions(false);
@@ -84,110 +65,7 @@ const EventFinanceSection: React.FC<IPropsDTO> = ({
     setOverdueTransactionsWindow(!overdueTransactionsWindow);
   }, [closeAllWindow, overdueTransactionsWindow]);
 
-  const sortByTransactionsDifferenceInDays = useCallback(
-    (a: ITransactionDTO, b: ITransactionDTO) => {
-      if (a.difference_in_days === b.difference_in_days) {
-        return 0;
-      }
-      if (a.difference_in_days && b.difference_in_days) {
-        if (
-          a.difference_in_days > 0 &&
-          a.difference_in_days > b.difference_in_days
-        ) {
-          return -1;
-        }
-
-        return 1;
-      }
-      return 0;
-    },
-    [],
-  );
-
-  const sortByOverdueTransactionsDifferenceInDays = useCallback(
-    (a: ITransactionDTO, b: ITransactionDTO) => {
-      if (a.difference_in_days === b.difference_in_days) {
-        return 0;
-      }
-      if (a.difference_in_days && b.difference_in_days) {
-        if (
-          a.difference_in_days > 0 &&
-          a.difference_in_days > b.difference_in_days
-        ) {
-          return 1;
-        }
-        if (
-          a.difference_in_days < 0 &&
-          a.difference_in_days > b.difference_in_days
-        ) {
-          return 1;
-        }
-        return -1;
-      }
-      return 0;
-    },
-    [],
-  );
-
   let supplierIndex = 0;
-  let agreementIndex = 0;
-  let allTransactionsIndex = 0;
-
-  hiredSuppliers.map(supplier => {
-    supplier.transactionAgreements &&
-      supplier.transactionAgreements.map(agreement => {
-        agreements.push(agreement);
-        agreement.transactions &&
-          agreement.transactions.map(transaction => {
-            const transactionDate = formatDateToString(
-              String(transaction.due_date),
-            ) as string;
-            const newDate = new Date(String(transaction.due_date));
-            const daysTillDueDate = differenceInDays(newDate, today) as number;
-
-            transactions.push({
-              id: transaction.id,
-              agreement_id: transaction.agreement_id,
-              amount: Number(transaction.amount),
-              due_date: new Date(transaction.due_date),
-              isPaid: transaction.isPaid,
-              formattedDate: transactionDate,
-              difference_in_days: daysTillDueDate,
-              supplier_name: supplier.name,
-              index: allTransactionsIndex,
-            });
-            return transaction;
-          });
-
-        return agreement;
-      });
-    return supplier;
-  });
-
-  const handleGetTotalEventCost = useCallback(() => {
-    setTotalEventCost(
-      agreements
-        .map(agreement => Number(agreement.amount))
-        .reduce((a, b) => a + b, 0),
-    );
-    setTotalPaid(
-      paidTransactions.map(paid => paid.amount).reduce((a, b) => a + b, 0),
-    );
-    setTotalToPay(
-      notPaidTransactions
-        .map(notPaid => notPaid.amount)
-        .reduce((a, b) => a + b, 0),
-    );
-    setTotalOverdue(
-      overdueTransactions
-        .map(overdue => overdue.amount)
-        .reduce((a, b) => a + b, 0),
-    );
-  }, [agreements, paidTransactions, notPaidTransactions, overdueTransactions]);
-
-  useEffect(() => {
-    handleGetTotalEventCost();
-  }, [handleGetTotalEventCost]);
 
   const handleSelectedSupplier = useCallback(
     props => {
@@ -198,61 +76,54 @@ const EventFinanceSection: React.FC<IPropsDTO> = ({
     [closeAllWindow],
   );
 
-  const sortedTransactions = useMemo(() => {
-    const sortedByDifferenceInDays = transactions.sort(
-      sortByTransactionsDifferenceInDays,
+  const paidTransactions = useMemo(() => {
+    return eventTransactions.filter(
+      ({ transaction }) => !transaction.isCancelled && transaction.isPaid,
     );
-    return sortedByDifferenceInDays;
-  }, [transactions, sortByTransactionsDifferenceInDays]);
+  }, [eventTransactions]);
 
-  const paidSortedTransactions = useMemo(() => {
-    sortedTransactions.map(
-      transaction =>
-        transaction.isPaid === true && paidTransactions.push(transaction),
+  const notPaidTransactions = useMemo(() => {
+    return eventTransactions.filter(
+      ({ transaction }) => !transaction.isCancelled && !transaction.isPaid,
     );
-    const sortedByDifferenceInDays = paidTransactions.sort(
-      sortByTransactionsDifferenceInDays,
-    );
-    return sortedByDifferenceInDays;
-  }, [
-    paidTransactions,
-    sortByTransactionsDifferenceInDays,
-    sortedTransactions,
-  ]);
+  }, [eventTransactions]);
 
-  const notPaidSortedTransactions = useMemo(() => {
-    transactions.map(
-      transaction =>
-        transaction.isPaid === false && notPaidTransactions.push(transaction),
+  const overdueTransactions = useMemo(() => {
+    return eventTransactions.filter(
+      ({ transaction }) =>
+        !transaction.isCancelled &&
+        !transaction.isPaid &&
+        new Date() < new Date(transaction.due_date),
     );
+  }, [eventTransactions]);
 
-    const sortedByDifferenceInDays = notPaidTransactions.sort(
-      sortByOverdueTransactionsDifferenceInDays,
-    );
-    return sortedByDifferenceInDays;
-  }, [
-    notPaidTransactions,
-    sortByOverdueTransactionsDifferenceInDays,
-    transactions,
-  ]);
+  const totalCost = useMemo(() => {
+    return eventTransactions
+      .filter(({ transaction }) => transaction.payer_id === selectedEvent.id)
+      .map(({ transaction }) => transaction.amount)
+      .reduce((acc, cv) => acc + cv, 0);
+  }, [eventTransactions, selectedEvent]);
 
-  const overdueSortedTransactions = useMemo(() => {
-    transactions.map(transaction => {
-      transaction.difference_in_days &&
-        transaction.isPaid !== true &&
-        transaction.difference_in_days < 0 &&
-        overdueTransactions.push(transaction);
-      return transaction;
-    });
-    const sortedByDifferenceInDays = overdueTransactions.sort(
-      sortByOverdueTransactionsDifferenceInDays,
-    );
-    return sortedByDifferenceInDays;
-  }, [
-    overdueTransactions,
-    transactions,
-    sortByOverdueTransactionsDifferenceInDays,
-  ]);
+  const totalPaid = useMemo(() => {
+    return paidTransactions
+      .filter(({ transaction }) => transaction.payer_id === selectedEvent.id)
+      .map(({ transaction }) => transaction.amount)
+      .reduce((acc, cv) => acc + cv, 0);
+  }, [paidTransactions, selectedEvent]);
+
+  const totalToPay = useMemo(() => {
+    return notPaidTransactions
+      .filter(({ transaction }) => transaction.payer_id === selectedEvent.id)
+      .map(({ transaction }) => transaction.amount)
+      .reduce((acc, cv) => acc + cv, 0);
+  }, [notPaidTransactions, selectedEvent]);
+
+  const totalOverdue = useMemo(() => {
+    return overdueTransactions
+      .filter(({ transaction }) => transaction.payer_id === selectedEvent.id)
+      .map(({ transaction }) => transaction.amount)
+      .reduce((acc, cv) => acc + cv, 0);
+  }, [overdueTransactions, selectedEvent]);
 
   return (
     <Container>
@@ -268,7 +139,7 @@ const EventFinanceSection: React.FC<IPropsDTO> = ({
           </MenuButton>
           <div>
             <h3>Total:</h3>
-            <p>{numberFormat(totalEventCost)}</p>
+            <p>{numberFormat(totalCost)}</p>
           </div>
         </div>
         <div>
@@ -341,27 +212,62 @@ const EventFinanceSection: React.FC<IPropsDTO> = ({
               <h1>{selectedSupplier.name}</h1>
               <div>
                 {selectedSupplier.transactionAgreements.map(agreement => {
-                  agreementIndex += 1;
-                  const key = String(agreementIndex);
                   return (
                     <>
-                      <TransactionAgreement
-                        key={key}
-                        transactionAgreement={agreement}
-                      />
                       <SupplierTransactionAgreementsWindow>
-                        {agreement.transactions.map(transaction => {
-                          allTransactionsIndex += 1;
-                          const supplierTransactionKey = String(
-                            allTransactionsIndex,
-                          );
+                        {agreement.transactions.map(agreementTransaction => {
+                          const eventTransaction: IEventTransactionDTO = {
+                            agreement_id: agreement.id,
+                            agreement_type: 'supplier',
+                            event_id: selectedSupplier.event_id,
+                            transaction: agreementTransaction.transaction,
+                          };
+                          const year = new Date(
+                            agreementTransaction.transaction.due_date,
+                          ).getFullYear();
+                          const month = new Date(
+                            agreementTransaction.transaction.due_date,
+                          ).getMonth();
+                          const date = new Date(
+                            agreementTransaction.transaction.due_date,
+                          ).getDate();
+
+                          const firstOfYear =
+                            agreement.transactions.filter(
+                              ({ transaction }) =>
+                                new Date(transaction.due_date).getFullYear() ===
+                                year,
+                            )[0].transaction.id ===
+                            agreementTransaction.transaction.id;
+
+                          const firstOfMonth =
+                            agreement.transactions.filter(
+                              ({ transaction }) =>
+                                new Date(transaction.due_date).getFullYear() ===
+                                  year &&
+                                new Date(transaction.due_date).getMonth() ===
+                                  month,
+                            )[0].transaction.id ===
+                            agreementTransaction.transaction.id;
+
+                          const firstOfDay =
+                            agreement.transactions.filter(
+                              ({ transaction }) =>
+                                new Date(transaction.due_date).getFullYear() ===
+                                  year &&
+                                new Date(transaction.due_date).getMonth() ===
+                                  month &&
+                                new Date(transaction.due_date).getDate() ===
+                                  date,
+                            )[0].transaction.id ===
+                            agreementTransaction.transaction.id;
                           return (
-                            <Transaction
-                              isOwner={isOwner}
-                              refreshHiredSuppliers={refreshHiredSuppliers}
-                              key={supplierTransactionKey}
-                              allTransactions={false}
-                              transaction={transaction}
+                            <EventTransactionButton
+                              eventTransaction={eventTransaction}
+                              firstOfDay={firstOfDay}
+                              firstOfMonth={firstOfMonth}
+                              firstOfYear={firstOfYear}
+                              key={agreementTransaction.id}
                             />
                           );
                         })}
@@ -375,33 +281,25 @@ const EventFinanceSection: React.FC<IPropsDTO> = ({
           {!!allTransactionsWindow && (
             <TransactionsWindow
               title="Transações"
-              isOwner={isOwner}
-              refreshHiredSuppliers={refreshHiredSuppliers}
-              transactions={sortedTransactions}
+              transactions={eventTransactions}
             />
           )}
           {!!paidTransactionsWindow && (
             <TransactionsWindow
               title="Transações Efetuadas"
-              isOwner={isOwner}
-              refreshHiredSuppliers={refreshHiredSuppliers}
-              transactions={paidSortedTransactions}
+              transactions={paidTransactions}
             />
           )}
           {!!notPaidTransactionsWindow && (
             <TransactionsWindow
               title="Transações a Pagar"
-              isOwner={isOwner}
-              refreshHiredSuppliers={refreshHiredSuppliers}
-              transactions={notPaidSortedTransactions}
+              transactions={notPaidTransactions}
             />
           )}
           {!!overdueTransactionsWindow && (
             <TransactionsWindow
-              isOwner
-              refreshHiredSuppliers={refreshHiredSuppliers}
               title="Transações Atrasadas"
-              transactions={overdueSortedTransactions}
+              transactions={overdueTransactions}
             />
           )}
         </PageContainer>
