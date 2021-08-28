@@ -68,7 +68,7 @@ export function SupplierNotesSection(): ReactElement {
         {filteredNotes.length > 0 && (
           <NotesContainer>
             {filteredNotes.map(note => {
-              return <Note key={note.id} selectedNote={note} />;
+              return <Note key={note.id} note={note} />;
             })}
           </NotesContainer>
         )}

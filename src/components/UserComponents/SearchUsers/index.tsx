@@ -35,7 +35,7 @@ export function SearchUsers({ handleUsers }: IProps): ReactElement {
 
   function handleResetSearch(): void {
     setFilterString(undefined);
-    // inputRef.current && inputRef.current.clear();
+    if (inputRef.current) inputRef.current.value = '';
     // Keyboard.dismiss();
     setBackdrop(false);
     handleUsers([]);

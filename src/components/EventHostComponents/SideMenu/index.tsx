@@ -21,8 +21,6 @@ interface IProps {
   handleMembersWindow: Function;
   handleAddPlannerDrawer: Function;
   handleEventInfoWindow: Function;
-  handleLatestActionsSection: Function;
-  // handleMessagesSection: Function;
   eventName: string;
   planners: IUserInfoDTO[];
   numberOfPlanners: number;
@@ -36,21 +34,24 @@ const SideMenu: React.FC<IProps> = ({
   handleMembersWindow,
   handleAddPlannerDrawer,
   handleEventInfoWindow,
-  handleLatestActionsSection,
-  // handleMessagesSection,
   handleAddOwnerDrawer,
   eventName,
   planners,
   numberOfPlanners,
 }: IProps) => {
-  const { eventOwners, eventMembers, isOwner } = useEventVariables();
+  const {
+    eventOwners,
+    eventMembers,
+    isOwner,
+    handleCurrentSection,
+  } = useEventVariables();
 
   const numberOfOwners = useMemo(() => eventOwners.length, [eventOwners]);
   const numberOfMembers = useMemo(() => eventMembers.length, [eventMembers]);
 
   return (
     <Container>
-      <button type="button" onClick={() => handleLatestActionsSection()}>
+      <button type="button" onClick={() => handleCurrentSection('dashboard')}>
         <h1>Dashboard</h1>
       </button>
       {isOwner ? (
@@ -150,7 +151,7 @@ const SideMenu: React.FC<IProps> = ({
       <button type="button" onClick={() => handleEventInfoWindow()}>
         Informações do Evento
       </button>
-      <button type="button" onClick={() => handleLatestActionsSection()}>
+      <button type="button" onClick={() => handleCurrentSection('notes')}>
         Últimas Atualizações
       </button>
       {/* <button type="button" onClick={() => handleMessagesSection()}>

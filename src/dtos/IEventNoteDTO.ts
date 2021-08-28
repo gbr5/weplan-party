@@ -1,10 +1,10 @@
-import IUserDTO from './IUserDTO';
+import INoteDTO from './INoteDTO';
 
 export default interface IEventNoteDTO {
   id: string;
   event_id: string;
-  access: string;
-  note: string;
-  color: string;
-  userEventNote: IUserDTO;
+  note_id: string;
+  note: INoteDTO;
+  created_at: Date;
+  updated_at: Date;
 }

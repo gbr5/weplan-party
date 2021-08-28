@@ -11,7 +11,7 @@ import { useLocation } from 'react-router-dom';
 import { FormHandles } from '@unform/core';
 import { Container, EventPageContent, Main } from './styles';
 import PageHeader from '../../components/PageHeader';
-import FirstRow from '../../components/EventHostComponents/FirstRow';
+import { FirstRow } from '../../components/EventHostComponents/FirstRow';
 import SideMenu from '../../components/EventHostComponents/SideMenu';
 
 import api from '../../services/api';
@@ -70,6 +70,10 @@ import { EditSupplierBudgetAmount } from '../../components/EventsComponents/Even
 import { EditSupplierBudgetDescription } from '../../components/EventsComponents/EventSupplierComponents/EditSupplierBudgetDescription';
 import { EditTransactionAmount } from '../../components/TransactionComponents/EditTransactionAmount';
 import { EditTransactionCategory } from '../../components/TransactionComponents/EditTransactionCategory';
+import { NotesSection } from '../../components/EventsComponents/EventNotesComponents/NotesSection';
+import { useNote } from '../../hooks/notes';
+import { EventNoteForm } from '../../components/EventsComponents/EventNotesComponents/EventNoteForm';
+import { EditNoteWindow } from '../../components/NotesComponents/EditNoteWindow';
 
 interface IUserInfoDTO {
   id: string;
@@ -96,6 +100,7 @@ const EventHostDashboard: React.FC = () => {
     selectedEventOwner,
     selectedEventMember,
     isOwner,
+    currentSection,
   } = useEventVariables();
   const { getEventMembers, getEventOwners } = useCurrentEvent();
   const { deleteEventOwner } = useEventOwners();
@@ -121,6 +126,7 @@ const EventHostDashboard: React.FC = () => {
     editTransactionCategory,
     newEventSupplierTransactionAgreement,
   } = useTransaction();
+  const { createEventNoteWindow, editNoteWindow } = useNote();
 
   const location = useLocation<IParams>();
   const pageEvent = location.state.params;
@@ -142,14 +148,6 @@ const EventHostDashboard: React.FC = () => {
   const [deleteMemberDrawer, setDeleteMemberDrawer] = useState(false);
   const [deleteOwnerDrawer, setDeleteOwnerDrawer] = useState(false);
   const [sidebar, setSidebar] = useState(false);
-  const [eventMainDashboardSection, setEventMainDashboardSection] = useState(
-    true,
-  );
-  const [guestsSection, setGuestsSection] = useState(false);
-  const [financeSection, setFinanceSection] = useState(false);
-  const [supplierSection, setSupplierSection] = useState(false);
-  const [checkListSection, setCheckListSection] = useState(false);
-  // const [messagesSection, setMessagesSection] = useState(false);
   const [
     updateEventNumberOfGuestsWindow,
     setUpdateEventNumberOfGuestsWindow,
@@ -189,17 +187,6 @@ const EventHostDashboard: React.FC = () => {
     setMemberProfileWindow(false);
     setDeleteMemberDrawer(false);
     setNumberOfGuestDrawer(false);
-    setSidebar(false);
-  }, []);
-  const closeAllSections = useCallback(() => {
-    setSelectedFriend({} as IFriendDTO);
-    setSelectedSupplier({} as IEventSupplierDTO);
-    setEventMainDashboardSection(false);
-    setGuestsSection(false);
-    setFinanceSection(false);
-    setCheckListSection(false);
-    setSupplierSection(false);
-    // setMessagesSection(false);
     setSidebar(false);
   }, []);
   const handleSideBar = useCallback(() => {
@@ -268,31 +255,6 @@ const EventHostDashboard: React.FC = () => {
     closeAllWindows();
     setAddPlannerDrawer(!addPlannerDrawer);
   }, [addPlannerDrawer, closeAllWindows]);
-
-  const handleLatestActionsSection = useCallback(() => {
-    closeAllSections();
-    setEventMainDashboardSection(true);
-  }, [closeAllSections]);
-
-  const handleGuestsSection = useCallback(() => {
-    closeAllSections();
-    setGuestsSection(true);
-  }, [closeAllSections]);
-
-  const handleFinanceSection = useCallback(() => {
-    closeAllSections();
-    setFinanceSection(true);
-  }, [closeAllSections]);
-
-  const handleCheckListSection = useCallback(() => {
-    closeAllSections();
-    setCheckListSection(true);
-  }, [closeAllSections]);
-
-  const handleSupplierSection = useCallback(() => {
-    closeAllSections();
-    setSupplierSection(true);
-  }, [closeAllSections]);
 
   const handleGetPlanners = useCallback(() => {
     try {
@@ -490,6 +452,12 @@ const EventHostDashboard: React.FC = () => {
       {editTransactionCategory && <EditTransactionCategory />}
       {editEventTransactionValueWindow && <EditTransactionAmount />}
       {/* End of Transaction Windows */}
+      {/* Notes Windows */}
+      {createEventNoteWindow && <EventNoteForm />}
+
+      {editNoteWindow && <EditNoteWindow />}
+
+      {/* End of Notes Windows */}
 
       {!!createEventInfoWindowForm && (
         <CreateEventInfoWindowForm
@@ -644,9 +612,7 @@ const EventHostDashboard: React.FC = () => {
             handleAddPlannerDrawer={handleAddPlannerDrawer}
             handleEditEventNameDrawer={handleEditEventNameDrawer}
             handleEventInfoWindow={handleEventInfoWindow}
-            handleLatestActionsSection={handleLatestActionsSection}
             handleMembersWindow={handleMembersWindow}
-            // handleMessagesSection={handleMessagesSection}
             handleOwnerProfileWindow={handleOwnerProfileWindow}
             handleSelectFriendAsMember={handleSelectFriendAsMember}
             numberOfPlanners={numberOfPlanners}
@@ -655,18 +621,13 @@ const EventHostDashboard: React.FC = () => {
           />
         )}
         <Main>
-          <FirstRow
-            eventInfo={eventInfo}
-            handleCheckListSection={handleCheckListSection}
-            handleFinanceSection={handleFinanceSection}
-            handleGuestsSection={handleGuestsSection}
-            handleSupplierSection={handleSupplierSection}
-          />
+          <FirstRow />
+          {currentSection === 'notes' && <NotesSection />}
           {!!eventBudgetWindow && <EditEventBudgetWindow />}
-          {!!eventMainDashboardSection && <EventMainDashboard />}
-          {!!supplierSection && <EventSupplierSection />}
+          {currentSection === 'dashboard' && <EventMainDashboard />}
+          {currentSection === 'suppliers' && <EventSupplierSection />}
           {/* {!!messagesSection && <MessageSection />} */}
-          {!!guestsSection && (
+          {currentSection === 'guests' && (
             <EventGuestSection
               handleGuestAllocationWindow={openGuestAlocationWindow}
               myAvailableNumberOfGuests={myAvailableNumberOfGuests}
@@ -674,8 +635,8 @@ const EventHostDashboard: React.FC = () => {
             />
           )}
           {/* Tem que refazer a Finance Section Inteira */}
-          {!!financeSection}
-          {!!checkListSection && <EventTaskSection />}
+          {currentSection === 'financial'}
+          {currentSection === 'tasks' && <EventTaskSection />}
         </Main>
       </EventPageContent>
     </Container>

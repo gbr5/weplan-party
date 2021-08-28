@@ -45,6 +45,7 @@ interface EventVariablesContextType {
   selectedNewTransaction: ICreateTransactionDTO; // 26
   isOwner: boolean;
   master: IUserDTO;
+  currentSection: string;
   handleEventGuests: (data: IEventGuestDTO[]) => void;
   handleEventSuppliers: (data: IEventSupplierDTO[]) => void;
   handleEventOwners: (data: IEventOwnerDTO[]) => void;
@@ -76,6 +77,7 @@ interface EventVariablesContextType {
   handleSelectedDateWindow: () => void;
   handleSelectedNewTransaction: (data: ICreateTransactionDTO) => void;
   selectNewTransactions: (data: ICreateTransactionDTO[]) => void;
+  handleCurrentSection: (date: string) => void;
 }
 
 const EventVariablesContext = createContext({} as EventVariablesContextType);
@@ -141,6 +143,7 @@ const EventVariablesProvider: React.FC = ({ children }) => {
   );
   const [selectedDate, setSelectedDate] = useState(addDays(new Date(), 3));
   const [selectedDateWindow, setSelectedDateWindow] = useState(false);
+  const [currentSection, setCurrentSection] = useState('notes');
 
   function unsetVariables(): void {
     setEventBudget({} as IEventBudgetDTO); // 1
@@ -171,6 +174,7 @@ const EventVariablesProvider: React.FC = ({ children }) => {
       {} as IEventSupplierTransactionAgreementDTO,
     ); // 25
     setSelectedNewTransaction({} as ICreateTransactionDTO); // 26
+    setCurrentSection('notes');
   }
 
   function handleSelectedDate(data: Date): void {
@@ -179,6 +183,9 @@ const EventVariablesProvider: React.FC = ({ children }) => {
   }
   function handleSelectedNewTransaction(data: ICreateTransactionDTO): void {
     setSelectedNewTransaction(data);
+  }
+  function handleCurrentSection(data: string): void {
+    setCurrentSection(data);
   }
   function selectNewTransactions(data: ICreateTransactionDTO[]): void {
     setNewTransactions(data);
@@ -360,6 +367,8 @@ const EventVariablesProvider: React.FC = ({ children }) => {
         handleSelectedNewTransaction,
         selectNewTransactions,
         transformEventTransactions,
+        currentSection,
+        handleCurrentSection,
       }}
     >
       {children}

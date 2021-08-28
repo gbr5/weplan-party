@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { ReactElement } from 'react';
-import { FiEdit2 } from 'react-icons/fi';
 
 import INoteDTO from '../../../dtos/INoteDTO';
 import IUserDTO from '../../../dtos/IUserDTO';
@@ -18,45 +17,54 @@ import {
 } from './styles';
 
 interface IProps {
-  selectedNote: INoteDTO;
+  note: INoteDTO;
 }
 
-export function Note({ selectedNote }: IProps): ReactElement {
-  const iconSize = 20;
+export function Note({ note }: IProps): ReactElement {
   const { getUser, user } = useAuth();
   const { handleEditNoteWindow, selectNote } = useNote();
 
   const [author, setAuthor] = useState({} as IUserDTO);
 
   function handleEditNote(): void {
-    selectNote(selectedNote);
+    selectNote(note);
     handleEditNoteWindow();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const getAuthor = useCallback(async () => {
-    user.id === selectedNote.author_id && setAuthor(user);
-    const findAuthor = await getUser(selectedNote.author_id);
+    user.id === note.author_id && setAuthor(user);
+    const findAuthor = await getUser(note.author_id);
     if (findAuthor) return findAuthor;
     return undefined;
-  }, [getUser, selectedNote, user]);
+  }, [getUser, note, user]);
 
   useEffect(() => {
     getAuthor();
   }, [getAuthor]);
 
+  const cols = useMemo(() => {
+    const screenWidth = window.screen.width;
+    return screenWidth * 0.08;
+  }, []);
+
+  const rows = useMemo(() => {
+    return note.note.length / cols + 5;
+  }, [note, cols]);
+
   return (
     <Container>
-      <TextNote>{selectedNote.note}</TextNote>
       <EditNoteButton onClick={handleEditNote}>
-        <FiEdit2 color="white" size={iconSize} />
+        <TextNote disabled cols={cols} rows={rows}>
+          {note.note}
+        </TextNote>
       </EditNoteButton>
       <NoteFooter>
-        {author && author.id && <NoteAuthor>{author.name}</NoteAuthor>}
+        <NoteAuthor>{author && author.id && author.name}</NoteAuthor>
         <NoteDate>
-          {selectedNote.updated_at === selectedNote.created_at
-            ? formatDateToString(String(selectedNote.created_at))
-            : formatDateToString(String(selectedNote.updated_at))}
+          {note.updated_at === note.created_at
+            ? formatDateToString(String(note.created_at))
+            : formatDateToString(String(note.updated_at))}
         </NoteDate>
       </NoteFooter>
     </Container>

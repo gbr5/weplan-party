@@ -1,5 +1,9 @@
+/* eslint-disable react/no-unused-prop-types */
+/* eslint-disable react/require-default-props */
 import React, { useState, useRef, ReactElement, useMemo } from 'react';
+import { useEffect } from 'react';
 import formatTextArea from '../../../utils/formatTextArea';
+import Button from '../../Button';
 
 import {
   Container,
@@ -12,10 +16,15 @@ import {
 
 interface IProps {
   placeholder: string;
+  defaulValue?: string;
   handleNote: (e: string) => void;
 }
 
-export function NoteForm({ placeholder, handleNote }: IProps): ReactElement {
+export function NoteForm({
+  placeholder,
+  handleNote,
+  defaulValue,
+}: IProps): ReactElement {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const [textValue, setTextValue] = useState('');
   const [rows, setRows] = useState(2);
@@ -30,7 +39,7 @@ export function NoteForm({ placeholder, handleNote }: IProps): ReactElement {
     const textArea = textAreaRef.current;
     if (textArea) {
       const numberOfRows = formatTextArea({ textArea });
-
+      setTextValue(textArea.value);
       setRows(numberOfRows);
     }
   }
@@ -39,6 +48,11 @@ export function NoteForm({ placeholder, handleNote }: IProps): ReactElement {
     const screenWidth = window.screen.width;
     return screenWidth * 0.08;
   }, []);
+
+  useEffect(() => {
+    if (textValue === '' && textAreaRef.current && defaulValue)
+      textAreaRef.current.value = defaulValue;
+  }, [defaulValue, textAreaRef, textValue]);
 
   return (
     <>
@@ -55,11 +69,7 @@ export function NoteForm({ placeholder, handleNote }: IProps): ReactElement {
           />
           <NumberOfCharacters>{textValue.length}</NumberOfCharacters>
         </TextAreaContainer>
-        {textValue !== '' && (
-          <SendButton onClick={submitNote}>
-            <SendButtonText>Enviar</SendButtonText>
-          </SendButton>
-        )}
+        {textValue !== '' && <Button onClick={submitNote}>Enviar</Button>}
       </Container>
     </>
   );

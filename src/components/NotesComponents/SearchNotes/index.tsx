@@ -29,8 +29,8 @@ export function SearchNotes({ handleNotes, notes }: IProps): ReactElement {
   );
 
   function handleResetSearch(): void {
-    setFilterString(undefined);
-    // inputRef.current && inputRef.current.clear();
+    setFilterString('');
+    if (inputRef.current) inputRef.current.value = '';
     // Keyboard.dismiss();
     setBackdrop(false);
     handleNotes(notes);

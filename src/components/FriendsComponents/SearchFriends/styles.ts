@@ -30,11 +30,12 @@ export const Input = styled.input`
   font-size: 16px;
   color: var(--letter-color-6);
   flex: 1;
-  border: none;
   width: 90%;
   background-color: var(--letter-color-2);
   border-bottom: 0.5px solid var(--letter-color-6);
   padding: 8px;
+  border: none;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
 `;
 
 export const CloseButton = styled.button`

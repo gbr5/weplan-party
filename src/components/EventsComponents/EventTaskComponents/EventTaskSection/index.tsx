@@ -28,7 +28,7 @@ export function EventTaskSection(): ReactElement {
     <>
       {!!createTaskWindow && <NewTaskForm />}
       <Container>
-        <strong>Check List</strong>
+        <strong>Tarefas</strong>
         {isOwner && (
           <button type="button" onClick={handleCreateTaskWindow}>
             <MdAdd size={40} />

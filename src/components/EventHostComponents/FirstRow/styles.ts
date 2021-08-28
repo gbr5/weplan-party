@@ -17,62 +17,50 @@ export const Container = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   border-radius: 10px;
   position: relative;
-  gap: 80px;
   margin-top: 2vh;
+  overflow-x: scroll;
 
   animation: ${appearFromTop} 0.5s;
 
   @media (max-width: 1000px) {
     overflow-x: scroll;
-    display: inline-flexbox;
     width: 100%;
     align-items: stretch;
-    justify-content: center;
+    justify-content: space-between;
     border-radius: 0;
   }
-  div {
+
+  button {
     display: flex;
-    width: 130px;
-    height: 130px;
-    border: 3px solid var(--primary-color);
-    background: var(--header-background-color);
-    border-radius: 50%;
+    flex-direction: column;
+    min-width: 130px;
+    min-height: 130px;
+    border: 0.3px solid var(--primary-color);
+    background: var(--letter-color-1);
+    border-radius: 10%;
     align-items: center;
     justify-content: center;
-
-    /* @media (max-width: 1000px) {
-      border-radius: 8px;
-    } */
+    margin: 8px 16px;
+    box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
 
     &:hover {
-      opacity: 0.7;
+      opacity: 0.8;
     }
 
-    button {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      border: none;
-      background: transparent;
+    h2 {
+      font-size: 16px;
+      color: var(--primary-color);
+      font-weight: bold;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
 
-      &:hover {
-        opacity: 0.8;
-      }
-
-      h2 {
-        font-size: 16px;
-        color: var(--title-color);
-        margin-bottom: 8px;
-      }
-
-      p {
-        font-size: 16px;
-        color: var(--letter-color-3);
-      }
+    p {
+      font-size: 18px;
+      color: var(--letter-color-6);
     }
   }
 `;

@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
+  position: relative;
   width: 100%;
   background-color: var(--letter-color-1);
   border-radius: 5px;
@@ -10,16 +11,22 @@ export const Container = styled.div`
   border: 0.5px solid var(--letter-color-3);
 `;
 
-export const TextNote = styled.p`
+export const TextNote = styled.textarea`
   padding: 5px;
   color: var(--letter-color-6);
   font-size: 16px;
-  margin: 8px 0 8px 8px;
+  width: 99%;
+  border: none;
+  text-decoration: none;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
+  padding: 8px;
+  letter-spacing: 0.8px;
+  border-radius: 5px;
 `;
 
 export const NoteFooter = styled.div`
   padding: 5px;
-  flex-direction: row;
+  display: flex;
   background-color: var(--letter-color-2);
   border-radius: 5px;
   justify-content: space-between;
@@ -37,13 +44,5 @@ export const NoteAuthor = styled.p`
 `;
 
 export const EditNoteButton = styled.button`
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  border-radius: 5px;
-  background-color: var(--letter-color-5);
-  padding: 5px;
-  align-items: center;
-  justify-content: center;
-  border: 0.5px solid var(--letter-color-3);
+  border: none;
 `;

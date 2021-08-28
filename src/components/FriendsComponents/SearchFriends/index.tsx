@@ -38,7 +38,7 @@ export function SearchFriends({ handleFriends }: IProps): ReactElement {
   function handleResetSearch(): void {
     setFilterString(undefined);
     // limpar o valor dentro de input e, se em mobile, esconder o teclado
-    // inputRef.current && inputRef.current.value = '';
+    if (inputRef.current) inputRef.current.value = '';
     // Keyboard.dismiss();
     setBackdrop(false);
     handleFriends(friends);

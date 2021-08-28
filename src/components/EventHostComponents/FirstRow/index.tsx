@@ -1,43 +1,21 @@
 import React from 'react';
 import { useMemo } from 'react';
-import IEventInfoDTO from '../../../dtos/IEventInfoDTO';
-import { useEvent } from '../../../hooks/event';
 import { useEventVariables } from '../../../hooks/eventVariables';
-import { formatBrlCurrency } from '../../../utils/formatBrlCurrency';
-import { numberFormat } from '../../../utils/numberFormat';
 
 import { Container } from './styles';
 
-interface IProps {
-  handleGuestsSection: Function;
-  handleCheckListSection: Function;
-  handleSupplierSection: Function;
-  handleFinanceSection: Function;
-  eventInfo: IEventInfoDTO;
-}
-
-const FirstRow: React.FC<IProps> = ({
-  handleGuestsSection,
-  eventInfo,
-  handleSupplierSection,
-  handleFinanceSection,
-  handleCheckListSection,
-}: IProps) => {
-  const { handleEventBudgetWindow } = useEvent();
+export function FirstRow(): JSX.Element {
   const {
-    isOwner,
+    eventOwners,
     eventBudget,
+    eventMembers,
     eventGuests,
     eventTasks,
     eventNotes,
     eventSuppliers,
+    selectedEvent,
+    handleCurrentSection,
   } = useEventVariables();
-
-  const budget = useMemo(() => {
-    return eventBudget && eventBudget.id
-      ? formatBrlCurrency(eventBudget.budget)
-      : formatBrlCurrency(0);
-  }, [eventBudget]);
 
   const numberOfConfirmedGuests = useMemo(() => {
     return eventGuests.filter(guest => guest.confirmed).length;
@@ -72,56 +50,52 @@ const FirstRow: React.FC<IProps> = ({
   }, [hiredSuppliers, eventSuppliers]);
 
   const notesInfo = useMemo(() => `${eventNotes.length}`, [eventNotes]);
+  const guestsInfo = useMemo(() => {
+    return `${numberOfConfirmedGuests} / ${eventGuests.length}`;
+  }, [numberOfConfirmedGuests, eventGuests]);
+  const financialInfo = useMemo(() => {
+    return totalEventCost > 0 && eventBudget.budget > 0
+      ? `${Math.round((totalEventCost / eventBudget.budget) * 100)}%`
+      : '0%';
+  }, [eventBudget, totalEventCost]);
+  const ownersNumber = useMemo(() => `${eventOwners.length}`, [eventOwners]);
+  const membersNumber = useMemo(() => `${eventMembers.length}`, [eventMembers]);
 
   return (
     <Container>
-      <div>
-        <button type="button" onClick={() => handleGuestsSection()}>
-          <h2>Notas</h2>
-          <p>{notesInfo}</p>
+      <button type="button" onClick={() => handleCurrentSection('dashboard')}>
+        <h2>Dashboard</h2>
+      </button>
+      <button type="button" onClick={() => handleCurrentSection('notes')}>
+        <h2>Notas</h2>
+        <p>{notesInfo}</p>
+      </button>
+      <button type="button" onClick={() => handleCurrentSection('tasks')}>
+        <h2>Tarefas</h2>
+        <p>{eventTaskInfo}</p>
+      </button>
+      <button type="button" onClick={() => handleCurrentSection('guests')}>
+        <h2>Convidados</h2>
+        <p>{guestsInfo}</p>
+      </button>
+      <button type="button" onClick={() => handleCurrentSection('suppliers')}>
+        <h2>Fornecedores</h2>
+        <p>{suppliersInfo}</p>
+      </button>
+      <button type="button" onClick={() => handleCurrentSection('financial')}>
+        <h2>Financeiro</h2>
+        <p>{financialInfo}</p>
+      </button>
+      <button type="button" onClick={() => handleCurrentSection('owners')}>
+        <h2>Anfritriões</h2>
+        <p>{ownersNumber}</p>
+      </button>
+      {selectedEvent.event_type === 'Prom' && (
+        <button type="button" onClick={() => handleCurrentSection('members')}>
+          <h2>Membros</h2>
+          <p>{membersNumber}</p>
         </button>
-      </div>
-      <div>
-        <button type="button" onClick={() => handleGuestsSection()}>
-          <h2>Convidados</h2>
-          <p>
-            {numberOfConfirmedGuests}/{eventGuests.length}
-          </p>
-        </button>
-      </div>
-      <div>
-        {isOwner ? (
-          <button type="button" onClick={handleEventBudgetWindow}>
-            <h2>Orçamento</h2>
-            <p>{budget}</p>
-          </button>
-        ) : (
-          <button type="button">
-            <h2>Orçamento</h2>
-            <p>{eventInfo.budget ? numberFormat(eventInfo.budget) : ''}</p>
-          </button>
-        )}
-      </div>
-      <div>
-        <button type="button" onClick={() => handleSupplierSection()}>
-          <h2>Fornecedores</h2>
-          <p>{suppliersInfo}</p>
-        </button>
-      </div>
-      <div>
-        <button type="button" onClick={() => handleFinanceSection()}>
-          <h2>Financeiro</h2>
-          <p>{Math.round((totalEventCost / eventInfo.budget) * 100)}%</p>
-        </button>
-      </div>
-      <div>
-        <button type="button" onClick={() => handleCheckListSection()}>
-          <h2>Check-List</h2>
-          <p>{eventTaskInfo}</p>
-        </button>
-      </div>
+      )}
     </Container>
   );
-};
-
-export default FirstRow;
+}
