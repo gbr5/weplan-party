@@ -17,11 +17,14 @@ export const DateTime = styled.p`
 `;
 
 export const PriorityButton = styled.button`
+  display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   padding: 4px;
   border-radius: 5px;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
+  border: none;
 `;
 
 export const Legend = styled.p`

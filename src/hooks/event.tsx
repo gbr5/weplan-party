@@ -1,4 +1,6 @@
 import React, { createContext, useCallback, useState, useContext } from 'react';
+import ICreateEventDTO from '../dtos/ICreateEventDTO';
+import IEventDTO from '../dtos/IEventDTO';
 import IEventGuestDTO from '../dtos/IEventGuestDTO';
 import IEventMemberDTO from '../dtos/IEventMemberDTO';
 import IEventOwnerDTO from '../dtos/IEventOwnerDTO';
@@ -7,15 +9,18 @@ import api from '../services/api';
 
 interface IEventContextData {
   eventBudgetWindow: boolean;
+  createEventWindow: boolean;
   nextEvent: IShowEventDTO;
   eventsAsOwner: IEventOwnerDTO[];
   eventsAsMember: IEventMemberDTO[];
   eventsAsGuest: IEventGuestDTO[];
   handleEventBudgetWindow: () => void;
+  handleCreateEventWindow: () => void;
   getEventsAsOwner(): void;
   getEventsAsMember(): void;
   getEventsAsGuest(): void;
   getNextEvent(): void;
+  createEvent(data: ICreateEventDTO): Promise<IEventDTO>;
 }
 
 const EventContext = createContext({} as IEventContextData);
@@ -26,9 +31,14 @@ const EventProvider: React.FC = ({ children }) => {
   const [eventsAsMember, setEventsAsMember] = useState<IEventMemberDTO[]>([]);
   const [eventsAsGuest, setEventsAsGuest] = useState<IEventGuestDTO[]>([]);
   const [eventBudgetWindow, setEventBudgetWindow] = useState(false);
+  const [createEventWindow, setCreateEventWindow] = useState(false);
 
   function handleEventBudgetWindow(): void {
     setEventBudgetWindow(!eventBudgetWindow);
+  }
+
+  function handleCreateEventWindow(): void {
+    setCreateEventWindow(!createEventWindow);
   }
 
   const getEventsAsOwner = useCallback(async () => {
@@ -70,6 +80,24 @@ const EventProvider: React.FC = ({ children }) => {
       throw new Error(err);
     }
   }, []);
+  const createEvent = useCallback(
+    async ({ name, date, event_type, isDateDefined }: ICreateEventDTO) => {
+      try {
+        const event = await api.post('/events', {
+          name,
+          date,
+          event_type,
+          isDateDefined,
+        });
+        event && event.data && getNextEvent();
+        event && event.data && getEventsAsOwner();
+        return event.data;
+      } catch (err) {
+        throw new Error(err);
+      }
+    },
+    [getEventsAsOwner, getNextEvent],
+  );
 
   return (
     <EventContext.Provider
@@ -84,6 +112,9 @@ const EventProvider: React.FC = ({ children }) => {
         getEventsAsMember,
         getEventsAsGuest,
         getNextEvent,
+        createEvent,
+        createEventWindow,
+        handleCreateEventWindow,
       }}
     >
       {children}

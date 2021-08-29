@@ -74,6 +74,8 @@ import { NotesSection } from '../../components/EventsComponents/EventNotesCompon
 import { useNote } from '../../hooks/notes';
 import { EventNoteForm } from '../../components/EventsComponents/EventNotesComponents/EventNoteForm';
 import { EditNoteWindow } from '../../components/NotesComponents/EditNoteWindow';
+import { CreateEvent } from '../../components/EventsComponents/CreateEvent';
+import { FinancialSection } from '../../components/EventsComponents/FinancialComponents/FinancialSection';
 
 interface IUserInfoDTO {
   id: string;
@@ -90,7 +92,7 @@ const EventHostDashboard: React.FC = () => {
   const { user } = useAuth();
   const { addToast } = useToast();
   const { friends } = useFriends();
-  const { eventBudgetWindow } = useEvent();
+  const { eventBudgetWindow, createEventWindow } = useEvent();
   const {
     eventGuests,
     selectEventOwner,
@@ -622,6 +624,7 @@ const EventHostDashboard: React.FC = () => {
         )}
         <Main>
           <FirstRow />
+          {createEventWindow && <CreateEvent />}
           {currentSection === 'notes' && <NotesSection />}
           {!!eventBudgetWindow && <EditEventBudgetWindow />}
           {currentSection === 'dashboard' && <EventMainDashboard />}
@@ -635,7 +638,7 @@ const EventHostDashboard: React.FC = () => {
             />
           )}
           {/* Tem que refazer a Finance Section Inteira */}
-          {currentSection === 'financial'}
+          {currentSection === 'financial' && <FinancialSection />}
           {currentSection === 'tasks' && <EventTaskSection />}
         </Main>
       </EventPageContent>

@@ -16,21 +16,21 @@ import {
 } from './styles';
 import { useAuth } from '../../../hooks/auth';
 import { useFriends } from '../../../hooks/friends';
+import { useEvent } from '../../../hooks/event';
+import { useEventVariables } from '../../../hooks/eventVariables';
 
 interface IProps {
-  handleCreateEventDrawer: Function;
   handleUploadFileWindow: Function;
 }
 
-const MenuDrawer: React.FC<IProps> = ({
-  handleCreateEventDrawer,
-  handleUploadFileWindow,
-}: IProps) => {
+const MenuDrawer: React.FC<IProps> = ({ handleUploadFileWindow }: IProps) => {
   const history = useHistory();
+  const { handleCreateEventWindow } = useEvent();
   const { handleSignOut } = useAuth();
   const { colors } = useContext(ThemeContext);
   const clientId = process.env.REACT_APP_URL_GOOGLE_CLIENT_ID;
   const { getFriends, getFriendRequests } = useFriends();
+  const { unsetVariables } = useEventVariables();
 
   const { toggleTheme, themeBoolean } = useToggleTheme();
 
@@ -42,6 +42,7 @@ const MenuDrawer: React.FC<IProps> = ({
   );
 
   async function navigateToFriendsPage(): Promise<void> {
+    unsetVariables();
     await getFriends();
     await getFriendRequests();
     navigateTo('/friends');
@@ -51,10 +52,11 @@ const MenuDrawer: React.FC<IProps> = ({
     clientId: clientId || '',
   });
 
-  const handleUserSignOut = useCallback(() => {
+  function handleUserSignOut(): void {
+    unsetVariables();
     handleSignOut();
     signOut();
-  }, [handleSignOut, signOut]);
+  }
 
   return (
     <Container>
@@ -75,7 +77,7 @@ const MenuDrawer: React.FC<IProps> = ({
         </ToggleButton>
       </MenuItemContainer>
       <MenuItemContainer>
-        <button type="button" onClick={() => handleCreateEventDrawer()}>
+        <button type="button" onClick={() => handleCreateEventWindow()}>
           <h3>Criar Evento</h3>
         </button>
       </MenuItemContainer>

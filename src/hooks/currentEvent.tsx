@@ -91,6 +91,7 @@ const CurrentEventProvider: React.FC = ({ children }) => {
   const [currentSection, setCurrentSection] = useState('Notes');
 
   const calculateTotalEventCost = useCallback(() => {
+    if (hiredSuppliers.length <= 0) return;
     const totalCost: number = hiredSuppliers
       .map(supplier => {
         let cost = 0;
@@ -192,7 +193,8 @@ const CurrentEventProvider: React.FC = ({ children }) => {
         const response = await api.get<IEventBudgetDTO>(
           `/event-budget/${eventId}`,
         );
-        handleEventBudget(response.data);
+        console.log(response);
+        response.data && response.data.id && handleEventBudget(response.data);
       }
     } catch (err) {
       throw new Error(err);

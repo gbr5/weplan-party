@@ -41,6 +41,7 @@ import getValidationErrors from '../../utils/getValidationErros';
 import WindowContainer from '../WindowContainer';
 import MenuButton from '../MenuButton';
 import UserProfileManagementWindow from '../UserProfileManagementWindow';
+import { useEventVariables } from '../../hooks/eventVariables';
 
 interface ICreateAppointment {
   subject: string;
@@ -68,6 +69,7 @@ const PageHeader: React.FC = () => {
   const { colors } = useContext(ThemeContext);
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
+  const { unsetVariables } = useEventVariables();
 
   const [appointmentsWindow, setAppointmentsWindow] = useState(false);
   const [appointments, setAppointments] = useState<IAppointmentDTO[]>([]);
@@ -333,9 +335,10 @@ const PageHeader: React.FC = () => {
     }
   }, [addToast, appointment.id, handleGetAppointments]);
 
-  const handleNavigateToDashboard = useCallback(() => {
+  function handleNavigateToDashboard(): void {
+    unsetVariables();
     history.push('/dashboard');
-  }, [history]);
+  }
 
   useEffect(() => {
     handleGetAppointments();

@@ -2,6 +2,7 @@ import React, { ReactElement, useCallback, useRef, useState } from 'react';
 import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
 
+import { addDays } from 'date-fns/esm';
 import { useEventTasks } from '../../../../hooks/eventTasks';
 import { useEventVariables } from '../../../../hooks/eventVariables';
 
@@ -23,6 +24,9 @@ import {
 import Button from '../../../Button';
 import Input from '../../../Input';
 import { useToast } from '../../../../hooks/toast';
+import { TimePickerLine } from '../../../DatePickerLine';
+import formatOnlyDateShort from '../../../../utils/formatOnlyDateShort';
+import { DatePickerLine } from '../../../TimePickerLine';
 
 interface IFormData {
   title: string;
@@ -30,12 +34,10 @@ interface IFormData {
 
 export function NewTaskForm(): ReactElement {
   const { addToast } = useToast();
-  const { selectedEvent } = useEventVariables();
+  const { selectedEvent, selectedEventTask } = useEventVariables();
   const {
     createTask,
     loading,
-    taskDate,
-    handleSelectTaskDateWindow,
     handleSelectTaskTimeWindow,
     handleCreateTaskWindow,
   } = useEventTasks();
@@ -44,6 +46,8 @@ export function NewTaskForm(): ReactElement {
   const [selectedPriority, setPriority] = useState<'low' | 'neutral' | 'high'>(
     'low',
   );
+
+  const [selectedDate, setSelectedDate] = useState(addDays(new Date(), 3));
 
   const handleSubmit = useCallback(
     async ({ title }: IFormData) => {
@@ -56,7 +60,7 @@ export function NewTaskForm(): ReactElement {
         await createTask({
           event_id: selectedEvent.id,
           title,
-          due_date: taskDate,
+          due_date: selectedDate,
           priority: selectedPriority,
           status: 'not started',
         });
@@ -78,13 +82,31 @@ export function NewTaskForm(): ReactElement {
       addToast,
       createTask,
       selectedEvent,
-      taskDate,
+      selectedDate,
       selectedPriority,
     ],
   );
 
   function selectTaskPriority(data: 'low' | 'neutral' | 'high'): void {
     setPriority(data);
+  }
+
+  async function handleUpdateTaskDueDate(date: Date): Promise<void> {
+    if (
+      formatOnlyDateShort(String(date)) ===
+      formatOnlyDateShort(String(setSelectedDate))
+    )
+      return;
+    setSelectedDate(date);
+  }
+
+  async function handleUpdateTaskDueTime(date: Date): Promise<void> {
+    if (
+      formatOnlyTime(String(date)) ===
+      formatOnlyTime(String(selectedEventTask.due_date))
+    )
+      return;
+    setSelectedDate(date);
   }
 
   return (
@@ -107,26 +129,28 @@ export function NewTaskForm(): ReactElement {
             autoCapitalize="words"
             placeholder="Defina o título da tarefa"
           />
+          <SelectTaskPriorityComponent
+            handleTaskPriority={(data: 'low' | 'neutral' | 'high') =>
+              selectTaskPriority(data)
+            }
+            selectedPriority={selectedPriority}
+          />
+          <FormQuestion>Data prevista</FormQuestion>
+          <DateContainer>
+            <TimePickerLine
+              handleSelectedDate={handleUpdateTaskDueTime}
+              selectedDate={selectedDate}
+            />
+            <DatePickerLine
+              handleSelectedDate={handleUpdateTaskDueDate}
+              selectedDate={selectedDate}
+            />
+          </DateContainer>
+          <Button loading={loading} type="submit">
+            Salvar
+          </Button>
         </Form>
-        <SelectTaskPriorityComponent
-          handleTaskPriority={(data: 'low' | 'neutral' | 'high') =>
-            selectTaskPriority(data)
-          }
-          selectedPriority={selectedPriority}
-        />
-        <FormQuestion>Data prevista</FormQuestion>
-        <DateContainer>
-          <DateButton onClick={handleSelectTaskDateWindow}>
-            <DateText>{formatOnlyDate(String(taskDate))}</DateText>
-          </DateButton>
-          <DateButton onClick={handleSelectTaskTimeWindow}>
-            <TimeText>{formatOnlyTime(String(taskDate))}</TimeText>
-          </DateButton>
-        </DateContainer>
       </Container>
-      <Button loading={loading} onClick={() => formRef.current?.submitForm()}>
-        Salvar
-      </Button>
     </WindowUnFormattedContainer>
   );
 }

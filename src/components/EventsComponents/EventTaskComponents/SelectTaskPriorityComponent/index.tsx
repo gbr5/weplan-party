@@ -14,6 +14,7 @@ export function SelectTaskPriorityComponent({
   handleTaskPriority,
   selectedPriority,
 }: IProps): ReactElement {
+  const iconSize = 40;
   function selectTaskPriority({ priority }: IPriorityButton): void {
     handleTaskPriority(priority);
   }
@@ -29,7 +30,7 @@ export function SelectTaskPriorityComponent({
             })
           }
         >
-          <FiFlag color="#007500" />
+          <FiFlag size={iconSize} color="#007500" />
         </IconButton>
         <IconButton
           isActive={selectedPriority === 'neutral'}
@@ -39,7 +40,7 @@ export function SelectTaskPriorityComponent({
             })
           }
         >
-          <FiFlag color="#1f4fff" />
+          <FiFlag size={iconSize} color="#1f4fff" />
         </IconButton>
         <IconButton
           isActive={selectedPriority === 'high'}
@@ -49,7 +50,7 @@ export function SelectTaskPriorityComponent({
             })
           }
         >
-          <FiFlag color="#ff3030" />
+          <FiFlag size={iconSize} color="#ff3030" />
         </IconButton>
       </IconContainer>
     </Container>

@@ -10,6 +10,7 @@ import { EventTransactionButtonInfo } from '../EventTransactionButtonInfo';
 
 import {
   Container,
+  OutContainer,
   TextContainer,
   Sign,
   Name,
@@ -79,7 +80,7 @@ export function EventTransactionButton({
   const year = new Date(eventTransaction.transaction.due_date).getFullYear();
 
   return (
-    <>
+    <OutContainer>
       {firstOfYear && (
         <>
           <Underline />
@@ -164,6 +165,6 @@ export function EventTransactionButton({
         !eventTransaction.transaction.isCancelled && (
           <EventTransactionButtonInfo />
         )}
-    </>
+    </OutContainer>
   );
 }

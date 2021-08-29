@@ -29,6 +29,8 @@ import GuestToUserMessageWindow from '../../components/GuestToUserMessageWindow'
 import DeleteEventQuestionWindow from './DeleteEventQuestionWindow';
 import { useEvent } from '../../hooks/event';
 import { useCurrentEvent } from '../../hooks/currentEvent';
+import { CreateEvent } from '../../components/EventsComponents/CreateEvent';
+import { useEventVariables } from '../../hooks/eventVariables';
 
 const Dashboard: React.FC = () => {
   const { user, handleSignOut } = useAuth();
@@ -39,8 +41,10 @@ const Dashboard: React.FC = () => {
     getEventsAsOwner,
     getEventsAsMember,
     getEventsAsGuest,
+    createEventWindow,
   } = useEvent();
   const { handleSelectedEvent } = useCurrentEvent();
+  const { unsetVariables } = useEventVariables();
   const { addToast } = useToast();
   const history = useHistory();
 
@@ -108,15 +112,13 @@ const Dashboard: React.FC = () => {
     setDeleteEventWindow(true);
   }, []);
 
-  const handleMyEventDashboard = useCallback(
-    (event: IEventDTO) => {
-      handleSelectedEvent(event);
-      history.push(`/dashboard/my-event/${event.trimmed_name}`, {
-        params: event,
-      });
-    },
-    [history, handleSelectedEvent],
-  );
+  function handleMyEventDashboard(event: IEventDTO): void {
+    unsetVariables();
+    handleSelectedEvent(event);
+    history.push(`/dashboard/my-event/${event.trimmed_name}`, {
+      params: event,
+    });
+  }
 
   const handleSelectedEventAsGuest = useCallback((props: IEventGuestDTO) => {
     setSelectedEventAsGuest(props);
@@ -180,94 +182,103 @@ const Dashboard: React.FC = () => {
   );
 
   return (
-    <Container>
-      <PageHeader />
-      {!!createPersonInfoWindow && (
-        <CreatePersonInfoWindowForm
-          getPersonInfo={getPersonInfo}
-          handleCloseWindow={closeCreatePersonInfoWindow}
-        />
-      )}
-      {guestToUserMessageWindow && (
-        <GuestToUserMessageWindow
-          getEventsAsGuest={getEventsAsGuest}
-          eventGuest={selectedEventAsGuest}
-          onHandleCloseWindow={() => setGuestToUserMessageWindow(false)}
-        />
-      )}
-      {!!deleteEventWindow && (
-        <DeleteEventQuestionWindow
-          closeWindow={() => setDeleteEventWindow(false)}
-          question="Tem certeza de que deseja deletar o evento?"
-          deleteEvent={() => handleDeleteEventQuestion(eventToDelete)}
-        />
-      )}
-      <Content>
-        <MiddlePage>
-          <MyNextEventSection handleMyEventDashboard={handleMyEventDashboard} />
-          <BottomPage>
-            <BottomSection>
-              <div>
-                <strong>Minhas Festas</strong>
+    <>
+      {createEventWindow && <CreateEvent />}
+
+      <Container>
+        <PageHeader />
+        {!!createPersonInfoWindow && (
+          <CreatePersonInfoWindowForm
+            getPersonInfo={getPersonInfo}
+            handleCloseWindow={closeCreatePersonInfoWindow}
+          />
+        )}
+        {guestToUserMessageWindow && (
+          <GuestToUserMessageWindow
+            getEventsAsGuest={getEventsAsGuest}
+            eventGuest={selectedEventAsGuest}
+            onHandleCloseWindow={() => setGuestToUserMessageWindow(false)}
+          />
+        )}
+        {!!deleteEventWindow && (
+          <DeleteEventQuestionWindow
+            closeWindow={() => setDeleteEventWindow(false)}
+            question="Tem certeza de que deseja deletar o evento?"
+            deleteEvent={() => handleDeleteEventQuestion(eventToDelete)}
+          />
+        )}
+        <Content>
+          <MiddlePage>
+            <MyNextEventSection
+              handleMyEventDashboard={handleMyEventDashboard}
+            />
+            <BottomPage>
+              <BottomSection>
                 <div>
-                  <BooleanNavigationButton
-                    booleanActiveButton={eventOwner}
-                    type="button"
-                    onClick={() => handleEventOwnerOrMember(true)}
-                  >
-                    Anfitrião
-                  </BooleanNavigationButton>
-                  <BooleanNavigationButton
-                    booleanActiveButton={!eventOwner}
-                    type="button"
-                    onClick={() => handleEventOwnerOrMember(false)}
-                  >
-                    Membro
-                  </BooleanNavigationButton>
+                  <strong>Minhas Festas</strong>
+                  <div>
+                    <BooleanNavigationButton
+                      booleanActiveButton={eventOwner}
+                      type="button"
+                      onClick={() => handleEventOwnerOrMember(true)}
+                    >
+                      Anfitrião
+                    </BooleanNavigationButton>
+                    <BooleanNavigationButton
+                      booleanActiveButton={!eventOwner}
+                      type="button"
+                      onClick={() => handleEventOwnerOrMember(false)}
+                    >
+                      Membro
+                    </BooleanNavigationButton>
+                  </div>
                 </div>
-              </div>
 
-              <ul>
-                {eventOwner
-                  ? eventsAsOwner.map(event => {
-                      return (
-                        <li key={event.id}>
-                          <button
-                            type="button"
-                            onClick={() => handleMyEventDashboard(event.event)}
-                          >
-                            <h3>{event.event.name}</h3>
-                          </button>
-                          {event.event.user_id === user.id && (
-                            <FiStar size={16} />
-                          )}
+                <ul>
+                  {eventOwner
+                    ? eventsAsOwner.map(event => {
+                        return (
+                          <li key={event.id}>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleMyEventDashboard(event.event)
+                              }
+                            >
+                              <h3>{event.event.name}</h3>
+                            </button>
+                            {event.event.user_id === user.id && (
+                              <FiStar size={16} />
+                            )}
 
-                          <div>
-                            <DateSection>
-                              {formatStringToDate(String(event.event.date))}
-                            </DateSection>
-                            <span>
-                              {event.event.user_id === user.id ? (
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    handleDeleteMasterEventWindow(event.id)
-                                  }
-                                >
-                                  <FiSettings size={20} />
-                                </button>
-                              ) : (
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    handleDeleteOwnerEventWindow(event.event.id)
-                                  }
-                                >
-                                  <FiSettings size={20} />
-                                </button>
-                              )}
-                            </span>
-                            {/* <button
+                            <div>
+                              <DateSection>
+                                {formatStringToDate(String(event.event.date))}
+                              </DateSection>
+                              <span>
+                                {event.event.user_id === user.id ? (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      handleDeleteMasterEventWindow(event.id)
+                                    }
+                                  >
+                                    <FiSettings size={20} />
+                                  </button>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      handleDeleteOwnerEventWindow(
+                                        event.event.id,
+                                      )
+                                    }
+                                  >
+                                    <FiSettings size={20} />
+                                  </button>
+                                )}
+                              </span>
+                              {/* <button
                               type="button"
                               onClick={() =>
                                 handleMyEventDashboard(event.event)
@@ -275,34 +286,38 @@ const Dashboard: React.FC = () => {
                             >
                               <FiChevronRight size={24} />
                             </button> */}
-                          </div>
-                        </li>
-                      );
-                    })
-                  : eventsAsMember.map(event => {
-                      return (
-                        <li key={event.id}>
-                          <button
-                            type="button"
-                            onClick={() => handleMyEventDashboard(event.event)}
-                          >
-                            <h3>{event.event.name}</h3>
-                          </button>
-                          <div>
-                            <DateSection>
-                              {formatStringToDate(String(event.event.date))}
-                            </DateSection>
-                            <span>
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  handleDeleteMemberEventWindow(event.event.id)
-                                }
-                              >
-                                <FiSettings size={20} />
-                              </button>
-                            </span>
-                            {/* <button
+                            </div>
+                          </li>
+                        );
+                      })
+                    : eventsAsMember.map(event => {
+                        return (
+                          <li key={event.id}>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleMyEventDashboard(event.event)
+                              }
+                            >
+                              <h3>{event.event.name}</h3>
+                            </button>
+                            <div>
+                              <DateSection>
+                                {formatStringToDate(String(event.event.date))}
+                              </DateSection>
+                              <span>
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    handleDeleteMemberEventWindow(
+                                      event.event.id,
+                                    )
+                                  }
+                                >
+                                  <FiSettings size={20} />
+                                </button>
+                              </span>
+                              {/* <button
                               type="button"
                               onClick={() =>
                                 handleMyEventDashboard(event.event)
@@ -310,34 +325,35 @@ const Dashboard: React.FC = () => {
                             >
                               <FiChevronRight size={24} />
                             </button> */}
-                          </div>
-                        </li>
-                      );
-                    })}
-              </ul>
-            </BottomSection>
-            <BottomSection>
-              <div>
-                <strong>Festas de Amigos</strong>
-              </div>
-              <ul>
-                {eventsAsGuest.map(event => (
-                  <li key={event.id}>
-                    <FriendsEventsSection
-                      selectEventGuest={(e: IEventGuestDTO) =>
-                        handleSelectedEventAsGuest(e)
-                      }
-                      deleteEvent={handleDeleteGuestEventWindow}
-                      eventAsGuest={event}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </BottomSection>
-          </BottomPage>
-        </MiddlePage>
-      </Content>
-    </Container>
+                            </div>
+                          </li>
+                        );
+                      })}
+                </ul>
+              </BottomSection>
+              <BottomSection>
+                <div>
+                  <strong>Festas de Amigos</strong>
+                </div>
+                <ul>
+                  {eventsAsGuest.map(event => (
+                    <li key={event.id}>
+                      <FriendsEventsSection
+                        selectEventGuest={(e: IEventGuestDTO) =>
+                          handleSelectedEventAsGuest(e)
+                        }
+                        deleteEvent={handleDeleteGuestEventWindow}
+                        eventAsGuest={event}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </BottomSection>
+            </BottomPage>
+          </MiddlePage>
+        </Content>
+      </Container>
+    </>
   );
 };
 

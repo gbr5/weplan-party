@@ -7,7 +7,7 @@ export const Container = styled.div`
 `;
 
 export const Title = styled.p`
-  font-size: 24px;
+  font-size: 12px;
   color: var(--letter-color-6);
   text-align: center;
 `;
@@ -27,10 +27,11 @@ export const FormQuestion = styled.p`
 `;
 
 export const DateContainer = styled.div`
+  display: flex;
+  width: 100%;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
-  width: 100%;
+  justify-content: space-around;
 `;
 
 export const DateButton = styled.button`

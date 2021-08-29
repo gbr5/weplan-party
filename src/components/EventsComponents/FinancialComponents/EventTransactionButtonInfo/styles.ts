@@ -12,14 +12,18 @@ export const Container = styled.div`
 `;
 
 export const FieldContainer = styled.div`
+  display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   margin: 8px 0;
   min-height: 48px;
+  position: relative;
 `;
 
 export const CategoryContainer = styled.div`
+  display: flex;
+  position: relative;
   margin: 8px 0;
   width: 100%;
 `;
@@ -36,7 +40,7 @@ export const FieldButtonText = styled.p`
 
 export const FieldLabel = styled.p`
   position: absolute;
-  top: 0;
+  top: 4px;
   left: 8px;
   font-size: 14px;
   color: var(--secondary-color);
@@ -48,6 +52,16 @@ export const Label = styled.p`
   margin-top: 16px;
 `;
 
+export const MainButton = styled.button`
+  background-color: var(--letter-color-1);
+  padding: 8px;
+  border-radius: 8px;
+  border: 0.5px solid var(--secondary-color);
+  align-items: center;
+  justify-content: center;
+  min-width: 100%;
+  position: relative;
+`;
 export const FieldButton = styled.button`
   background-color: var(--letter-color-1);
   padding: 8px;
@@ -56,9 +70,11 @@ export const FieldButton = styled.button`
   align-items: center;
   justify-content: center;
   min-width: 48%;
+  position: relative;
 `;
 
 export const PaidButton = styled.button<IsPaidParams>`
+  display: flex;
   background-color: ${({ color }) => color};
   min-width: 36%;
   padding: 10px;

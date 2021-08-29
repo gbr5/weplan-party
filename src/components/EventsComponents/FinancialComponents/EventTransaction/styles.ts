@@ -10,7 +10,15 @@ interface IsContainerProps {
   isSelected: boolean;
 }
 
+export const OutContainer = styled.div`
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+
 export const Container = styled.button<IsContainerProps>`
+  position: relative;
   width: 100%;
   padding: 8px 4px;
   flex-direction: row;
@@ -101,6 +109,7 @@ export const DayContainer = styled.div`
   justify-content: flex-end;
   /* background-color: var(--letter-color-6); */
   padding: 0 16px;
+  margin-left: auto;
 `;
 
 export const YearContainer = styled.div`
@@ -111,9 +120,11 @@ export const YearContainer = styled.div`
   position: absolute;
   top: 0;
   left: 40%;
+  width: 100%;
 `;
 
 export const MonthContainer = styled.div`
+  display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;

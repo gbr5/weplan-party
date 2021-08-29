@@ -26,6 +26,7 @@ import {
   CategoryContainer,
   Label,
   FieldLabel,
+  MainButton,
 } from './styles';
 import { useEventVariables } from '../../../../hooks/eventVariables';
 import { DatePickerLine } from '../../../TimePickerLine';
@@ -100,19 +101,19 @@ export function EventTransactionButtonInfo(): ReactElement {
     <Container>
       {/* {selectedEventTransaction.transaction.category && ( */}
       <CategoryContainer>
-        <FieldButton onClick={handleEditTransactionCategory}>
+        <MainButton onClick={handleEditTransactionCategory}>
           <FieldLabel>Categoria</FieldLabel>
           <Label>
             {selectedEventTransaction.transaction.category &&
               selectedEventTransaction.transaction.category}
           </Label>
-        </FieldButton>
+        </MainButton>
       </CategoryContainer>
       {/* )} */}
-      <FieldButton onClick={handleEditTransactionName}>
+      <MainButton onClick={handleEditTransactionName}>
         <FieldLabel>Nome</FieldLabel>
         <Label>{selectedEventTransaction.transaction.name}</Label>
-      </FieldButton>
+      </MainButton>
       <FieldContainer>
         <FieldButton onClick={handleEditEventTransactionValueWindow}>
           <FieldButtonText>

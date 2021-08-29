@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 export const Container = styled.button`
   position: absolute;
+  display: flex;
   top: 8px;
   right: 8px;
   background-color: var(--letter-color-1);
@@ -13,5 +14,6 @@ export const Container = styled.button`
   justify-content: center;
   z-index: 2;
   transform: rotateZ(45deg);
-  box-shadow: 1px 1px 2px 2px rgba(0, 0, 0, 0.2);
+  border: none;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
 `;
