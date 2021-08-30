@@ -13,6 +13,7 @@ export const TransactionTitleContainer = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
+  margin-bottom: 8px;
 `;
 
 export const TransactionTitleButton = styled.button<IProps>`
@@ -105,7 +106,12 @@ export const SectionUnderline = styled.div`
 
 export const TransactionsContainer = styled.div`
   width: 100%;
-  height: 240px;
+  height: 550px;
+  margin-top: 16px;
   border-radius: 8px;
-  border: 0.4px solid #e1e0e0;
+  border: none;
+  background-color: var(--letter-color-1);
+  padding: 8px;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
+  overflow-y: scroll;
 `;

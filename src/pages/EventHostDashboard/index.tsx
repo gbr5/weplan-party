@@ -79,6 +79,8 @@ import { FinancialSection } from '../../components/EventsComponents/FinancialCom
 import { EventSupplierAgreementTransactionsWindow } from '../../components/EventsComponents/FinancialComponents/EventSupplierAgreementTransactionsWindow';
 
 import { Container, EventPageContent, Main } from './styles';
+import { TransactionFilesWindow } from '../../components/TransactionComponents/TransactionFilesWindow';
+import { TransactionNotesWindow } from '../../components/TransactionComponents/TransactionNotesWindow';
 
 interface IUserInfoDTO {
   id: string;
@@ -131,6 +133,8 @@ const EventHostDashboard: React.FC = () => {
     editEventTransactionValueWindow,
     editNewTransactionValueWindow,
     newEventSupplierTransactionAgreement,
+    transactionFilesWindow,
+    transactionNotesWindow,
   } = useTransaction();
   const { createEventNoteWindow, editNoteWindow } = useNote();
 
@@ -439,6 +443,9 @@ const EventHostDashboard: React.FC = () => {
         eventSupplierAgreementTransactionsWindow && (
           <EventSupplierAgreementTransactionsWindow />
         )}
+      {transactionNotesWindow && <TransactionNotesWindow />}
+      {transactionFilesWindow && <TransactionFilesWindow />}
+
       {/* End of Transaction Windows */}
       {/* Notes Windows */}
       {createEventNoteWindow && <EventNoteForm />}

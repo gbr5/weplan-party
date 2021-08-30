@@ -118,13 +118,13 @@ const SideMenu: React.FC<IProps> = ({ user }: IProps) => {
   }, [user]);
 
   const handleAvatarChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
+    async (e: ChangeEvent<HTMLInputElement>) => {
       if (e.target.files) {
         const data = new FormData();
 
         data.append('avatar', e.target.files[0]);
 
-        api.patch(`/users/avatar/${user.id}`, data).then(response => {
+        await api.patch(`/users/avatar/${user.id}`, data).then(response => {
           updateUser(response.data);
 
           addToast({

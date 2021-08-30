@@ -35,11 +35,13 @@ import InlineFormField from '../../../InlineFormField';
 
 export function EventTransactionButtonInfo(): ReactElement {
   const { getTransactionNotes, selectedTransactionNotes } = useNote();
-  const { selectedEventTransaction } = useEventVariables();
+  const {
+    selectedEventTransaction,
+    selectEventTransaction,
+  } = useEventVariables();
   const {
     editTransaction,
     handleCancelEventTransactionConfirmationWindow,
-    handleSelectedEventTransaction,
     handleEditEventTransactionValueWindow,
     handleTransactionNotesWindow,
     handleTransactionFilesWindow,
@@ -62,7 +64,7 @@ export function EventTransactionButtonInfo(): ReactElement {
         ...selectedEventTransaction.transaction,
         isPaid: !selectedEventTransaction.transaction.isPaid,
       });
-      handleSelectedEventTransaction({
+      selectEventTransaction({
         ...selectedEventTransaction,
         transaction: response,
       });
@@ -80,7 +82,7 @@ export function EventTransactionButtonInfo(): ReactElement {
         ...selectedEventTransaction.transaction,
         due_date,
       });
-      handleSelectedEventTransaction({
+      selectEventTransaction({
         ...selectedEventTransaction,
         transaction: response,
       });
@@ -106,7 +108,7 @@ export function EventTransactionButtonInfo(): ReactElement {
         ...selectedEventTransaction.transaction,
         category,
       });
-      handleSelectedEventTransaction({
+      selectEventTransaction({
         ...selectedEventTransaction,
         transaction: response,
       });
@@ -126,7 +128,7 @@ export function EventTransactionButtonInfo(): ReactElement {
         ...selectedEventTransaction.transaction,
         name,
       });
-      handleSelectedEventTransaction({
+      selectEventTransaction({
         ...selectedEventTransaction,
         transaction: response,
       });

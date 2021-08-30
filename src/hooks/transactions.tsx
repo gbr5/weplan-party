@@ -1,4 +1,4 @@
-import React, { useContext, createContext, useState, useEffect } from 'react';
+import React, { useContext, createContext, useState, ChangeEvent } from 'react';
 import { subDays } from 'date-fns';
 
 import api from '../services/api';
@@ -12,6 +12,7 @@ import IUpdateEventSupplierTransactionAgreementDTO from '../dtos/IUpdateEventSup
 import IEventTransactionDTO from '../dtos/IEventTransactionDTO';
 import { useFiles } from './files';
 import { useEventVariables } from './eventVariables';
+import { useToast } from './toast';
 
 interface INewAgreementDTO {
   amount: number;
@@ -47,9 +48,8 @@ interface TransactionContextType {
   filterTransactionOption: string;
   handleFilterTransactionOption: (data: string) => void;
   cancelEventTransaction: () => Promise<void>;
-  importTransactionFile: (transaction_id: string) => Promise<void>;
   editTransactionFile: (data: IEditTransactionFileDTO) => Promise<void>;
-  importTransactionImage: (transaction_id: string) => Promise<void>;
+  importTransactionFile: (e: ChangeEvent<HTMLInputElement>) => Promise<void>;
   handleTransactionFilesWindow: () => void;
   createSupplierTransactionAgreementWithTransactions: (
     data: ICreateEventSupplierTransactionAgreementWithTransactionsDTO,
@@ -71,7 +71,6 @@ interface TransactionContextType {
   handleNewEventSupplierTransactionAgreement: () => void;
   handleNewAgreement: (data: INewAgreementDTO) => void;
   handleUpdateTransactionDueDate: (data: Date) => void;
-  handleSelectedEventTransaction: (data: IEventTransactionDTO) => void;
   selectTransaction: (data: ITransactionDTO) => void;
   updateEventSupplierTransactionAgreement: (
     data: IUpdateEventSupplierTransactionAgreementDTO,
@@ -81,6 +80,7 @@ interface TransactionContextType {
 const TransactionContext = createContext({} as TransactionContextType);
 
 const TransactionProvider: React.FC = ({ children }) => {
+  const { addToast } = useToast();
   const {
     selectedEventSupplier,
     selectedEvent,
@@ -88,6 +88,8 @@ const TransactionProvider: React.FC = ({ children }) => {
     selectedEventSupplierTransactionAgreement,
     filteredEventTransactions,
     handleFilteredEventTransactions,
+    selectedEventTransaction,
+    selectEventTransaction,
   } = useEventVariables();
   const {
     getEventSuppliers,
@@ -122,9 +124,6 @@ const TransactionProvider: React.FC = ({ children }) => {
   ] = useState(false);
   const [newAgreementAmount, setNewAgreementAmount] = useState(0);
   const [newAgreementInstallments, setNewAgreementInstallments] = useState(1);
-  const [selectedEventTransaction, setSelectedEventTransaction] = useState(
-    {} as IEventTransactionDTO,
-  );
   const [selectedTransaction, setSelectedTransaction] = useState(
     {} as ITransactionDTO,
   );
@@ -167,9 +166,6 @@ const TransactionProvider: React.FC = ({ children }) => {
   }
   function handleToDateTransactionFilter(data: Date): void {
     setToDateTransactionFilter(data);
-  }
-  function handleSelectedEventTransaction(data: IEventTransactionDTO): void {
-    setSelectedEventTransaction(data);
   }
   function handleEditNewTransactionValueWindow(): void {
     setEditNewTransactionValueWindow(!editNewTransactionValueWindow);
@@ -290,7 +286,7 @@ const TransactionProvider: React.FC = ({ children }) => {
       }
       selectedEventTransaction &&
         selectedEventTransaction.transaction &&
-        setSelectedEventTransaction({
+        selectEventTransaction({
           ...selectedEventTransaction,
           transaction: response.data,
         });
@@ -316,7 +312,7 @@ const TransactionProvider: React.FC = ({ children }) => {
     await getEventTransactions(selectedEvent.id);
     oldTransaction.agreement_type === 'supplier' &&
       (await getEventSuppliers(selectedEventTransaction.event_id));
-    setSelectedEventTransaction({
+    selectEventTransaction({
       ...oldTransaction,
       transaction: response,
     });
@@ -449,35 +445,6 @@ const TransactionProvider: React.FC = ({ children }) => {
       setLoading(false);
     }
   }
-  async function importTransactionImage(transaction_id: string): Promise<void> {
-    try {
-      setLoading(true);
-      // const response = await ImagePicker.launchImageLibraryAsync({
-      //   mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      //   allowsEditing: true,
-      //   // aspect: [4, 3],
-      //   quality: 0.5,
-      // });
-      // if (!response.cancelled) {
-      const data = new FormData();
-      // data.append('file', {
-      //   uri: response.uri,
-      //   type: `${response.type}/${response.uri.replace(/^[^\r\n]+\./g, '')}`,
-      //   name: response.uri.replace(/^[^\r\n]+ImagePicker\//g, ''),
-      // });
-      await api.post(`/transaction-files/${transaction_id}`, data);
-      await getEventSuppliers(selectedEvent.id);
-      await getEventTransactions(selectedEvent.id);
-      // }
-    } catch (err) {
-      // if (DocumentPicker.isCancel(err)) {
-      //   return;
-      // }
-      throw new Error(err);
-    } finally {
-      setLoading(false);
-    }
-  }
   async function editTransactionFile({
     id,
     name,
@@ -499,27 +466,36 @@ const TransactionProvider: React.FC = ({ children }) => {
       setLoading(false);
     }
   }
-  async function importTransactionFile(transaction_id: string): Promise<void> {
+  async function importTransactionFile(
+    e: ChangeEvent<HTMLInputElement>,
+  ): Promise<void> {
     try {
       setLoading(true);
-      // const response = await DocumentPicker.pickSingle({
-      //   mode: 'import',
-      //   allowMultiSelection: false,
-      //   type: [DocumentPicker.types.pdf, DocumentPicker.types.images],
-      // });
-      const data = new FormData();
-      // data.append('file', {
-      //   uri: response.uri,
-      //   type: response.type,
-      //   name: response.name,
-      // });
-      await api.post(`/transaction-files/${transaction_id}`, data);
-      await getEventSuppliers(selectedEvent.id);
-      await getEventTransactions(selectedEvent.id);
+      if (e.target.files) {
+        const data = new FormData();
+
+        data.append('file', e.target.files[0]);
+
+        await api.post(
+          `/transaction-files/${selectedEventTransaction.transaction.id}`,
+          data,
+        );
+        addToast({
+          type: 'success',
+          title: 'Avatar atualizado com sucesso.',
+        });
+
+        await getEventSuppliers(selectedEvent.id);
+        await getEventTransactions(selectedEvent.id);
+      } else {
+        addToast({
+          type: 'error',
+          title: 'Erro na atualização',
+          description:
+            'Ocorreu um erro ao atualizar o perfil, tente novamente.',
+        });
+      }
     } catch (err) {
-      // if (DocumentPicker.isCancel(err)) {
-      //   return;
-      // }
       throw new Error(err);
     } finally {
       setLoading(false);
@@ -547,7 +523,6 @@ const TransactionProvider: React.FC = ({ children }) => {
         handleFilterTransactionWindow,
         handleNewAgreement,
         handleNewEventSupplierTransactionAgreement,
-        handleSelectedEventTransaction,
         handleUpdateTransactionDueDate,
         loading,
         newEventSupplierTransactionAgreement,
@@ -572,7 +547,6 @@ const TransactionProvider: React.FC = ({ children }) => {
         transactionFilesWindow,
         importTransactionFile,
         editTransactionFile,
-        importTransactionImage,
       }}
     >
       {children}

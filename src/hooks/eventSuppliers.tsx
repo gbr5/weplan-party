@@ -4,6 +4,7 @@ import React, {
   useState,
   useMemo,
   useEffect,
+  ChangeEvent,
 } from 'react';
 
 import api from '../services/api';
@@ -19,6 +20,7 @@ import IUpdateEventSupplierTransactionAgreementDTO from '../dtos/IUpdateEventSup
 import ICreateEventSupplierBudgetDTO from '../dtos/ICreateEventSupplierBudgetDTO';
 import IEventSupplierBudgetDTO from '../dtos/IEventSupplierBudgetDTO';
 import { useEventVariables } from './eventVariables';
+import { useToast } from './toast';
 
 interface IUpdateAgreementAndTransactionsDTO {
   id: string;
@@ -87,8 +89,7 @@ interface EventSuppliersContextType {
   handleCancelFutureTransactionsWindow: () => void;
   handleCancelNotPaidTransactionsWindow: () => void;
   handleEventSupplierAgreementTransactionsWindow: () => void;
-  importSupplierFile: (supplier_id: string) => Promise<void>;
-  importSupplierImage: (supplier_id: string) => Promise<void>;
+  importSupplierFile: (e: ChangeEvent<HTMLInputElement>) => Promise<void>;
   handleUpdateAgreementAndTransactions: (
     data: IUpdateAgreementAndTransactionsDTO,
   ) => IUpdateEventSupplierTransactionAgreementDTO;
@@ -107,6 +108,7 @@ interface EventSuppliersContextType {
 const EventSuppliersContext = createContext({} as EventSuppliersContextType);
 
 const EventSuppliersProvider: React.FC = ({ children }) => {
+  const { addToast } = useToast();
   const {
     eventSuppliers,
     selectedEvent,
@@ -503,54 +505,33 @@ const EventSuppliersProvider: React.FC = ({ children }) => {
     }
     await getSupplierSubCategories();
   }
-  async function importSupplierImage(supplier_id: string): Promise<void> {
+  async function importSupplierFile(
+    e: ChangeEvent<HTMLInputElement>,
+  ): Promise<void> {
     try {
       setLoading(true);
-      // const response = await ImagePicker.launchImageLibraryAsync({
-      //   mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      //   allowsEditing: true,
-      //   // aspect: [4, 3],
-      //   quality: 0.5,
-      // });
-      // if (!response.cancelled) {
-      const data = new FormData();
-      // data.append('file', {
-      //   uri: response.uri,
-      //   type: `${response.type}/${response.uri.replace(/^[^\r\n]+\./g, '')}`,
-      //   name: response.uri.replace(/^[^\r\n]+ImagePicker\//g, ''),
-      // });
-      await api.post(`/event-supplier-files/${supplier_id}`, data);
-      await getEventSuppliers(selectedEvent.id);
-      // }
+      if (e.target.files) {
+        const data = new FormData();
+
+        data.append('file', e.target.files[0]);
+        await api.post(
+          `/event-supplier-files/${selectedEventSupplier.id}`,
+          data,
+        );
+        addToast({
+          type: 'success',
+          title: 'Avatar atualizado com sucesso.',
+        });
+        await getEventSuppliers(selectedEvent.id);
+      } else {
+        addToast({
+          type: 'error',
+          title: 'Erro na atualização',
+          description:
+            'Ocorreu um erro ao atualizar o perfil, tente novamente.',
+        });
+      }
     } catch (err) {
-      // if (DocumentPicker.isCancel(err)) {
-      //   return;
-      // }
-      throw new Error(err);
-    } finally {
-      setLoading(false);
-    }
-  }
-  async function importSupplierFile(supplier_id: string): Promise<void> {
-    try {
-      setLoading(true);
-      // const response = await DocumentPicker.pickSingle({
-      //   mode: 'import',
-      //   allowMultiSelection: false,
-      //   type: [DocumentPicker.types.pdf, DocumentPicker.types.images],
-      // });
-      const data = new FormData();
-      // data.append('file', {
-      //   uri: response.uri,
-      //   type: response.type,
-      //   name: response.name,
-      // });
-      await api.post(`/event-supplier-files/${supplier_id}`, data);
-      await getEventSuppliers(selectedEvent.id);
-    } catch (err) {
-      // if (DocumentPicker.isCancel(err)) {
-      //   return;
-      // }
       throw new Error(err);
     } finally {
       setLoading(false);
@@ -674,7 +655,6 @@ const EventSuppliersProvider: React.FC = ({ children }) => {
         supplierFilesWindow,
         supplierBudgetsWindow,
         importSupplierFile,
-        importSupplierImage,
         handleSupplierBudgetForm,
         supplierBudgetForm,
         handleSupplierSelectedDateWindow,

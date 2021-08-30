@@ -27,10 +27,12 @@ export function EditTransactionAmount(): ReactElement {
 
   const { addToast } = useToast();
   const { handleUpdateAgreementAndTransactions } = useEventSuppliers();
-  const { selectedEventTransaction } = useEventVariables();
+  const {
+    selectedEventTransaction,
+    selectEventTransaction,
+  } = useEventVariables();
   const {
     editTransaction,
-    handleSelectedEventTransaction,
     handleEditEventTransactionValueWindow,
     updateEventSupplierTransactionAgreement,
   } = useTransaction();
@@ -66,7 +68,7 @@ export function EditTransactionAmount(): ReactElement {
           ...selectedEventTransaction.transaction,
           amount,
         });
-        handleSelectedEventTransaction({
+        selectEventTransaction({
           ...oldEventTransaction,
           transaction: response,
         });

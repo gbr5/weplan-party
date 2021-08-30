@@ -21,16 +21,16 @@ export function SupplierTransactionsWindow(): ReactElement {
     selectedEvent,
     eventTransactions,
     selectEventSupplierTransactionAgreement,
+    selectEventTransaction,
   } = useEventVariables();
   const {
     selectSupplierTransaction,
     handleSupplierTransactionsWindow,
   } = useEventSuppliers();
-  const { handleSelectedEventTransaction } = useTransaction();
 
   function closeWindow(): void {
     handleSupplierTransactionsWindow();
-    handleSelectedEventTransaction({} as IEventTransactionDTO);
+    selectEventTransaction({} as IEventTransactionDTO);
     selectSupplierTransaction({} as IEventSupplierTransactionDTO);
     selectEventSupplierTransactionAgreement(
       {} as IEventSupplierTransactionAgreementDTO,

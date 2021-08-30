@@ -32,7 +32,7 @@ export function NoteForm({
   function submitNote(): void {
     handleNote(textValue);
     setTextValue('');
-    // textAreaRef.current?.clear();
+    if (textAreaRef.current) textAreaRef.current.value = '';
   }
 
   function handleChange(): void {
