@@ -20,10 +20,10 @@ export function SupplierTransactionsWindow(): ReactElement {
     selectedEventSupplier,
     selectedEvent,
     eventTransactions,
+    selectEventSupplierTransactionAgreement,
   } = useEventVariables();
   const {
     selectSupplierTransaction,
-    selectSupplierTransactionAgreement,
     handleSupplierTransactionsWindow,
   } = useEventSuppliers();
   const { handleSelectedEventTransaction } = useTransaction();
@@ -32,7 +32,7 @@ export function SupplierTransactionsWindow(): ReactElement {
     handleSupplierTransactionsWindow();
     handleSelectedEventTransaction({} as IEventTransactionDTO);
     selectSupplierTransaction({} as IEventSupplierTransactionDTO);
-    selectSupplierTransactionAgreement(
+    selectEventSupplierTransactionAgreement(
       {} as IEventSupplierTransactionAgreementDTO,
     );
   }

@@ -28,6 +28,7 @@ import {
 import formatOnlyTime from '../../../../utils/formatOnlyTime';
 import { TimePickerLine } from '../../../DatePickerLine';
 import { DatePickerLine } from '../../../TimePickerLine';
+import InlineFormField from '../../../InlineFormField';
 
 export function EventTaskBody(): ReactElement {
   const iconSize = 40;
@@ -74,6 +75,18 @@ export function EventTaskBody(): ReactElement {
     }
   }
 
+  async function handleUpdateTaskTitle(title: string): Promise<void> {
+    if (title === selectedEventTask.title || title === '') return;
+    try {
+      await updateTask({
+        ...selectedEventTask,
+        title,
+      });
+    } catch {
+      throw new Error();
+    }
+  }
+
   const status = useMemo(() => {
     if (selectedEventTask.status === 'not started')
       return {
@@ -110,6 +123,11 @@ export function EventTaskBody(): ReactElement {
 
   return (
     <Container>
+      <InlineFormField
+        defaultValue={selectedEventTask.title}
+        handleOnSubmit={handleUpdateTaskTitle}
+        placeholder={selectedEventTask.title}
+      />
       <Menu>
         <MenuButton onClick={handleEditTaskStatusWindow}>
           <MenuTitle>Status</MenuTitle>

@@ -21,8 +21,11 @@ const EditEventBudgetWindow: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
   const { eventBudget } = useEventVariables();
-  const { updateEventBudget, createEventBudget } = useCurrentEvent();
-  const { handleEventBudgetWindow } = useEvent();
+  const {
+    updateEventBudget,
+    createEventBudget,
+    handleBudgetWindow,
+  } = useCurrentEvent();
 
   const handleSubmit = useCallback(
     async (data: IFormProps) => {
@@ -38,11 +41,12 @@ const EditEventBudgetWindow: React.FC = () => {
         });
 
         const { budget } = data;
+        console.log({ budget });
 
         if (eventBudget && eventBudget.id) {
           const { id, event_id } = eventBudget;
           await updateEventBudget({
-            budget,
+            budget: Number(budget),
             id,
             event_id,
           });
@@ -50,7 +54,7 @@ const EditEventBudgetWindow: React.FC = () => {
           await createEventBudget(budget);
         }
 
-        handleEventBudgetWindow();
+        handleBudgetWindow();
         addToast({
           type: 'success',
           title: 'Informações editadas com sucesso',
@@ -72,7 +76,7 @@ const EditEventBudgetWindow: React.FC = () => {
     [
       addToast,
       eventBudget,
-      handleEventBudgetWindow,
+      handleBudgetWindow,
       updateEventBudget,
       createEventBudget,
     ],
@@ -80,7 +84,7 @@ const EditEventBudgetWindow: React.FC = () => {
 
   return (
     <WindowUnFormattedContainer
-      onHandleCloseWindow={handleEventBudgetWindow}
+      onHandleCloseWindow={handleBudgetWindow}
       containerStyle={{
         zIndex: 10,
         top: '29vh',
@@ -92,7 +96,7 @@ const EditEventBudgetWindow: React.FC = () => {
       <Form ref={formRef} onSubmit={handleSubmit}>
         <Container>
           <span>
-            <h2>Novo Orçamento</h2>
+            <h2>Orçamento</h2>
 
             <Input
               name="budget"
@@ -100,7 +104,7 @@ const EditEventBudgetWindow: React.FC = () => {
               defaultValue={
                 eventBudget && eventBudget.id ? eventBudget.budget : 0
               }
-              type="text"
+              type="number"
             />
 
             <button type="submit">

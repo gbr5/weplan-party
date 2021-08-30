@@ -12,6 +12,9 @@ export const TitleButton = styled.button`
   width: 100%;
   align-items: center;
   justify-content: center;
+  border: none;
+  background-color: transparent;
+  margin-bottom: 16px;
 `;
 
 export const Title = styled.p`
@@ -89,19 +92,21 @@ export const ResumeValue = styled.p`
 `;
 
 export const SectionButton = styled.div`
+  display: flex;
   width: 100%;
   padding: 8px;
   padding-right: 18px;
   margin-top: 4px;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
 `;
 
 export const MenuButton = styled.button<IMenuButtonProps>`
   flex-direction: row;
   /* width: 180px; */
   width: 32%;
+  max-width: 160px;
   height: 40px;
   border-radius: 5px;
   ${({ isActive }) =>
@@ -110,7 +115,7 @@ export const MenuButton = styled.button<IMenuButtonProps>`
           background-color: var(--primary-color);
         `
       : css`
-          background-color: var(--secondary-color);
+          background-color: var(--letter-color-2);
         `};
   /* margin: 0 8px; */
   align-items: center;

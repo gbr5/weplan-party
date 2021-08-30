@@ -35,7 +35,11 @@ import {
 } from './styles';
 
 export function CancelAllAgreements(): ReactElement {
-  const { selectedEventSupplier } = useEventVariables();
+  const {
+    selectedEventSupplier,
+    selectedEventSupplierTransactionAgreement,
+    selectEventSupplierTransactionAgreement,
+  } = useEventVariables();
   const {
     dischargeOption,
     supplierTransactions,
@@ -43,8 +47,6 @@ export function CancelAllAgreements(): ReactElement {
     handleDischargingWindow,
     handleCancelAllAgreementsWindow,
     handleDichargeOption,
-    selectSupplierTransactionAgreement,
-    selectedSupplierTransactionAgreement,
   } = useEventSuppliers();
   const {
     updateEventSupplierTransactionAgreement,
@@ -64,7 +66,7 @@ export function CancelAllAgreements(): ReactElement {
   );
 
   function closeWindow(): void {
-    selectSupplierTransactionAgreement(
+    selectEventSupplierTransactionAgreement(
       {} as IEventSupplierTransactionAgreementDTO,
     );
     setDeleteAllConfirmationWindow(false);
@@ -78,7 +80,7 @@ export function CancelAllAgreements(): ReactElement {
   function handleSelectAgreement(
     data: IEventSupplierTransactionAgreementDTO,
   ): void {
-    selectSupplierTransactionAgreement(data);
+    selectEventSupplierTransactionAgreement(data);
   }
 
   function cancelAgreementSelectedTransactions({
@@ -138,10 +140,10 @@ export function CancelAllAgreements(): ReactElement {
     const today = new Date();
     if (dischargeOption === 'all' || dischargeOption === 'edit') {
       if (
-        selectedSupplierTransactionAgreement.id &&
-        selectedSupplierTransactionAgreement.transactions.length > 0
+        selectedEventSupplierTransactionAgreement.id &&
+        selectedEventSupplierTransactionAgreement.transactions.length > 0
       ) {
-        const updatedTransactions = selectedSupplierTransactionAgreement.transactions
+        const updatedTransactions = selectedEventSupplierTransactionAgreement.transactions
           .filter(transaction => !transaction.transaction.isCancelled)
           .map(transaction => transaction.transaction)
           .sort((a, b) => {
@@ -188,7 +190,7 @@ export function CancelAllAgreements(): ReactElement {
     }
     return undefined;
   }, [
-    selectedSupplierTransactionAgreement,
+    selectedEventSupplierTransactionAgreement,
     supplierTransactions,
     dischargeOption,
   ]);
@@ -245,14 +247,15 @@ export function CancelAllAgreements(): ReactElement {
                   return (
                     <AgreementContainer
                       isActive={
-                        selectedSupplierTransactionAgreement.id === agreement.id
+                        selectedEventSupplierTransactionAgreement.id ===
+                        agreement.id
                       }
                       onClick={() => handleSelectAgreement(agreement)}
                       key={agreement.id}
                     >
                       <AgreementIndex
                         isActive={
-                          selectedSupplierTransactionAgreement.id ===
+                          selectedEventSupplierTransactionAgreement.id ===
                           agreement.id
                         }
                       >
@@ -263,7 +266,7 @@ export function CancelAllAgreements(): ReactElement {
                       >
                         <AgreementValue
                           isActive={
-                            selectedSupplierTransactionAgreement.id ===
+                            selectedEventSupplierTransactionAgreement.id ===
                             agreement.id
                           }
                         >
@@ -271,7 +274,7 @@ export function CancelAllAgreements(): ReactElement {
                         </AgreementValue>
                         <NumberOfInstallments
                           isActive={
-                            selectedSupplierTransactionAgreement.id ===
+                            selectedEventSupplierTransactionAgreement.id ===
                             agreement.id
                           }
                         >
@@ -280,7 +283,7 @@ export function CancelAllAgreements(): ReactElement {
                       </AgreementButton>
                       <AgreementDate
                         isActive={
-                          selectedSupplierTransactionAgreement.id ===
+                          selectedEventSupplierTransactionAgreement.id ===
                           agreement.id
                         }
                       >
@@ -298,7 +301,7 @@ export function CancelAllAgreements(): ReactElement {
               <Title>Transações</Title>
 
               <TransactionTitleButton
-                isActive={!selectedSupplierTransactionAgreement.id}
+                isActive={!selectedEventSupplierTransactionAgreement.id}
                 onClick={() =>
                   handleSelectAgreement(
                     {} as IEventSupplierTransactionAgreementDTO,
@@ -306,7 +309,7 @@ export function CancelAllAgreements(): ReactElement {
                 }
               >
                 <TransactionTitleText
-                  isActive={!selectedSupplierTransactionAgreement.id}
+                  isActive={!selectedEventSupplierTransactionAgreement.id}
                 >
                   Todas
                 </TransactionTitleText>
@@ -331,14 +334,15 @@ export function CancelAllAgreements(): ReactElement {
                   return (
                     <AgreementContainer
                       isActive={
-                        selectedSupplierTransactionAgreement.id === agreement.id
+                        selectedEventSupplierTransactionAgreement.id ===
+                        agreement.id
                       }
                       onClick={() => handleSelectAgreement(agreement)}
                       key={agreement.id}
                     >
                       <AgreementIndex
                         isActive={
-                          selectedSupplierTransactionAgreement.id ===
+                          selectedEventSupplierTransactionAgreement.id ===
                           agreement.id
                         }
                       >
@@ -349,7 +353,7 @@ export function CancelAllAgreements(): ReactElement {
                       >
                         <AgreementValue
                           isActive={
-                            selectedSupplierTransactionAgreement.id ===
+                            selectedEventSupplierTransactionAgreement.id ===
                             agreement.id
                           }
                         >
@@ -357,7 +361,7 @@ export function CancelAllAgreements(): ReactElement {
                         </AgreementValue>
                         <NumberOfInstallments
                           isActive={
-                            selectedSupplierTransactionAgreement.id ===
+                            selectedEventSupplierTransactionAgreement.id ===
                             agreement.id
                           }
                         >
@@ -366,7 +370,7 @@ export function CancelAllAgreements(): ReactElement {
                       </AgreementButton>
                       <AgreementDate
                         isActive={
-                          selectedSupplierTransactionAgreement.id ===
+                          selectedEventSupplierTransactionAgreement.id ===
                           agreement.id
                         }
                       >
@@ -384,7 +388,7 @@ export function CancelAllAgreements(): ReactElement {
               <Title>Transações</Title>
 
               <TransactionTitleButton
-                isActive={!selectedSupplierTransactionAgreement.id}
+                isActive={!selectedEventSupplierTransactionAgreement.id}
                 onClick={() =>
                   handleSelectAgreement(
                     {} as IEventSupplierTransactionAgreementDTO,
@@ -392,7 +396,7 @@ export function CancelAllAgreements(): ReactElement {
                 }
               >
                 <TransactionTitleText
-                  isActive={!selectedSupplierTransactionAgreement.id}
+                  isActive={!selectedEventSupplierTransactionAgreement.id}
                 >
                   Todas
                 </TransactionTitleText>
@@ -422,7 +426,7 @@ export function CancelAllAgreements(): ReactElement {
         {supplierTransactions &&
           supplierTransactions.length > 0 &&
           dischargeOption === 'all' &&
-          !selectedSupplierTransactionAgreement.id && (
+          !selectedEventSupplierTransactionAgreement.id && (
             <TransactionsContainer>
               {supplierTransactions.map(item => {
                 const index = String(
@@ -447,7 +451,7 @@ export function CancelAllAgreements(): ReactElement {
         {supplierTransactions &&
           supplierTransactions.length > 0 &&
           dischargeOption === 'edit' &&
-          !selectedSupplierTransactionAgreement.id && (
+          !selectedEventSupplierTransactionAgreement.id && (
             <TransactionsContainer>
               {supplierTransactions.map(item => {
                 const index = String(
@@ -472,7 +476,7 @@ export function CancelAllAgreements(): ReactElement {
         {transactions &&
           transactions.length > 0 &&
           dischargeOption === 'all' &&
-          !!selectedSupplierTransactionAgreement.id && (
+          !!selectedEventSupplierTransactionAgreement.id && (
             <TransactionsContainer>
               {transactions.map(item => {
                 const index = String(
@@ -497,7 +501,7 @@ export function CancelAllAgreements(): ReactElement {
         {transactions &&
           transactions.length > 0 &&
           dischargeOption === 'edit' &&
-          !!selectedSupplierTransactionAgreement.id && (
+          !!selectedEventSupplierTransactionAgreement.id && (
             <TransactionsContainer>
               {transactions.map(item => {
                 const index = String(

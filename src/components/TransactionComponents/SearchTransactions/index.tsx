@@ -42,7 +42,6 @@ export function SearchTransactions({
   }
 
   function handleLookForTransaction(data: string): void {
-    console.log(data);
     setFilterString(data);
     if (data === '') return handleEventTransactions(eventTransactions);
     setBackdrop(true);
@@ -54,7 +53,7 @@ export function SearchTransactions({
         formatOnlyDateShort(String(transaction.created_at)).includes(data)
       );
     });
-    console.log(findTransactions);
+
     return handleEventTransactions(findTransactions);
   }
 

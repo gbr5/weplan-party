@@ -8,4 +8,6 @@ export const Container = styled.button`
   border-radius: 5px;
   background-color: var(--primary-color);
   padding: 4px;
+  border: none;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
 `;

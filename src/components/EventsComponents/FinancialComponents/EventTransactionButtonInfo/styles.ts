@@ -5,10 +5,24 @@ interface IsPaidParams {
 }
 
 export const Container = styled.div`
+  top: -16px;
+  position: relative;
   width: 100%;
   padding: 8px;
+  padding-top: 24px;
   background-color: var(--letter-color-2);
-  border: 0.5px solid var(--letter-color-3);
+  border: none;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
+`;
+
+export const FirstContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  @media (max-width: 800px) {
+    flex-direction: column;
+  }
 `;
 
 export const FieldContainer = styled.div`
@@ -22,10 +36,17 @@ export const FieldContainer = styled.div`
 `;
 
 export const CategoryContainer = styled.div`
-  display: flex;
   position: relative;
+  display: flex;
+  width: 99%;
+  align-items: center;
+  justify-content: space-around;
   margin: 8px 0;
-  width: 100%;
+  padding-top: 16px;
+  border-radius: 5px;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
+  background-color: var(--letter-color-1);
+  margin: 4px;
 `;
 
 export const FieldText = styled.p`
@@ -61,6 +82,8 @@ export const MainButton = styled.button`
   justify-content: center;
   min-width: 100%;
   position: relative;
+  border: none;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
 `;
 export const FieldButton = styled.button`
   background-color: var(--letter-color-1);
@@ -71,6 +94,8 @@ export const FieldButton = styled.button`
   justify-content: center;
   min-width: 48%;
   position: relative;
+  border: none;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
 `;
 
 export const PaidButton = styled.button<IsPaidParams>`
@@ -84,6 +109,8 @@ export const PaidButton = styled.button<IsPaidParams>`
   justify-content: center;
   flex-direction: row;
   justify-content: space-around;
+  border: none;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
 `;
 
 export const DeleteButton = styled.button`
@@ -93,6 +120,8 @@ export const DeleteButton = styled.button`
   border: 1px solid black;
   align-items: center;
   justify-content: center;
+  border: none;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
 `;
 
 export const ReceiptButton = styled.button`
@@ -102,4 +131,6 @@ export const ReceiptButton = styled.button`
   border: 1px solid black;
   align-items: center;
   justify-content: center;
+  border: none;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
 `;

@@ -5,10 +5,6 @@ interface IAmountProps {
   isPaid: boolean;
 }
 
-interface IsActiveProps {
-  isActive: boolean;
-}
-
 export const Container = styled.button`
   display: flex;
   width: 100%;
@@ -16,6 +12,9 @@ export const Container = styled.button`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  border: none;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
+  border-radius: 5px;
 `;
 
 export const TextContainer = styled.div`
@@ -77,6 +76,7 @@ export const InfoButton = styled.button`
   align-items: center;
   justify-content: center;
   border-radius: 16px;
+  border: none;
 `;
 
 export const Underline = styled.div`

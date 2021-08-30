@@ -77,7 +77,15 @@ export function EventTransactionButton({
     () => formatOnlyDateShort(String(eventTransaction.transaction.due_date)),
     [eventTransaction],
   );
+
   const year = new Date(eventTransaction.transaction.due_date).getFullYear();
+
+  const isSelected = useMemo(() => {
+    return selectedEventTransaction && selectedEventTransaction.transaction
+      ? eventTransaction.transaction.id ===
+          selectedEventTransaction.transaction.id
+      : false;
+  }, [selectedEventTransaction, eventTransaction]);
 
   return (
     <OutContainer>
@@ -107,12 +115,10 @@ export function EventTransactionButton({
       )}
 
       <Container
-        isSelected={
-          selectedEventTransaction &&
-          selectedEventTransaction.transaction &&
-          eventTransaction.transaction.id ===
-            selectedEventTransaction.transaction.id
-        }
+        style={{
+          zIndex: isSelected ? 3 : 1,
+        }}
+        isSelected={isSelected}
         isCancelled={eventTransaction.transaction.isCancelled}
         onClick={handleSelectTransaction}
       >

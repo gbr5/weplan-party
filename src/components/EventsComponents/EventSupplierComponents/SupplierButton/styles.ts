@@ -8,7 +8,13 @@ interface IButtonProps {
   isActive: boolean;
 }
 
+export const OutContainer = styled.div`
+  position: relative;
+`;
+
 export const Container = styled.button<IButtonProps>`
+  position: relative;
+
   display: flex;
   flex-direction: row;
   align-items: center;

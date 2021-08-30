@@ -16,6 +16,7 @@ import { useNote } from '../../../../hooks/notes';
 
 import {
   Container,
+  FirstContainer,
   FieldContainer,
   FieldText,
   FieldButton,
@@ -30,6 +31,7 @@ import {
 } from './styles';
 import { useEventVariables } from '../../../../hooks/eventVariables';
 import { DatePickerLine } from '../../../TimePickerLine';
+import InlineFormField from '../../../InlineFormField';
 
 export function EventTransactionButtonInfo(): ReactElement {
   const { getTransactionNotes, selectedTransactionNotes } = useNote();
@@ -38,8 +40,6 @@ export function EventTransactionButtonInfo(): ReactElement {
     editTransaction,
     handleCancelEventTransactionConfirmationWindow,
     handleSelectedEventTransaction,
-    handleEditTransactionName,
-    handleEditTransactionCategory,
     handleEditEventTransactionValueWindow,
     handleTransactionNotesWindow,
     handleTransactionFilesWindow,
@@ -91,6 +91,52 @@ export function EventTransactionButtonInfo(): ReactElement {
     }
   }
 
+  async function handleUpdateTransactionCategory(
+    category: string,
+  ): Promise<void> {
+    console.log(category);
+    if (
+      category === '' &&
+      category === selectedEventTransaction.transaction.category
+    )
+      return;
+    try {
+      setLoading(true);
+      const response = await editTransaction({
+        ...selectedEventTransaction.transaction,
+        category,
+      });
+      handleSelectedEventTransaction({
+        ...selectedEventTransaction,
+        transaction: response,
+      });
+    } catch (err) {
+      throw new Error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleUpdateTransactionName(name: string): Promise<void> {
+    if (name === '' && name === selectedEventTransaction.transaction.name)
+      return;
+    try {
+      setLoading(true);
+      const response = await editTransaction({
+        ...selectedEventTransaction.transaction,
+        name,
+      });
+      handleSelectedEventTransaction({
+        ...selectedEventTransaction,
+        transaction: response,
+      });
+    } catch (err) {
+      throw new Error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
     getTransactionNotes(selectedEventTransaction.transaction.id);
   }, [getTransactionNotes, selectedEventTransaction]);
@@ -99,21 +145,24 @@ export function EventTransactionButtonInfo(): ReactElement {
 
   return (
     <Container>
-      {/* {selectedEventTransaction.transaction.category && ( */}
-      <CategoryContainer>
-        <MainButton onClick={handleEditTransactionCategory}>
+      <FirstContainer>
+        <CategoryContainer>
           <FieldLabel>Categoria</FieldLabel>
-          <Label>
-            {selectedEventTransaction.transaction.category &&
-              selectedEventTransaction.transaction.category}
-          </Label>
-        </MainButton>
-      </CategoryContainer>
-      {/* )} */}
-      <MainButton onClick={handleEditTransactionName}>
-        <FieldLabel>Nome</FieldLabel>
-        <Label>{selectedEventTransaction.transaction.name}</Label>
-      </MainButton>
+          <InlineFormField
+            defaultValue={selectedEventTransaction.transaction.category}
+            placeholder={selectedEventTransaction.transaction.category}
+            handleOnSubmit={handleUpdateTransactionCategory}
+          />
+        </CategoryContainer>
+        <CategoryContainer>
+          <FieldLabel>Nome</FieldLabel>
+          <InlineFormField
+            defaultValue={selectedEventTransaction.transaction.name}
+            placeholder={selectedEventTransaction.transaction.name}
+            handleOnSubmit={handleUpdateTransactionName}
+          />
+        </CategoryContainer>
+      </FirstContainer>
       <FieldContainer>
         <FieldButton onClick={handleEditEventTransactionValueWindow}>
           <FieldButtonText>
@@ -126,13 +175,6 @@ export function EventTransactionButtonInfo(): ReactElement {
           handleSelectedDate={handleUpdateTransactionDueDate}
           selectedDate={selectedEventTransaction.transaction.due_date}
         />
-        {/* <FieldButton onClick={handleOpenUpdateTransactionDueDateWindow}>
-          <FieldButtonText>
-            {formatOnlyDate(
-              String(selectedEventTransaction.transaction.due_date),
-            )}
-          </FieldButtonText>
-        </FieldButton> */}
       </FieldContainer>
       <FieldContainer>
         <PaidButton color={color} onClick={updateTransactionIsPaid}>

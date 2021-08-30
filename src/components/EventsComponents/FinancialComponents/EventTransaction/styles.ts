@@ -15,19 +15,24 @@ export const OutContainer = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
+  padding: 8px 0;
 `;
 
 export const Container = styled.button<IsContainerProps>`
+  display: flex;
   position: relative;
   width: 100%;
-  padding: 8px 4px;
+  padding: 8px;
+  border-radius: 5px;
+  margin: 4px 0;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  border: none;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
   ${({ isCancelled }) =>
     isCancelled &&
     css`
-      /* background-var(--red-color)light}; */
       opacity: 0.4;
     `}
 `;
@@ -44,6 +49,7 @@ export const CancelledTransaction = styled.div`
 `;
 
 export const TextContainer = styled.div`
+  display: flex;
   width: 95%;
   flex-direction: row;
   align-items: center;
@@ -92,15 +98,19 @@ export const DateText = styled.p`
 `;
 
 export const InfoButton = styled.button`
+  display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 16px;
+  border: none;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
+  background-color: transparent;
 `;
 
 export const Underline = styled.div`
   width: 100%;
   height: 0.3px;
-  background-color: var(--letter-color-6);
+  background-color: var(--letter-color-4);
 `;
 
 export const DayContainer = styled.div`
@@ -118,9 +128,8 @@ export const YearContainer = styled.div`
   justify-content: center;
   padding: 0 16px;
   position: absolute;
-  top: 0;
-  left: 40%;
-  width: 100%;
+  top: 8px;
+  left: 44%;
 `;
 
 export const MonthContainer = styled.div`

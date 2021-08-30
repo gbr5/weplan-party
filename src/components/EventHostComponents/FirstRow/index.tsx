@@ -2,7 +2,7 @@ import React from 'react';
 import { useMemo } from 'react';
 import { useEventVariables } from '../../../hooks/eventVariables';
 
-import { Container } from './styles';
+import { Container, MenuButton } from './styles';
 
 export function FirstRow(): JSX.Element {
   const {
@@ -15,6 +15,7 @@ export function FirstRow(): JSX.Element {
     eventSuppliers,
     selectedEvent,
     handleCurrentSection,
+    currentSection,
   } = useEventVariables();
 
   const numberOfConfirmedGuests = useMemo(() => {
@@ -63,38 +64,70 @@ export function FirstRow(): JSX.Element {
 
   return (
     <Container>
-      <button type="button" onClick={() => handleCurrentSection('dashboard')}>
+      <MenuButton
+        type="button"
+        onClick={() => handleCurrentSection('dashboard')}
+        isActive={currentSection === 'dashboard'}
+      >
         <h2>Dashboard</h2>
-      </button>
-      <button type="button" onClick={() => handleCurrentSection('notes')}>
+      </MenuButton>
+      <MenuButton
+        type="button"
+        onClick={() => handleCurrentSection('notes')}
+        isActive={currentSection === 'notes'}
+      >
         <h2>Notas</h2>
         <p>{notesInfo}</p>
-      </button>
-      <button type="button" onClick={() => handleCurrentSection('tasks')}>
+      </MenuButton>
+      <MenuButton
+        type="button"
+        onClick={() => handleCurrentSection('tasks')}
+        isActive={currentSection === 'tasks'}
+      >
         <h2>Tarefas</h2>
         <p>{eventTaskInfo}</p>
-      </button>
-      <button type="button" onClick={() => handleCurrentSection('guests')}>
+      </MenuButton>
+      <MenuButton
+        type="button"
+        onClick={() => handleCurrentSection('guests')}
+        isActive={currentSection === 'guests'}
+      >
         <h2>Convidados</h2>
         <p>{guestsInfo}</p>
-      </button>
-      <button type="button" onClick={() => handleCurrentSection('suppliers')}>
+      </MenuButton>
+      <MenuButton
+        type="button"
+        onClick={() => handleCurrentSection('suppliers')}
+        isActive={currentSection === 'suppliers'}
+      >
         <h2>Fornecedores</h2>
         <p>{suppliersInfo}</p>
-      </button>
-      <button type="button" onClick={() => handleCurrentSection('financial')}>
+      </MenuButton>
+      <MenuButton
+        type="button"
+        onClick={() => handleCurrentSection('financial')}
+        isActive={currentSection === 'financial'}
+      >
         <h2>Financeiro</h2>
         <p>{financialInfo}</p>
-      </button>
-      <button type="button" onClick={() => handleCurrentSection('owners')}>
+      </MenuButton>
+      <MenuButton
+        type="button"
+        onClick={() => handleCurrentSection('owners')}
+        isActive={currentSection === 'owners'}
+      >
         <h2>Anfritriões</h2>
         <p>{ownersNumber}</p>
-      </button>
+      </MenuButton>
       {selectedEvent.event_type === 'Prom' && (
-        <button type="button" onClick={() => handleCurrentSection('members')}>
+        <MenuButton
+          type="button"
+          onClick={() => handleCurrentSection('members')}
+          isActive={currentSection === 'members'}
+        >
           <h2>Membros</h2>
           <p>{membersNumber}</p>
-        </button>
+        </MenuButton>
       )}
     </Container>
   );

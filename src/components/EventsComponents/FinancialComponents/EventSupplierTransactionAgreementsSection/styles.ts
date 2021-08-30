@@ -19,8 +19,8 @@ export const AgreementsContainer = styled.div`
   border-radius: 16px;
   width: 100%;
   flex: 1;
-  max-height: 90%;
   padding: 2px;
+  height: 400px;
   background-color: #f3f2f2;
   border-radius: 8px;
   border: 0.4px solid #e1e0e0;

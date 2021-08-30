@@ -39,7 +39,6 @@ interface EventSuppliersContextType {
   loading: boolean;
   selectedSupplierCategory: string;
   selectedSupplierSubCategory: ISupplierSubCategoryDTO;
-  selectedSupplierTransactionAgreement: IEventSupplierTransactionAgreementDTO;
   selectedSupplierTransaction: IEventSupplierTransactionDTO;
   supplierAgreementTransactions: IEventSupplierTransactionDTO[] | undefined;
   supplierCategoryWindow: boolean;
@@ -95,9 +94,6 @@ interface EventSuppliersContextType {
   ) => IUpdateEventSupplierTransactionAgreementDTO;
   selectSupplierCategory: (category: string) => Promise<void>;
   selectSupplierSubCategory: (subCategory: ISupplierSubCategoryDTO) => void;
-  selectSupplierTransactionAgreement: (
-    agreement: IEventSupplierTransactionAgreementDTO,
-  ) => void;
   selectSupplierTransaction: (
     supplierTransaction: IEventSupplierTransactionDTO,
   ) => void;
@@ -116,6 +112,7 @@ const EventSuppliersProvider: React.FC = ({ children }) => {
     selectedEvent,
     selectedEventSupplier,
     selectEventSupplier,
+    selectEventSupplierTransactionAgreement,
   } = useEventVariables();
   const { getEventSuppliers, getEventNotes } = useCurrentEvent();
 
@@ -164,10 +161,6 @@ const EventSuppliersProvider: React.FC = ({ children }) => {
     selectedSupplierSubCategory,
     setSelectedSupplierSubCategory,
   ] = useState({} as ISupplierSubCategoryDTO);
-  const [
-    selectedSupplierTransactionAgreement,
-    setSelectedSupplierTransactionAgreement,
-  ] = useState({} as IEventSupplierTransactionAgreementDTO);
   const [
     selectedSupplierTransaction,
     setSelectedSupplierTransaction,
@@ -218,9 +211,6 @@ const EventSuppliersProvider: React.FC = ({ children }) => {
     setSupplierCategoryWindow(false);
     setSelectedSupplierCategory('');
     setSelectedSupplierSubCategory({} as ISupplierSubCategoryDTO);
-    setSelectedSupplierTransactionAgreement(
-      {} as IEventSupplierTransactionAgreementDTO,
-    );
     setSelectedSupplierTransaction({} as IEventSupplierTransactionDTO);
     setSupplierAgreementTransactions([]);
     setSupplierSubCategoryWindow(false);
@@ -459,7 +449,7 @@ const EventSuppliersProvider: React.FC = ({ children }) => {
           number_of_installments,
         },
       );
-      response.data && setSelectedSupplierTransactionAgreement(response.data);
+      selectEventSupplierTransactionAgreement(response.data);
       await getEventNotes(selectedEvent.id);
     } catch (err) {
       throw new Error(err);
@@ -493,11 +483,6 @@ const EventSuppliersProvider: React.FC = ({ children }) => {
     subCategory: ISupplierSubCategoryDTO,
   ): void {
     setSelectedSupplierSubCategory(subCategory);
-  }
-  function selectSupplierTransactionAgreement(
-    agreement: IEventSupplierTransactionAgreementDTO,
-  ): void {
-    setSelectedSupplierTransactionAgreement(agreement);
   }
   function selectSupplierTransaction(
     supplierTransaction: IEventSupplierTransactionDTO,
@@ -659,11 +644,9 @@ const EventSuppliersProvider: React.FC = ({ children }) => {
         loading,
         selectedSupplierSubCategory,
         selectedSupplierCategory,
-        selectedSupplierTransactionAgreement,
         selectedSupplierTransaction,
         selectSupplierCategory,
         selectSupplierSubCategory,
-        selectSupplierTransactionAgreement,
         selectSupplierTransaction,
         supplierCategoryWindow,
         supplierSubCategoryWindow,

@@ -14,6 +14,8 @@ export const Container = styled.button`
   justify-content: space-between;
   border-radius: 8px;
   margin: 8px 0;
+  border: none;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
 `;
 
 export const Index = styled.p`
@@ -73,15 +75,16 @@ export const PlusContainer = styled.div`
 `;
 
 export const StatusContainer = styled.div<IsOverdueProps>`
-  background-color: ${({ isOverdue }) =>
+  ${({ isOverdue }) =>
     isOverdue
       ? css`
-          background-color: var(--red-color);
+          color: var(--red-color);
         `
       : css`
-          background-color: var(--letter-color-1);
+          color: var(--green-color);
         `};
-  border: 0.2px solid var(--letter-color-3);
+  border: none;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
   padding: 4px;
   border-radius: 20px;
   align-items: center;

@@ -29,7 +29,7 @@ export default {
 
     windowBoxShadow: 'rgba(255, 150, 10, 0.3)',
 
-    green: '#47c101',
+    green: '#007500',
     red: '#cf4444',
   },
 

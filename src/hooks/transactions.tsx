@@ -31,8 +31,6 @@ interface TransactionContextType {
   createTransactionWindow: boolean;
   transactionFilesWindow: boolean;
   cancelEventTransactionConfirmationWindow: boolean;
-  editTransactionName: boolean;
-  editTransactionCategory: boolean;
   editNewTransactionValueWindow: boolean;
   editEventTransactionValueWindow: boolean;
   filterTransactionWindow: boolean;
@@ -62,8 +60,6 @@ interface TransactionContextType {
   editTransaction: (data: ITransactionDTO) => Promise<ITransactionDTO>;
   handleCreateTransactionWindow: () => void;
   handleCancelEventTransactionConfirmationWindow: () => void;
-  handleEditTransactionName: () => void;
-  handleEditTransactionCategory: () => void;
   handleEditNewTransactionValueWindow: () => void;
   handleTransactionNotesWindow: () => void;
   handleCancelledTransactionFilter: () => void;
@@ -88,7 +84,8 @@ const TransactionProvider: React.FC = ({ children }) => {
   const {
     selectedEventSupplier,
     selectedEvent,
-    eventTransactions,
+    selectEventSupplierTransactionAgreement,
+    selectedEventSupplierTransactionAgreement,
     filteredEventTransactions,
     handleFilteredEventTransactions,
   } = useEventVariables();
@@ -98,10 +95,8 @@ const TransactionProvider: React.FC = ({ children }) => {
     getEventTransactions,
   } = useCurrentEvent();
   const {
-    selectSupplierTransactionAgreement,
     handleUpdateAgreementAndTransactions,
     updateEventSupplier,
-    selectedSupplierTransactionAgreement,
   } = useEventSuppliers();
   const { handleSelectedFile, selectedFile } = useFiles();
 
@@ -112,8 +107,6 @@ const TransactionProvider: React.FC = ({ children }) => {
     cancelEventTransactionConfirmationWindow,
     setCancelEventTransactionConfirmationWindow,
   ] = useState(false);
-  const [editTransactionName, setEditTransactionName] = useState(false);
-  const [editTransactionCategory, setEditTransactionCategory] = useState(false);
   const [
     editNewTransactionValueWindow,
     setEditNewTransactionValueWindow,
@@ -177,12 +170,6 @@ const TransactionProvider: React.FC = ({ children }) => {
   }
   function handleSelectedEventTransaction(data: IEventTransactionDTO): void {
     setSelectedEventTransaction(data);
-  }
-  function handleEditTransactionName(): void {
-    setEditTransactionName(!editTransactionName);
-  }
-  function handleEditTransactionCategory(): void {
-    setEditTransactionCategory(!editTransactionCategory);
   }
   function handleEditNewTransactionValueWindow(): void {
     setEditNewTransactionValueWindow(!editNewTransactionValueWindow);
@@ -262,10 +249,10 @@ const TransactionProvider: React.FC = ({ children }) => {
         isPaid,
       });
       if (
-        selectedSupplierTransactionAgreement &&
-        selectedSupplierTransactionAgreement.id
+        selectedEventSupplierTransactionAgreement &&
+        selectedEventSupplierTransactionAgreement.id
       ) {
-        const updatedAgreement = selectedSupplierTransactionAgreement.transactions.map(
+        const updatedAgreement = selectedEventSupplierTransactionAgreement.transactions.map(
           transaction => {
             return transaction.id === id
               ? {
@@ -282,8 +269,8 @@ const TransactionProvider: React.FC = ({ children }) => {
               : transaction;
           },
         );
-        selectSupplierTransactionAgreement({
-          ...selectedSupplierTransactionAgreement,
+        selectEventSupplierTransactionAgreement({
+          ...selectedEventSupplierTransactionAgreement,
           transactions: updatedAgreement,
         });
       }
@@ -408,7 +395,7 @@ const TransactionProvider: React.FC = ({ children }) => {
         isCancelled,
         transactions,
       });
-      selectSupplierTransactionAgreement(response.data);
+      selectEventSupplierTransactionAgreement(response.data);
       await getEventSuppliers(selectedEvent.id);
       await getEventNotes(selectedEvent.id);
       await getEventTransactions(selectedEvent.id);
@@ -539,20 +526,6 @@ const TransactionProvider: React.FC = ({ children }) => {
     }
   }
 
-  useEffect(() => {
-    if (selectedEventTransaction && selectedEventTransaction.transaction) {
-      const findTransaction = eventTransactions.find(
-        item => item.transaction.id === selectedEventTransaction.transaction.id,
-      );
-      findTransaction && setSelectedEventTransaction(findTransaction);
-    }
-    handleFilteredEventTransactions(eventTransactions);
-  }, [
-    eventTransactions,
-    selectedEventTransaction,
-    handleFilteredEventTransactions,
-  ]);
-
   return (
     <TransactionContext.Provider
       value={{
@@ -593,10 +566,6 @@ const TransactionProvider: React.FC = ({ children }) => {
         toDateTransactionFilter,
         handleFilterTransactionOption,
         filterTransactionOption,
-        editTransactionName,
-        handleEditTransactionName,
-        editTransactionCategory,
-        handleEditTransactionCategory,
         handleTransactionNotesWindow,
         transactionNotesWindow,
         handleTransactionFilesWindow,

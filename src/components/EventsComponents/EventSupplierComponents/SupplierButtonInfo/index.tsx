@@ -23,6 +23,7 @@ import { NotificationNumber } from '../../../NotificationNumber';
 import {
   Container, // 1
   SupplierConfirmationButton, // 2
+  NameContainer, // 3
   RowContainer, // 3
   RowTitle, // 4
   SupplierName, // 5
@@ -42,6 +43,7 @@ import {
   SupplierLabel, // 19
   FieldContainer, // 20
 } from './styles';
+import InlineFormField from '../../../InlineFormField';
 
 export function SupplierButtonInfo(): ReactElement {
   const { selectedEventSupplier, eventTransactions } = useEventVariables();
@@ -49,13 +51,13 @@ export function SupplierButtonInfo(): ReactElement {
     handleCreateSupplierTransactionAgreementWindow,
     handleDischargingWindow,
     handleSupplierTransactionsWindow,
-    handleEditSupplierNameWindow,
     handleEditSupplierCategoryWindow,
     selectSupplierCategory,
     handleSupplierTransactionAgreementsWindow,
     handleSupplierNotesWindow,
     handleSupplierFilesWindow,
     handleSupplierBudgetsWindow,
+    updateEventSupplier,
   } = useEventSuppliers();
 
   const [loading, setLoading] = useState(false);
@@ -66,6 +68,21 @@ export function SupplierButtonInfo(): ReactElement {
       selectedEventSupplier.isHired && handleDischargingWindow();
       !selectedEventSupplier.isHired &&
         handleCreateSupplierTransactionAgreementWindow();
+    } catch (err) {
+      throw new Error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function updateSupplierName(name: string): Promise<void> {
+    if (name === selectedEventSupplier.name || name === '') return;
+    try {
+      setLoading(true);
+      await updateEventSupplier({
+        ...selectedEventSupplier,
+        name,
+      });
     } catch (err) {
       throw new Error(err);
     } finally {
@@ -164,12 +181,14 @@ export function SupplierButtonInfo(): ReactElement {
         </SupplierNameButton>
       </FieldContainer>
       <SectionBorder />
-      <FieldContainer>
+      <NameContainer>
         <SupplierLabel>Nome</SupplierLabel>
-        <SupplierNameButton onClick={handleEditSupplierNameWindow}>
-          <SupplierName>{selectedEventSupplier.name}</SupplierName>
-        </SupplierNameButton>
-      </FieldContainer>
+        <InlineFormField
+          defaultValue={selectedEventSupplier.name}
+          placeholder={selectedEventSupplier.name}
+          handleOnSubmit={updateSupplierName}
+        />
+      </NameContainer>
 
       <SectionBorder />
 
@@ -210,7 +229,7 @@ export function SupplierButtonInfo(): ReactElement {
         {selectedEventSupplier.isHired && (
           <MenuButton onClick={handleSupplierTransactionAgreementsWindow}>
             <MenuText>Contratos</MenuText>
-            <IconContainer color="#99ff99">
+            <IconContainer color="#007500">
               <NotificationNumber
                 top={top}
                 left={left}

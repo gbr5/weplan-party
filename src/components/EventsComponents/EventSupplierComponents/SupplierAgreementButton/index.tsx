@@ -30,10 +30,12 @@ export function SupplierAgreementButton({
   index,
   isSupplierSelected,
 }: IProps): ReactElement {
-  const { eventSuppliers } = useEventVariables();
+  const {
+    eventSuppliers,
+    selectEventSupplierTransactionAgreement,
+  } = useEventVariables();
   const {
     handleEventSupplierAgreementTransactionsWindow,
-    selectSupplierTransactionAgreement,
   } = useEventSuppliers();
 
   const supplier = useMemo(() => {
@@ -58,7 +60,7 @@ export function SupplierAgreementButton({
   }, [agreement]);
 
   function handleSelectAgreement(): void {
-    selectSupplierTransactionAgreement(agreement);
+    selectEventSupplierTransactionAgreement(agreement);
     handleEventSupplierAgreementTransactionsWindow();
   }
   return (

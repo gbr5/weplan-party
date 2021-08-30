@@ -20,6 +20,8 @@ export const FilterButton = styled.button`
   align-items: center;
   justify-content: center;
   padding: 4px;
+  border: none;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
 `;
 
 export const IsCancelledButton = styled.button<IsActiveProps>`
@@ -56,11 +58,11 @@ export const TransactionContainer = styled.div`
   flex-direction: column;
   width: 100%;
   flex: 1;
-  min-height: 320px;
+  height: 320px;
   margin-top: 8px;
-  padding-bottom: 32px;
+  padding: 0 4px 32px;
   margin-bottom: 32px;
-  background-color: #f3f2f2;
+  background-color: var(--letter-color-1);
   border-radius: 8px;
   border: 0.4px solid #e1e0e0;
   overflow-y: scroll;

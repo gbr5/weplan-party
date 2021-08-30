@@ -1,7 +1,6 @@
 import React from 'react';
 import { useMemo } from 'react';
 import IEventSupplierTransactionAgreementDTO from '../../../../dtos/IEventSupplierTransactionAgreementDTO';
-import { useCurrentEvent } from '../../../../hooks/currentEvent';
 import { useEventVariables } from '../../../../hooks/eventVariables';
 import { SupplierAgreementButton } from '../SupplierAgreementButton';
 

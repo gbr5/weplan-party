@@ -14,8 +14,10 @@ interface IBackgroundColor {
 
 // 1
 export const Container = styled.div`
-  top: -8px;
+  top: 40px;
+  padding-top: 16px;
   width: 99%;
+  position: absolute;
   /* background-color: var(--red-color); */
   background-color: var(--letter-color-1);
   margin: 0 auto 8px;
@@ -23,6 +25,8 @@ export const Container = styled.div`
   padding: 8px;
   border: 0.5px solid var(--title-color);
   box-sizing: border-box;
+  z-index: 2;
+  padding-top: 24px;
 `;
 
 // 2
@@ -58,9 +62,10 @@ export const SupplierNameButton = styled.button`
   align-items: center;
   justify-content: center;
   background-color: var(--letter-color-2);
-  border: 1px solid var(--letter-color-3);
+  border: none;
   margin: 8px;
   width: 100%;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
 `;
 
 // 6
@@ -73,10 +78,20 @@ export const SupplierConfirmationButton = styled.button<ISupplierProps>`
   align-items: center;
   justify-content: space-evenly;
   background-color: var(--letter-color-2);
-  border: 1px solid var(--letter-color-3);
+  border: none;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
 `;
 
 // 7
+export const NameContainer = styled.div`
+  position: relative;
+  width: 100%;
+  padding: 8px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 24px;
+`;
 export const RowContainer = styled.div`
   width: 100%;
   padding: 8px;
@@ -104,7 +119,7 @@ export const IconContainer = styled.div<IBackgroundColor>`
   padding: 8px;
   background-color: ${({ color }) => color};
   border-radius: 8px;
-  border: 2px solid black;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
 `;
 
 // 11

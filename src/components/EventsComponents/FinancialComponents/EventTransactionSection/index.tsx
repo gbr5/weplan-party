@@ -31,95 +31,42 @@ export function EventTransactionSection(): JSX.Element {
   } = useTransaction();
 
   const transactions = useMemo<IEventTransactionDTO[]>(() => {
-    if (filteredEventTransactions.length < 0) return [];
+    if (filteredEventTransactions.length <= 0) {
+      handleFilteredEventTransactions(eventTransactions);
+      return eventTransactions;
+    }
+    let resultTransactions = filteredEventTransactions;
     if (sortTransactionsByInterval) {
-      const updatedTransactions = eventTransactions.filter(
+      resultTransactions = resultTransactions.filter(
         ({ transaction }) =>
-          transaction &&
           new Date(transaction.due_date) > fromDateTransactionFilter &&
           new Date(transaction.due_date) < toDateTransactionFilter,
       );
-      if (filterTransactionOption === 'paid') {
-        if (!cancelledTransactionFilter)
-          return updatedTransactions.filter(
-            ({ transaction }) =>
-              transaction && !transaction.isCancelled && transaction.isPaid,
-          );
-        return updatedTransactions.filter(
-          ({ transaction }) => transaction && transaction.isPaid,
-        );
-      }
-      if (filterTransactionOption === 'notPaid') {
-        if (!cancelledTransactionFilter)
-          return updatedTransactions.filter(
-            ({ transaction }) =>
-              transaction && !transaction.isCancelled && !transaction.isPaid,
-          );
-        return updatedTransactions.filter(
-          ({ transaction }) => transaction && !transaction.isPaid,
-        );
-      }
-      if (filterTransactionOption === 'delayed') {
-        if (!cancelledTransactionFilter)
-          return updatedTransactions.filter(
-            ({ transaction }) =>
-              transaction &&
-              !transaction.isCancelled &&
-              !transaction.isPaid &&
-              new Date() > new Date(transaction.due_date),
-          );
-        return updatedTransactions.filter(
-          ({ transaction }) =>
-            transaction &&
-            !transaction.isPaid &&
-            new Date() < new Date(transaction.due_date),
-        );
-      }
-      if (!cancelledTransactionFilter)
-        return updatedTransactions.filter(
-          ({ transaction }) => transaction && !transaction.isCancelled,
-        );
-      return updatedTransactions;
     }
     if (filterTransactionOption === 'paid') {
-      if (!cancelledTransactionFilter)
-        return eventTransactions.filter(
-          ({ transaction }) =>
-            transaction && !transaction.isCancelled && transaction.isPaid,
-        );
-      return eventTransactions.filter(
-        ({ transaction }) => transaction && transaction.isPaid,
+      resultTransactions = resultTransactions.filter(
+        ({ transaction }) => transaction.isPaid,
       );
     }
     if (filterTransactionOption === 'notPaid') {
-      if (!cancelledTransactionFilter)
-        return eventTransactions.filter(
-          ({ transaction }) =>
-            transaction && !transaction.isCancelled && !transaction.isPaid,
-        );
-      return eventTransactions.filter(
-        ({ transaction }) => transaction && !transaction.isPaid,
+      resultTransactions = resultTransactions.filter(
+        ({ transaction }) => !transaction.isPaid,
       );
     }
     if (filterTransactionOption === 'delayed') {
-      if (!cancelledTransactionFilter)
-        return eventTransactions.filter(
-          ({ transaction }) =>
-            transaction &&
-            !transaction.isCancelled &&
-            !transaction.isPaid &&
-            new Date() > new Date(transaction.due_date),
-        );
-      return eventTransactions.filter(
+      resultTransactions = resultTransactions.filter(
         ({ transaction }) =>
-          !transaction.isPaid && new Date() < new Date(transaction.due_date),
+          !transaction.isCancelled &&
+          !transaction.isPaid &&
+          new Date() > new Date(transaction.due_date),
       );
     }
-    if (!cancelledTransactionFilter)
-      return eventTransactions.filter(
-        ({ transaction }) => transaction && !transaction.isCancelled,
+    if (!cancelledTransactionFilter) {
+      resultTransactions = resultTransactions.filter(
+        ({ transaction }) => !transaction.isCancelled,
       );
-    return eventTransactions;
+    }
+    return resultTransactions;
   }, [
     filteredEventTransactions,
     filterTransactionOption,
@@ -128,6 +75,7 @@ export function EventTransactionSection(): JSX.Element {
     toDateTransactionFilter,
     sortTransactionsByInterval,
     eventTransactions,
+    handleFilteredEventTransactions,
   ]);
 
   const filter = useMemo(() => {

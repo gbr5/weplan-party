@@ -9,33 +9,42 @@ import * as Yup from 'yup';
 import { FiChevronRight, FiChevronLeft } from 'react-icons/fi';
 import { useLocation } from 'react-router-dom';
 import { FormHandles } from '@unform/core';
-import { Container, EventPageContent, Main } from './styles';
+
+import api from '../../services/api';
+import getValidationErrors from '../../utils/getValidationErros';
+
+import { useToast } from '../../hooks/toast';
+import { useAuth } from '../../hooks/auth';
+import { useEvent } from '../../hooks/event';
+import { useFriends } from '../../hooks/friends';
+import { useEventVariables } from '../../hooks/eventVariables';
+import { useCurrentEvent } from '../../hooks/currentEvent';
+import { useEventOwners } from '../../hooks/eventOwners';
+import { useEventSuppliers } from '../../hooks/eventSuppliers';
+import { useTransaction } from '../../hooks/transactions';
+import { useNote } from '../../hooks/notes';
+
+import IEventDTO from '../../dtos/IEventDTO';
+import IFriendDTO from '../../dtos/IFriendDTO';
+import IEventOwnerDTO from '../../dtos/IEventOwnerDTO';
+import IEventSupplierDTO from '../../dtos/IEventSupplierDTO';
+import IEventInfoDTO from '../../dtos/IEventInfoDTO';
+import IEventMemberDTO from '../../dtos/IEventMemberDTO';
+
 import PageHeader from '../../components/PageHeader';
 import { FirstRow } from '../../components/EventHostComponents/FirstRow';
 import SideMenu from '../../components/EventHostComponents/SideMenu';
-
-import api from '../../services/api';
-import { useToast } from '../../hooks/toast';
-import getValidationErrors from '../../utils/getValidationErros';
-import { useAuth } from '../../hooks/auth';
 import MemberProfileDrawer from '../../components/MemberProfileDrawer';
 import OwnerProfileDrawer from '../../components/OwnerProfileDrawer';
-import IEventDTO from '../../dtos/IEventDTO';
-import IFriendDTO from '../../dtos/IFriendDTO';
-
 import EditEventNameWindow from '../../components/EditEventNameWindow';
-import IEventMemberDTO from '../../dtos/IEventMemberDTO';
 import EditMemberNumberOfGuestsWindow from '../../components/EditEventMemberNumberOfGuestsWindow';
 import DeleteConfirmationWindow from '../../components/DeleteConfirmationWindow';
-import IEventOwnerDTO from '../../dtos/IEventOwnerDTO';
 import { EventTaskSection } from '../../components/EventsComponents/EventTaskComponents/EventTaskSection';
 import EventGuestSection from '../../components/EventGuestSection';
-import IEventSupplierDTO from '../../dtos/IEventSupplierDTO';
 import EventSupplierSection from '../../components/EventSupplierSection';
 import AddMemberWindow from '../../components/AddMemberWindow';
 import AddOwnerWindow from '../../components/AddOwnerWindow';
 import FriendsListWindow from '../../components/FriendsListWindow';
-import IEventInfoDTO from '../../dtos/IEventInfoDTO';
 import EventInfoWindow from '../../components/EventInfoWindow';
 import MembersWindow from '../../components/MembersWindow';
 import EditEventInfoWindow from '../../components/EditEventInfoWindow';
@@ -45,18 +54,11 @@ import UpdateEventNumberOfGuestsWindow from '../../components/UpdateEventNumberO
 import GuestAlocationWindow from '../../components/GuestAlocationWindow';
 import EditEventBudgetWindow from '../../components/EditEventBudgetWindow';
 import { EventMainDashboard } from '../../components/EventHostComponents/EventMainDashboard';
-import { useEvent } from '../../hooks/event';
-import { useFriends } from '../../hooks/friends';
-import { useEventVariables } from '../../hooks/eventVariables';
-import { useCurrentEvent } from '../../hooks/currentEvent';
-import { useEventOwners } from '../../hooks/eventOwners';
-import { useEventSuppliers } from '../../hooks/eventSuppliers';
 import { EditSupplierCategory } from '../../components/EventsComponents/EventSupplierComponents/EditSupplierCategory';
 import { EditSupplierName } from '../../components/EventsComponents/EventSupplierComponents/EditSupplierName';
 import { SupplierTransactionsWindow } from '../../components/EventsComponents/EventSupplierComponents/SupplierTransactionsWindow';
 import { SupplierNotesSection } from '../../components/EventsComponents/EventSupplierComponents/SupplierNotesWindow';
 import { TransactionsFilterWindow } from '../../components/TransactionComponents/TransactionsFilterWindow';
-import { useTransaction } from '../../hooks/transactions';
 import { SupplierTransactionAgreementsWindow } from '../../components/EventsComponents/EventSupplierComponents/SupplierTransactionAgreementsWindow';
 import { EventSupplierFilesWindow } from '../../components/EventsComponents/EventSupplierComponents/EventSupplierFilesWindow';
 import { CancelAllAgreements } from '../../components/EventsComponents/EventSupplierComponents/CancelAllAgreements';
@@ -69,13 +71,14 @@ import { EditNewTransactionAmount } from '../../components/TransactionComponents
 import { EditSupplierBudgetAmount } from '../../components/EventsComponents/EventSupplierComponents/EditSupplierBudgetAmount';
 import { EditSupplierBudgetDescription } from '../../components/EventsComponents/EventSupplierComponents/EditSupplierBudgetDescription';
 import { EditTransactionAmount } from '../../components/TransactionComponents/EditTransactionAmount';
-import { EditTransactionCategory } from '../../components/TransactionComponents/EditTransactionCategory';
 import { NotesSection } from '../../components/EventsComponents/EventNotesComponents/NotesSection';
-import { useNote } from '../../hooks/notes';
 import { EventNoteForm } from '../../components/EventsComponents/EventNotesComponents/EventNoteForm';
 import { EditNoteWindow } from '../../components/NotesComponents/EditNoteWindow';
 import { CreateEvent } from '../../components/EventsComponents/CreateEvent';
 import { FinancialSection } from '../../components/EventsComponents/FinancialComponents/FinancialSection';
+import { EventSupplierAgreementTransactionsWindow } from '../../components/EventsComponents/FinancialComponents/EventSupplierAgreementTransactionsWindow';
+
+import { Container, EventPageContent, Main } from './styles';
 
 interface IUserInfoDTO {
   id: string;
@@ -92,7 +95,7 @@ const EventHostDashboard: React.FC = () => {
   const { user } = useAuth();
   const { addToast } = useToast();
   const { friends } = useFriends();
-  const { eventBudgetWindow, createEventWindow } = useEvent();
+  const { createEventWindow } = useEvent();
   const {
     eventGuests,
     selectEventOwner,
@@ -103,8 +106,9 @@ const EventHostDashboard: React.FC = () => {
     selectedEventMember,
     isOwner,
     currentSection,
+    selectedEventSupplierTransactionAgreement,
   } = useEventVariables();
-  const { getEventMembers, getEventOwners } = useCurrentEvent();
+  const { getEventMembers, getEventOwners, budgetWindow } = useCurrentEvent();
   const { deleteEventOwner } = useEventOwners();
   const {
     editSupplierCategoryWindow,
@@ -120,12 +124,12 @@ const EventHostDashboard: React.FC = () => {
     cancelAgreementsWindow,
     dischargingWindow,
     supplierCategoryWindow,
+    eventSupplierAgreementTransactionsWindow,
   } = useEventSuppliers();
   const {
     filterTransactionWindow,
     editEventTransactionValueWindow,
     editNewTransactionValueWindow,
-    editTransactionCategory,
     newEventSupplierTransactionAgreement,
   } = useTransaction();
   const { createEventNoteWindow, editNoteWindow } = useNote();
@@ -230,34 +234,28 @@ const EventHostDashboard: React.FC = () => {
     closeAllWindows();
     setMembersWindow(!membersWindow);
   }, [membersWindow, closeAllWindows]);
-
   const handleEditEventNameDrawer = useCallback(() => {
     closeAllWindows();
     setEditEventNameDrawer(!editEventNameDrawer);
   }, [editEventNameDrawer, closeAllWindows]);
-
   const handleSelectFriendAsMember = useCallback(() => {
     closeAllWindows();
     setFriendsWindow(true);
     setAddMemberWindowForm(true);
   }, [closeAllWindows]);
-
   const handleSelectFriendAsOwner = useCallback(() => {
     closeAllWindows();
     setFriendsWindow(true);
     setAddOwnerDrawer(true);
   }, [closeAllWindows]);
-
   const handleAddOwnerDrawer = useCallback(() => {
     closeAllWindows();
     setAddOwnerDrawer(!addOwnerDrawer);
   }, [addOwnerDrawer, closeAllWindows]);
-
   const handleAddPlannerDrawer = useCallback(() => {
     closeAllWindows();
     setAddPlannerDrawer(!addPlannerDrawer);
   }, [addPlannerDrawer, closeAllWindows]);
-
   const handleGetPlanners = useCallback(() => {
     try {
       api
@@ -270,7 +268,6 @@ const EventHostDashboard: React.FC = () => {
       throw new Error(err);
     }
   }, [eventId]);
-
   const handleGetEventInfo = useCallback(() => {
     try {
       api.get<IEventInfoDTO>(`/events/${eventId}/event-info`).then(response => {
@@ -281,7 +278,6 @@ const EventHostDashboard: React.FC = () => {
       throw new Error(err);
     }
   }, [eventId]);
-
   const currentNumberOfGuests = useMemo(() => {
     const currentMembersGuestNumber: number = eventMembers
       .map(tmember => tmember.number_of_guests)
@@ -294,12 +290,10 @@ const EventHostDashboard: React.FC = () => {
       currentMembersGuestNumber + currentOwnersGuestNumber;
     return currentGuestNumber;
   }, [eventMembers, eventOwners]);
-
   const availableNumberOfGuests = useMemo(() => {
     const availableGuestNumber = totalGuestNumber - currentNumberOfGuests;
     return availableGuestNumber;
   }, [totalGuestNumber, currentNumberOfGuests]);
-
   const myAvailableNumberOfGuests = useMemo(() => {
     const myGuests = eventGuests.filter(guest => guest.host_id === user.id);
     let myNumberOfGuests = 0;
@@ -317,15 +311,12 @@ const EventHostDashboard: React.FC = () => {
     const availableGuestNumber = Number(myNumberOfGuests) - myGuests.length;
     return availableGuestNumber;
   }, [eventOwners, eventMembers, user, isOwner, eventGuests]);
-
   const handleCloseAddPlannerWindow = useCallback(() => {
     setSelectedSupplier({} as IEventSupplierDTO);
     setAddPlannerDrawer(false);
-
     handleAddPlannerDrawer();
     handleGetPlanners();
   }, [handleAddPlannerDrawer, handleGetPlanners]);
-
   const handleCloseAddMemberWindow = useCallback(async () => {
     setSelectedFriend({} as IFriendDTO);
     setAddMemberWindowForm(false);
@@ -355,19 +346,16 @@ const EventHostDashboard: React.FC = () => {
     selectEventMember({} as IEventMemberDTO);
     await getEventMembers(eventId);
   }, [getEventMembers, eventId, selectEventMember]);
-
   const handleDeleteMember = useCallback(async () => {
     try {
       await api.delete(
         `/events/${eventId}/event-members/${selectedEventMember.userEventMember.id}`,
       );
-
       addToast({
         type: 'success',
         title: 'Membro excluído com sucesso',
         description: 'As mudanças já foram atualizadas no seu evento.',
       });
-
       setMemberProfileWindow(false);
       setDeleteMemberDrawer(false);
       await getEventMembers(eventId);
@@ -377,7 +365,6 @@ const EventHostDashboard: React.FC = () => {
 
         formRef.current?.setErrors(error);
       }
-
       addToast({
         type: 'error',
         title: 'Erro ao excluir convidado',
@@ -385,7 +372,6 @@ const EventHostDashboard: React.FC = () => {
       });
     }
   }, [eventId, selectedEventMember, addToast, getEventMembers]);
-
   const handleSeletedFriend = useCallback(
     (props: IFriendDTO) => {
       if (addMemberWindowForm) {
@@ -403,21 +389,17 @@ const EventHostDashboard: React.FC = () => {
     },
     [addMemberWindowForm, addOwnerDrawer, closeAllWindows],
   );
-
   const handleCloseOwnerWindow = useCallback(() => {
     setOwnerProfileWindow(false);
     selectEventOwner({} as IEventOwnerDTO);
   }, [selectEventOwner]);
-
   const handleEditEventInfoWindow = useCallback(() => {
     setEventInfoDrawer(false);
     setEditEventInfoDrawer(true);
   }, []);
-
   useEffect(() => {
     handleGetPlanners();
   }, [handleGetPlanners]);
-
   const closeEventInfoWindowForm = useCallback(() => {
     handleGetEventInfo();
     setCreateEventInfoWindowForm(false);
@@ -451,16 +433,17 @@ const EventHostDashboard: React.FC = () => {
       {/* Transaction Windows */}
       {filterTransactionWindow && <TransactionsFilterWindow />}
       {editNewTransactionValueWindow && <EditNewTransactionAmount />}
-      {editTransactionCategory && <EditTransactionCategory />}
       {editEventTransactionValueWindow && <EditTransactionAmount />}
+      {selectedEventSupplierTransactionAgreement &&
+        selectedEventSupplierTransactionAgreement.id &&
+        eventSupplierAgreementTransactionsWindow && (
+          <EventSupplierAgreementTransactionsWindow />
+        )}
       {/* End of Transaction Windows */}
       {/* Notes Windows */}
       {createEventNoteWindow && <EventNoteForm />}
-
       {editNoteWindow && <EditNoteWindow />}
-
       {/* End of Notes Windows */}
-
       {!!createEventInfoWindowForm && (
         <CreateEventInfoWindowForm
           eventId={eventId}
@@ -521,7 +504,6 @@ const EventHostDashboard: React.FC = () => {
           onHandleCloseWindow={() => setDeleteOwnerDrawer(false)}
         />
       )}
-
       {!!eventInfoDrawer && (
         <EventInfoWindow
           eventInfo={eventInfo}
@@ -606,7 +588,6 @@ const EventHostDashboard: React.FC = () => {
             <FiChevronRight size={60} />
           </button>
         )}
-
         {sidebar && (
           <SideMenu
             eventName={eventName}
@@ -626,10 +607,9 @@ const EventHostDashboard: React.FC = () => {
           <FirstRow />
           {createEventWindow && <CreateEvent />}
           {currentSection === 'notes' && <NotesSection />}
-          {!!eventBudgetWindow && <EditEventBudgetWindow />}
+          {budgetWindow && <EditEventBudgetWindow />}
           {currentSection === 'dashboard' && <EventMainDashboard />}
           {currentSection === 'suppliers' && <EventSupplierSection />}
-          {/* {!!messagesSection && <MessageSection />} */}
           {currentSection === 'guests' && (
             <EventGuestSection
               handleGuestAllocationWindow={openGuestAlocationWindow}
@@ -637,7 +617,6 @@ const EventHostDashboard: React.FC = () => {
               closeAllWindows={closeAllWindows}
             />
           )}
-          {/* Tem que refazer a Finance Section Inteira */}
           {currentSection === 'financial' && <FinancialSection />}
           {currentSection === 'tasks' && <EventTaskSection />}
         </Main>

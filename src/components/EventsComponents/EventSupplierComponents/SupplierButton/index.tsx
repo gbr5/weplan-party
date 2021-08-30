@@ -1,4 +1,5 @@
 import React, { useState, useEffect, ReactElement } from 'react';
+import { useMemo } from 'react';
 import { FiChevronUp, FiChevronDown } from 'react-icons/fi';
 
 import IEventSupplierDTO from '../../../../dtos/IEventSupplierDTO';
@@ -6,7 +7,7 @@ import { useEventVariables } from '../../../../hooks/eventVariables';
 
 import { SupplierButtonInfo } from '../SupplierButtonInfo';
 
-import { Container, SupplierIndex, SupplierName } from './styles';
+import { OutContainer, Container, SupplierIndex, SupplierName } from './styles';
 
 interface IProps {
   supplier: IEventSupplierDTO;
@@ -35,10 +36,18 @@ export function SupplierButton({ supplier, index }: IProps): ReactElement {
       : setSupplierBody(false);
   }, [selectedEventSupplier, supplier]);
 
+  const isActive = useMemo(() => selectedEventSupplier.id === supplier.id, [
+    selectedEventSupplier,
+    supplier,
+  ]);
+
   return (
-    <>
+    <OutContainer>
       <Container
-        isActive={selectedEventSupplier.id === supplier.id}
+        style={{
+          zIndex: isActive ? 3 : 1,
+        }}
+        isActive={isActive}
         onClick={handleSupplierBody}
       >
         <SupplierIndex>{index}</SupplierIndex>
@@ -53,6 +62,6 @@ export function SupplierButton({ supplier, index }: IProps): ReactElement {
         selectedEventSupplier &&
         selectedEventSupplier.id &&
         selectedEventSupplier.id === supplier.id && <SupplierButtonInfo />}
-    </>
+    </OutContainer>
   );
 }
