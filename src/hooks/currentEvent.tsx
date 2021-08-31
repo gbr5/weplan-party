@@ -69,6 +69,8 @@ const CurrentEventProvider: React.FC = ({ children }) => {
     selectedEventSupplier,
     selectedEventGuest,
     selectEventGuest,
+    selectedEventTask,
+    selectEventTask,
     selectedEvent,
     selectEvent,
   } = useEventVariables();
@@ -217,7 +219,19 @@ const CurrentEventProvider: React.FC = ({ children }) => {
       const response = await api.get<IEventTaskDTO[]>(
         `/event-tasks/${eventId}`,
       );
-      handleEventTasks(response.data);
+      handleEventTasks(
+        response.data.sort((a, b) => {
+          if (new Date(a.updated_at) > new Date(b.updated_at)) return 1;
+          if (new Date(a.updated_at) < new Date(b.updated_at)) return -1;
+          return 0;
+        }),
+      );
+      if (selectedEventTask && selectedEventTask.id) {
+        const updatedTask = response.data.find(
+          item => item.id === selectedEventTask.id,
+        );
+        updatedTask && selectEventTask(updatedTask);
+      }
     } catch (err) {
       throw new Error(err);
     }

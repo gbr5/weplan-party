@@ -22,8 +22,6 @@ import {
   MenuTitle,
   DateContainer,
   DateHeader,
-  NumberOfNotesContainer,
-  NumberOfNotes,
   MenuButtonContainer,
 } from './styles';
 import formatOnlyTime from '../../../../utils/formatOnlyTime';
@@ -32,6 +30,7 @@ import { DatePickerLine } from '../../../TimePickerLine';
 import InlineFormField from '../../../InlineFormField';
 import { SelectTaskStatus } from '../SelectTaskStatus';
 import { SelectTaskPriority } from '../SelectTaskPriority';
+import { NotificationNumber } from '../../../NotificationNumber';
 
 export function EventTaskBody(): ReactElement {
   const iconSize = 40;
@@ -167,9 +166,7 @@ export function EventTaskBody(): ReactElement {
           <IconContainer color="#99afff">
             <FiFileText size={iconSize} />
             {selectedEventTask.notes.length > 0 && (
-              <NumberOfNotesContainer>
-                <NumberOfNotes>{selectedEventTask.notes.length}</NumberOfNotes>
-              </NumberOfNotesContainer>
+              <NotificationNumber number={selectedEventTask.notes.length} />
             )}
           </IconContainer>
         </MenuButton>

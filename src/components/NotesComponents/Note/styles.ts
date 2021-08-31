@@ -8,7 +8,8 @@ export const Container = styled.div`
   padding-top: 5px;
   justify-content: space-between;
   margin: 8px 0;
-  border: 0.5px solid var(--letter-color-3);
+  border: none;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
 `;
 
 export const TextNote = styled.textarea`

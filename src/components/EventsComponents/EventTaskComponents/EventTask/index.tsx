@@ -40,7 +40,13 @@ export function EventTask({ eventTask }: IProps): ReactElement {
         ) : (
           <>
             <CloseButton closeFunction={handleTaskBody} />
-            <Title>{eventTask.title}</Title>
+            <Title
+              style={{
+                marginRight: '34px',
+              }}
+            >
+              {eventTask.title}
+            </Title>
             <Underline />
           </>
         )}

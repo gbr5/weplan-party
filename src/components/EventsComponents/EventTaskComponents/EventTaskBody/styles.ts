@@ -29,6 +29,7 @@ export const Menu = styled.div`
 export const MenuButtonContainer = styled.div``;
 
 export const MenuButton = styled.button`
+  position: relative;
   display: flex;
   flex-direction: column;
   margin-bottom: 8px;
@@ -55,6 +56,7 @@ export const MenuTitle = styled.p`
 `;
 
 export const IconContainer = styled.div<IBackgroundColor>`
+  position: relative;
   padding: 8px;
   background-color: ${({ color }) => color};
   border-radius: 24px;
@@ -125,24 +127,4 @@ export const DateHeader = styled.p`
   color: var(--letter-color-6);
   font-size: 16px;
   letter-spacing: 1px;
-`;
-
-export const NumberOfNotesContainer = styled.div`
-  border-radius: 80px;
-  padding: 4px;
-  position: absolute;
-  background-color: var(--red-color);
-  top: -0px;
-  left: -10px;
-  z-index: 3;
-  min-width: 38px;
-  min-height: 38px;
-  justify-content: center;
-  align-items: center;
-  z-index: 3;
-`;
-
-export const NumberOfNotes = styled.p`
-  color: var(--letter-color-6);
-  font-size: 15px;
 `;

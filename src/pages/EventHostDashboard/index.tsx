@@ -83,6 +83,7 @@ import { TransactionFilesWindow } from '../../components/TransactionComponents/T
 import { TransactionNotesWindow } from '../../components/TransactionComponents/TransactionNotesWindow';
 import { useEventTasks } from '../../hooks/eventTasks';
 import { SelectTaskStatus } from '../../components/EventsComponents/EventTaskComponents/SelectTaskStatus';
+import { EventTaskNotesWindow } from '../../components/EventsComponents/EventTaskNotesWindow';
 
 interface IUserInfoDTO {
   id: string;
@@ -101,6 +102,7 @@ const EventHostDashboard: React.FC = () => {
   const { friends } = useFriends();
   const { createEventWindow } = useEvent();
   const {
+    selectedEventTask,
     eventGuests,
     selectEventOwner,
     selectEventMember,
@@ -139,7 +141,12 @@ const EventHostDashboard: React.FC = () => {
     transactionNotesWindow,
   } = useTransaction();
   const { createEventNoteWindow, editNoteWindow } = useNote();
-  const { editTaskStatusWindow } = useEventTasks();
+  const {
+    eventTaskNotesWindow,
+    deleteTaskConfirmationWindow,
+    handleDeleteTaskConfirmationWindow,
+    deleteTask,
+  } = useEventTasks();
 
   const location = useLocation<IParams>();
   const pageEvent = location.state.params;
@@ -451,7 +458,16 @@ const EventHostDashboard: React.FC = () => {
 
       {/* End of Transaction Windows */}
       {/* Event Tasks Windows */}
-
+      {eventTaskNotesWindow && <EventTaskNotesWindow />}
+      {deleteTaskConfirmationWindow &&
+        selectedEventTask &&
+        selectedEventTask.id && (
+          <DeleteConfirmationWindow
+            title="Deseja deletar esta tarefa?"
+            onHandleCloseWindow={handleDeleteTaskConfirmationWindow}
+            handleDelete={() => deleteTask(selectedEventTask)}
+          />
+        )}
       {/* End of Event Tasks Windows */}
       {/* Notes Windows */}
       {createEventNoteWindow && <EventNoteForm />}
@@ -507,12 +523,14 @@ const EventHostDashboard: React.FC = () => {
       )}
       {!!deleteMemberDrawer && (
         <DeleteConfirmationWindow
+          title="Deseja deletar este membro?"
           handleDelete={() => handleDeleteMember()}
           onHandleCloseWindow={() => setDeleteMemberDrawer(false)}
         />
       )}
       {!!deleteOwnerDrawer && selectedEventOwner && selectedEventOwner.id && (
         <DeleteConfirmationWindow
+          title="Deseja deletar este anfitrião?"
           handleDelete={() => deleteEventOwner(selectedEventOwner.id)}
           onHandleCloseWindow={() => setDeleteOwnerDrawer(false)}
         />

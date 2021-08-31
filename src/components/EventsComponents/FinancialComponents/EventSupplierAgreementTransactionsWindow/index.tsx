@@ -118,6 +118,7 @@ export function EventSupplierAgreementTransactionsWindow(): JSX.Element {
     >
       {cancelAgreementConfirmationWindow && (
         <DeleteConfirmationWindow
+          title="Deseja deletar este contrato?"
           handleDelete={cancelAgreementAndTransactions}
           onHandleCloseWindow={handleCancelAgreementConfirmationWindow}
         />

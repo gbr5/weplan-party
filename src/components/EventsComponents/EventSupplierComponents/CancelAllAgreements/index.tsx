@@ -225,6 +225,7 @@ export function CancelAllAgreements(): ReactElement {
     >
       {deleteAllConfirmationWindow && (
         <ShortConfirmationWindow
+          title="Deseja deletar todos os contratos?"
           onHandleCloseWindow={handleDeleteAllConfirmationWindow}
           handleDelete={handleDeleteAll}
         />

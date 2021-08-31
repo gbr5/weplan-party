@@ -53,7 +53,7 @@ const EventTasksProvider: React.FC = ({ children }) => {
     selectedEventTask,
     selectEventTask,
   } = useEventVariables();
-  const { getEvent, getEventNotes, getEventTasks } = useCurrentEvent();
+  const { getEventNotes, getEventTasks } = useCurrentEvent();
   const [editTaskTitleWindow, setEditTaskTitleWindow] = useState(false);
   const [editTaskPriorityWindow, setEditTaskPriorityWindow] = useState(false);
   const [editTaskStatusWindow, setEditTaskStatusWindow] = useState(false);
@@ -180,6 +180,7 @@ const EventTasksProvider: React.FC = ({ children }) => {
       setLoading(true);
       await api.delete(`/event-tasks/${data.id}`);
       await getEventTasks(data.event_id);
+      setDeleteTaskConfirmationWindow(false);
     } catch (err) {
       throw new Error(err);
     } finally {
@@ -191,7 +192,7 @@ const EventTasksProvider: React.FC = ({ children }) => {
     try {
       setLoading(true);
       await api.post(`/event-task-notes`, data);
-      await getEvent(selectedEvent.id);
+      await getEventTasks(selectedEvent.id);
     } catch (err) {
       throw new Error(err);
     } finally {
@@ -203,7 +204,7 @@ const EventTasksProvider: React.FC = ({ children }) => {
     try {
       setLoading(true);
       await api.delete(`/event-task-notes/${data.id}`);
-      await getEvent(selectedEvent.id);
+      await getEventTasks(selectedEvent.id);
     } catch (err) {
       throw new Error(err);
     } finally {
