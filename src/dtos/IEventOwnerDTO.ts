@@ -9,4 +9,6 @@ export default interface IEventOwnerDTO {
   event: IEventDTO;
   userEventOwner: IUserDTO;
   event_avatar_url?: string;
+  created_at: Date;
+  updated_at: Date;
 }

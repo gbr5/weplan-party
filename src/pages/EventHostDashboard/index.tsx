@@ -83,6 +83,10 @@ import { useEventTasks } from '../../hooks/eventTasks';
 import { EventTaskNotesWindow } from '../../components/EventsComponents/EventTaskNotesWindow';
 import { EventSupplierBudgetsWindow } from '../../components/EventsComponents/EventSupplierComponents/EventSupplierBudgetsWindow';
 import { EventSupplierBudgetForm } from '../../components/EventsComponents/EventSupplierComponents/EventSupplierBudgetForm';
+import { SelectFromFriends } from '../../components/FriendsComponents/SelectFromFriends';
+import { useEventMembers } from '../../hooks/eventMembers';
+import { OwnersSection } from '../../components/EventsComponents/OwnersComponents/OwnersSection';
+import { MembersSection } from '../../components/EventsComponents/MembersComponents/MembersSection';
 
 interface IUserInfoDTO {
   id: string;
@@ -114,7 +118,18 @@ const EventHostDashboard: React.FC = () => {
     selectedEventSupplierTransactionAgreement,
   } = useEventVariables();
   const { getEventMembers, getEventOwners, budgetWindow } = useCurrentEvent();
-  const { deleteEventOwner } = useEventOwners();
+  const {
+    deleteEventOwner,
+    addMultipleOwners,
+    handleAddOwnerWindow,
+    addOwnerWindow,
+  } = useEventOwners();
+  const {
+    deleteEventMember,
+    addMultipleMembers,
+    handleAddMemberWindow,
+    addMemberWindow,
+  } = useEventMembers();
   const {
     supplierBudgetsWindow,
     editSupplierCategoryWindow,
@@ -454,6 +469,22 @@ const EventHostDashboard: React.FC = () => {
       {supplierBudgetsWindow && <EventSupplierBudgetsWindow />}
 
       {/* End of Event Tasks Windows */}
+      {/* Event Owner Windows */}
+      {addOwnerWindow && (
+        <SelectFromFriends
+          closeWindow={handleAddOwnerWindow}
+          handleAddFriends={addMultipleOwners}
+        />
+      )}
+      {/* End of Event Owner Windows */}
+      {/* Event Member Windows */}
+      {addMemberWindow && (
+        <SelectFromFriends
+          closeWindow={handleAddMemberWindow}
+          handleAddFriends={addMultipleMembers}
+        />
+      )}
+      {/* End of Event Member Windows */}
       {/* Notes Windows */}
       {createEventNoteWindow && <EventNoteForm />}
       {editNoteWindow && <EditNoteWindow />}
@@ -499,13 +530,6 @@ const EventHostDashboard: React.FC = () => {
           handleCloseWindow={handleCloseEditMemberNumberOfGuestsWindow}
         />
       )}
-      {!!deleteMemberDrawer && (
-        <DeleteConfirmationWindow
-          title="Deseja deletar este membro?"
-          handleDelete={() => handleDeleteMember()}
-          onHandleCloseWindow={() => setDeleteMemberDrawer(false)}
-        />
-      )}
       {!!deleteOwnerDrawer && selectedEventOwner && selectedEventOwner.id && (
         <DeleteConfirmationWindow
           title="Deseja deletar este anfitrião?"
@@ -513,6 +537,15 @@ const EventHostDashboard: React.FC = () => {
           onHandleCloseWindow={() => setDeleteOwnerDrawer(false)}
         />
       )}
+      {!!deleteMemberDrawer &&
+        selectedEventMember &&
+        selectedEventMember.id && (
+          <DeleteConfirmationWindow
+            title="Deseja deletar este membro?"
+            handleDelete={() => deleteEventMember(selectedEventMember.id)}
+            onHandleCloseWindow={() => setDeleteMemberDrawer(false)}
+          />
+        )}
       {!!eventInfoDrawer && (
         <EventInfoWindow
           eventInfo={eventInfo}
@@ -617,6 +650,8 @@ const EventHostDashboard: React.FC = () => {
           )}
           {currentSection === 'financial' && <FinancialSection />}
           {currentSection === 'tasks' && <EventTaskSection />}
+          {currentSection === 'owners' && <OwnersSection />}
+          {currentSection === 'members' && <MembersSection />}
         </Main>
       </EventPageContent>
     </Container>

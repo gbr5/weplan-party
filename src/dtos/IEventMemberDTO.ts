@@ -8,4 +8,6 @@ export default interface IEventMemberDTO {
   event: IEventDTO;
   userEventMember: IUserDTO;
   event_avatar_url?: string;
+  created_at: Date;
+  updated_at: Date;
 }
