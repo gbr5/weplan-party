@@ -94,10 +94,12 @@ const EventTasksProvider: React.FC = ({ children }) => {
   }
 
   function handleEditTaskPriorityWindow(): void {
+    setEditTaskStatusWindow(false);
     setEditTaskPriorityWindow(!editTaskPriorityWindow);
   }
 
   function handleEditTaskStatusWindow(): void {
+    setEditTaskPriorityWindow(false);
     setEditTaskStatusWindow(!editTaskStatusWindow);
   }
 

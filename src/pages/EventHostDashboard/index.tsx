@@ -81,6 +81,8 @@ import { EventSupplierAgreementTransactionsWindow } from '../../components/Event
 import { Container, EventPageContent, Main } from './styles';
 import { TransactionFilesWindow } from '../../components/TransactionComponents/TransactionFilesWindow';
 import { TransactionNotesWindow } from '../../components/TransactionComponents/TransactionNotesWindow';
+import { useEventTasks } from '../../hooks/eventTasks';
+import { SelectTaskStatus } from '../../components/EventsComponents/EventTaskComponents/SelectTaskStatus';
 
 interface IUserInfoDTO {
   id: string;
@@ -137,6 +139,7 @@ const EventHostDashboard: React.FC = () => {
     transactionNotesWindow,
   } = useTransaction();
   const { createEventNoteWindow, editNoteWindow } = useNote();
+  const { editTaskStatusWindow } = useEventTasks();
 
   const location = useLocation<IParams>();
   const pageEvent = location.state.params;
@@ -447,6 +450,9 @@ const EventHostDashboard: React.FC = () => {
       {transactionFilesWindow && <TransactionFilesWindow />}
 
       {/* End of Transaction Windows */}
+      {/* Event Tasks Windows */}
+
+      {/* End of Event Tasks Windows */}
       {/* Notes Windows */}
       {createEventNoteWindow && <EventNoteForm />}
       {editNoteWindow && <EditNoteWindow />}

@@ -2,8 +2,8 @@
 /* eslint-disable react/require-default-props */
 import React, { useState, useRef, ReactElement, useMemo } from 'react';
 import { useEffect } from 'react';
+import { FiSend } from 'react-icons/fi';
 import formatTextArea from '../../../utils/formatTextArea';
-import Button from '../../Button';
 
 import {
   Container,
@@ -11,7 +11,6 @@ import {
   TextAreaInput,
   NumberOfCharacters,
   SendButton,
-  SendButtonText,
 } from './styles';
 
 interface IProps {
@@ -30,9 +29,12 @@ export function NoteForm({
   const [rows, setRows] = useState(2);
 
   function submitNote(): void {
-    handleNote(textValue);
-    setTextValue('');
-    if (textAreaRef.current) textAreaRef.current.value = '';
+    if (textAreaRef.current) {
+      if (textAreaRef.current.value === '') return;
+      handleNote(textValue);
+      setTextValue('');
+      textAreaRef.current.value = '';
+    }
   }
 
   function handleChange(): void {
@@ -50,8 +52,10 @@ export function NoteForm({
   }, []);
 
   useEffect(() => {
-    if (textValue === '' && textAreaRef.current && defaulValue)
+    if (textValue === '' && textAreaRef.current && defaulValue) {
       textAreaRef.current.value = defaulValue;
+      setTextValue(defaulValue);
+    }
   }, [defaulValue, textAreaRef, textValue]);
 
   return (
@@ -61,6 +65,7 @@ export function NoteForm({
           <TextAreaInput
             ref={textAreaRef}
             placeholder={placeholder}
+            defaultValue={defaulValue}
             autoCapitalize="sentences"
             name="note"
             onChange={handleChange}
@@ -69,7 +74,9 @@ export function NoteForm({
           />
           <NumberOfCharacters>{textValue.length}</NumberOfCharacters>
         </TextAreaContainer>
-        {textValue !== '' && <Button onClick={submitNote}>Enviar</Button>}
+        <SendButton onClick={submitNote}>
+          <FiSend />
+        </SendButton>
       </Container>
     </>
   );

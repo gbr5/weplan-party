@@ -1,30 +1,23 @@
 import React, { ReactElement } from 'react';
-import { FiLoader, FiUpload } from 'react-icons/fi';
+import { FiUpload } from 'react-icons/fi';
 
 import { useEventVariables } from '../../../../hooks/eventVariables';
 import { useEventSuppliers } from '../../../../hooks/eventSuppliers';
 
 import WindowUnFormattedContainer from '../../../WindowUnFormattedContainer';
-import { WindowHeader } from '../../../WindowHeader';
 
 import {
   Container,
   FileButton,
   FileInput,
   FileContainer,
-  IconContainer,
   HeaderContainer,
   Title,
 } from './styles';
 
 export function EventSupplierFilesWindow(): ReactElement {
-  const iconSize = 60;
   const { selectedEventSupplier } = useEventVariables();
-  const {
-    handleSupplierFilesWindow,
-    importSupplierFile,
-    loading,
-  } = useEventSuppliers();
+  const { handleSupplierFilesWindow, importSupplierFile } = useEventSuppliers();
 
   return (
     <WindowUnFormattedContainer
@@ -39,7 +32,7 @@ export function EventSupplierFilesWindow(): ReactElement {
     >
       <Container>
         <HeaderContainer>
-          <Title>Arquivos - {selectedEventSupplier.name}</Title>
+          <Title>Arquivos de {selectedEventSupplier.name}</Title>
           <FileInput>
             <label htmlFor="file">
               <FiUpload />

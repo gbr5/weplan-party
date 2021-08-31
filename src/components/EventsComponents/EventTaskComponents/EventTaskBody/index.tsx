@@ -24,11 +24,14 @@ import {
   DateHeader,
   NumberOfNotesContainer,
   NumberOfNotes,
+  MenuButtonContainer,
 } from './styles';
 import formatOnlyTime from '../../../../utils/formatOnlyTime';
 import { TimePickerLine } from '../../../DatePickerLine';
 import { DatePickerLine } from '../../../TimePickerLine';
 import InlineFormField from '../../../InlineFormField';
+import { SelectTaskStatus } from '../SelectTaskStatus';
+import { SelectTaskPriority } from '../SelectTaskPriority';
 
 export function EventTaskBody(): ReactElement {
   const iconSize = 40;
@@ -41,6 +44,8 @@ export function EventTaskBody(): ReactElement {
     handleEventTaskNotesWindow,
     handleDeleteTaskConfirmationWindow,
     updateTask,
+    editTaskStatusWindow,
+    editTaskPriorityWindow,
   } = useEventTasks();
 
   async function handleUpdateTaskDueDate(date: Date): Promise<void> {
@@ -129,28 +134,34 @@ export function EventTaskBody(): ReactElement {
         placeholder={selectedEventTask.title}
       />
       <Menu>
-        <MenuButton onClick={handleEditTaskStatusWindow}>
-          <MenuTitle>Status</MenuTitle>
-          <IconContainer color={status.color}>
-            {selectedEventTask.status === 'not started' && (
-              <FiCloud size={functionIconSize} />
-            )}
-            {selectedEventTask.status === 'running' && (
-              <FiZap size={functionIconSize} />
-            )}
-            {selectedEventTask.status === 'finnished' && (
-              <FiAward size={functionIconSize} />
-            )}
-            <MenuText>{status.title}</MenuText>
-          </IconContainer>
-        </MenuButton>
-        <MenuButton onClick={handleEditTaskPriorityWindow}>
-          <MenuTitle>Prioridade</MenuTitle>
-          <IconContainer color={priority.color}>
-            <FiFlag size={functionIconSize} name="flag" />
-            <MenuText>{priority.title}</MenuText>
-          </IconContainer>
-        </MenuButton>
+        <MenuButtonContainer>
+          {editTaskStatusWindow && <SelectTaskStatus />}
+          <MenuButton onClick={handleEditTaskStatusWindow}>
+            <MenuTitle>Status</MenuTitle>
+            <IconContainer color={status.color}>
+              {selectedEventTask.status === 'not started' && (
+                <FiCloud size={functionIconSize} />
+              )}
+              {selectedEventTask.status === 'running' && (
+                <FiZap size={functionIconSize} />
+              )}
+              {selectedEventTask.status === 'finnished' && (
+                <FiAward size={functionIconSize} />
+              )}
+              <MenuText>{status.title}</MenuText>
+            </IconContainer>
+          </MenuButton>
+        </MenuButtonContainer>
+        <MenuButtonContainer>
+          {editTaskPriorityWindow && <SelectTaskPriority />}
+          <MenuButton onClick={handleEditTaskPriorityWindow}>
+            <MenuTitle>Prioridade</MenuTitle>
+            <IconContainer color={priority.color}>
+              <FiFlag size={functionIconSize} name="flag" />
+              <MenuText>{priority.title}</MenuText>
+            </IconContainer>
+          </MenuButton>
+        </MenuButtonContainer>
         <MenuButton onClick={handleEventTaskNotesWindow}>
           <MenuTitle>Notas</MenuTitle>
           <IconContainer color="#99afff">
