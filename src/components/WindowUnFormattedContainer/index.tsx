@@ -9,10 +9,11 @@ interface WindowUnFormattedContainerProps
   containerStyle?: object;
   onHandleCloseWindow: Function;
   // children: ;
+  zIndex: number;
 }
 
 const WindowUnFormattedContainer: React.FC<WindowUnFormattedContainerProps> = props => {
-  const { containerStyle = {}, onHandleCloseWindow, children } = props;
+  const { containerStyle = {}, onHandleCloseWindow, children, zIndex } = props;
   const [backdrop, setBackdrop] = useState(true);
 
   const closeAll = useCallback(() => {
@@ -21,7 +22,7 @@ const WindowUnFormattedContainer: React.FC<WindowUnFormattedContainerProps> = pr
   }, [onHandleCloseWindow]);
   return (
     <>
-      {backdrop && <Backdrop onClick={closeAll} />}
+      {backdrop && <Backdrop zIndex={zIndex} onClick={closeAll} />}
       <Container style={containerStyle}>
         <header>
           <button type="button" onClick={() => closeAll()}>

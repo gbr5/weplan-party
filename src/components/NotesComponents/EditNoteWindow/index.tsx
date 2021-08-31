@@ -29,6 +29,7 @@ export function EditNoteWindow(): JSX.Element {
         height: '90%',
         width: '100%',
       }}
+      zIndex={24}
     >
       <Container>
         <Title>Atualizar nota</Title>

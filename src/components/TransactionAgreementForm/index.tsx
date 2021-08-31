@@ -178,6 +178,7 @@ const TransactionAgreementForm: React.FC<IPropsDTO> = ({
         </div>
         {!!transactionContainer && (
           <WindowUnFormattedContainer
+            zIndex={9}
             onHandleCloseWindow={onHandleCloseWindow}
             containerStyle={{
               zIndex: 10,

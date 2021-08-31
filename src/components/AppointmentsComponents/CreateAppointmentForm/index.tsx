@@ -7,7 +7,6 @@ import WindowUnFormattedContainer from '../../WindowUnFormattedContainer';
 import { Container, ButtonContainer } from './styles';
 import { useToast } from '../../../hooks/toast';
 import api from '../../../services/api';
-import SelectDate from '../../UserComponents/SelectDate';
 import formatDateToString from '../../../utils/formatDateToString';
 import IUserDTO from '../../../dtos/IUserDTO';
 import IFriendDTO from '../../../dtos/IFriendDTO';
@@ -231,6 +230,7 @@ const CreateAppointmentForm: React.FC<IProps> = ({
         height: '100%',
         width: '100%',
       }}
+      zIndex={14}
     >
       <Form ref={formRef} onSubmit={handleSubmit}>
         <Container>
@@ -329,12 +329,6 @@ const CreateAppointmentForm: React.FC<IProps> = ({
           )}
         </Container>
       </Form>
-      {selectDateWindow && (
-        <SelectDate
-          closeWindow={() => nextSection()}
-          selectDate={(e: Date) => setSelectedDate(e)}
-        />
-      )}
 
       {participants && (
         <SelectFriendWindow

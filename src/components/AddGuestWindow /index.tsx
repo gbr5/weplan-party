@@ -353,6 +353,7 @@ export function AddGuestWindow({
           width: '100%',
           overflowY: 'scroll',
         }}
+        zIndex={14}
       >
         <Form ref={formRef} onSubmit={handleAddGuest}>
           <Container>

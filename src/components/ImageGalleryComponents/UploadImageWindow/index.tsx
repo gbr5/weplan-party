@@ -18,6 +18,7 @@ const UploadImageWindow: React.FC<IProps> = ({ closeWindow }: IProps) => {
         height: '100%',
         width: '100%',
       }}
+      zIndex={19}
     >
       <Container>
         <h1>Upload de Imagens</h1>

@@ -89,6 +89,10 @@ const EventProvider: React.FC = ({ children }) => {
           event_type,
           isDateDefined,
         });
+        await api.post(`/event-budget`, {
+          event_id: event.data.id,
+          budget: 0,
+        });
         event && event.data && getNextEvent();
         event && event.data && getEventsAsOwner();
         return event.data;

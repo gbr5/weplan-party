@@ -6,7 +6,6 @@ import MainFriendsWindow from '../MainFriendsWindow';
 import UploadFileWindow from '../UploadFileWindow';
 import MenuDrawer from './MenuDrawer';
 import Backdrop from '../Backdrop';
-import CreateEventInfoWindowForm from '../CreateEventInfoWindowForm';
 
 interface IEvent {
   id: string;

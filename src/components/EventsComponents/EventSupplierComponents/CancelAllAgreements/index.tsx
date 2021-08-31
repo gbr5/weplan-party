@@ -222,6 +222,7 @@ export function CancelAllAgreements(): ReactElement {
         height: '95%',
         width: '100%',
       }}
+      zIndex={35}
     >
       {deleteAllConfirmationWindow && (
         <ShortConfirmationWindow

@@ -183,6 +183,7 @@ const UserToGuestMessageWindow: React.FC<IPropsDTO> = ({
         height: '100%',
         width: '100%',
       }}
+      zIndex={24}
     >
       <Container>
         <SideMenu>

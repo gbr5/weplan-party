@@ -180,6 +180,7 @@ const AddSupplierWindow: React.FC<IProps> = ({
           height: '100%',
           width: '100%',
         }}
+        zIndex={14}
       >
         <Form ref={formRef} onSubmit={handleAddSupplier}>
           <Container>

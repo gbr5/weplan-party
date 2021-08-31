@@ -51,6 +51,7 @@ export function TransactionNotesWindow(): JSX.Element {
         height: '90%',
         width: '100%',
       }}
+      zIndex={54}
     >
       <Container>
         <WindowHeader

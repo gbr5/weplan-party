@@ -47,9 +47,7 @@ import AddOwnerWindow from '../../components/AddOwnerWindow';
 import FriendsListWindow from '../../components/FriendsListWindow';
 import EventInfoWindow from '../../components/EventInfoWindow';
 import MembersWindow from '../../components/MembersWindow';
-import EditEventInfoWindow from '../../components/EditEventInfoWindow';
 import AddPlannerWindow from '../../components/AddPlannerWindow';
-import CreateEventInfoWindowForm from '../../components/CreateEventInfoWindowForm';
 import UpdateEventNumberOfGuestsWindow from '../../components/UpdateEventNumberOfGuestsWindow';
 import GuestAlocationWindow from '../../components/GuestAlocationWindow';
 import EditEventBudgetWindow from '../../components/EditEventBudgetWindow';
@@ -82,8 +80,9 @@ import { Container, EventPageContent, Main } from './styles';
 import { TransactionFilesWindow } from '../../components/TransactionComponents/TransactionFilesWindow';
 import { TransactionNotesWindow } from '../../components/TransactionComponents/TransactionNotesWindow';
 import { useEventTasks } from '../../hooks/eventTasks';
-import { SelectTaskStatus } from '../../components/EventsComponents/EventTaskComponents/SelectTaskStatus';
 import { EventTaskNotesWindow } from '../../components/EventsComponents/EventTaskNotesWindow';
+import { EventSupplierBudgetsWindow } from '../../components/EventsComponents/EventSupplierComponents/EventSupplierBudgetsWindow';
+import { EventSupplierBudgetForm } from '../../components/EventsComponents/EventSupplierComponents/EventSupplierBudgetForm';
 
 interface IUserInfoDTO {
   id: string;
@@ -117,6 +116,7 @@ const EventHostDashboard: React.FC = () => {
   const { getEventMembers, getEventOwners, budgetWindow } = useCurrentEvent();
   const { deleteEventOwner } = useEventOwners();
   const {
+    supplierBudgetsWindow,
     editSupplierCategoryWindow,
     createSupplierTransactionAgreementWindow,
     addSupplierWindow,
@@ -130,6 +130,7 @@ const EventHostDashboard: React.FC = () => {
     cancelAgreementsWindow,
     dischargingWindow,
     supplierCategoryWindow,
+    supplierBudgetForm,
     eventSupplierAgreementTransactionsWindow,
   } = useEventSuppliers();
   const {
@@ -157,7 +158,6 @@ const EventHostDashboard: React.FC = () => {
   const [guestAlocationWindow, setGuestAlocationWindow] = useState(false);
   const [membersWindow, setMembersWindow] = useState(false);
   const [eventInfoDrawer, setEventInfoDrawer] = useState(false);
-  const [editEventInfoDrawer, setEditEventInfoDrawer] = useState(false);
   const [editEventNameDrawer, setEditEventNameDrawer] = useState(false);
   const [addPlannerDrawer, setAddPlannerDrawer] = useState(false);
   const [addOwnerDrawer, setAddOwnerDrawer] = useState(false);
@@ -172,9 +172,6 @@ const EventHostDashboard: React.FC = () => {
     updateEventNumberOfGuestsWindow,
     setUpdateEventNumberOfGuestsWindow,
   ] = useState(false);
-  const [createEventInfoWindowForm, setCreateEventInfoWindowForm] = useState(
-    false,
-  );
   const [numberOfPlanners, setNumberOfPlanners] = useState(0);
   const [totalGuestNumber, setTotalGuestNumber] = useState(0);
   const [selectedFriend, setSelectedFriend] = useState<IFriendDTO>(
@@ -190,13 +187,11 @@ const EventHostDashboard: React.FC = () => {
 
   const closeAllWindows = useCallback(() => {
     setGuestAlocationWindow(false);
-    setCreateEventInfoWindowForm(false);
     setUpdateEventNumberOfGuestsWindow(false);
     setSelectedFriend({} as IFriendDTO);
     setSelectedSupplier({} as IEventSupplierDTO);
     setFriendsWindow(false);
     setMembersWindow(false);
-    setEditEventInfoDrawer(false);
     setOwnerProfileWindow(false);
     setDeleteOwnerDrawer(false);
     setEventInfoDrawer(false);
@@ -336,15 +331,6 @@ const EventHostDashboard: React.FC = () => {
     setAddMemberWindowForm(false);
     await getEventMembers(eventId);
   }, [getEventMembers, eventId]);
-
-  const handleCloseEditEventInfoWindow = useCallback(
-    (data: IEventInfoDTO) => {
-      setEventInfo(data);
-      setEditEventInfoDrawer(false);
-      handleGetEventInfo();
-    },
-    [handleGetEventInfo],
-  );
   const handleCloseAddOwnerWindow = useCallback(async () => {
     setSelectedFriend({} as IFriendDTO);
     setAddOwnerDrawer(false);
@@ -409,15 +395,10 @@ const EventHostDashboard: React.FC = () => {
   }, [selectEventOwner]);
   const handleEditEventInfoWindow = useCallback(() => {
     setEventInfoDrawer(false);
-    setEditEventInfoDrawer(true);
   }, []);
   useEffect(() => {
     handleGetPlanners();
   }, [handleGetPlanners]);
-  const closeEventInfoWindowForm = useCallback(() => {
-    handleGetEventInfo();
-    setCreateEventInfoWindowForm(false);
-  }, [handleGetEventInfo]);
 
   return (
     <Container>
@@ -443,6 +424,8 @@ const EventHostDashboard: React.FC = () => {
       {newEventSupplierTransactionAgreement && (
         <NewEventSupplierTransactionAgreementConfirmation />
       )}
+      {supplierBudgetForm && <EventSupplierBudgetForm />}
+
       {/* End of Supplier Windows */}
       {/* Transaction Windows */}
       {filterTransactionWindow && <TransactionsFilterWindow />}
@@ -468,18 +451,13 @@ const EventHostDashboard: React.FC = () => {
             handleDelete={() => deleteTask(selectedEventTask)}
           />
         )}
+      {supplierBudgetsWindow && <EventSupplierBudgetsWindow />}
+
       {/* End of Event Tasks Windows */}
       {/* Notes Windows */}
       {createEventNoteWindow && <EventNoteForm />}
       {editNoteWindow && <EditNoteWindow />}
       {/* End of Notes Windows */}
-      {!!createEventInfoWindowForm && (
-        <CreateEventInfoWindowForm
-          eventId={eventId}
-          getEventInfo={handleGetEventInfo}
-          handleCloseWindow={closeEventInfoWindowForm}
-        />
-      )}
       {guestAlocationWindow && (
         <GuestAlocationWindow
           onHandleCloseWindow={() => closeGuestAlocationWindow()}
@@ -541,17 +519,6 @@ const EventHostDashboard: React.FC = () => {
           handleEditEventInfo={() => handleEditEventInfoWindow()}
           onHandleCloseWindow={() => setEventInfoDrawer(false)}
           eventName={eventName}
-        />
-      )}
-      {!!editEventInfoDrawer && (
-        <EditEventInfoWindow
-          eventId={eventId}
-          eventInfo={eventInfo}
-          currentNumberOfGuests={currentNumberOfGuests}
-          handleCloseWindow={(e: IEventInfoDTO) =>
-            handleCloseEditEventInfoWindow(e)
-          }
-          onHandleCloseWindow={() => setEditEventInfoDrawer(false)}
         />
       )}
       {!!addPlannerDrawer && (

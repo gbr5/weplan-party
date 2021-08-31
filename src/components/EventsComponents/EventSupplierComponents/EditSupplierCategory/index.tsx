@@ -36,6 +36,7 @@ export function EditSupplierCategory(): ReactElement {
         height: '65%',
         width: '100%',
       }}
+      zIndex={14}
     >
       <Container>
         <WindowHeader

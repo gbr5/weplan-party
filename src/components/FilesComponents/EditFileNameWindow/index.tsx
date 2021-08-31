@@ -50,6 +50,7 @@ export function EditFileNameWindow(): JSX.Element {
         height: '70%',
         width: '96%',
       }}
+      zIndex={27}
     >
       <WindowHeader overTitle="Editar" title="Nome do Arquivo" />
       <Container>

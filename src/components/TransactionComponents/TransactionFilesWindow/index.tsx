@@ -46,6 +46,7 @@ export function TransactionFilesWindow(): JSX.Element {
         height: '90%',
         width: '100%',
       }}
+      zIndex={17}
     >
       <Container>
         <WindowHeader

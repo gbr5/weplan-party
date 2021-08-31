@@ -64,6 +64,7 @@ export function EventTaskNotesWindow(): JSX.Element {
         width: '100%',
         zIndex: 15,
       }}
+      zIndex={14}
     >
       <Container>
         <Title>Notas</Title>

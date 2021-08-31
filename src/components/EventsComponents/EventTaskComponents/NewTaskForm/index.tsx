@@ -119,6 +119,7 @@ export function NewTaskForm(): ReactElement {
         width: '96%',
         zIndex: 15,
       }}
+      zIndex={14}
     >
       <WindowHeader title="Nova Tarefa" />
       <Container>

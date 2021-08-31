@@ -113,6 +113,7 @@ export function DischargeSupplierWindow(): ReactElement {
         height: '95%',
         width: '100%',
       }}
+      zIndex={24}
     >
       <Container>
         <WindowHeader

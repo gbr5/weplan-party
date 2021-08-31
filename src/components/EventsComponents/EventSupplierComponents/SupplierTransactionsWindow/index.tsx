@@ -74,6 +74,7 @@ export function SupplierTransactionsWindow(): ReactElement {
         height: '95%',
         width: '100%',
       }}
+      zIndex={15}
     >
       <Container>
         <WindowHeader

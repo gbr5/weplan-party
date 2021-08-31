@@ -115,6 +115,7 @@ export function EventSupplierAgreementTransactionsWindow(): JSX.Element {
         height: '90%',
         width: '100%',
       }}
+      zIndex={15}
     >
       {cancelAgreementConfirmationWindow && (
         <DeleteConfirmationWindow

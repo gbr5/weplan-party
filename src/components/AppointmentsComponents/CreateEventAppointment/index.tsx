@@ -11,7 +11,6 @@ import {
 } from './styles';
 import { useToast } from '../../../hooks/toast';
 import api from '../../../services/api';
-import SelectDate from '../../UserComponents/SelectDate';
 import formatDateToString from '../../../utils/formatDateToString';
 import IUserDTO from '../../../dtos/IUserDTO';
 import IFriendDTO from '../../../dtos/IFriendDTO';
@@ -242,6 +241,7 @@ export function CreateEventAppointment({
           height: '100%',
           width: '100%',
         }}
+        zIndex={8}
       >
         <Form ref={formRef} onSubmit={handleSubmit}>
           <Container>
@@ -349,12 +349,6 @@ export function CreateEventAppointment({
           </SelectFriendWindowContainer>
         )}
       </WindowUnFormattedContainer>
-      {selectDateWindow && (
-        <SelectDate
-          closeWindow={() => nextSection()}
-          selectDate={(e: Date) => setSelectedDate(e)}
-        />
-      )}
       {files && (
         <SelectUserFileWindow
           handleCloseWindow={() => nextSection()}

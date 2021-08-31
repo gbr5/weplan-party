@@ -51,6 +51,7 @@ export function SupplierNotesSection(): ReactElement {
         height: '90%',
         width: '100%',
       }}
+      zIndex={14}
     >
       <Container>
         <WindowHeader

@@ -41,7 +41,6 @@ const EditEventBudgetWindow: React.FC = () => {
         });
 
         const { budget } = data;
-        console.log({ budget });
 
         if (eventBudget && eventBudget.id) {
           const { id, event_id } = eventBudget;
@@ -92,6 +91,7 @@ const EditEventBudgetWindow: React.FC = () => {
         height: '42vh',
         width: '90%',
       }}
+      zIndex={9}
     >
       <Form ref={formRef} onSubmit={handleSubmit}>
         <Container>

@@ -51,6 +51,7 @@ export function TransactionsFilterWindow(): ReactElement {
         height: '85%',
         width: '100%',
       }}
+      zIndex={14}
     >
       <Container>
         <WindowHeader overTitle="Filtrar" title="Transações" />

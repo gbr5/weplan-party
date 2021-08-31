@@ -103,6 +103,7 @@ const CreatePersonInfoWindowForm: React.FC<IProps> = ({
         height: '100%',
         width: '100%',
       }}
+      zIndex={99}
     >
       <Container>
         <Form ref={formRef} onSubmit={handleSubmitPersonInfo}>

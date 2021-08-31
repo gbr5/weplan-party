@@ -26,6 +26,7 @@ export function EventNoteForm(): JSX.Element {
         height: '90%',
         width: '100%',
       }}
+      zIndex={14}
     >
       <WindowHeader title="Nova Nota do Evento" />
 

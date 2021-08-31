@@ -409,7 +409,7 @@ const EventSuppliersProvider: React.FC = ({ children }) => {
   }: IEventSupplierBudgetDTO): Promise<void> {
     try {
       setLoading(true);
-      await api.put(`/event-supplier-budgets/`, {
+      const response = await api.put(`/event-supplier-budgets/`, {
         id,
         amount,
         description,

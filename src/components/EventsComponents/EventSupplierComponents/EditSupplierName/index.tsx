@@ -50,6 +50,7 @@ export function EditSupplierName(): ReactElement {
         height: '60%',
         width: '96%',
       }}
+      zIndex={30}
     >
       <WindowHeader
         overTitle="Editar Fornecedor"

@@ -68,6 +68,7 @@ export function EditNewTransactionAmount(): ReactElement {
         height: '50%',
         width: '96%',
       }}
+      zIndex={30}
     >
       <WindowHeader overTitle="Novo Contrato" title="Editar Transação" />
       <Container>

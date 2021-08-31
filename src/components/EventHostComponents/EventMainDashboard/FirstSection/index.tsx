@@ -2,22 +2,17 @@ import React, {
   ChangeEvent,
   ReactElement,
   useCallback,
-  useEffect,
   useMemo,
   useState,
 } from 'react';
-import { FiCamera, FiEdit } from 'react-icons/fi';
-import { MdAdd } from 'react-icons/md';
+import { FiCamera } from 'react-icons/fi';
 
 import placeholder from '../../../../assets/WePlanLogo.svg';
 import { useToast } from '../../../../hooks/toast';
 import api from '../../../../services/api';
 import formatDateToString from '../../../../utils/formatDateToString';
 import { getEventType } from '../../../../utils/getEventType';
-import SelectMultipleDates from '../../../SelectMultipleDates';
-import SetEventDate from '../SetEventDate';
 import PossibleDates from './PossibleDatesSection';
-import EventInfoSection from './EventInfoSection';
 
 import {
   Container,
@@ -25,8 +20,6 @@ import {
   EventSection,
   InsideSection,
   PublishedButton,
-  EditButton,
-  PossibleDatesHeader,
 } from './styles';
 import { useEventVariables } from '../../../../hooks/eventVariables';
 
@@ -34,11 +27,7 @@ export function FirstSection(): ReactElement {
   const { addToast } = useToast();
   const { selectedEvent, master } = useEventVariables();
 
-  const [eventDateWindow, setEventDateWindow] = useState(false);
-  const [editEventInfoDrawer, setEditEventInfoDrawer] = useState(false);
   const [avatar, setAvatar] = useState(selectedEvent.avatar_url || placeholder);
-  const [alreadySelectedDates, setAlreadySelectedDates] = useState<Date[]>([]);
-  const [createEventDatesWindow, setCreateEventDatesWindow] = useState(false);
   const [updatedEvent, setUpdatedEvent] = useState(selectedEvent);
 
   const updateEvent = useCallback(() => {
@@ -57,17 +46,6 @@ export function FirstSection(): ReactElement {
       throw new Error(err);
     }
   }, [selectedEvent, addToast, avatar]);
-
-  useEffect(() => {
-    const dates =
-      !!updatedEvent.eventDates &&
-      updatedEvent.eventDates.map(date => date.date);
-    !!dates && setAlreadySelectedDates(dates);
-  }, [updatedEvent]);
-
-  const openEventDateWindow = useCallback(() => {
-    setEventDateWindow(true);
-  }, []);
 
   const handleAvatarChange = useCallback(
     async (e: ChangeEvent<HTMLInputElement>) => {
@@ -150,33 +128,8 @@ export function FirstSection(): ReactElement {
     [updatedEvent, updateEvent, addToast],
   );
 
-  // const handleCloseWindow = useCallback(() => {
-  //   setEditEventInfoDrawer(false);
-  //   updateEvent();
-  // }, [updateEvent]);
-
   return (
     <Container>
-      {eventDateWindow && (
-        <SetEventDate closeWindow={() => setEventDateWindow(false)} />
-      )}
-      {createEventDatesWindow && (
-        <SelectMultipleDates
-          alreadySelectedDates={alreadySelectedDates}
-          closeWindow={() => setCreateEventDatesWindow(false)}
-          selectDates={(e: Date[]) => handleCreateEventDates(e)}
-        />
-      )}
-      {/* {!!editEventInfoDrawer && (
-        <EditEventInfoWindow
-          eventId={event.id}
-          eventInfo={event.eventInfo}
-          currentNumberOfGuests={currentNumberOfGuests}
-          handleCloseWindow={handleCloseWindow}
-          onHandleCloseWindow={() => setEditEventInfoDrawer(false)}
-        />
-      )} */}
-
       <AvatarInput>
         <img src={avatar} alt="WePlan" />
         <label htmlFor="avatar">
@@ -201,43 +154,9 @@ export function FirstSection(): ReactElement {
               {updatedEvent.isPublished ? 'Publicado' : 'Publicar'}
             </PublishedButton>
           </span>
-          <span>
-            {updatedEvent.isDateDefined ? (
-              <>
-                <p>{eventDate.date}</p>
-                <p>{eventDate.hour}</p>
-                <EditButton type="button" onClick={openEventDateWindow}>
-                  <FiEdit />
-                </EditButton>
-              </>
-            ) : (
-              <PublishedButton
-                isPublished
-                type="button"
-                onClick={openEventDateWindow}
-              >
-                Definir a data do evento
-              </PublishedButton>
-            )}
-          </span>
         </InsideSection>
-        <PossibleDatesHeader>
-          <p>Possíveis datas</p>
-
-          <PublishedButton
-            isPublished
-            type="button"
-            onClick={() => setCreateEventDatesWindow(true)}
-          >
-            <MdAdd />
-          </PublishedButton>
-        </PossibleDatesHeader>
         <PossibleDates dates={updatedEvent.eventDates} />
       </EventSection>
-      <EventInfoSection
-        event={updatedEvent}
-        openEditEventInfo={() => setEditEventInfoDrawer(true)}
-      />
     </Container>
   );
 }

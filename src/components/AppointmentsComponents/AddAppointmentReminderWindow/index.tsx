@@ -6,7 +6,7 @@ import IAppointmentDTO from '../../../dtos/IAppointmentDTO';
 
 import { Container, TypeButton, ButtonContainer, SaveButton } from './styles';
 import WindowUnFormattedContainer from '../../WindowUnFormattedContainer';
-import SelectDate from '../../UserComponents/SelectDate';
+import { DatePickerLine } from '../../TimePickerLine';
 
 interface IProps {
   closeWindow: Function;
@@ -72,6 +72,7 @@ const AddAppointmentReminderWindow: React.FC<IProps> = ({
         height: '100%',
         width: '100%',
       }}
+      zIndex={19}
     >
       <Container>
         <h3>Definir lembrete</h3>
@@ -103,9 +104,9 @@ const AddAppointmentReminderWindow: React.FC<IProps> = ({
         )}
       </Container>
       {selectDateWindow && (
-        <SelectDate
-          closeWindow={() => setSelectDateWindow(false)}
-          selectDate={(e: Date) => setSelectedDate(e)}
+        <DatePickerLine
+          handleSelectedDate={(e: Date) => setSelectedDate(e)}
+          selectedDate={new Date()}
         />
       )}
     </WindowUnFormattedContainer>

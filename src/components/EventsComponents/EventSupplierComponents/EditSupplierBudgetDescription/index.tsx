@@ -63,6 +63,7 @@ export function EditSupplierBudgetDescription(): ReactElement {
         height: '70%',
         width: '100%',
       }}
+      zIndex={24}
     >
       <Container>
         <WindowHeader title="Editar Descrição" />

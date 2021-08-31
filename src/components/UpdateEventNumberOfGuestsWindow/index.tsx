@@ -101,6 +101,7 @@ const UpdateEventNumberOfGuestsWindow: React.FC<IProps> = ({
         height: '90%',
         width: '90%',
       }}
+      zIndex={39}
     >
       <Form ref={formRef} onSubmit={handleEditEventInfo}>
         <Container>

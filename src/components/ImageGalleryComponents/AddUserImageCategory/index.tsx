@@ -83,6 +83,7 @@ const AddUserImageCategory: React.FC<IProps> = ({
         height: '100%',
         width: '100%',
       }}
+      zIndex={14}
     >
       <Form ref={formRef} onSubmit={handleSubmit}>
         <Input name="name" type="text" placeholder="Nome da Categoria" />

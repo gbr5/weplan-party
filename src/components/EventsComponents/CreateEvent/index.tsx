@@ -86,6 +86,7 @@ export function CreateEvent(): JSX.Element {
         top: '10%',
         zIndex: 15,
       }}
+      zIndex={14}
     >
       <Container>
         <Title>Novo Evento</Title>

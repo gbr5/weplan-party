@@ -96,7 +96,6 @@ export function EventTransactionButtonInfo(): ReactElement {
   async function handleUpdateTransactionCategory(
     category: string,
   ): Promise<void> {
-    console.log(category);
     if (
       category === '' &&
       category === selectedEventTransaction.transaction.category

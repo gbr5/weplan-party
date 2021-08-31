@@ -124,6 +124,7 @@ const SignIn: React.FC = () => {
             height: '100%',
             width: '100%',
           }}
+          zIndex={14}
         >
           <ActivationMessageContainer>
             <h1>Ativação de conta</h1>

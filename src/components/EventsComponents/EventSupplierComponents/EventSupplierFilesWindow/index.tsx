@@ -29,6 +29,7 @@ export function EventSupplierFilesWindow(): ReactElement {
         height: '90%',
         width: '100%',
       }}
+      zIndex={55}
     >
       <Container>
         <HeaderContainer>

@@ -115,6 +115,7 @@ const GuestAlocationWindow: React.FC<IProps> = ({
         height: '100%',
         width: '100%',
       }}
+      zIndex={29}
     >
       <Container>
         <h1>Alocação de Convidados</h1>

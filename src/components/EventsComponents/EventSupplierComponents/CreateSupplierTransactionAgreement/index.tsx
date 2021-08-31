@@ -163,6 +163,7 @@ export function CreateSupplierTransactionAgreement(): ReactElement {
         height: '92%',
         width: '96%',
       }}
+      zIndex={14}
     >
       <WindowHeader title="Novo Contrato" />
       <Container>

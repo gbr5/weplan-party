@@ -90,6 +90,7 @@ export function NewEventSupplierTransactionAgreementConfirmation(): ReactElement
           height: '95%',
           width: '96%',
         }}
+        zIndex={29}
       >
         <Container>
           <WindowHeader

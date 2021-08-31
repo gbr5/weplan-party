@@ -97,6 +97,7 @@ const SelectUserFileWindow: React.FC<IProps> = ({
         height: '100%',
         width: '100%',
       }}
+      zIndex={19}
     >
       <Container>
         <SideMenu>

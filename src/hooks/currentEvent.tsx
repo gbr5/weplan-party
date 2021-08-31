@@ -195,7 +195,6 @@ const CurrentEventProvider: React.FC = ({ children }) => {
         const response = await api.get<IEventBudgetDTO>(
           `/event-budget/${eventId}`,
         );
-        console.log(response.data);
         response.data && response.data.id && handleEventBudget(response.data);
       }
     } catch (err) {

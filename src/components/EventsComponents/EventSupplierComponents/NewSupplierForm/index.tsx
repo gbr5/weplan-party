@@ -76,6 +76,7 @@ export function NewSupplierForm(): ReactElement {
         width: '96%',
         zIndex: 11,
       }}
+      zIndex={10}
     >
       <WindowHeader title="Novo(a) Fornecedor(a)" />
 

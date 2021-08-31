@@ -32,6 +32,7 @@ const SelectSupplierCategoryWindow: React.FC<IProps> = ({
         height: '90%',
         width: '90%',
       }}
+      zIndex={17}
     >
       <Container>
         <h1>Categoria de Fornecedores</h1>

@@ -72,6 +72,7 @@ const SelectWeekDay: React.FC<IProps> = ({
         height: '100%',
         width: '100%',
       }}
+      zIndex={29}
     >
       <Container>
         <h2>Selecione os dias de interesse</h2>

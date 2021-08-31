@@ -67,6 +67,7 @@ const EditAppointmentDuration: React.FC<IProps> = ({
         height: '100%',
         widthtop: '100%',
       }}
+      zIndex={15}
     >
       <Form ref={formRef} onSubmit={handleSubmit}>
         <Container>

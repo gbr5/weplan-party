@@ -80,6 +80,7 @@ const EditEventNameWindow: React.FC<IProps> = ({
         height: '40%',
         width: '90%',
       }}
+      zIndex={9}
     >
       <Form ref={formRef} onSubmit={handleEditEventName}>
         <Container>

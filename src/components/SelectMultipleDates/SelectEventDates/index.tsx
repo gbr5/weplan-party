@@ -68,6 +68,7 @@ const SelectEventDates: React.FC<IProps> = ({
         height: '100%',
         width: '100%',
       }}
+      zIndex={29}
     >
       <Container>
         <h2>Selecione as datas de interesse</h2>

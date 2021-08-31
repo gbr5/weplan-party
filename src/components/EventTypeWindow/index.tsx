@@ -22,6 +22,7 @@ const EventTypeWindow: React.FC<IProps> = ({
         height: '100%',
         width: '100%',
       }}
+      zIndex={15}
     >
       <Container>
         <button type="button" onClick={() => selectEventType('Wedding')}>

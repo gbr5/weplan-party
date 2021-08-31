@@ -5,7 +5,6 @@ import IAppointmentDTO from '../../../dtos/IAppointmentDTO';
 import { useToast } from '../../../hooks/toast';
 import api from '../../../services/api';
 import formatDateToString from '../../../utils/formatDateToString';
-import SelectDate from '../../UserComponents/SelectDate';
 import WindowUnFormattedContainer from '../../WindowUnFormattedContainer';
 import AddAppointmentFilesWindow from '../AddAppointmentFilesWindow';
 import AddAppointmentParticipantsWindow from '../AddAppointmentParticipantsWindow';
@@ -88,13 +87,8 @@ const AppointmentWindow: React.FC<IProps> = ({
         height: '100%',
         width: '100%',
       }}
+      zIndex={9}
     >
-      {editAppointmentDate && (
-        <SelectDate
-          selectDate={(e: Date) => handleSelectedDate(e)}
-          closeWindow={() => setEditAppointmentDate(false)}
-        />
-      )}
       {addAppointmentParticipant && (
         <AddAppointmentParticipantsWindow
           appointment={appointment}
