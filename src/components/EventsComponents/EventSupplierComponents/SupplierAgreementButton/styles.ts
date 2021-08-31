@@ -5,9 +5,10 @@ interface IsOverdueProps {
 }
 
 export const Container = styled.button`
+  display: flex;
   width: 100%;
   padding: 16px;
-  background-color: var(--letter-color-6);
+  background-color: var(--letter-color-1);
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
@@ -27,6 +28,7 @@ export const Body = styled.div`
 `;
 
 export const ContractInfo = styled.div`
+  display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
@@ -36,15 +38,17 @@ export const ContractInfo = styled.div`
 export const SupplierName = styled.p`
   color: var(--letter-color-6);
   letter-spacing: 1px;
-  font-size: 20px;
+  font-size: 18px;
   text-align: left;
 `;
 
 export const Amount = styled.p`
+  flex: 1;
   min-width: 60%;
-  color: var(--letter-color-4);
+  color: var(--letter-color-6);
   font-size: 20px;
   text-align: right;
+  margin-right: 16px;
 `;
 
 export const NumberOfInstallments = styled.p`

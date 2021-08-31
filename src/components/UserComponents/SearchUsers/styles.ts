@@ -9,20 +9,21 @@ export const Container = styled.div`
   display: flex;
   flex-direction: row;
   height: 80px;
+  width: 100%;
 `;
 
 export const InputContainer = styled.div<IsActive>`
   display: flex;
-  flex-direction: row;
+  flex: 1;
   align-items: center;
   justify-content: space-between;
-  background-color: var(--letter-color-2);
-  border: 1px solid var(--letter-color-4);
+  flex-direction: row;
+  background-color: var(--letter-color-1);
+  border: none;
   border-radius: 16px;
   padding: 8px 16px;
   z-index: 3;
-  left: 0;
-  width: 100%;
+  box-shadow: 0 0 5px 3px rgba(0, 0, 0, 0.2);
   ${({ isActive }) =>
     isActive &&
     css`
@@ -31,36 +32,37 @@ export const InputContainer = styled.div<IsActive>`
 `;
 
 export const Input = styled.input`
-  font-size: 16px;
+  font-size: 18px;
   color: var(--letter-color-6);
   flex: 1;
-  border: none;
-  background-color: var(--letter-color-2);
-  border-bottom: 0.5px solid var(--letter-color-6);
+  border-radius: 5px;
   padding: 8px;
   border: none;
-  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 0 5px 3px rgba(0, 0, 0, 0.09);
+  border-radius: 5px;
 `;
 
 export const CloseButton = styled.button`
   display: flex;
   border-radius: 5px;
-  background-color: var(--letter-color-2);
+  background-color: transparent;
   align-items: center;
   justify-content: center;
   margin-right: 8px;
-  padding: 2px;
+  padding: 8px;
   max-width: 40px;
   max-height: 40px;
+  font-size: 28;
   margin-right: 16px;
-  border: 1px solid var(--letter-color-4);
+  border: none;
+  box-shadow: 0px 0px 3px 3px rgba(0, 0, 0, 0.3);
 `;
 
 export const SearchButton = styled.button`
   display: flex;
   border-radius: 5px;
-  background-color: var(--letter-color-1);
-  border: 1px solid var(--letter-color-4);
+  background-color: transparent;
+  border: none;
   align-items: center;
   color: var(--letter-color-6);
   justify-content: center;
@@ -68,4 +70,5 @@ export const SearchButton = styled.button`
   max-width: 40px;
   max-height: 40px;
   margin-left: 16px;
+  box-shadow: 0px 0px 3px 3px rgba(0, 0, 0, 0.3);
 `;

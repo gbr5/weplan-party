@@ -63,6 +63,11 @@ export function SupplierAgreementButton({
     selectEventSupplierTransactionAgreement(agreement);
     handleEventSupplierAgreementTransactionsWindow();
   }
+
+  const agreementInfo = useMemo(
+    () => `${numberOfPaidTransactions} / ${agreement.number_of_installments}`,
+    [numberOfPaidTransactions, agreement],
+  );
   return (
     <Container onClick={handleSelectAgreement}>
       <Index>{index}</Index>
@@ -75,10 +80,8 @@ export function SupplierAgreementButton({
           </SupplierName>
         )}
         <ContractInfo>
-          <Amount>{formatBrlCurrency(agreement.amount)} | </Amount>
-          <NumberOfInstallments>
-            {numberOfPaidTransactions} / {agreement.number_of_installments}
-          </NumberOfInstallments>
+          <Amount>{formatBrlCurrency(agreement.amount)}</Amount>
+          <NumberOfInstallments>{agreementInfo}</NumberOfInstallments>
         </ContractInfo>
       </Body>
       <StatusContainer isOverdue={isOverdue}>

@@ -28,13 +28,14 @@ export const Container = styled.div`
   }
 
   > button {
-    background: rgba(15, 250, 80, 0.2);
-    border: 1px solid var(--title-color);
+    background: var(--letter-color-1);
+    border: none;
+    box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0.2rem;
     border-radius: 8px;
     color: rgba(10, 95, 10);
+    font-weight: bold;
   }
 `;

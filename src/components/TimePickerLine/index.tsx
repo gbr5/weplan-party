@@ -24,7 +24,7 @@ export function DatePickerLine({
           alignItems: 'center',
           justifyContent: 'center',
         }}
-        label={title ?? 'Selecione a data'}
+        label={title ?? ''}
         format="dd/MM/yyyy"
         value={new Date(selectedDate)}
         onChange={date => handleSelectedDate(date ?? new Date(selectedDate))}

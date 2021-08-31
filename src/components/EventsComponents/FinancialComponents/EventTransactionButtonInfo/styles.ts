@@ -42,11 +42,13 @@ export const CategoryContainer = styled.div`
   align-items: center;
   justify-content: space-around;
   margin: 8px 0;
-  padding-top: 16px;
+  padding: 0 16px;
+  padding-top: 32px;
   border-radius: 5px;
   box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
   background-color: var(--letter-color-1);
   margin: 4px;
+  min-height: 87px;
 `;
 
 export const FieldText = styled.p`
@@ -67,35 +69,21 @@ export const FieldLabel = styled.p`
   color: var(--secondary-color);
 `;
 
-export const Label = styled.p`
-  font-size: 16px;
-  color: var(--letter-color-6);
-  margin-top: 16px;
-`;
-
-export const MainButton = styled.button`
-  background-color: var(--letter-color-1);
-  padding: 8px;
-  border-radius: 8px;
-  border: 0.5px solid var(--secondary-color);
-  align-items: center;
-  justify-content: center;
-  min-width: 100%;
-  position: relative;
-  border: none;
-  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
-`;
 export const FieldButton = styled.button`
-  background-color: var(--letter-color-1);
-  padding: 8px;
-  border-radius: 8px;
-  border: 0.5px solid var(--secondary-color);
-  align-items: center;
-  justify-content: center;
-  min-width: 48%;
   position: relative;
-  border: none;
+  display: flex;
+  width: 99%;
+  align-items: center;
+  justify-content: space-around;
+  margin: 8px 0;
+  padding: 0 8px;
+  padding-top: 32px;
+  border-radius: 5px;
   box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
+  background-color: var(--letter-color-1);
+  margin: 4px;
+  border: none;
+  min-height: 87px;
 `;
 
 export const PaidButton = styled.button<IsPaidParams>`
