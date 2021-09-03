@@ -1,5 +1,9 @@
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 import '../../styles/global';
+
+interface IProps {
+  isActive: boolean;
+}
 
 const appearFromTop = keyframes`
   0% {
@@ -28,14 +32,10 @@ export const Container = styled.div`
   margin: 0;
   padding: 0;
   height: 100%;
-  display: flex;
+  display: block;
   animation: ${appearFromTop} 0.5s;
 
   margin-bottom: 4vh;
-
-  /* @media (max-width: 1000px) {
-    margin-bottom: 8vh;
-  } */
 `;
 
 export const EventPageContent = styled.main`
@@ -43,52 +43,10 @@ export const EventPageContent = styled.main`
   width: 100%;
   display: flex;
   padding: 0 80px;
-  gap: 4vh;
   animation: ${appearFromTop} 0.5s;
 
   @media (max-width: 1000px) {
     padding: 0 2vw;
-    gap: 0;
-  }
-
-  > button {
-    z-index: 5;
-    background: transparent;
-    border: none;
-    border-radius: 8px;
-    position: fixed;
-    top: 100px;
-    left: -8px;
-    transition: 0.25s;
-
-    color: var(--primary-color);
-
-    &:hover {
-      color: var(--letter-color-4);
-    }
-  }
-
-  > span {
-    > button {
-      z-index: 5;
-      background: transparent;
-      border: none;
-      border-radius: 8px;
-      position: fixed;
-      top: 100px;
-      left: 22%;
-      transition: 0.25s;
-
-      color: var(--letter-color-4);
-      animation: ${appearFromLeft} 0.5s;
-
-      @media (max-width: 1000px) {
-        left: 70%;
-      }
-      &:hover {
-        color: var(--primary-color);
-      }
-    }
   }
 `;
 
@@ -98,58 +56,43 @@ export const Main = styled.div`
   flex-direction: column;
   margin-top: 144px;
   position: relative;
+`;
 
-  /* @media (max-width: 1000px) {
-    margin-top: 13vh;
-  } */
+export const SideMenuButton = styled.button<IProps>`
+  z-index: 5;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  position: fixed;
+  top: 100px;
+  left: -8px;
+  transition: 0.25s;
 
-  > button {
-    z-index: 5;
-    position: fixed;
-    top: 5vh;
-    left: 47%;
-    background: transparent;
-    border: none;
-    transition: 0.25s;
+  color: var(--primary-color);
 
-    @media (max-width: 1000px) {
-      /* left: 41.5%; */
-      left: 83.2%;
-    }
-
-    > svg {
-      color: var(--primary-color);
-      transition: 0.25s;
-
-      &:hover {
-        color: var(--letter-color-4);
-      }
-    }
+  &:hover {
+    color: var(--letter-color-4);
   }
-
-  > span {
-    > button {
+  ${({ isActive }) =>
+    isActive &&
+    css`
       z-index: 5;
-      position: absolute;
-      top: 4vh;
-      left: 47.3%;
       background: transparent;
       border: none;
+      border-radius: 8px;
+      position: fixed;
+      top: 100px;
+      left: 22%;
       transition: 0.25s;
-      animation: ${appearFromTop} 0.5s;
+
+      color: var(--letter-color-1);
+      animation: ${appearFromLeft} 0.5s;
 
       @media (max-width: 1000px) {
-        left: 83.2%;
-        /* left: 41.5%; */
+        left: 70%;
       }
-      > svg {
-        color: var(--letter-color-4);
-        transition: 0.25s;
-
-        &:hover {
-          color: var(--primary-color);
-        }
+      &:hover {
+        color: var(--primary-color);
       }
-    }
-  }
+    `}
 `;

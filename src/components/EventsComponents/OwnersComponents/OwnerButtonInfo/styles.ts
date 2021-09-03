@@ -10,13 +10,36 @@ interface IBackgroundColor {
 
 export const Container = styled.div`
   top: -8px;
-  z-index: -1;
+  z-index: 1;
   width: 99%;
   background-color: var(--letter-color-1);
   margin: 0 auto 8px;
-  border-radius: 8px;
+  border-radius: 5px;
   padding: 8px;
   /* border: 1.5px solid black; */
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
+  position: relative;
+`;
+
+export const DescriptionContainer = styled.button`
+  border: none;
+  background-color: var(--letter-color-1);
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
+  border-radius: 5px;
+  width: 100%;
+  padding: 8px;
+  margin: 4px;
+  padding-top: 24px;
+`;
+
+export const DescriptionButton = styled.button`
+  border: none;
+  background-color: var(--letter-color-1);
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
+  border-radius: 5px;
+  width: 100%;
+  padding: 8px;
+  margin: 4px;
 `;
 
 export const GoToButton = styled.button`
@@ -65,7 +88,7 @@ export const RowTitle = styled.p`
 `;
 
 export const DateText = styled.p`
-  font-size: 8px;
+  font-size: 18px;
   color: var(--letter-color-4);
   letter-spacing: 1.5px;
 `;
@@ -101,7 +124,7 @@ export const MenuButtonSection = styled.div`
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin: 7px 4px 0;
+  margin: 7px 4px 4px;
 `;
 
 export const MenuButton = styled.button`
@@ -119,7 +142,7 @@ export const MenuButton = styled.button`
 
 export const SectionTitle = styled.p`
   margin-bottom: 4px;
-  font-size: 8px;
+  font-size: 18px;
   font-weight: bold;
   color: var(--letter-color-6);
 `;
@@ -132,7 +155,7 @@ export const TransactionText = styled.p`
 
 export const MenuText = styled.p`
   margin-bottom: 12px;
-  font-size: 6px;
+  font-size: 16px;
   font-weight: bold;
   color: var(--letter-color-6);
 `;

@@ -34,6 +34,7 @@ import IWeplanGuestDTO from '../../dtos/IWeplanGuestDTO';
 import { useEventVariables } from '../../hooks/eventVariables';
 import { useCurrentEvent } from '../../hooks/currentEvent';
 import { useFriends } from '../../hooks/friends';
+import { EventGuestButton } from '../EventsComponents/EventGuestComponents/EventGuestButton';
 
 interface IProps {
   closeAllWindows: Function;
@@ -244,6 +245,14 @@ const EventGuestSection: React.FC<IProps> = ({
     }
   }, [eventGuests, selectedEvent, addToast]);
 
+  const myGuestsInfo = useMemo(
+    () => `${myGuestsConfirmed} / ${myGuests.length}`,
+    [myGuestsConfirmed, myGuests],
+  );
+  const eventGuestsInfo = useMemo(
+    () => `${confirmedGuests} / ${eventGuests.length}`,
+    [confirmedGuests, eventGuests],
+  );
   return (
     <>
       {wpGuestInvitationWindow && (
@@ -353,111 +362,19 @@ const EventGuestSection: React.FC<IProps> = ({
           </span>
         </span>
 
-        {!guestWindow && (
-          <h3>
-            {myGuestsConfirmed}/{myGuests.length}
-          </h3>
-        )}
-
-        {guestWindow && (
-          <h3>
-            {confirmedGuests}/{eventGuests.length}
-          </h3>
-        )}
+        {guestWindow ? <h3>{eventGuestsInfo}</h3> : <h3>{myGuestsInfo}</h3>}
 
         <div>
           {guestWindow &&
             eventGuests.map(eGuest => {
               guestCount += 1;
-
-              return (
-                <Guest key={eGuest.id}>
-                  <span>
-                    <p>{guestCount}</p>
-                    {eGuest.host.name === user.name ? (
-                      <button
-                        type="button"
-                        onClick={() => handleEditGuestWindow(eGuest)}
-                      >
-                        <strong>{eGuest.first_name}</strong> {eGuest.last_name}
-                        <FiEdit3 size={16} />
-                      </button>
-                    ) : (
-                      <NotHostGuest title={notHostMessage}>
-                        <strong>{eGuest.first_name}</strong> {eGuest.last_name}
-                      </NotHostGuest>
-                    )}
-                  </span>
-
-                  {eGuest.weplanUser && (
-                    <button type="button">
-                      <FiUser size={24} />
-                    </button>
-                  )}
-
-                  {eGuest.host.name === user.name ? (
-                    <div>
-                      <button
-                        type="button"
-                        onClick={() => handleEditConfirmedGuest(eGuest)}
-                      >
-                        {eGuest.confirmed ? (
-                          <FiCheckSquare size={24} />
-                        ) : (
-                          <FiSquare size={24} />
-                        )}
-                      </button>
-                    </div>
-                  ) : (
-                    <div>
-                      <NotHostGuest title={notHostMessage}>
-                        {eGuest.confirmed ? (
-                          <FiCheckSquare size={24} />
-                        ) : (
-                          <FiSquare size={24} />
-                        )}
-                      </NotHostGuest>
-                    </div>
-                  )}
-                </Guest>
-              );
+              return <EventGuestButton guest={eGuest} index={guestCount} />;
             })}
 
           {!guestWindow &&
             myGuests.map(mGuest => {
               myGuestCount += 1;
-              return (
-                <Guest key={mGuest.id}>
-                  <span>
-                    <p>{myGuestCount}</p>
-                    <button
-                      type="button"
-                      onClick={() => handleEditGuestWindow(mGuest)}
-                    >
-                      <strong>{mGuest.first_name}</strong> {mGuest.last_name}
-                      <FiEdit3 size={16} />
-                    </button>
-                  </span>
-                  {mGuest.weplanUser && (
-                    <button type="button">
-                      <FiUser size={24} />
-                    </button>
-                  )}
-                  <div>
-                    <button
-                      key={mGuest.id}
-                      type="button"
-                      onClick={() => handleEditConfirmedGuest(mGuest)}
-                    >
-                      {mGuest.confirmed ? (
-                        <FiCheckSquare size={24} />
-                      ) : (
-                        <FiSquare size={24} />
-                      )}
-                    </button>
-                  </div>
-                </Guest>
-              );
+              return <EventGuestButton guest={mGuest} index={myGuestCount} />;
             })}
         </div>
       </Container>

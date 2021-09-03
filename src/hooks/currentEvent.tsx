@@ -239,7 +239,7 @@ const CurrentEventProvider: React.FC = ({ children }) => {
   async function getEventGuests(eventId: string): Promise<void> {
     try {
       const response = await api.get<IEventGuestDTO[]>(
-        `/events/${eventId}/guests`,
+        `/event-guests/list/${eventId}`,
       );
       if (response.data && response.data.length > 0) {
         handleEventGuests(response.data);

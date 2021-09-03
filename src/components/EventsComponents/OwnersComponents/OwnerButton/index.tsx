@@ -30,7 +30,13 @@ export function OwnerButton({ owner, index }: IProps): JSX.Element {
 
   return (
     <>
-      <Container onClick={handleOwnerBody} isActive={isActive}>
+      <Container
+        style={{
+          zIndex: isActive ? 3 : 1,
+        }}
+        onClick={handleOwnerBody}
+        isActive={isActive}
+      >
         <Index>{index}</Index>
         <Name>{owner.userEventOwner.name}</Name>
         {isActive ? (

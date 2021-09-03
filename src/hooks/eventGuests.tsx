@@ -28,6 +28,7 @@ interface EventGuestsContextType {
   // createMultipleMobileGuests: (data: Contact[]) => Promise<void>;
   createGuestContact: (data: ICreateGuestContactDTO) => Promise<void>;
   deleteGuestContact: (data: IGuestContactDTO) => Promise<void>;
+  deleteGuest: (data: IEventGuestDTO) => Promise<void>;
   editGuest: (data: IEventGuestDTO) => Promise<IEventGuestDTO>;
   handleAllGuestsFilter: () => void;
   handleConfirmedGuestsFilter: () => void;
@@ -121,7 +122,7 @@ const EventGuestsProvider: React.FC = ({ children }) => {
           description: `Já existe um convidado com este nome - ${first_name} ${last_name}!`,
           type: 'error',
         });
-      await api.post(`events/${selectedEvent.id}/guests`, {
+      await api.post(`event-guests/${selectedEvent.id}`, {
         first_name,
         last_name: last_name || '',
         description: ' ',
@@ -201,15 +202,12 @@ const EventGuestsProvider: React.FC = ({ children }) => {
   async function editGuest(data: IEventGuestDTO): Promise<IEventGuestDTO> {
     try {
       setLoading(true);
-      const response = await api.put(
-        `events/${data.event_id}/guests/${data.id}`,
-        {
-          first_name: data.first_name,
-          last_name: data.last_name,
-          description: data.description,
-          confirmed: data.confirmed,
-        },
-      );
+      const response = await api.put(`event-guests/${data.id}`, {
+        first_name: data.first_name,
+        last_name: data.last_name,
+        description: data.description,
+        confirmed: data.confirmed,
+      });
       selectEventGuest(response.data);
       await getEventGuests(data.event_id);
       return response.data;
@@ -258,6 +256,18 @@ const EventGuestsProvider: React.FC = ({ children }) => {
     }
   }
 
+  async function deleteGuest(data: IEventGuestDTO): Promise<void> {
+    try {
+      setLoading(true);
+      await api.delete(`/event-guests/${data.id}`);
+      await getEventGuests(selectedEvent.id);
+    } catch (err) {
+      throw new Error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   function selectGuestContact(data: IGuestContactDTO): void {
     setSelectedGuestContact(data);
   }
@@ -285,6 +295,7 @@ const EventGuestsProvider: React.FC = ({ children }) => {
       value={{
         addNewGuest,
         createGuestContact,
+        deleteGuest,
         // createMultipleMobileGuests,
         deleteGuestContact,
         editGuest,

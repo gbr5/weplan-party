@@ -15,4 +15,6 @@ export default interface IEventGuestDTO {
   weplanGuest: IWeplanGuestDTO;
   guestContactInfos: IGuestContactInfoDTO[];
   event_avatar_url?: string;
+  created_at: Date;
+  updated_at: Date;
 }

@@ -32,6 +32,9 @@ export function MemberButton({ member, index }: IProps): JSX.Element {
   return (
     <>
       <Container
+        style={{
+          zIndex: isActive ? 3 : 1,
+        }}
         isActive={selectedEventMember.id === member.id}
         onClick={handleMemberBody}
       >

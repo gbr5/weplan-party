@@ -38,7 +38,7 @@ export const MenuButton = styled.button<IProps>`
   border-radius: 10px;
   align-items: center;
   justify-content: center;
-  margin: 4px 16px;
+  margin: 4px 16px 2px;
   box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.25);
 
   ${({ isActive }) =>

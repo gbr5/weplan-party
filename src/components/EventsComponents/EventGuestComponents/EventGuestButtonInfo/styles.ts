@@ -6,9 +6,10 @@ interface IBackgroundColor {
 
 export const Container = styled.div`
   top: -14px;
-  z-index: 1;
+  z-index: 2;
   position: relative;
   width: 99%;
+  max-width: 525px;
   background-color: var(--letter-color-1);
   margin: 0 auto 8px;
   border-radius: 8px;
@@ -72,4 +73,45 @@ export const SectionBorder = styled.div`
   min-height: 1px;
   background-color: var(--letter-color-4);
   /* margin: 8px 0; */
+`;
+
+export const FieldLabel = styled.p`
+  position: absolute;
+  top: 4px;
+  left: 8px;
+  font-size: 14px;
+  color: var(--secondary-color);
+`;
+
+export const FieldContainer = styled.div`
+  position: relative;
+  display: flex;
+  width: 99%;
+  align-items: center;
+  justify-content: space-around;
+  margin: 8px 0;
+  padding: 0 16px;
+  padding-top: 32px;
+  border-radius: 5px;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
+  background-color: var(--letter-color-1);
+  margin: 4px;
+  min-height: 87px;
+`;
+
+export const FieldButton = styled.button`
+  position: relative;
+  display: flex;
+  width: 99%;
+  align-items: center;
+  justify-content: space-around;
+  margin: 8px 0;
+  padding: 0 8px;
+  padding-top: 32px;
+  border-radius: 5px;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
+  background-color: var(--letter-color-1);
+  margin: 4px;
+  border: none;
+  min-height: 87px;
 `;

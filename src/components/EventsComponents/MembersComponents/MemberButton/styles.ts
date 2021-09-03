@@ -5,6 +5,7 @@ interface IButtonProps {
 }
 
 export const Container = styled.button<IButtonProps>`
+  display: flex;
   flex-direction: row;
   align-items: center;
   ${({ isActive }) =>

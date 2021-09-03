@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
+import { useMemo } from 'react';
 import { FiDollarSign, FiLock, FiPlus } from 'react-icons/fi';
 import { useTheme } from 'styled-components';
+import { useEventOwners } from '../../../../hooks/eventOwners';
 
 import { useEventVariables } from '../../../../hooks/eventVariables';
 
 import formatOnlyDateShort from '../../../../utils/formatOnlyDateShort';
+import { CloseButton } from '../../../CloseButton';
+import InlineFormField from '../../../InlineFormField';
 
 import {
   Container,
@@ -12,23 +16,60 @@ import {
   DateText,
   IconContainer,
   MenuButtonSection,
+  DescriptionButton,
   MenuButton,
   MenuText,
   FooterContainer,
   SectionBorder,
+  DescriptionContainer,
 } from './styles';
 
 export function OwnerButtonInfo(): JSX.Element {
   const iconSize = 30;
   const theme = useTheme();
   const { selectedEventOwner, selectedEvent } = useEventVariables();
+  const { editEventOwner } = useEventOwners();
+
+  const [editDescription, setEditDescription] = useState(false);
+
+  function handleEditDescription(): void {
+    setEditDescription(!editDescription);
+  }
+
+  async function handleEditOwnerDescription(
+    description: string,
+  ): Promise<void> {
+    await editEventOwner({
+      ...selectedEventOwner,
+      description,
+    });
+    handleEditDescription();
+  }
+
+  const description = useMemo(() => selectedEventOwner.description, [
+    selectedEventOwner,
+  ]);
 
   return (
     <Container>
-      {selectedEventOwner.description !== '' && (
-        <Name>{selectedEventOwner.description}</Name>
+      {editDescription ? (
+        <DescriptionContainer>
+          <CloseButton closeFunction={handleEditDescription} />
+          <InlineFormField
+            defaultValue={description}
+            placeholder={description}
+            handleOnSubmit={handleEditOwnerDescription}
+          />
+        </DescriptionContainer>
+      ) : (
+        <DescriptionButton onClick={handleEditDescription}>
+          <Name>
+            {description === '' || description === ' '
+              ? 'Descrição'
+              : description}
+          </Name>
+        </DescriptionButton>
       )}
-
       <SectionBorder />
 
       <MenuButtonSection>

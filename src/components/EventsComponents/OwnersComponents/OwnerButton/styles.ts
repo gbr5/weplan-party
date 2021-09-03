@@ -5,6 +5,7 @@ interface IButtonProps {
 }
 
 export const Container = styled.button<IButtonProps>`
+  display: flex;
   flex-direction: row;
   align-items: center;
   ${({ isActive }) =>
@@ -21,6 +22,10 @@ export const Container = styled.button<IButtonProps>`
   border-radius: 8px;
   padding: 8px 0;
   width: 100%;
+
+  svg {
+    margin: 0 8px;
+  }
 `;
 
 export const Index = styled.p`
@@ -35,6 +40,6 @@ export const Index = styled.p`
 export const Name = styled.p`
   font-size: 18px;
   text-align: left;
-  width: 70%;
   color: var(--letter-colo-6);
+  flex: 1;
 `;

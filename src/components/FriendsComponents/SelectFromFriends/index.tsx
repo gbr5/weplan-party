@@ -2,20 +2,14 @@ import React, { ReactElement, useState } from 'react';
 
 import { useFriends } from '../../../hooks/friends';
 
-import WindowContainer from '../../WindowContainer';
+import WindowUnFormattedContainer from '../../WindowUnFormattedContainer';
 import { WindowHeader } from '../../WindowHeader';
-import profilePlaceholder from '../../../assets/avatar_placeholder.jpg';
 import { SearchFriends } from '../SearchFriends';
+import { SelectFriendButton } from '../SelectFriendButton';
 import IFriendDTO from '../../../dtos/IFriendDTO';
 import Button from '../../Button';
 
-import {
-  Container,
-  FriendsContainer,
-  Avatar,
-  FriendButton,
-  Name,
-} from './styles';
+import { Container, FriendsContainer } from './styles';
 
 interface IProps {
   handleAddFriends: (data: IFriendDTO[]) => Promise<void>;
@@ -34,64 +28,37 @@ export function SelectFromFriends({
     setFilteredFriends(data);
   }
 
-  function handleSelectFriend(data: IFriendDTO): void {
-    const findFriend = selectedFriends.find(friend => friend.id === data.id);
-    if (findFriend) {
-      const filtered = selectedFriends.filter(friend => friend.id !== data.id);
-      return handleSelectedFriends(filtered);
-    }
-    return handleSelectedFriends([...selectedFriends, data]);
-  }
-
   async function handleSelectFriends(): Promise<void> {
     await handleAddFriends(selectedFriends);
     closeWindow();
   }
 
   return (
-    <WindowContainer
+    <WindowUnFormattedContainer
       onHandleCloseWindow={() => closeWindow()}
       containerStyle={{
         zIndex: 15,
         top: '5%',
-        left: '10%',
+        left: '0%',
         height: '90%',
-        width: '80%',
+        width: '100%',
       }}
+      zIndex={14}
     >
       <Container>
         <WindowHeader overTitle="Selecionar" title="Amigos" />
         <SearchFriends handleFriends={handleFilteredFriends} />
         {filteredFriends.length > 0 && (
           <FriendsContainer>
-            {filteredFriends.map(item => {
-              const isSelected = !!selectedFriends.find(
-                friend => friend.id === item.id,
-              );
-              return (
-                <FriendButton
-                  key={item.id}
-                  onClick={() => handleSelectFriend(item)}
-                  isSelected={isSelected}
-                >
-                  <Avatar
-                    alt="Avatar"
-                    src={
-                      !item.friend.avatar_url
-                        ? profilePlaceholder
-                        : item.friend.avatar_url
-                    }
-                  />
-                  <Name>{item.friend.name}</Name>
-                </FriendButton>
-              );
-            })}
+            {filteredFriends.map(item => (
+              <SelectFriendButton friend={item} />
+            ))}
           </FriendsContainer>
         )}
         {selectedFriends.length > 0 && (
           <Button onClick={handleSelectFriends}>Avançar</Button>
         )}
       </Container>
-    </WindowContainer>
+    </WindowUnFormattedContainer>
   );
 }

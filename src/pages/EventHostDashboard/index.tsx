@@ -1,19 +1,9 @@
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
-  useMemo,
-} from 'react';
-import * as Yup from 'yup';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { FiChevronRight, FiChevronLeft } from 'react-icons/fi';
 import { useLocation } from 'react-router-dom';
-import { FormHandles } from '@unform/core';
 
 import api from '../../services/api';
-import getValidationErrors from '../../utils/getValidationErros';
 
-import { useToast } from '../../hooks/toast';
 import { useAuth } from '../../hooks/auth';
 import { useEvent } from '../../hooks/event';
 import { useFriends } from '../../hooks/friends';
@@ -75,8 +65,6 @@ import { EditNoteWindow } from '../../components/NotesComponents/EditNoteWindow'
 import { CreateEvent } from '../../components/EventsComponents/CreateEvent';
 import { FinancialSection } from '../../components/EventsComponents/FinancialComponents/FinancialSection';
 import { EventSupplierAgreementTransactionsWindow } from '../../components/EventsComponents/FinancialComponents/EventSupplierAgreementTransactionsWindow';
-
-import { Container, EventPageContent, Main } from './styles';
 import { TransactionFilesWindow } from '../../components/TransactionComponents/TransactionFilesWindow';
 import { TransactionNotesWindow } from '../../components/TransactionComponents/TransactionNotesWindow';
 import { useEventTasks } from '../../hooks/eventTasks';
@@ -87,6 +75,9 @@ import { SelectFromFriends } from '../../components/FriendsComponents/SelectFrom
 import { useEventMembers } from '../../hooks/eventMembers';
 import { OwnersSection } from '../../components/EventsComponents/OwnersComponents/OwnersSection';
 import { MembersSection } from '../../components/EventsComponents/MembersComponents/MembersSection';
+import Backdrop from '../../components/Backdrop';
+
+import { Container, EventPageContent, Main, SideMenuButton } from './styles';
 
 interface IUserInfoDTO {
   id: string;
@@ -99,9 +90,7 @@ interface IParams {
 }
 
 const EventHostDashboard: React.FC = () => {
-  const formRef = useRef<FormHandles>(null);
   const { user } = useAuth();
-  const { addToast } = useToast();
   const { friends } = useFriends();
   const { createEventWindow } = useEvent();
   const {
@@ -361,32 +350,6 @@ const EventHostDashboard: React.FC = () => {
     selectEventMember({} as IEventMemberDTO);
     await getEventMembers(eventId);
   }, [getEventMembers, eventId, selectEventMember]);
-  const handleDeleteMember = useCallback(async () => {
-    try {
-      await api.delete(
-        `/events/${eventId}/event-members/${selectedEventMember.userEventMember.id}`,
-      );
-      addToast({
-        type: 'success',
-        title: 'Membro excluído com sucesso',
-        description: 'As mudanças já foram atualizadas no seu evento.',
-      });
-      setMemberProfileWindow(false);
-      setDeleteMemberDrawer(false);
-      await getEventMembers(eventId);
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const error = getValidationErrors(err);
-
-        formRef.current?.setErrors(error);
-      }
-      addToast({
-        type: 'error',
-        title: 'Erro ao excluir convidado',
-        description: 'Erro ao excluir o convidado, tente novamente.',
-      });
-    }
-  }, [eventId, selectedEventMember, addToast, getEventMembers]);
   const handleSeletedFriend = useCallback(
     (props: IFriendDTO) => {
       if (addMemberWindowForm) {
@@ -440,7 +403,6 @@ const EventHostDashboard: React.FC = () => {
         <NewEventSupplierTransactionAgreementConfirmation />
       )}
       {supplierBudgetForm && <EventSupplierBudgetForm />}
-
       {/* End of Supplier Windows */}
       {/* Transaction Windows */}
       {filterTransactionWindow && <TransactionsFilterWindow />}
@@ -453,7 +415,6 @@ const EventHostDashboard: React.FC = () => {
         )}
       {transactionNotesWindow && <TransactionNotesWindow />}
       {transactionFilesWindow && <TransactionFilesWindow />}
-
       {/* End of Transaction Windows */}
       {/* Event Tasks Windows */}
       {eventTaskNotesWindow && <EventTaskNotesWindow />}
@@ -467,7 +428,6 @@ const EventHostDashboard: React.FC = () => {
           />
         )}
       {supplierBudgetsWindow && <EventSupplierBudgetsWindow />}
-
       {/* End of Event Tasks Windows */}
       {/* Event Owner Windows */}
       {addOwnerWindow && (
@@ -610,14 +570,23 @@ const EventHostDashboard: React.FC = () => {
       <EventPageContent>
         {sidebar ? (
           <span>
-            <button type="button" onClick={handleSideBar}>
+            <Backdrop zIndex={3} onClick={handleSideBar} />
+            <SideMenuButton
+              isActive={sidebar}
+              type="button"
+              onClick={handleSideBar}
+            >
               <FiChevronLeft size={60} />
-            </button>
+            </SideMenuButton>
           </span>
         ) : (
-          <button type="button" onClick={handleSideBar}>
+          <SideMenuButton
+            isActive={sidebar}
+            type="button"
+            onClick={handleSideBar}
+          >
             <FiChevronRight size={60} />
-          </button>
+          </SideMenuButton>
         )}
         {sidebar && (
           <SideMenu
@@ -637,8 +606,8 @@ const EventHostDashboard: React.FC = () => {
         <Main>
           <FirstRow />
           {createEventWindow && <CreateEvent />}
-          {currentSection === 'notes' && <NotesSection />}
           {budgetWindow && <EditEventBudgetWindow />}
+          {currentSection === 'notes' && <NotesSection />}
           {currentSection === 'dashboard' && <EventMainDashboard />}
           {currentSection === 'suppliers' && <EventSupplierSection />}
           {currentSection === 'guests' && (

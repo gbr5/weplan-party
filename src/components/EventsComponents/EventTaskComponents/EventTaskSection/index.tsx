@@ -36,7 +36,7 @@ export function EventTaskSection(): ReactElement {
         )}
         <CheckListFunnel>
           <div>
-            <h1>Não iniciada</h1>
+            <h1>Início</h1>
             <ul>
               {notStartedCheckListTasks.map(item => (
                 <EventTask key={item.id} eventTask={item} />
@@ -44,7 +44,7 @@ export function EventTaskSection(): ReactElement {
             </ul>
           </div>
           <div>
-            <h1>Em progresso</h1>
+            <h1>Execução</h1>
             <ul>
               {inProgressCheckListTasks.map(item => (
                 <EventTask key={item.id} eventTask={item} />
@@ -52,7 +52,7 @@ export function EventTaskSection(): ReactElement {
             </ul>
           </div>
           <div>
-            <h1>Concluída</h1>
+            <h1>Fim</h1>
             <ul>
               {resolvedCheckListTasks.map(item => (
                 <EventTask key={item.id} eventTask={item} />

@@ -5,11 +5,14 @@ interface IButtonProps {
 }
 
 export const Container = styled.div`
+  display: flex;
   width: 100%;
   padding: 0 16px;
+  overflow-x: scroll;
 `;
 
 export const MenuButton = styled.button<IButtonProps>`
+  display: flex;
   flex-direction: row;
   width: 180px;
   height: 56px;

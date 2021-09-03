@@ -1,4 +1,6 @@
 import React from 'react';
+import { useMemo } from 'react';
+import { useState } from 'react';
 import {
   FiBell,
   FiDollarSign,
@@ -8,10 +10,12 @@ import {
   FiStar,
 } from 'react-icons/fi';
 import { useTheme } from 'styled-components';
+import { useEventGuests } from '../../../../hooks/eventGuests';
 
 import { useEventVariables } from '../../../../hooks/eventVariables';
 
 import formatOnlyDateShort from '../../../../utils/formatOnlyDateShort';
+import InlineFormField from '../../../InlineFormField';
 import { NotificationNumber } from '../../../NotificationNumber';
 
 import {
@@ -23,17 +27,77 @@ import {
   MenuButton, // 6
   MenuText, // 7
   SectionBorder, // 8
+  FieldButton,
+  FieldContainer,
+  FieldLabel,
 } from './styles';
 
-export function MemberButtonInfo(): JSX.Element {
+export function EventGuestButtonInfo(): JSX.Element {
   const iconSize = 30;
-  const { selectedEventMember } = useEventVariables();
+  const { selectedEventGuest } = useEventVariables();
   const theme = useTheme();
+  const { editGuest } = useEventGuests();
+
+  const [editGuestName, setEditGuestName] = useState(false);
+  const [editGuestDescription, setEditGuestDescription] = useState(false);
+
+  function handleEditGuestName(): void {
+    setEditGuestName(!editGuestName);
+  }
+
+  function handleEditGuestDescription(): void {
+    setEditGuestDescription(!editGuestDescription);
+  }
+
+  async function handleEditGuestFirstName(first_name: string): Promise<void> {
+    await editGuest({
+      ...selectedEventGuest,
+      first_name,
+    });
+  }
+
+  async function handleEditGuestLastName(last_name: string): Promise<void> {
+    await editGuest({
+      ...selectedEventGuest,
+      last_name,
+    });
+  }
+
+  const guestName = useMemo(
+    () => `${selectedEventGuest.first_name}  ${selectedEventGuest.last_name}`,
+    [selectedEventGuest],
+  );
 
   return (
     <Container>
+      {editGuestName ? (
+        <>
+          <FieldContainer>
+            <FieldLabel>Nome: </FieldLabel>
+            <InlineFormField
+              defaultValue={selectedEventGuest.first_name}
+              handleOnSubmit={handleEditGuestFirstName}
+              placeholder={selectedEventGuest.first_name}
+              closeComponent={handleEditGuestName}
+            />
+          </FieldContainer>
+          <FieldContainer>
+            <FieldLabel>Sobrenome: </FieldLabel>
+            <InlineFormField
+              defaultValue={selectedEventGuest.last_name}
+              handleOnSubmit={handleEditGuestLastName}
+              placeholder={selectedEventGuest.last_name}
+              closeComponent={handleEditGuestName}
+            />
+          </FieldContainer>
+        </>
+      ) : (
+        <FieldButton onClick={handleEditGuestName}>
+          <FieldLabel>Nome e sobrenome</FieldLabel>
+          <MenuText>{guestName}</MenuText>
+        </FieldButton>
+      )}
       <SectionBorder />
-
       <MenuButtonSection>
         <MenuButton>
           <MenuText>Tarefas</MenuText>
@@ -85,7 +149,7 @@ export function MemberButtonInfo(): JSX.Element {
       <FooterContainer>
         <DateText>Criado dia: </DateText>
         <DateText>
-          {formatOnlyDateShort(String(selectedEventMember.created_at))}
+          {formatOnlyDateShort(String(selectedEventGuest.created_at))}
         </DateText>
       </FooterContainer>
     </Container>
