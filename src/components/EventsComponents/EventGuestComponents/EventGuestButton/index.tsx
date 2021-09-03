@@ -1,8 +1,10 @@
 import React from 'react';
+import { useState } from 'react';
 import { useMemo } from 'react';
-import { FiCheckSquare, FiSquare, FiUser } from 'react-icons/fi';
+import { FiCheckSquare, FiLoader, FiSquare, FiUser } from 'react-icons/fi';
 import IEventGuestDTO from '../../../../dtos/IEventGuestDTO';
 import { useAuth } from '../../../../hooks/auth';
+import { useEventGuests } from '../../../../hooks/eventGuests';
 import { useEventVariables } from '../../../../hooks/eventVariables';
 import { EventGuestButtonInfo } from '../EventGuestButtonInfo';
 
@@ -23,6 +25,9 @@ interface IProps {
 export function EventGuestButton({ guest, index }: IProps): JSX.Element {
   const { user } = useAuth();
   const { selectedEventGuest, selectEventGuest } = useEventVariables();
+  const { editGuest } = useEventGuests();
+
+  const [loading, setLoading] = useState(false);
 
   const isMine = useMemo(() => guest.host_id === user.id, [guest, user]);
   const isActive = useMemo(() => guest.id === selectedEventGuest.id, [
@@ -39,7 +44,21 @@ export function EventGuestButton({ guest, index }: IProps): JSX.Element {
     return selectEventGuest({} as IEventGuestDTO);
   }
 
-  console.log(isActive);
+  async function handleEditGuestConfirmation(): Promise<void> {
+    if (isMine) {
+      try {
+        setLoading(true);
+        await editGuest({
+          ...guest,
+          confirmed: !guest.confirmed,
+        });
+      } catch {
+        throw new Error();
+      } finally {
+        setLoading(false);
+      }
+    }
+  }
 
   return (
     <OverContainer>
@@ -56,13 +75,19 @@ export function EventGuestButton({ guest, index }: IProps): JSX.Element {
             <FiUser size={24} />
           </ConfirmGuestButton>
         )}
-        <ConfirmGuestButton>
-          {guest.confirmed ? (
-            <FiCheckSquare size={24} />
-          ) : (
-            <FiSquare size={24} />
-          )}
-        </ConfirmGuestButton>
+        {loading ? (
+          <ConfirmGuestButton>
+            <FiLoader size={24} />
+          </ConfirmGuestButton>
+        ) : (
+          <ConfirmGuestButton onClick={handleEditGuestConfirmation}>
+            {guest.confirmed ? (
+              <FiCheckSquare size={24} />
+            ) : (
+              <FiSquare size={24} />
+            )}
+          </ConfirmGuestButton>
+        )}
       </Container>
       {isActive && <EventGuestButtonInfo />}
     </OverContainer>

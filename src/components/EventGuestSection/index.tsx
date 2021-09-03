@@ -7,7 +7,6 @@ import React, {
 } from 'react';
 import * as Yup from 'yup';
 import { FormHandles } from '@unform/core';
-import { FiCheckSquare, FiEdit3, FiSquare, FiUser } from 'react-icons/fi';
 
 import { MdMail, MdPersonAdd } from 'react-icons/md';
 import { AddEventGuestListWindow } from '../AddEventGuestListWindow';
@@ -15,20 +14,15 @@ import { AddEventGuestListWindow } from '../AddEventGuestListWindow';
 import {
   Container,
   GuestAllocationButton,
-  NotHostGuest,
-  Guest,
   BooleanNavigationButton,
 } from './styles';
 import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
-import getValidationErrors from '../../utils/getValidationErros';
 import { useAuth } from '../../hooks/auth';
 import BooleanQuestionWindow from '../BooleanQuestionWindow';
 import FriendsListWindow from '../FriendsListWindow';
 import IFriendDTO from '../../dtos/IFriendDTO';
-import IEventGuestDTO from '../../dtos/IEventGuestDTO';
 import { AddGuestWindow } from '../AddGuestWindow ';
-import EditGuestWindow from '../EditGuestWindow';
 import EventInvitationWindow from '../EventInvitationWindow';
 import IWeplanGuestDTO from '../../dtos/IWeplanGuestDTO';
 import { useEventVariables } from '../../hooks/eventVariables';
@@ -52,18 +46,12 @@ const EventGuestSection: React.FC<IProps> = ({
   const { friends } = useFriends();
   const { getEventGuests } = useCurrentEvent();
   const { eventGuests, isOwner, selectedEvent } = useEventVariables();
-  const formRef = useRef<FormHandles>(null);
-
-  const [selectedGuest, setSelectedGuest] = useState<IEventGuestDTO>(
-    {} as IEventGuestDTO,
-  );
 
   const [selectedFriend, setSelectedFriend] = useState<IFriendDTO>(
     {} as IFriendDTO,
   );
   const [wpGuestInvitationWindow, setWpGuestInvitationWindow] = useState(false);
   const [wpGuestQuestionWindow, setWpGuestQuestionWindow] = useState(false);
-  const [editGuestWindow, setEditGuestWindow] = useState(false);
   const [guestWindow, setGuestWindow] = useState(true);
   const [addGuestWindow, setAddGuestWindow] = useState(false);
   const [guestConfirmationWindow, setGuestConfirmationWindow] = useState(false);
@@ -79,20 +67,6 @@ const EventGuestSection: React.FC<IProps> = ({
   const handleGuestWindow = useCallback(props => {
     setGuestWindow(props);
   }, []);
-  const handleEditGuestWindow = useCallback(
-    (props: IEventGuestDTO) => {
-      closeAllWindows();
-      setSelectedGuest(props);
-      if (props.weplanUser === true) {
-        setWeplanUser(true);
-      } else {
-        setWeplanUser(false);
-      }
-
-      return setEditGuestWindow(!editGuestWindow);
-    },
-    [editGuestWindow, closeAllWindows],
-  );
   const handleWeplanGuestWindow = useCallback(props => {
     setWpGuestQuestionWindow(props);
   }, []);
@@ -126,38 +100,6 @@ const EventGuestSection: React.FC<IProps> = ({
     setAddGuestListWindow(true);
   }, [closeAllWindows]);
 
-  const handleEditConfirmedGuest = useCallback(
-    async (props: IEventGuestDTO) => {
-      try {
-        await api.put(`events/${selectedEvent.id}/guests/${props.id}`, {
-          first_name: props.first_name,
-          last_name: props.last_name,
-          description: props.description,
-          confirmed: !props.confirmed,
-        });
-
-        addToast({
-          type: 'success',
-          title: 'Convidado editado com sucesso',
-          description: 'As mudanças já foram atualizadas no seu evento.',
-        });
-        await getEventGuests(selectedEvent.id);
-      } catch (err) {
-        if (err instanceof Yup.ValidationError) {
-          const error = getValidationErrors(err);
-
-          formRef.current?.setErrors(error);
-        }
-
-        addToast({
-          type: 'error',
-          title: 'Erro ao editar convidado',
-          description: 'Erro ao editar o convidado, tente novamente.',
-        });
-      }
-    },
-    [addToast, selectedEvent.id, getEventGuests],
-  );
   const handleWeplanUserQuestion = useCallback(
     (weplan_user: boolean) => {
       if (weplan_user === true) {
@@ -187,7 +129,6 @@ const EventGuestSection: React.FC<IProps> = ({
 
   let guestCount = 0;
   let myGuestCount = 0;
-  const notHostMessage = 'Você não é o anfitrião deste convidado!';
 
   const wpGuests = useMemo(() => {
     const wpguests: IWeplanGuestDTO[] = [];
@@ -210,11 +151,10 @@ const EventGuestSection: React.FC<IProps> = ({
       const guests = eventGuests
         .map(guest => {
           const email =
-            (!!guest.guestContactInfos &&
-              guest.guestContactInfos.length > 0 &&
-              guest.guestContactInfos.find(
-                contact => contact.contactType.name === 'Email',
-              )?.contact_info) ||
+            (!!guest.contacts &&
+              guest.contacts.length > 0 &&
+              guest.contacts.find(contact => contact.contact_type === 'Email')
+                ?.contact_info) ||
             '';
           return {
             id: guest.id,
@@ -301,14 +241,6 @@ const EventGuestSection: React.FC<IProps> = ({
           onHandleCloseWindow={() => setAddGuestListWindow(false)}
         />
       )}
-      {editGuestWindow && (
-        <EditGuestWindow
-          eventGuest={selectedGuest}
-          handleCloseWindow={handleEditGuestWindow}
-          handleGetGuests={getEventGuests}
-          onHandleCloseWindow={() => setEditGuestWindow(false)}
-        />
-      )}
       {!!guestConfirmationWindow && (
         <BooleanQuestionWindow
           selectBooleanOption={handleIsGuestConfirmed}
@@ -368,13 +300,25 @@ const EventGuestSection: React.FC<IProps> = ({
           {guestWindow &&
             eventGuests.map(eGuest => {
               guestCount += 1;
-              return <EventGuestButton guest={eGuest} index={guestCount} />;
+              return (
+                <EventGuestButton
+                  key={eGuest.id}
+                  guest={eGuest}
+                  index={guestCount}
+                />
+              );
             })}
 
           {!guestWindow &&
             myGuests.map(mGuest => {
               myGuestCount += 1;
-              return <EventGuestButton guest={mGuest} index={myGuestCount} />;
+              return (
+                <EventGuestButton
+                  key={mGuest.id}
+                  guest={mGuest}
+                  index={myGuestCount}
+                />
+              );
             })}
         </div>
       </Container>

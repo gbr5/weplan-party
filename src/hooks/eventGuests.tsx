@@ -47,7 +47,12 @@ const EventGuestsContext = createContext({} as EventGuestsContextType);
 
 const EventGuestsProvider: React.FC = ({ children }) => {
   const { addToast } = useToast();
-  const { selectedEvent, selectEventGuest, eventGuests } = useEventVariables();
+  const {
+    selectedEvent,
+    selectEventGuest,
+    selectedEventGuest,
+    eventGuests,
+  } = useEventVariables();
   const { getEventGuests } = useCurrentEvent();
 
   const [loading, setLoading] = useState(false);
@@ -208,7 +213,9 @@ const EventGuestsProvider: React.FC = ({ children }) => {
         description: data.description,
         confirmed: data.confirmed,
       });
-      selectEventGuest(response.data);
+      selectedEventGuest &&
+        selectedEventGuest.id &&
+        selectEventGuest(response.data);
       await getEventGuests(data.event_id);
       return response.data;
     } catch (err) {

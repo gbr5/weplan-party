@@ -39,14 +39,17 @@ export function EventGuestButtonInfo(): JSX.Element {
   const { editGuest } = useEventGuests();
 
   const [editGuestName, setEditGuestName] = useState(false);
-  const [editGuestDescription, setEditGuestDescription] = useState(false);
+  const [
+    editGuestDescriptionComponent,
+    setEditGuestDescriptionComponent,
+  ] = useState(false);
 
   function handleEditGuestName(): void {
     setEditGuestName(!editGuestName);
   }
 
-  function handleEditGuestDescription(): void {
-    setEditGuestDescription(!editGuestDescription);
+  function handleEditGuestDescriptionComponent(): void {
+    setEditGuestDescriptionComponent(!editGuestDescriptionComponent);
   }
 
   async function handleEditGuestFirstName(first_name: string): Promise<void> {
@@ -60,6 +63,15 @@ export function EventGuestButtonInfo(): JSX.Element {
     await editGuest({
       ...selectedEventGuest,
       last_name,
+    });
+  }
+
+  async function handleEditGuestDescription(
+    description: string,
+  ): Promise<void> {
+    await editGuest({
+      ...selectedEventGuest,
+      description,
     });
   }
 
@@ -97,49 +109,102 @@ export function EventGuestButtonInfo(): JSX.Element {
           <MenuText>{guestName}</MenuText>
         </FieldButton>
       )}
+      {editGuestDescriptionComponent ? (
+        <FieldContainer>
+          <FieldLabel>Nome: </FieldLabel>
+          <InlineFormField
+            defaultValue={selectedEventGuest.description}
+            handleOnSubmit={handleEditGuestDescription}
+            placeholder={selectedEventGuest.description}
+            closeComponent={handleEditGuestDescriptionComponent}
+          />
+        </FieldContainer>
+      ) : (
+        <FieldButton onClick={handleEditGuestDescriptionComponent}>
+          <FieldLabel>Descrição</FieldLabel>
+          <MenuText>{selectedEventGuest.description}</MenuText>
+        </FieldButton>
+      )}
       <SectionBorder />
       <MenuButtonSection>
-        <MenuButton>
-          <MenuText>Tarefas</MenuText>
-          <IconContainer color={theme.colors.red}>
-            <NotificationNumber number={0} />
-            <FiBell size={iconSize} />
-          </IconContainer>
-        </MenuButton>
+        {selectedEventGuest.contacts.map(contact => {
+          let contactType = contact.contact_type;
+          if (contact.contact_type === 'Address') contactType = 'Endereço';
+          if (contact.contact_type === 'Phone') {
+            contactType = 'Telefone';
 
-        <MenuButton>
-          <MenuText>Transações</MenuText>
-          <IconContainer color={theme.colors.title}>
-            <FiDollarSign size={iconSize} />
-          </IconContainer>
-        </MenuButton>
-        <MenuButton>
-          <MenuText>Notas</MenuText>
-          <IconContainer color={theme.colors.toastInfoColor}>
-            <FiFileText size={iconSize} />
-          </IconContainer>
-        </MenuButton>
-
-        <MenuButton>
-          <MenuText>Contratos</MenuText>
-          <IconContainer color={theme.colors.green}>
-            <FiLock size={iconSize} />
-          </IconContainer>
-        </MenuButton>
-
-        <MenuButton>
-          <MenuText>Votos</MenuText>
-          <IconContainer color={theme.colors.title}>
-            <FiStar size={iconSize} />
-          </IconContainer>
-        </MenuButton>
-
-        <MenuButton>
-          <MenuText>Mais</MenuText>
-          <IconContainer color={theme.colors.primary}>
-            <FiPlus size={iconSize} />
-          </IconContainer>
-        </MenuButton>
+            return (
+              <MenuButton key={contact.id}>
+                <MenuText>{contactType}</MenuText>
+                <IconContainer color={theme.colors.primary}>
+                  <MenuText>
+                    <a target="blank" href={`tel:${contact.contact_info}`}>
+                      {contact.contact_info}
+                    </a>
+                  </MenuText>
+                </IconContainer>
+              </MenuButton>
+            );
+          }
+          if (contact.contact_type === 'Whatsapp') {
+            return (
+              <MenuButton key={contact.id}>
+                <MenuText>{contactType}</MenuText>
+                <IconContainer color={theme.colors.primary}>
+                  <MenuText>
+                    <a
+                      target="blank"
+                      href={`https://wa.me/${contact.contact_info}`}
+                    >
+                      {contact.contact_info}
+                    </a>
+                  </MenuText>
+                </IconContainer>
+              </MenuButton>
+            );
+          }
+          if (contact.contact_type === 'Email') {
+            return (
+              <MenuButton key={contact.id}>
+                <MenuText>{contactType}</MenuText>
+                <IconContainer color={theme.colors.primary}>
+                  <MenuText>
+                    <a target="blank" href={`mailto:${contact.contact_info}`}>
+                      {contact.contact_info}
+                    </a>
+                  </MenuText>
+                </IconContainer>
+              </MenuButton>
+            );
+          }
+          if (
+            contact.contact_type === 'Instagram' ||
+            contact.contact_type === 'Facebook' ||
+            contact.contact_type === 'Linkedin' ||
+            contact.contact_type === 'WebSite'
+          ) {
+            return (
+              <MenuButton key={contact.id}>
+                <MenuText>{contactType}</MenuText>
+                <IconContainer color={theme.colors.primary}>
+                  <MenuText>
+                    <a target="blank" href={contact.contact_info}>
+                      {contact.contact_info}
+                    </a>
+                  </MenuText>
+                </IconContainer>
+              </MenuButton>
+            );
+          }
+          return (
+            <MenuButton key={contact.id}>
+              <MenuText>{contactType}</MenuText>
+              <IconContainer color={theme.colors.primary}>
+                <MenuText>{contact.contact_info}</MenuText>
+              </IconContainer>
+            </MenuButton>
+          );
+        })}
       </MenuButtonSection>
 
       <SectionBorder />
