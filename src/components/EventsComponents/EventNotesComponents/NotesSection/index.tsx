@@ -5,12 +5,13 @@ import { useEventVariables } from '../../../../hooks/eventVariables';
 import { useNote } from '../../../../hooks/notes';
 import { Note } from '../../../NotesComponents/Note';
 import { SearchNotes } from '../../../NotesComponents/SearchNotes';
+import { EventNoteForm } from '../EventNoteForm';
 
 import { Container } from './styles';
 
 export function NotesSection(): JSX.Element {
   const { eventNotes, isOwner } = useEventVariables();
-  const { handleCreateEventNoteWindow } = useNote();
+  const { handleCreateEventNoteWindow, createEventNoteWindow } = useNote();
 
   const [filteredNotes, setFilteredNotes] = useState<INoteDTO[]>([]);
 
@@ -31,24 +32,28 @@ export function NotesSection(): JSX.Element {
   }, [eventNotes]);
 
   return (
-    <Container>
-      <h1>Notas</h1>
-      <span>
-        <SearchNotes handleNotes={handleFilteredNotes} notes={notes} />
-        {isOwner && (
-          <span>
-            <button type="button" onClick={handleCreateEventNoteWindow}>
-              <MdAdd size={40} />
-            </button>
-          </span>
-        )}
-      </span>
+    <>
+      {createEventNoteWindow && <EventNoteForm />}
 
-      <div>
-        {filteredNotes.map(note => {
-          return <Note key={note.id} note={note} />;
-        })}
-      </div>
-    </Container>
+      <Container>
+        <h1>Notas</h1>
+        <span>
+          <SearchNotes handleNotes={handleFilteredNotes} notes={notes} />
+          {isOwner && (
+            <span>
+              <button type="button" onClick={handleCreateEventNoteWindow}>
+                <MdAdd size={40} />
+              </button>
+            </span>
+          )}
+        </span>
+
+        <div>
+          {filteredNotes.map(note => {
+            return <Note key={note.id} note={note} />;
+          })}
+        </div>
+      </Container>
+    </>
   );
 }

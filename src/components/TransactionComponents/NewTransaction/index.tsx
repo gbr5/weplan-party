@@ -17,6 +17,8 @@ import {
   AmountButton,
 } from './styles';
 import { DatePickerLine } from '../../TimePickerLine';
+import { InlineCurrencyFormField } from '../../InlineCurrencyFormField';
+import { useToast } from '../../../hooks/toast';
 
 interface IProps {
   transaction: ICreateTransactionDTO;
@@ -24,13 +26,16 @@ interface IProps {
 }
 
 export function NewTransaction({ transaction, index }: IProps): ReactElement {
+  const { addToast } = useToast();
   const {
     handleSelectedNewTransaction,
+    selectedNewTransaction,
     newTransactions,
     selectNewTransactions,
   } = useEventVariables();
-  const { handleEditNewTransactionValueWindow } = useTransaction();
+  const { handleNewAgreement, newAgreementInstallments } = useTransaction();
   const [isPaid, setIsPaid] = useState(false);
+  const [editAmount, setEditAmount] = useState(false);
 
   function handleIsPaid(): void {
     setIsPaid(!isPaid);
@@ -48,7 +53,7 @@ export function NewTransaction({ transaction, index }: IProps): ReactElement {
 
   function handleEditAmount(): void {
     handleSelectedNewTransaction(transaction);
-    handleEditNewTransactionValueWindow();
+    setEditAmount(true);
   }
 
   function handleEditDate(date: Date): void {
@@ -69,16 +74,47 @@ export function NewTransaction({ transaction, index }: IProps): ReactElement {
       });
     selectNewTransactions(transactions);
   }
+
+  function handleSubmit(amount: number): void {
+    const transactions = newTransactions.map(item => {
+      if (item === selectedNewTransaction) {
+        return {
+          ...item,
+          amount,
+        };
+      }
+      return item;
+    });
+    selectNewTransactions(transactions);
+    const totalAmount = transactions
+      .map(item => item.amount)
+      .reduce((acc, cv) => acc + cv, 0);
+    handleNewAgreement({
+      amount: totalAmount,
+      installments: newAgreementInstallments,
+    });
+    handleSelectedNewTransaction({} as ICreateTransactionDTO);
+    setEditAmount(false);
+  }
+
   return (
     <>
       <Container>
         <TextContainer>
           <Index>{index}</Index>
-          <AmountButton onClick={handleEditAmount}>
-            <Amount isOverdue={isOverdue} isPaid={transaction.isPaid}>
-              {formatBrlCurrency(transaction.amount)}
-            </Amount>
-          </AmountButton>
+          {editAmount && selectedNewTransaction === transaction ? (
+            <InlineCurrencyFormField
+              defaultValue={String(transaction.amount)}
+              handleOnSubmit={handleSubmit}
+              placeholder={String(transaction.amount)}
+            />
+          ) : (
+            <AmountButton onClick={handleEditAmount}>
+              <Amount isOverdue={isOverdue} isPaid={transaction.isPaid}>
+                {formatBrlCurrency(transaction.amount)}
+              </Amount>
+            </AmountButton>
+          )}
           <DatePickerLine
             handleSelectedDate={handleEditDate}
             selectedDate={transaction.due_date}

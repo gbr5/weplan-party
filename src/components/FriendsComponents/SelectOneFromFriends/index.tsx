@@ -65,6 +65,7 @@ export function SelectOneFromFriends({
           <FriendsContainer>
             {filteredFriends.map(item => (
               <SelectOneFriendButton
+                key={item.id}
                 handleSelectFriend={handleSelectFriend}
                 friend={item}
               />

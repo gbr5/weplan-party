@@ -35,12 +35,7 @@ interface IFormData {
 export function NewTaskForm(): ReactElement {
   const { addToast } = useToast();
   const { selectedEvent, selectedEventTask } = useEventVariables();
-  const {
-    createTask,
-    loading,
-    handleSelectTaskTimeWindow,
-    handleCreateTaskWindow,
-  } = useEventTasks();
+  const { createTask, loading, handleCreateTaskWindow } = useEventTasks();
   const formRef = useRef<FormHandles>(null);
 
   const [selectedPriority, setPriority] = useState<'low' | 'neutral' | 'high'>(
@@ -49,43 +44,33 @@ export function NewTaskForm(): ReactElement {
 
   const [selectedDate, setSelectedDate] = useState(addDays(new Date(), 3));
 
-  const handleSubmit = useCallback(
-    async ({ title }: IFormData) => {
-      try {
-        if (title === '')
-          return addToast({
-            title: 'Dê um nome à tarefa!',
-            type: 'error',
-          });
-        await createTask({
-          event_id: selectedEvent.id,
-          title,
-          due_date: selectedDate,
-          priority: selectedPriority,
-          status: 'not started',
-        });
-        handleCreateTaskWindow();
+  async function handleSubmit({ title }: IFormData): Promise<void> {
+    try {
+      if (title === '')
         return addToast({
-          title: 'Tarefa criada com sucesso!',
-          type: 'success',
-        });
-      } catch {
-        addToast({
+          title: 'Dê um nome à tarefa!',
           type: 'error',
-          title: 'Erro ao criar a tarefa, tente novamente.',
         });
-        throw new Error();
-      }
-    },
-    [
-      handleCreateTaskWindow,
-      addToast,
-      createTask,
-      selectedEvent,
-      selectedDate,
-      selectedPriority,
-    ],
-  );
+      await createTask({
+        event_id: selectedEvent.id,
+        title,
+        due_date: selectedDate,
+        priority: selectedPriority,
+        status: 'not started',
+      });
+      handleCreateTaskWindow();
+      return addToast({
+        title: 'Tarefa criada com sucesso!',
+        type: 'success',
+      });
+    } catch {
+      addToast({
+        type: 'error',
+        title: 'Erro ao criar a tarefa, tente novamente.',
+      });
+      throw new Error();
+    }
+  }
 
   function selectTaskPriority(data: 'low' | 'neutral' | 'high'): void {
     setPriority(data);

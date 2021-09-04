@@ -28,20 +28,14 @@ import {
 import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
 import { useEventVariables } from '../../hooks/eventVariables';
+import { useEventGuests } from '../../hooks/eventGuests';
 
-interface IProps {
-  onHandleCloseWindow: MouseEventHandler;
-  myAvailableNumberOfGuests: number;
-  handleCloseWindow: Function;
-}
-
-export function AddEventGuestListWindow({
-  onHandleCloseWindow,
-  myAvailableNumberOfGuests,
-  handleCloseWindow,
-}: IProps): ReactElement {
+export function AddEventGuestListWindow(): ReactElement {
   const { addToast } = useToast();
   const { selectedEvent } = useEventVariables();
+  const { handleAddGuestListWindow } = useEventGuests();
+
+  const myAvailableNumberOfGuests = 0;
 
   const [firstWindow, setFirstWindow] = useState(true);
   const [secondWindow, setSecondWindow] = useState(false);
@@ -123,7 +117,7 @@ export function AddEventGuestListWindow({
             data,
           );
         }
-        handleCloseWindow();
+        handleAddGuestListWindow();
         return addToast({
           type: 'success',
           title: 'Convidados criados com sucesso',
@@ -138,12 +132,17 @@ export function AddEventGuestListWindow({
         throw new Error(err);
       }
     },
-    [addToast, selectedEvent.id, myAvailableNumberOfGuests, handleCloseWindow],
+    [
+      addToast,
+      selectedEvent.id,
+      myAvailableNumberOfGuests,
+      handleAddGuestListWindow,
+    ],
   );
 
   return (
     <WindowContainer
-      onHandleCloseWindow={onHandleCloseWindow}
+      onHandleCloseWindow={handleAddGuestListWindow}
       containerStyle={{
         zIndex: 15,
         top: '5%',

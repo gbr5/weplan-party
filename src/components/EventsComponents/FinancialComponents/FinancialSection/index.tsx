@@ -1,10 +1,12 @@
 import React, { useMemo } from 'react';
 import { FiDollarSign, FiFileText, FiHome } from 'react-icons/fi';
 import { useCurrentEvent } from '../../../../hooks/currentEvent';
+import { useEventSuppliers } from '../../../../hooks/eventSuppliers';
 
 import { useEventVariables } from '../../../../hooks/eventVariables';
 
 import { formatBrlCurrency } from '../../../../utils/formatBrlCurrency';
+import { EventSupplierBudgetsWindow } from '../../EventSupplierComponents/EventSupplierBudgetsWindow';
 
 import { EventSupplierTransactionAgreementsSection } from '../EventSupplierTransactionAgreementsSection';
 import { EventTransactionSection } from '../EventTransactionSection';
@@ -34,6 +36,7 @@ export function FinancialSection(): JSX.Element {
     eventFinancialSubSection,
     handleEventFinancialSubSection,
   } = useCurrentEvent();
+  const { supplierBudgetsWindow } = useEventSuppliers();
 
   const budget = useMemo(() => {
     return eventBudget
@@ -70,6 +73,8 @@ export function FinancialSection(): JSX.Element {
 
   return (
     <>
+      {supplierBudgetsWindow && <EventSupplierBudgetsWindow />}
+
       <Container>
         <TitleButton onClick={() => handleEventFinancialSubSection('Main')}>
           <Title>Financeiro</Title>

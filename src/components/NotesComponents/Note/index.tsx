@@ -30,7 +30,7 @@ export function Note({ note }: IProps): ReactElement {
   const { selectedEvent } = useEventVariables();
   const { editNote, selectNote } = useNote();
 
-  const [author, setAuthor] = useState({} as IUserDTO);
+  const [author, setAuthor] = useState('');
   const [editNoteComponent, setEditNoteComponent] = useState(false);
 
   async function handleEditNote(data: string): Promise<void> {
@@ -56,17 +56,23 @@ export function Note({ note }: IProps): ReactElement {
     selectNote({} as INoteDTO);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const getAuthor = useCallback(async () => {
-    user.id === note.author_id && setAuthor(user);
     const findAuthor = await getUser(note.author_id);
-    if (findAuthor) return findAuthor;
+    findAuthor && setAuthor(findAuthor.name);
     return undefined;
-  }, [getUser, note, user]);
+  }, [getUser, note]);
 
   useEffect(() => {
-    getAuthor();
-  }, [getAuthor]);
+    if (selectedEvent.id !== note.author_id && user.id !== note.author_id) {
+      getAuthor();
+    }
+    if (selectedEvent.id === note.author_id) {
+      setAuthor('WePlan');
+    }
+    if (user.id === note.author_id) {
+      setAuthor(user.name);
+    }
+  }, [getAuthor, selectedEvent, note, user]);
 
   const cols = useMemo(() => {
     const screenWidth = window.screen.width;
@@ -90,13 +96,11 @@ export function Note({ note }: IProps): ReactElement {
         </>
       ) : (
         <EditNoteButton onClick={openEditNote}>
-          <TextNote disabled cols={cols} rows={rows}>
-            {note.note}
-          </TextNote>
+          <TextNote disabled cols={cols} rows={rows} defaultValue={note.note} />
         </EditNoteButton>
       )}
       <NoteFooter>
-        <NoteAuthor>{author && author.id && author.name}</NoteAuthor>
+        <NoteAuthor>{author}</NoteAuthor>
         <NoteDate>
           {note.updated_at === note.created_at
             ? formatDateToString(String(note.created_at))

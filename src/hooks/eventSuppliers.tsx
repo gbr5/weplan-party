@@ -33,7 +33,6 @@ interface EventSuppliersContextType {
   cancelAgreementsWindow: boolean;
   dischargeOption: string;
   dischargingWindow: boolean;
-  editSupplierNameWindow: boolean;
   editSupplierBudgetAmountWindow: boolean;
   editSupplierBudgetDescriptionWindow: boolean;
   editSupplierCategoryWindow: boolean;
@@ -73,7 +72,6 @@ interface EventSuppliersContextType {
   handleAddSupplierWindow: () => void;
   handleSupplierTransactionAgreementsWindow: () => void;
   handleDischargingWindow: () => void;
-  handleEditSupplierNameWindow: () => void;
   handleEditSupplierCategoryWindow: () => void;
   handleSupplierCategoryWindow: () => void;
   handleSupplierNotesWindow: () => void;
@@ -140,7 +138,6 @@ const EventSuppliersProvider: React.FC = ({ children }) => {
   ] = useState(false);
   const [dischargeOption, setDischargeOption] = useState('');
   const [dischargingWindow, setDischargingWindow] = useState(false);
-  const [editSupplierNameWindow, setEditSupplierNameWindow] = useState(false);
   const [
     editSupplierBudgetAmountWindow,
     setEditSupplierBudgetAmountWindow,
@@ -261,9 +258,6 @@ const EventSuppliersProvider: React.FC = ({ children }) => {
   }
   function handleAddSupplierWindow(): void {
     setAddSupplierWindow(!addSupplierWindow);
-  }
-  function handleEditSupplierNameWindow(): void {
-    setEditSupplierNameWindow(!editSupplierNameWindow);
   }
   function handleEditSupplierBudgetAmountWindow(): void {
     setEditSupplierBudgetAmountWindow(!editSupplierBudgetAmountWindow);
@@ -639,11 +633,9 @@ const EventSuppliersProvider: React.FC = ({ children }) => {
         updateEventSupplierTransactionAgreement,
         unsetEventSuppliersVariables,
         editSupplierCategoryWindow,
-        editSupplierNameWindow,
         editSupplierBudgetAmountWindow,
         editSupplierBudgetDescriptionWindow,
         handleEditSupplierCategoryWindow,
-        handleEditSupplierNameWindow,
         handleSupplierTransactionAgreementsWindow,
         supplierTransactionAgreementsWindow,
         handleSupplierNotesWindow,

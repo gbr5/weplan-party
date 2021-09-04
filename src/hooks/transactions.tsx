@@ -32,7 +32,6 @@ interface TransactionContextType {
   createTransactionWindow: boolean;
   transactionFilesWindow: boolean;
   cancelEventTransactionConfirmationWindow: boolean;
-  editNewTransactionValueWindow: boolean;
   editEventTransactionValueWindow: boolean;
   filterTransactionWindow: boolean;
   loading: boolean;
@@ -60,7 +59,6 @@ interface TransactionContextType {
   editTransaction: (data: ITransactionDTO) => Promise<ITransactionDTO>;
   handleCreateTransactionWindow: () => void;
   handleCancelEventTransactionConfirmationWindow: () => void;
-  handleEditNewTransactionValueWindow: () => void;
   handleTransactionNotesWindow: () => void;
   handleCancelledTransactionFilter: () => void;
   handleEditEventTransactionValueWindow: () => void;
@@ -108,10 +106,6 @@ const TransactionProvider: React.FC = ({ children }) => {
   const [
     cancelEventTransactionConfirmationWindow,
     setCancelEventTransactionConfirmationWindow,
-  ] = useState(false);
-  const [
-    editNewTransactionValueWindow,
-    setEditNewTransactionValueWindow,
   ] = useState(false);
   const [
     editEventTransactionValueWindow,
@@ -166,9 +160,6 @@ const TransactionProvider: React.FC = ({ children }) => {
   }
   function handleToDateTransactionFilter(data: Date): void {
     setToDateTransactionFilter(data);
-  }
-  function handleEditNewTransactionValueWindow(): void {
-    setEditNewTransactionValueWindow(!editNewTransactionValueWindow);
   }
 
   function handleFilterTransactionWindow(): void {
@@ -511,13 +502,11 @@ const TransactionProvider: React.FC = ({ children }) => {
         createSupplierTransactionAgreementWithTransactions,
         deleteTransaction,
         deleteAllSupplierAgreements,
-        editNewTransactionValueWindow,
         editTransaction,
         editEventTransactionValueWindow,
         filterTransactionWindow,
         handleCancelEventTransactionConfirmationWindow,
         handleCreateTransactionWindow,
-        handleEditNewTransactionValueWindow,
         handleEditEventTransactionValueWindow,
         createTransaction,
         handleFilterTransactionWindow,

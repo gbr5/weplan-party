@@ -66,7 +66,7 @@ export function SelectFromFriends({
         {filteredFriends.length > 0 && (
           <FriendsContainer>
             {filteredFriends.map(item => (
-              <SelectFriendButton friend={item} />
+              <SelectFriendButton key={item.id} friend={item} />
             ))}
           </FriendsContainer>
         )}

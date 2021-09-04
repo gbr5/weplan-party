@@ -1,10 +1,5 @@
-import React, {
-  MouseEventHandler,
-  useCallback,
-  useMemo,
-  useState,
-} from 'react';
-import { MdMail, MdPersonAdd } from 'react-icons/md';
+import React, { useCallback, useMemo, useState } from 'react';
+import { MdPersonAdd } from 'react-icons/md';
 
 import { useAuth } from '../../../../hooks/auth';
 import { useEventVariables } from '../../../../hooks/eventVariables';
@@ -14,28 +9,17 @@ import IWeplanGuestDTO from '../../../../dtos/IWeplanGuestDTO';
 
 import EventInvitationWindow from '../../../EventInvitationWindow';
 import { EventGuestButton } from '../EventGuestButton';
-import { AddEventGuestListWindow } from '../../../AddEventGuestListWindow';
+// import { AddEventGuestListWindow } from '../../../AddEventGuestListWindow';
 import { SelectFromFriends } from '../../../FriendsComponents/SelectFromFriends';
-
-import {
-  Container,
-  GuestAllocationButton,
-  BooleanNavigationButton,
-} from './styles';
 import { SelectOneFromFriends } from '../../../FriendsComponents/SelectOneFromFriends';
 import DeleteConfirmationWindow from '../../../DeleteConfirmationWindow';
+import NewGuestForm from '../NewGuestForm';
+import { NewGuestWindow } from '../NewGuestWindow';
 
-interface IProps {
-  closeAllWindows: Function;
-  handleGuestAllocationWindow: MouseEventHandler;
-  myAvailableNumberOfGuests: number;
-}
+import { Container, BooleanNavigationButton } from './styles';
+import { AddEventGuestListWindow } from '../../../AddEventGuestListWindow';
 
-const EventGuestSection: React.FC<IProps> = ({
-  handleGuestAllocationWindow,
-  closeAllWindows,
-  myAvailableNumberOfGuests,
-}: IProps) => {
+export function EventGuestSection(): JSX.Element {
   const { user } = useAuth();
   const { getEventGuests } = useCurrentEvent();
   const {
@@ -54,10 +38,11 @@ const EventGuestSection: React.FC<IProps> = ({
     handleSelectWePlanGuestsWindow,
     handleSelectWePlanGuestWindow,
     createMultipleWePlanGuests,
-    sendMassEmailInvitations,
     handleDissociateUserFromGuestConfirmation,
     dissociateUserFromGuestConfirmation,
     deleteWePlanGuest,
+    newGuestForm,
+    newGuestWindow,
   } = useEventGuests();
 
   const [wpGuestInvitationWindow, setWpGuestInvitationWindow] = useState(false);
@@ -66,9 +51,6 @@ const EventGuestSection: React.FC<IProps> = ({
   const handleGuestWindow = useCallback(props => {
     setGuestWindow(props);
   }, []);
-  const handleCloseAddGuestListWindow = useCallback(() => {
-    closeAllWindows();
-  }, [closeAllWindows]);
 
   const myGuests = useMemo(() => {
     return eventGuests.filter(guest => guest.host_id === user.id);
@@ -111,6 +93,8 @@ const EventGuestSection: React.FC<IProps> = ({
   );
   return (
     <>
+      {newGuestForm && <NewGuestForm />}
+      {newGuestWindow && <NewGuestWindow />}
       {wpGuestInvitationWindow && (
         <EventInvitationWindow
           handleCloseWindow={() => setWpGuestInvitationWindow(false)}
@@ -119,13 +103,7 @@ const EventGuestSection: React.FC<IProps> = ({
           wpGuests={wpGuests}
         />
       )}
-      {!!addGuestListWindow && (
-        <AddEventGuestListWindow
-          handleCloseWindow={handleCloseAddGuestListWindow}
-          myAvailableNumberOfGuests={myAvailableNumberOfGuests}
-          onHandleCloseWindow={handleAddGuestListWindow}
-        />
-      )}
+      {!!addGuestListWindow && <AddEventGuestListWindow />}
       {selectWePlanGuestsWindow && (
         <SelectFromFriends
           closeWindow={handleSelectWePlanGuestsWindow}
@@ -146,7 +124,7 @@ const EventGuestSection: React.FC<IProps> = ({
         />
       )}
       <Container>
-        {selectedEvent.event_type === 'Prom' && (
+        {/* {selectedEvent.event_type === 'Prom' && (
           <span>
             {isOwner && (
               <GuestAllocationButton
@@ -157,7 +135,7 @@ const EventGuestSection: React.FC<IProps> = ({
               </GuestAllocationButton>
             )}
           </span>
-        )}
+        )} */}
         <span>
           <BooleanNavigationButton
             booleanActiveButton={guestWindow}
@@ -174,10 +152,10 @@ const EventGuestSection: React.FC<IProps> = ({
             Meus Convidados
           </BooleanNavigationButton>
           <span>
-            <button type="button" onClick={sendMassEmailInvitations}>
+            {/* <button type="button" onClick={sendMassEmailInvitations}>
               Convite Virtual
               <MdMail size={30} />
-            </button>
+            </button> */}
             <button type="button" onClick={handleNewGuestWindow}>
               Adicionar Convidado
               <MdPersonAdd size={30} />
@@ -215,6 +193,4 @@ const EventGuestSection: React.FC<IProps> = ({
       </Container>
     </>
   );
-};
-
-export default EventGuestSection;
+}

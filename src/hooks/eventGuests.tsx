@@ -308,7 +308,7 @@ const EventGuestsProvider: React.FC = ({ children }) => {
             guest.last_name === personInfo.last_name,
         );
 
-        if (findGuest) {
+        if (findGuest && findGuest.weplanUser) {
           return addToast({
             title: `Convidado duplicado!`,
             description: `Já existe um convidado ${personInfo.first_name} ${personInfo.last_name}.`,

@@ -97,7 +97,7 @@ export const DateText = styled.p`
   font-size: 18px;
 `;
 
-export const InfoButton = styled.button`
+export const InfoButton = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;

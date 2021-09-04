@@ -9,7 +9,9 @@ import { useToast } from './toast';
 
 interface EventOwnersContextType {
   addOwnerWindow: boolean;
+  deleteOwnerWindow: boolean;
   handleAddOwnerWindow: () => void;
+  handleDeleteOwnerWindow: () => void;
   addMultipleOwners: (data: IFriendDTO[]) => Promise<void>;
   editEventOwner: (data: IEventOwnerDTO) => Promise<void>;
   createEventOwner: (data: ICreateEventOwnerDTO) => Promise<void>;
@@ -24,9 +26,14 @@ const EventOwnersProvider: React.FC = ({ children }) => {
   const { getEventOwners } = useCurrentEvent();
 
   const [addOwnerWindow, setAddOwnerWindow] = useState(false);
+  const [deleteOwnerWindow, setDeleteOwnerWindow] = useState(false);
 
   function handleAddOwnerWindow(): void {
     setAddOwnerWindow(!addOwnerWindow);
+  }
+
+  function handleDeleteOwnerWindow(): void {
+    setDeleteOwnerWindow(!deleteOwnerWindow);
   }
 
   async function addMultipleOwners(data: IFriendDTO[]): Promise<void> {
@@ -122,6 +129,8 @@ const EventOwnersProvider: React.FC = ({ children }) => {
         addMultipleOwners,
         addOwnerWindow,
         handleAddOwnerWindow,
+        deleteOwnerWindow,
+        handleDeleteOwnerWindow,
       }}
     >
       {children}

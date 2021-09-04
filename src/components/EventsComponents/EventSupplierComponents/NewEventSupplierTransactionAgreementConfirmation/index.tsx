@@ -8,7 +8,6 @@ import { useEventSuppliers } from '../../../../hooks/eventSuppliers';
 import { useEventVariables } from '../../../../hooks/eventVariables';
 import { useTransaction } from '../../../../hooks/transactions';
 
-import { EditNewTransactionAmount } from '../../../TransactionComponents/EditNewTransactionAmount';
 import { NewTransaction } from '../../../TransactionComponents/NewTransaction';
 import WindowUnFormattedContainer from '../../../WindowUnFormattedContainer';
 
@@ -36,7 +35,6 @@ export function NewEventSupplierTransactionAgreementConfirmation(): ReactElement
   } = useEventSuppliers();
   const {
     createSupplierTransactionAgreementWithTransactions,
-    editNewTransactionValueWindow,
     handleNewEventSupplierTransactionAgreement,
     handleNewAgreement,
     newAgreementAmount,
@@ -78,9 +76,6 @@ export function NewEventSupplierTransactionAgreementConfirmation(): ReactElement
 
   return (
     <>
-      {editNewTransactionValueWindow &&
-        selectedNewTransaction &&
-        selectedNewTransaction.amount && <EditNewTransactionAmount />}
       <WindowUnFormattedContainer
         onHandleCloseWindow={closeWindow}
         containerStyle={{

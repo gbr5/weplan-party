@@ -149,7 +149,7 @@ export function EventTransactionButton({
           </TextContainer>
         )}
         {!eventTransaction.transaction.isCancelled && (
-          <InfoButton onClick={handleSelectTransaction}>
+          <InfoButton>
             {selectedEventTransaction &&
             selectedEventTransaction.transaction &&
             selectedEventTransaction.transaction.id ===

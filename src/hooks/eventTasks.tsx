@@ -17,10 +17,6 @@ interface EventTasksContextType {
   editTaskTitleWindow: boolean;
   editTaskPriorityWindow: boolean;
   editTaskStatusWindow: boolean;
-  editTaskDateWindow: boolean;
-  editTaskTimeWindow: boolean;
-  selectTaskDateWindow: boolean;
-  selectTaskTimeWindow: boolean;
   eventTaskNotesWindow: boolean;
   deleteTaskConfirmationWindow: boolean;
   createTaskWindow: boolean;
@@ -33,10 +29,6 @@ interface EventTasksContextType {
   handleEditTaskTitleWindow: () => void;
   handleEditTaskPriorityWindow: () => void;
   handleEditTaskStatusWindow: () => void;
-  handleEditTaskDateWindow: () => void;
-  handleEditTaskTimeWindow: () => void;
-  handleSelectTaskDateWindow: () => void;
-  handleSelectTaskTimeWindow: () => void;
   handleEventTaskNotesWindow: () => void;
   handleCreateTaskWindow: () => void;
   handleDeleteTaskConfirmationWindow: () => void;
@@ -57,10 +49,6 @@ const EventTasksProvider: React.FC = ({ children }) => {
   const [editTaskTitleWindow, setEditTaskTitleWindow] = useState(false);
   const [editTaskPriorityWindow, setEditTaskPriorityWindow] = useState(false);
   const [editTaskStatusWindow, setEditTaskStatusWindow] = useState(false);
-  const [editTaskDateWindow, setEditTaskDateWindow] = useState(false);
-  const [editTaskTimeWindow, setEditTaskTimeWindow] = useState(false);
-  const [selectTaskDateWindow, setSelectTaskDateWindow] = useState(false);
-  const [selectTaskTimeWindow, setSelectTaskTimeWindow] = useState(false);
   const [eventTaskNotesWindow, setEventTaskNotesWindow] = useState(false);
   const [
     deleteTaskConfirmationWindow,
@@ -77,10 +65,6 @@ const EventTasksProvider: React.FC = ({ children }) => {
     setEditTaskTitleWindow(false);
     setEditTaskPriorityWindow(false);
     setEditTaskStatusWindow(false);
-    setEditTaskDateWindow(false);
-    setEditTaskTimeWindow(false);
-    setSelectTaskDateWindow(false);
-    setSelectTaskTimeWindow(false);
     setEventTaskNotesWindow(false);
     setDeleteTaskConfirmationWindow(false);
     setStatus('not started');
@@ -101,22 +85,6 @@ const EventTasksProvider: React.FC = ({ children }) => {
   function handleEditTaskStatusWindow(): void {
     setEditTaskPriorityWindow(false);
     setEditTaskStatusWindow(!editTaskStatusWindow);
-  }
-
-  function handleEditTaskDateWindow(): void {
-    setEditTaskDateWindow(!editTaskDateWindow);
-  }
-
-  function handleEditTaskTimeWindow(): void {
-    setEditTaskTimeWindow(!editTaskTimeWindow);
-  }
-
-  function handleSelectTaskDateWindow(): void {
-    setSelectTaskDateWindow(!selectTaskDateWindow);
-  }
-
-  function handleSelectTaskTimeWindow(): void {
-    setSelectTaskTimeWindow(!selectTaskTimeWindow);
   }
 
   function handleEventTaskNotesWindow(): void {
@@ -220,10 +188,6 @@ const EventTasksProvider: React.FC = ({ children }) => {
         editTaskTitleWindow,
         editTaskPriorityWindow,
         editTaskStatusWindow,
-        editTaskDateWindow,
-        editTaskTimeWindow,
-        selectTaskDateWindow,
-        selectTaskTimeWindow,
         eventTaskNotesWindow,
         deleteTaskConfirmationWindow,
         taskDate,
@@ -236,10 +200,6 @@ const EventTasksProvider: React.FC = ({ children }) => {
         handleEditTaskTitleWindow,
         handleEditTaskPriorityWindow,
         handleEditTaskStatusWindow,
-        handleEditTaskDateWindow,
-        handleEditTaskTimeWindow,
-        handleSelectTaskDateWindow,
-        handleSelectTaskTimeWindow,
         handleEventTaskNotesWindow,
         handleCreateTaskWindow,
         handleDeleteTaskConfirmationWindow,

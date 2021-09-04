@@ -9,9 +9,20 @@ import { MembersMainSection } from '../MembersMainSection';
 import { Container, Body } from './styles';
 import { useEventMembers } from '../../../../hooks/eventMembers';
 import { useFriends } from '../../../../hooks/friends';
+import { SelectFromFriends } from '../../../FriendsComponents/SelectFromFriends';
+import { useEventVariables } from '../../../../hooks/eventVariables';
+import DeleteConfirmationWindow from '../../../DeleteConfirmationWindow';
 
 export function MembersSection(): JSX.Element {
-  const { handleAddMemberWindow } = useEventMembers();
+  const { selectedEventMember } = useEventVariables();
+  const {
+    handleAddMemberWindow,
+    addMemberWindow,
+    addMultipleMembers,
+    deleteMemberWindow,
+    deleteEventMember,
+    handleDeleteMemberWindow,
+  } = useEventMembers();
   const { getFriends } = useFriends();
 
   const [section, setSection] = useState('Members');
@@ -24,21 +35,39 @@ export function MembersSection(): JSX.Element {
     handleAddMemberWindow();
   }
   return (
-    <Container>
-      <SectionHeader
-        handleAddButton={handleAddMemberForm}
-        handleInfoButton={handleAddMemberForm}
-        title="Membros"
-      />
-      <Body>
-        {section === 'Members' && <MembersListSection />}
-        {section === 'Main' && <MembersMainSection />}
-        {section === 'Financial' && <MembersFinancialSection />}
-      </Body>
-      <MembersFooterMenu
-        handleSection={(data: string) => handleSection(data)}
-        section={section}
-      />
-    </Container>
+    <>
+      {addMemberWindow && (
+        <SelectFromFriends
+          closeWindow={handleAddMemberWindow}
+          handleAddFriends={addMultipleMembers}
+        />
+      )}
+
+      {!!deleteMemberWindow &&
+        selectedEventMember &&
+        selectedEventMember.id && (
+          <DeleteConfirmationWindow
+            title="Deseja deletar este membro?"
+            handleDelete={() => deleteEventMember(selectedEventMember.id)}
+            onHandleCloseWindow={handleDeleteMemberWindow}
+          />
+        )}
+      <Container>
+        <SectionHeader
+          handleAddButton={handleAddMemberForm}
+          handleInfoButton={handleAddMemberForm}
+          title="Membros"
+        />
+        <Body>
+          {section === 'Members' && <MembersListSection />}
+          {section === 'Main' && <MembersMainSection />}
+          {section === 'Financial' && <MembersFinancialSection />}
+        </Body>
+        <MembersFooterMenu
+          handleSection={(data: string) => handleSection(data)}
+          section={section}
+        />
+      </Container>
+    </>
   );
 }

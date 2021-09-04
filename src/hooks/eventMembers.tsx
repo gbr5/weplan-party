@@ -8,7 +8,9 @@ import { useEventVariables } from './eventVariables';
 
 interface EventMembersContextType {
   addMemberWindow: boolean;
+  deleteMemberWindow: boolean;
   handleAddMemberWindow: () => void;
+  handleDeleteMemberWindow: () => void;
   addMultipleMembers: (data: IFriendDTO[]) => Promise<void>;
   editEventMember: (data: IEventMemberDTO) => void;
   createEventMember: (data: ICreateEventMemberDTO) => void;
@@ -22,9 +24,14 @@ const EventMembersProvider: React.FC = ({ children }) => {
   const { getEventMembers } = useCurrentEvent();
 
   const [addMemberWindow, setAddMemberWindow] = useState(false);
+  const [deleteMemberWindow, setDeleteMemberWindow] = useState(false);
 
   function handleAddMemberWindow(): void {
     setAddMemberWindow(!addMemberWindow);
+  }
+
+  function handleDeleteMemberWindow(): void {
+    setDeleteMemberWindow(!deleteMemberWindow);
   }
 
   async function addMultipleMembers(data: IFriendDTO[]): Promise<void> {
@@ -79,6 +86,8 @@ const EventMembersProvider: React.FC = ({ children }) => {
         addMemberWindow,
         addMultipleMembers,
         handleAddMemberWindow,
+        deleteMemberWindow,
+        handleDeleteMemberWindow,
       }}
     >
       {children}
