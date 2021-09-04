@@ -1,5 +1,4 @@
 import IGuestContactDTO from './IGuestContactDTO';
-import IGuestContactInfoDTO from './IGuestContactInfoDTO';
 import IUserDTO from './IUserDTO';
 import IWeplanGuestDTO from './IWeplanGuestDTO';
 

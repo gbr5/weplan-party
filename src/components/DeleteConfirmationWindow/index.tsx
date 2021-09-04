@@ -23,9 +23,9 @@ const DeleteConfirmationWindow: React.FC<IProps> = ({
       containerStyle={{
         zIndex: 50,
         top: '25%',
-        left: '30%',
+        left: '0%',
         height: '50%',
-        width: '40%',
+        width: '100%',
       }}
     >
       <Container>

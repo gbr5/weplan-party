@@ -5,11 +5,10 @@ interface IBackgroundColor {
 }
 
 export const Container = styled.div`
-  top: -14px;
   z-index: 2;
-  position: relative;
-  width: 99%;
-  max-width: 525px;
+  position: absolute;
+  top: 40px;
+  width: 100%;
   background-color: var(--letter-color-1);
   margin: 0 auto 8px;
   border-radius: 8px;
@@ -55,7 +54,7 @@ export const MenuButton = styled.button`
   border-radius: 24px;
   align-items: center;
   justify-content: center;
-  min-width: 112px;
+  min-width: 150px;
   min-height: 112px;
   border: none;
   margin-right: 16px;
@@ -107,11 +106,18 @@ export const FieldButton = styled.button`
   justify-content: space-around;
   margin: 8px 0;
   padding: 0 8px;
-  padding-top: 32px;
+  padding-top: 16px;
   border-radius: 5px;
   box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
   background-color: var(--letter-color-1);
   margin: 4px;
   border: none;
-  min-height: 87px;
+  min-height: 60px;
+`;
+
+export const ConfirmGuestButton = styled.button`
+  border: none;
+  background-color: transparent;
+  font-size: 24px;
+  margin-left: 8px;
 `;

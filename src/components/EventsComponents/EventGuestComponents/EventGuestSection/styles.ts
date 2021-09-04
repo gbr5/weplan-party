@@ -1,6 +1,6 @@
 import styled, { css, keyframes } from 'styled-components';
 
-import Tooltip from '../Tooltip';
+import Tooltip from '../../../Tooltip';
 
 const appearFromTop = keyframes`
   0% {

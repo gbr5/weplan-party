@@ -1,27 +1,25 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useMemo, useState } from 'react';
 
-import { useMemo } from 'react';
 import { useFriends } from '../../../hooks/friends';
 
 import WindowUnFormattedContainer from '../../WindowUnFormattedContainer';
 import { WindowHeader } from '../../WindowHeader';
 import { SearchFriends } from '../SearchFriends';
-import { SelectFriendButton } from '../SelectFriendButton';
+import { SelectOneFriendButton } from '../SelectOneFriendButton';
 import IFriendDTO from '../../../dtos/IFriendDTO';
-import Button from '../../Button';
 
 import { Container, FriendsContainer } from './styles';
 
 interface IProps {
-  handleAddFriends: (data: IFriendDTO[]) => Promise<void>;
+  handleAddFriend: (data: IFriendDTO) => Promise<void>;
   closeWindow: () => void;
 }
 
-export function SelectFromFriends({
-  handleAddFriends,
+export function SelectOneFromFriends({
+  handleAddFriend,
   closeWindow,
 }: IProps): ReactElement {
-  const { friends, selectedFriends, unselectedFriends } = useFriends();
+  const { friends, unselectedFriends } = useFriends();
 
   const sortedFriends = useMemo(() => {
     const response: IFriendDTO[] = [];
@@ -43,8 +41,8 @@ export function SelectFromFriends({
     setFilteredFriends(data);
   }
 
-  async function handleSelectFriends(): Promise<void> {
-    await handleAddFriends(selectedFriends);
+  async function handleSelectFriend(data: IFriendDTO): Promise<void> {
+    await handleAddFriend(data);
     closeWindow();
   }
 
@@ -61,17 +59,17 @@ export function SelectFromFriends({
       zIndex={14}
     >
       <Container>
-        <WindowHeader overTitle="Selecionar" title="Amigos" />
+        <WindowHeader overTitle="Selecionar" title="Amigo" />
         <SearchFriends handleFriends={handleFilteredFriends} />
         {filteredFriends.length > 0 && (
           <FriendsContainer>
             {filteredFriends.map(item => (
-              <SelectFriendButton friend={item} />
+              <SelectOneFriendButton
+                handleSelectFriend={handleSelectFriend}
+                friend={item}
+              />
             ))}
           </FriendsContainer>
-        )}
-        {selectedFriends.length > 0 && (
-          <Button onClick={handleSelectFriends}>Avançar</Button>
         )}
       </Container>
     </WindowUnFormattedContainer>

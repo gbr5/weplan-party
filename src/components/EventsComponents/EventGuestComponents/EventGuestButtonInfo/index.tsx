@@ -1,22 +1,16 @@
 import React from 'react';
 import { useMemo } from 'react';
 import { useState } from 'react';
-import {
-  FiBell,
-  FiDollarSign,
-  FiFileText,
-  FiLock,
-  FiPlus,
-  FiStar,
-} from 'react-icons/fi';
+import { FiCheckSquare, FiPlus, FiSquare } from 'react-icons/fi';
 import { useTheme } from 'styled-components';
+import { useAuth } from '../../../../hooks/auth';
 import { useEventGuests } from '../../../../hooks/eventGuests';
 
 import { useEventVariables } from '../../../../hooks/eventVariables';
+import { useFriends } from '../../../../hooks/friends';
 
 import formatOnlyDateShort from '../../../../utils/formatOnlyDateShort';
 import InlineFormField from '../../../InlineFormField';
-import { NotificationNumber } from '../../../NotificationNumber';
 
 import {
   Container, // 1
@@ -30,13 +24,19 @@ import {
   FieldButton,
   FieldContainer,
   FieldLabel,
+  ConfirmGuestButton,
 } from './styles';
 
 export function EventGuestButtonInfo(): JSX.Element {
-  const iconSize = 30;
-  const { selectedEventGuest } = useEventVariables();
+  const { user } = useAuth();
+  const { selectedEventGuest, eventGuests } = useEventVariables();
+  const { getFriends, handleUnselectedFriends } = useFriends();
   const theme = useTheme();
-  const { editGuest } = useEventGuests();
+  const {
+    editGuest,
+    handleSelectWePlanGuestWindow,
+    handleDissociateUserFromGuestConfirmation,
+  } = useEventGuests();
 
   const [editGuestName, setEditGuestName] = useState(false);
   const [
@@ -44,12 +44,17 @@ export function EventGuestButtonInfo(): JSX.Element {
     setEditGuestDescriptionComponent,
   ] = useState(false);
 
+  const isMine = useMemo(() => selectedEventGuest.host_id === user.id, [
+    selectedEventGuest,
+    user,
+  ]);
+
   function handleEditGuestName(): void {
-    setEditGuestName(!editGuestName);
+    isMine && setEditGuestName(!editGuestName);
   }
 
   function handleEditGuestDescriptionComponent(): void {
-    setEditGuestDescriptionComponent(!editGuestDescriptionComponent);
+    isMine && setEditGuestDescriptionComponent(!editGuestDescriptionComponent);
   }
 
   async function handleEditGuestFirstName(first_name: string): Promise<void> {
@@ -80,35 +85,78 @@ export function EventGuestButtonInfo(): JSX.Element {
     [selectedEventGuest],
   );
 
+  const weplanGuest = useMemo(
+    () =>
+      selectedEventGuest.weplanUser &&
+      !!selectedEventGuest.weplanGuest &&
+      !!selectedEventGuest.weplanGuest.weplanUserGuest,
+    [selectedEventGuest],
+  );
+
+  const weplanGuestName = useMemo(() => {
+    if (weplanGuest) {
+      const { personInfo } = selectedEventGuest.weplanGuest.weplanUserGuest;
+      return personInfo
+        ? `${personInfo.first_name}  ${personInfo.last_name}`
+        : selectedEventGuest.weplanGuest.weplanUserGuest.name;
+    }
+    return undefined;
+  }, [selectedEventGuest, weplanGuest]);
+
+  async function handleWePlanGuest(): Promise<void> {
+    if (!weplanGuest) {
+      const findWePlanGuests = eventGuests
+        .filter(
+          guest =>
+            guest.weplanUser &&
+            guest.weplanGuest &&
+            guest.weplanGuest.weplanUserGuest,
+        )
+        .map(guest => guest.weplanGuest.weplanUserGuest);
+      findWePlanGuests.length > 0 && handleUnselectedFriends(findWePlanGuests);
+      await getFriends();
+      handleSelectWePlanGuestWindow();
+    } else {
+      handleDissociateUserFromGuestConfirmation();
+    }
+  }
+
   return (
     <Container>
-      {editGuestName ? (
-        <>
-          <FieldContainer>
-            <FieldLabel>Nome: </FieldLabel>
-            <InlineFormField
-              defaultValue={selectedEventGuest.first_name}
-              handleOnSubmit={handleEditGuestFirstName}
-              placeholder={selectedEventGuest.first_name}
-              closeComponent={handleEditGuestName}
-            />
-          </FieldContainer>
-          <FieldContainer>
-            <FieldLabel>Sobrenome: </FieldLabel>
-            <InlineFormField
-              defaultValue={selectedEventGuest.last_name}
-              handleOnSubmit={handleEditGuestLastName}
-              placeholder={selectedEventGuest.last_name}
-              closeComponent={handleEditGuestName}
-            />
-          </FieldContainer>
-        </>
-      ) : (
-        <FieldButton onClick={handleEditGuestName}>
-          <FieldLabel>Nome e sobrenome</FieldLabel>
-          <MenuText>{guestName}</MenuText>
+      {weplanGuest && (
+        <FieldButton>
+          <FieldLabel>Nome e sobrenome: </FieldLabel>
+          <MenuText>{weplanGuestName}</MenuText>
         </FieldButton>
       )}
+      {!weplanGuest &&
+        (editGuestName ? (
+          <>
+            <FieldContainer>
+              <FieldLabel>Nome: </FieldLabel>
+              <InlineFormField
+                defaultValue={selectedEventGuest.first_name}
+                handleOnSubmit={handleEditGuestFirstName}
+                placeholder={selectedEventGuest.first_name}
+                closeComponent={handleEditGuestName}
+              />
+            </FieldContainer>
+            <FieldContainer>
+              <FieldLabel>Sobrenome: </FieldLabel>
+              <InlineFormField
+                defaultValue={selectedEventGuest.last_name}
+                handleOnSubmit={handleEditGuestLastName}
+                placeholder={selectedEventGuest.last_name}
+                closeComponent={handleEditGuestName}
+              />
+            </FieldContainer>
+          </>
+        ) : (
+          <FieldButton onClick={handleEditGuestName}>
+            <FieldLabel>Nome e sobrenome</FieldLabel>
+            <MenuText>{guestName}</MenuText>
+          </FieldButton>
+        ))}
       {editGuestDescriptionComponent ? (
         <FieldContainer>
           <FieldLabel>Nome: </FieldLabel>
@@ -127,6 +175,12 @@ export function EventGuestButtonInfo(): JSX.Element {
       )}
       <SectionBorder />
       <MenuButtonSection>
+        <MenuButton>
+          <MenuText>Adicionar Contato</MenuText>
+          <IconContainer color={theme.colors.primary}>
+            <FiPlus size={24} />
+          </IconContainer>
+        </MenuButton>
         {selectedEventGuest.contacts.map(contact => {
           let contactType = contact.contact_type;
           if (contact.contact_type === 'Address') contactType = 'Endereço';
@@ -208,8 +262,15 @@ export function EventGuestButtonInfo(): JSX.Element {
       </MenuButtonSection>
 
       <SectionBorder />
-      {/*
-      <SectionBorder /> */}
+
+      <FieldButton onClick={handleWePlanGuest}>
+        <MenuText>Usuário WePlan</MenuText>
+        <ConfirmGuestButton>
+          {weplanGuest ? <FiCheckSquare /> : <FiSquare />}
+        </ConfirmGuestButton>
+      </FieldButton>
+
+      <SectionBorder />
 
       <FooterContainer>
         <DateText>Criado dia: </DateText>

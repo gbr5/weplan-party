@@ -1,4 +1,4 @@
-import React, { useContext, createContext, useState } from 'react';
+import React, { useContext, createContext, useState, useCallback } from 'react';
 
 import { useEffect } from 'react';
 import api from '../services/api';
@@ -14,22 +14,27 @@ import { useEventVariables } from './eventVariables';
 
 interface EventGuestsContextType {
   allGuestsFilter: boolean;
+  addGuestListWindow: boolean;
   confirmedGuestsFilter: boolean;
   guestFilterWindow: boolean;
+  dissociateUserFromGuestConfirmation: boolean;
   loading: boolean;
   newGuestForm: boolean;
   newGuestWindow: boolean;
   selectWePlanGuestsWindow: boolean;
+  selectWePlanGuestWindow: boolean;
   notConfirmedGuestsFilter: boolean;
   onlyMyGuestsFilter: boolean;
   selectedGuestContact: IGuestContactDTO;
   addNewGuest: (data: IAddNewEventGuestDTO) => Promise<void>;
+  associateUserToEventGuest: (data: IFriendDTO) => Promise<void>;
   createMultipleWePlanGuests: (data: IFriendDTO[]) => Promise<void>;
-  // createMultipleMobileGuests: (data: Contact[]) => Promise<void>;
   createGuestContact: (data: ICreateGuestContactDTO) => Promise<void>;
   deleteGuestContact: (data: IGuestContactDTO) => Promise<void>;
   deleteGuest: (data: IEventGuestDTO) => Promise<void>;
+  deleteWePlanGuest: () => Promise<void>;
   editGuest: (data: IEventGuestDTO) => Promise<IEventGuestDTO>;
+  handleAddGuestListWindow: () => void;
   handleAllGuestsFilter: () => void;
   handleConfirmedGuestsFilter: () => void;
   handleGuestFilterWindow: () => void;
@@ -37,9 +42,12 @@ interface EventGuestsContextType {
   handleNewGuestWindow: () => void;
   handleNotConfirmedGuestsFilter: () => void;
   handleSelectWePlanGuestsWindow: () => void;
+  handleSelectWePlanGuestWindow: () => void;
+  handleDissociateUserFromGuestConfirmation: () => void;
   handleOnlyMyGuestsFilter: () => void;
   selectGuestContact: (data: IGuestContactDTO) => void;
   updateGuestContact: (data: IGuestContactDTO) => Promise<void>;
+  sendMassEmailInvitations: () => Promise<void>;
   unsetEventGuestVariables: () => void;
 }
 
@@ -64,6 +72,11 @@ const EventGuestsProvider: React.FC = ({ children }) => {
   const [notConfirmedGuestsFilter, setNotConfirmedGuestsFilter] = useState(
     false,
   );
+  const [addGuestListWindow, setAddGuestListWindow] = useState(false);
+  const [
+    dissociateUserFromGuestConfirmation,
+    setDissociateUserFromGuestConfirmation,
+  ] = useState(false);
   const [allGuestsFilter, setAllGuestsFilter] = useState(true);
   const [onlyMyGuestsFilter, setOnlyMyGuestsFilter] = useState(false);
   const [newGuestForm, setNewGuestForm] = useState(false);
@@ -71,6 +84,17 @@ const EventGuestsProvider: React.FC = ({ children }) => {
   const [selectWePlanGuestsWindow, setSelectWePlanGuestsWindow] = useState(
     false,
   );
+  const [selectWePlanGuestWindow, setSelectWePlanGuestWindow] = useState(false);
+
+  function handleAddGuestListWindow(): void {
+    setAddGuestListWindow(!addGuestListWindow);
+  }
+
+  function handleDissociateUserFromGuestConfirmation(): void {
+    setDissociateUserFromGuestConfirmation(
+      !dissociateUserFromGuestConfirmation,
+    );
+  }
 
   function handleAllGuestsFilter(): void {
     setAllGuestsFilter(!allGuestsFilter);
@@ -80,7 +104,12 @@ const EventGuestsProvider: React.FC = ({ children }) => {
     setSelectWePlanGuestsWindow(!selectWePlanGuestsWindow);
   }
 
+  function handleSelectWePlanGuestWindow(): void {
+    setSelectWePlanGuestWindow(!selectWePlanGuestWindow);
+  }
+
   function handleNewGuestForm(): void {
+    setNewGuestWindow(false);
     setNewGuestForm(!newGuestForm);
   }
 
@@ -148,6 +177,25 @@ const EventGuestsProvider: React.FC = ({ children }) => {
   }
 
   async function createMultipleWePlanGuests(data: IFriendDTO[]): Promise<void> {
+    data.map(item => {
+      const { personInfo } = item.friend;
+      if (personInfo) {
+        const findGuest = eventGuests.find(
+          guest =>
+            guest.first_name === personInfo.first_name &&
+            guest.last_name === personInfo.last_name,
+        );
+
+        if (findGuest) {
+          return addToast({
+            title: `Convidado duplicado!`,
+            description: `Já existe um convidado ${personInfo.first_name} ${personInfo.last_name}.`,
+            type: 'error',
+          });
+        }
+      }
+      return item;
+    });
     try {
       setLoading(true);
       const users = data.map(({ friend }) => friend);
@@ -162,47 +210,6 @@ const EventGuestsProvider: React.FC = ({ children }) => {
       setLoading(false);
     }
   }
-
-  // async function createMultipleMobileGuests(data: Contact[]): Promise<void> {
-  //   try {
-  //     setLoading(true);
-  //     const contacts = data.map(
-  //       ({ givenName, familyName, phoneNumbers, emailAddresses }) => {
-  //         const findGuest = guests.find(
-  //           guest =>
-  //             guest.last_name === familyName && guest.first_name === givenName,
-  //         );
-  //         if (findGuest)
-  //           return Alert.alert(
-  //             `Convidado Duplicado`,
-  //             `Já existe um convidado com este nome - ${givenName} ${familyName}!`,
-  //           );
-  //         return {
-  //           givenName,
-  //           familyName,
-  //           phoneNumbers: phoneNumbers.map(({ number }) => {
-  //             return {
-  //               number,
-  //             };
-  //           }),
-  //           emailAddresses: emailAddresses.map(({ email }) => {
-  //             return {
-  //               email,
-  //             };
-  //           }),
-  //         };
-  //       },
-  //     );
-  //     await api.post(`/create-multiple-mobile-guests/${selectedEvent.id}`, {
-  //       contacts,
-  //     });
-  //     await getEventGuests(selectedEvent.id);
-  //   } catch (err) {
-  //     throw new Error(err);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
 
   async function editGuest(data: IEventGuestDTO): Promise<IEventGuestDTO> {
     try {
@@ -275,6 +282,92 @@ const EventGuestsProvider: React.FC = ({ children }) => {
     }
   }
 
+  async function deleteWePlanGuest(): Promise<void> {
+    try {
+      setLoading(true);
+      await api.delete(
+        `/event/weplan-guests/${selectedEventGuest.weplanGuest.id}`,
+      );
+      await getEventGuests(selectedEvent.id);
+      setDissociateUserFromGuestConfirmation(false);
+    } catch (err) {
+      throw new Error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function associateUserToEventGuest(data: IFriendDTO): Promise<void> {
+    try {
+      setLoading(true);
+      const { personInfo } = data.friend;
+      if (personInfo) {
+        const findGuest = eventGuests.find(
+          guest =>
+            guest.first_name === personInfo.first_name &&
+            guest.last_name === personInfo.last_name,
+        );
+
+        if (findGuest) {
+          return addToast({
+            title: `Convidado duplicado!`,
+            description: `Já existe um convidado ${personInfo.first_name} ${personInfo.last_name}.`,
+            type: 'error',
+          });
+        }
+      }
+      await api.post(`/associate-user-to-event-guest/`, {
+        guest_id: selectedEventGuest.id,
+        user_id: data.friend_id,
+      });
+
+      return await getEventGuests(selectedEvent.id);
+    } catch (err) {
+      throw new Error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const sendMassEmailInvitations = useCallback(async () => {
+    try {
+      const guests = eventGuests
+        .map(guest => {
+          const email =
+            (!!guest.contacts &&
+              guest.contacts.length > 0 &&
+              guest.contacts.find(contact => contact.contact_type === 'Email')
+                ?.contact_info) ||
+            '';
+          return {
+            id: guest.id,
+            email,
+            first_name: guest.first_name,
+            host_name:
+              (!!guest.host.personInfo && guest.host.personInfo.first_name) ||
+              guest.host.name,
+          };
+        })
+        .filter(e => e.email !== '');
+
+      await api.post('/mass-invitation', {
+        name: selectedEvent.name,
+        eventTrimmedName: selectedEvent.trimmed_name,
+        guests,
+      });
+      addToast({
+        type: 'success',
+        title: 'Convites enviados com sucesso!',
+      });
+    } catch (err) {
+      addToast({
+        type: 'error',
+        title: 'Ocorreu um erro, tente novamente!',
+      });
+      throw new Error(err);
+    }
+  }, [eventGuests, selectedEvent, addToast]);
+
   function selectGuestContact(data: IGuestContactDTO): void {
     setSelectedGuestContact(data);
   }
@@ -301,9 +394,11 @@ const EventGuestsProvider: React.FC = ({ children }) => {
     <EventGuestsContext.Provider
       value={{
         addNewGuest,
+        addGuestListWindow,
+        associateUserToEventGuest,
+        dissociateUserFromGuestConfirmation,
         createGuestContact,
         deleteGuest,
-        // createMultipleMobileGuests,
         deleteGuestContact,
         editGuest,
         guestFilterWindow,
@@ -315,6 +410,7 @@ const EventGuestsProvider: React.FC = ({ children }) => {
         unsetEventGuestVariables,
         allGuestsFilter,
         confirmedGuestsFilter,
+        deleteWePlanGuest,
         handleAllGuestsFilter,
         handleConfirmedGuestsFilter,
         handleNewGuestForm,
@@ -327,7 +423,12 @@ const EventGuestsProvider: React.FC = ({ children }) => {
         onlyMyGuestsFilter,
         createMultipleWePlanGuests,
         handleSelectWePlanGuestsWindow,
+        handleSelectWePlanGuestWindow,
+        selectWePlanGuestWindow,
         selectWePlanGuestsWindow,
+        handleAddGuestListWindow,
+        handleDissociateUserFromGuestConfirmation,
+        sendMassEmailInvitations,
       }}
     >
       {children}

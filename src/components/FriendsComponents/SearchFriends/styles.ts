@@ -9,7 +9,7 @@ export const Container = styled.div`
   flex-direction: row;
   flex: 1;
   width: 100%;
-  height: 80px;
+  max-height: 80px;
 `;
 
 export const InputContainer = styled.div<IsActive>`

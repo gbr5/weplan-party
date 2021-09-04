@@ -30,7 +30,7 @@ import EditEventNameWindow from '../../components/EditEventNameWindow';
 import EditMemberNumberOfGuestsWindow from '../../components/EditEventMemberNumberOfGuestsWindow';
 import DeleteConfirmationWindow from '../../components/DeleteConfirmationWindow';
 import { EventTaskSection } from '../../components/EventsComponents/EventTaskComponents/EventTaskSection';
-import EventGuestSection from '../../components/EventGuestSection';
+import EventGuestSection from '../../components/EventsComponents/EventGuestComponents/EventGuestSection';
 import EventSupplierSection from '../../components/EventSupplierSection';
 import AddMemberWindow from '../../components/AddMemberWindow';
 import AddOwnerWindow from '../../components/AddOwnerWindow';
@@ -78,6 +78,9 @@ import { MembersSection } from '../../components/EventsComponents/MembersCompone
 import Backdrop from '../../components/Backdrop';
 
 import { Container, EventPageContent, Main, SideMenuButton } from './styles';
+import NewGuestForm from '../../components/EventsComponents/EventGuestComponents/NewGuestForm';
+import { NewGuestWindow } from '../../components/EventsComponents/EventGuestComponents/NewGuestWindow';
+import { useEventGuests } from '../../hooks/eventGuests';
 
 interface IUserInfoDTO {
   id: string;
@@ -152,6 +155,7 @@ const EventHostDashboard: React.FC = () => {
     handleDeleteTaskConfirmationWindow,
     deleteTask,
   } = useEventTasks();
+  const { newGuestForm, newGuestWindow } = useEventGuests();
 
   const location = useLocation<IParams>();
   const pageEvent = location.state.params;
@@ -445,6 +449,10 @@ const EventHostDashboard: React.FC = () => {
         />
       )}
       {/* End of Event Member Windows */}
+      {/* Event Guests Windows */}
+      {newGuestForm && <NewGuestForm />}
+      {newGuestWindow && <NewGuestWindow />}
+      {/* End of Event Guests Windows */}
       {/* Notes Windows */}
       {createEventNoteWindow && <EventNoteForm />}
       {editNoteWindow && <EditNoteWindow />}

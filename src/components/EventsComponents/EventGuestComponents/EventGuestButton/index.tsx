@@ -60,17 +60,34 @@ export function EventGuestButton({ guest, index }: IProps): JSX.Element {
     }
   }
 
+  const weplanGuest = useMemo(() => {
+    if (
+      guest.weplanUser &&
+      !!guest.weplanGuest &&
+      !!guest.weplanGuest.weplanUserGuest
+    ) {
+      const { personInfo } = guest.weplanGuest.weplanUserGuest;
+      return personInfo
+        ? `${personInfo.first_name}  ${personInfo.last_name}`
+        : guest.weplanGuest.weplanUserGuest.name;
+    }
+    return undefined;
+  }, [guest]);
+
+  const guestName = useMemo(
+    () => weplanGuest || `${guest.first_name} ${guest.last_name}`,
+    [weplanGuest, guest],
+  );
+
   return (
     <OverContainer>
       <Container style={{ zIndex: isActive ? 3 : 1 }} isActive={isMine}>
         <GuestInfoButton onClick={handleSelectGuest}>
           <Index>{index}</Index>
-          <Name>
-            {guest.first_name} {guest.last_name}
-          </Name>
+          <Name>{guestName}</Name>
         </GuestInfoButton>
 
-        {guest.weplanUser && (
+        {!!weplanGuest && (
           <ConfirmGuestButton>
             <FiUser size={24} />
           </ConfirmGuestButton>
