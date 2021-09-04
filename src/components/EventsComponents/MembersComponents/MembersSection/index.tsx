@@ -14,7 +14,7 @@ import { useEventVariables } from '../../../../hooks/eventVariables';
 import DeleteConfirmationWindow from '../../../DeleteConfirmationWindow';
 
 export function MembersSection(): JSX.Element {
-  const { selectedEventMember } = useEventVariables();
+  const { selectedEventMember, eventMembers } = useEventVariables();
   const {
     handleAddMemberWindow,
     addMemberWindow,
@@ -23,7 +23,7 @@ export function MembersSection(): JSX.Element {
     deleteEventMember,
     handleDeleteMemberWindow,
   } = useEventMembers();
-  const { getFriends } = useFriends();
+  const { getFriends, handleUnselectedFriends } = useFriends();
 
   const [section, setSection] = useState('Members');
 
@@ -31,9 +31,14 @@ export function MembersSection(): JSX.Element {
     setSection(data);
   }
   async function handleAddMemberForm(): Promise<void> {
+    if (eventMembers.length > 1) {
+      const findMembers = eventMembers.map(owner => owner.userEventMember);
+      handleUnselectedFriends(findMembers);
+    }
     await getFriends();
     handleAddMemberWindow();
   }
+
   return (
     <>
       {addMemberWindow && (

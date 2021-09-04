@@ -15,7 +15,11 @@ import DeleteConfirmationWindow from '../../../DeleteConfirmationWindow';
 import { SelectFromFriends } from '../../../FriendsComponents/SelectFromFriends';
 
 export function OwnersSection(): JSX.Element {
-  const { selectedEvent, selectedEventOwner } = useEventVariables();
+  const {
+    selectedEvent,
+    selectedEventOwner,
+    eventOwners,
+  } = useEventVariables();
   const {
     handleAddOwnerWindow,
     deleteEventOwner,
@@ -24,7 +28,7 @@ export function OwnersSection(): JSX.Element {
     addMultipleOwners,
     handleDeleteOwnerWindow,
   } = useEventOwners();
-  const { getFriends } = useFriends();
+  const { getFriends, handleUnselectedFriends } = useFriends();
 
   const [section, setSection] = useState('Owners');
 
@@ -32,6 +36,10 @@ export function OwnersSection(): JSX.Element {
     setSection(data);
   }
   async function handleAddOwnerForm(): Promise<void> {
+    if (eventOwners.length > 1) {
+      const findOwners = eventOwners.map(owner => owner.userEventOwner);
+      handleUnselectedFriends(findOwners);
+    }
     await getFriends();
     handleAddOwnerWindow();
   }

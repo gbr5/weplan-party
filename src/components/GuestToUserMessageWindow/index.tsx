@@ -19,6 +19,8 @@ import placeholder from '../../assets/WePlanLogo.svg';
 import { Container, SideMenu, Body, Message, DialogBox } from './styles';
 import formatStringToDate from '../../utils/formatDateToString';
 import IUserConfirmationDTO from '../../dtos/IUserConfirmationDTO';
+import { useAuth } from '../../hooks/auth';
+import { useEventVariables } from '../../hooks/eventVariables';
 
 interface IWPGuestMessagesDTO {
   wpGuestSentMessages: IUserConfirmationDTO[];
@@ -37,6 +39,8 @@ const GuestToUserMessageWindow: React.FC<IPropsDTO> = ({
   getEventsAsGuest,
 }: IPropsDTO) => {
   const { addToast } = useToast();
+  const { user } = useAuth();
+  const { eventOwners, eventMembers, selectedEvent } = useEventVariables();
 
   const [guestTitleMessage, setGuestTitleMessage] = useState('');
   const [guestMessage, setGuestMessage] = useState('');
@@ -154,23 +158,26 @@ const GuestToUserMessageWindow: React.FC<IPropsDTO> = ({
     guestTitleMessage,
   ]);
 
-  const avatar = useMemo(() => {
-    const xAvatar = eventGuest.host.avatar_url
-      ? eventGuest.host.avatar_url
-      : placeholder;
-    return xAvatar;
-  }, [eventGuest]);
-
-  const hostName = useMemo(() => {
-    const { host } = updatedEventGuest;
-    const firstName = host.personInfo ? host.personInfo.first_name : host.name;
-    const lastName = host.personInfo ? host.personInfo.last_name : '';
-    return `${firstName} ${lastName}`;
-  }, [updatedEventGuest]);
-
   const messageDate = useMemo(() => {
     return formatStringToDate(String(updatedEventGuest));
   }, [updatedEventGuest]);
+
+  const host = useMemo(() => {
+    if (eventGuest.host_id === user.id) return user;
+    const findOwner = eventOwners.find(
+      owner => owner.userEventOwner.id === eventGuest.host_id,
+    );
+    if (findOwner) return findOwner.userEventOwner;
+    const findMember = eventMembers.find(
+      member => member.userEventMember.id === eventGuest.host_id,
+    );
+    if (findMember) return findMember.userEventMember;
+    return undefined;
+  }, [user, eventOwners, eventMembers, eventGuest]);
+
+  const avatar = useMemo(() => (host && host.avatar_url) ?? placeholder, [
+    host,
+  ]);
 
   return (
     <WindowUnFormattedContainer
@@ -188,21 +195,21 @@ const GuestToUserMessageWindow: React.FC<IPropsDTO> = ({
       <Container>
         <SideMenu>
           <img src={avatar} alt="WePlan User Avatar" />
-          <h1>@{updatedEventGuest.host.trimmed_name}</h1>
+          <h1>@{host && host.trimmed_name}</h1>
           <h2>
-            <strong>Anfitrião:</strong> {hostName}
+            <strong>Anfitrião:</strong> {host && host.name}
           </h2>
           <h2>
-            <strong>Evento:</strong> {updatedEventGuest.weplanGuest.event.name}
+            <strong>Evento:</strong> {selectedEvent.name}
           </h2>
           <h2>
             <strong>Data:</strong> {messageDate}
           </h2>
           <h2>
             <strong>Traje:</strong>{' '}
-            {updatedEventGuest.weplanGuest.event.eventInfo &&
+            {/* {updatedEventGuest.weplanGuest.event.eventInfo &&
               updatedEventGuest.weplanGuest.event.eventInfo.dress_code &&
-              updatedEventGuest.weplanGuest.event.eventInfo.dress_code}
+              updatedEventGuest.weplanGuest.event.eventInfo.dress_code} */}
           </h2>
           <h2>
             <strong>RSVP:</strong>
@@ -231,7 +238,7 @@ const GuestToUserMessageWindow: React.FC<IPropsDTO> = ({
               >
                 {conversation.sender_id !==
                   updatedEventGuest.weplanGuest.id && (
-                  <h1>@{updatedEventGuest.host.trimmed_name}</h1>
+                  <h1>@{host && host.trimmed_name}</h1>
                 )}
                 <h3>
                   <strong>Título: </strong>

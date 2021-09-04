@@ -11,6 +11,9 @@ import IGuestContactDTO from '../dtos/IGuestContactDTO';
 import IFriendDTO from '../dtos/IFriendDTO';
 import { useToast } from './toast';
 import { useEventVariables } from './eventVariables';
+import { useFriends } from './friends';
+import { useAuth } from './auth';
+import IUserDTO from '../dtos/IUserDTO';
 
 interface EventGuestsContextType {
   allGuestsFilter: boolean;
@@ -54,14 +57,18 @@ interface EventGuestsContextType {
 const EventGuestsContext = createContext({} as EventGuestsContextType);
 
 const EventGuestsProvider: React.FC = ({ children }) => {
+  const { user } = useAuth();
   const { addToast } = useToast();
   const {
     selectedEvent,
     selectEventGuest,
     selectedEventGuest,
     eventGuests,
+    eventOwners,
+    eventMembers,
   } = useEventVariables();
   const { getEventGuests } = useCurrentEvent();
+  const { handleUnselectedFriends } = useFriends();
 
   const [loading, setLoading] = useState(false);
   const [guestFilterWindow, setGuestFilterWindow] = useState(false);
@@ -101,10 +108,12 @@ const EventGuestsProvider: React.FC = ({ children }) => {
   }
 
   function handleSelectWePlanGuestsWindow(): void {
+    selectWePlanGuestsWindow === true && handleUnselectedFriends([]);
     setSelectWePlanGuestsWindow(!selectWePlanGuestsWindow);
   }
 
   function handleSelectWePlanGuestWindow(): void {
+    selectWePlanGuestWindow === true && handleUnselectedFriends([]);
     setSelectWePlanGuestWindow(!selectWePlanGuestWindow);
   }
 
@@ -329,7 +338,7 @@ const EventGuestsProvider: React.FC = ({ children }) => {
     }
   }
 
-  const sendMassEmailInvitations = useCallback(async () => {
+  async function sendMassEmailInvitations(): Promise<void> {
     try {
       const guests = eventGuests
         .map(guest => {
@@ -339,13 +348,21 @@ const EventGuestsProvider: React.FC = ({ children }) => {
               guest.contacts.find(contact => contact.contact_type === 'Email')
                 ?.contact_info) ||
             '';
+          let host = user;
+          const findOwner = eventOwners.find(
+            owner => owner.userEventOwner.id === guest.host_id,
+          );
+          if (findOwner) host = findOwner.userEventOwner;
+          const findMember = eventMembers.find(
+            member => member.userEventMember.id === guest.host_id,
+          );
+          if (findMember) host = findMember.userEventMember;
           return {
             id: guest.id,
             email,
             first_name: guest.first_name,
             host_name:
-              (!!guest.host.personInfo && guest.host.personInfo.first_name) ||
-              guest.host.name,
+              (!!host.personInfo && host.personInfo.first_name) || host.name,
           };
         })
         .filter(e => e.email !== '');
@@ -366,7 +383,7 @@ const EventGuestsProvider: React.FC = ({ children }) => {
       });
       throw new Error(err);
     }
-  }, [eventGuests, selectedEvent, addToast]);
+  }
 
   function selectGuestContact(data: IGuestContactDTO): void {
     setSelectedGuestContact(data);

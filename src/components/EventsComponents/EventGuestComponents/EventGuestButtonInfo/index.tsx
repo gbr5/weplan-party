@@ -29,7 +29,13 @@ import {
 
 export function EventGuestButtonInfo(): JSX.Element {
   const { user } = useAuth();
-  const { selectedEventGuest, eventGuests } = useEventVariables();
+  const {
+    selectedEventGuest,
+    eventGuests,
+    eventOwners,
+    eventMembers,
+    isOwner,
+  } = useEventVariables();
   const { getFriends, handleUnselectedFriends } = useFriends();
   const theme = useTheme();
   const {
@@ -48,11 +54,42 @@ export function EventGuestButtonInfo(): JSX.Element {
     selectedEventGuest,
     user,
   ]);
+  const guestName = useMemo(
+    () => `${selectedEventGuest.first_name}  ${selectedEventGuest.last_name}`,
+    [selectedEventGuest],
+  );
+  const weplanGuest = useMemo(
+    () =>
+      selectedEventGuest.weplanUser &&
+      !!selectedEventGuest.weplanGuest &&
+      !!selectedEventGuest.weplanGuest.weplanUserGuest,
+    [selectedEventGuest],
+  );
+  const weplanGuestName = useMemo(() => {
+    if (weplanGuest) {
+      const { personInfo } = selectedEventGuest.weplanGuest.weplanUserGuest;
+      return personInfo
+        ? `${personInfo.first_name}  ${personInfo.last_name}`
+        : selectedEventGuest.weplanGuest.weplanUserGuest.name;
+    }
+    return undefined;
+  }, [selectedEventGuest, weplanGuest]);
+  const host = useMemo(() => {
+    if (selectedEventGuest.host_id === user.id) return user;
+    const findOwner = eventOwners.find(
+      owner => owner.userEventOwner.id === selectedEventGuest.host_id,
+    );
+    if (findOwner) return findOwner.userEventOwner;
+    const findMember = eventMembers.find(
+      member => member.userEventMember.id === selectedEventGuest.host_id,
+    );
+    if (findMember) return findMember.userEventMember;
+    return undefined;
+  }, [user, eventOwners, eventMembers, selectedEventGuest]);
 
   function handleEditGuestName(): void {
     isMine && setEditGuestName(!editGuestName);
   }
-
   function handleEditGuestDescriptionComponent(): void {
     isMine && setEditGuestDescriptionComponent(!editGuestDescriptionComponent);
   }
@@ -63,14 +100,12 @@ export function EventGuestButtonInfo(): JSX.Element {
       first_name,
     });
   }
-
   async function handleEditGuestLastName(last_name: string): Promise<void> {
     await editGuest({
       ...selectedEventGuest,
       last_name,
     });
   }
-
   async function handleEditGuestDescription(
     description: string,
   ): Promise<void> {
@@ -80,49 +115,36 @@ export function EventGuestButtonInfo(): JSX.Element {
     });
   }
 
-  const guestName = useMemo(
-    () => `${selectedEventGuest.first_name}  ${selectedEventGuest.last_name}`,
-    [selectedEventGuest],
-  );
-
-  const weplanGuest = useMemo(
-    () =>
-      selectedEventGuest.weplanUser &&
-      !!selectedEventGuest.weplanGuest &&
-      !!selectedEventGuest.weplanGuest.weplanUserGuest,
-    [selectedEventGuest],
-  );
-
-  const weplanGuestName = useMemo(() => {
-    if (weplanGuest) {
-      const { personInfo } = selectedEventGuest.weplanGuest.weplanUserGuest;
-      return personInfo
-        ? `${personInfo.first_name}  ${personInfo.last_name}`
-        : selectedEventGuest.weplanGuest.weplanUserGuest.name;
-    }
-    return undefined;
-  }, [selectedEventGuest, weplanGuest]);
-
   async function handleWePlanGuest(): Promise<void> {
-    if (!weplanGuest) {
-      const findWePlanGuests = eventGuests
-        .filter(
-          guest =>
-            guest.weplanUser &&
-            guest.weplanGuest &&
-            guest.weplanGuest.weplanUserGuest,
-        )
-        .map(guest => guest.weplanGuest.weplanUserGuest);
-      findWePlanGuests.length > 0 && handleUnselectedFriends(findWePlanGuests);
-      await getFriends();
-      handleSelectWePlanGuestWindow();
-    } else {
-      handleDissociateUserFromGuestConfirmation();
+    if (isMine) {
+      if (!weplanGuest) {
+        const findWePlanGuests = eventGuests
+          .filter(
+            guest =>
+              guest.weplanUser &&
+              guest.weplanGuest &&
+              guest.weplanGuest.weplanUserGuest,
+          )
+          .map(guest => guest.weplanGuest.weplanUserGuest);
+        findWePlanGuests.length > 0 &&
+          handleUnselectedFriends(findWePlanGuests);
+        await getFriends();
+        handleSelectWePlanGuestWindow();
+      } else {
+        handleDissociateUserFromGuestConfirmation();
+      }
     }
   }
 
   return (
     <Container>
+      <SectionBorder />
+      {!isMine && (
+        <FieldButton>
+          <FieldLabel>Anfitrião: </FieldLabel>
+          <DateText>{host && host.name}</DateText>
+        </FieldButton>
+      )}
       {weplanGuest && (
         <FieldButton>
           <FieldLabel>Nome e sobrenome: </FieldLabel>
@@ -174,92 +196,96 @@ export function EventGuestButtonInfo(): JSX.Element {
         </FieldButton>
       )}
       <SectionBorder />
-      <MenuButtonSection>
-        <MenuButton>
-          <MenuText>Adicionar Contato</MenuText>
-          <IconContainer color={theme.colors.primary}>
-            <FiPlus size={24} />
-          </IconContainer>
-        </MenuButton>
-        {selectedEventGuest.contacts.map(contact => {
-          let contactType = contact.contact_type;
-          if (contact.contact_type === 'Address') contactType = 'Endereço';
-          if (contact.contact_type === 'Phone') {
-            contactType = 'Telefone';
-
-            return (
-              <MenuButton key={contact.id}>
-                <MenuText>{contactType}</MenuText>
-                <IconContainer color={theme.colors.primary}>
-                  <MenuText>
-                    <a target="blank" href={`tel:${contact.contact_info}`}>
-                      {contact.contact_info}
-                    </a>
-                  </MenuText>
-                </IconContainer>
-              </MenuButton>
-            );
-          }
-          if (contact.contact_type === 'Whatsapp') {
-            return (
-              <MenuButton key={contact.id}>
-                <MenuText>{contactType}</MenuText>
-                <IconContainer color={theme.colors.primary}>
-                  <MenuText>
-                    <a
-                      target="blank"
-                      href={`https://wa.me/${contact.contact_info}`}
-                    >
-                      {contact.contact_info}
-                    </a>
-                  </MenuText>
-                </IconContainer>
-              </MenuButton>
-            );
-          }
-          if (contact.contact_type === 'Email') {
-            return (
-              <MenuButton key={contact.id}>
-                <MenuText>{contactType}</MenuText>
-                <IconContainer color={theme.colors.primary}>
-                  <MenuText>
-                    <a target="blank" href={`mailto:${contact.contact_info}`}>
-                      {contact.contact_info}
-                    </a>
-                  </MenuText>
-                </IconContainer>
-              </MenuButton>
-            );
-          }
-          if (
-            contact.contact_type === 'Instagram' ||
-            contact.contact_type === 'Facebook' ||
-            contact.contact_type === 'Linkedin' ||
-            contact.contact_type === 'WebSite'
-          ) {
-            return (
-              <MenuButton key={contact.id}>
-                <MenuText>{contactType}</MenuText>
-                <IconContainer color={theme.colors.primary}>
-                  <MenuText>
-                    <a target="blank" href={contact.contact_info}>
-                      {contact.contact_info}
-                    </a>
-                  </MenuText>
-                </IconContainer>
-              </MenuButton>
-            );
-          }
-          return (
-            <MenuButton key={contact.id}>
-              <MenuText>{contactType}</MenuText>
+      {isOwner && (
+        <MenuButtonSection>
+          {isMine && (
+            <MenuButton>
+              <MenuText>Adicionar Contato</MenuText>
               <IconContainer color={theme.colors.primary}>
-                <MenuText>{contact.contact_info}</MenuText>
+                <FiPlus size={24} />
               </IconContainer>
             </MenuButton>
-          );
-        })}
-      </MenuButtonSection>
+          )}
+          {selectedEventGuest.contacts.map(contact => {
+            let contactType = contact.contact_type;
+            if (contact.contact_type === 'Address') contactType = 'Endereço';
+            if (contact.contact_type === 'Phone') {
+              contactType = 'Telefone';
+
+              return (
+                <MenuButton key={contact.id}>
+                  <MenuText>{contactType}</MenuText>
+                  <IconContainer color={theme.colors.primary}>
+                    <MenuText>
+                      <a target="blank" href={`tel:${contact.contact_info}`}>
+                        {contact.contact_info}
+                      </a>
+                    </MenuText>
+                  </IconContainer>
+                </MenuButton>
+              );
+            }
+            if (contact.contact_type === 'Whatsapp') {
+              return (
+                <MenuButton key={contact.id}>
+                  <MenuText>{contactType}</MenuText>
+                  <IconContainer color={theme.colors.primary}>
+                    <MenuText>
+                      <a
+                        target="blank"
+                        href={`https://wa.me/${contact.contact_info}`}
+                      >
+                        {contact.contact_info}
+                      </a>
+                    </MenuText>
+                  </IconContainer>
+                </MenuButton>
+              );
+            }
+            if (contact.contact_type === 'Email') {
+              return (
+                <MenuButton key={contact.id}>
+                  <MenuText>{contactType}</MenuText>
+                  <IconContainer color={theme.colors.primary}>
+                    <MenuText>
+                      <a target="blank" href={`mailto:${contact.contact_info}`}>
+                        {contact.contact_info}
+                      </a>
+                    </MenuText>
+                  </IconContainer>
+                </MenuButton>
+              );
+            }
+            if (
+              contact.contact_type === 'Instagram' ||
+              contact.contact_type === 'Facebook' ||
+              contact.contact_type === 'Linkedin' ||
+              contact.contact_type === 'WebSite'
+            ) {
+              return (
+                <MenuButton key={contact.id}>
+                  <MenuText>{contactType}</MenuText>
+                  <IconContainer color={theme.colors.primary}>
+                    <MenuText>
+                      <a target="blank" href={contact.contact_info}>
+                        {contact.contact_info}
+                      </a>
+                    </MenuText>
+                  </IconContainer>
+                </MenuButton>
+              );
+            }
+            return (
+              <MenuButton key={contact.id}>
+                <MenuText>{contactType}</MenuText>
+                <IconContainer color={theme.colors.primary}>
+                  <MenuText>{contact.contact_info}</MenuText>
+                </IconContainer>
+              </MenuButton>
+            );
+          })}
+        </MenuButtonSection>
+      )}
 
       <SectionBorder />
 

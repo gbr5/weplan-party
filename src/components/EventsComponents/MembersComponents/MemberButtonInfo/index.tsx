@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   FiBell,
   FiDollarSign,
@@ -30,8 +30,18 @@ export function MemberButtonInfo(): JSX.Element {
   const { selectedEventMember } = useEventVariables();
   const theme = useTheme();
 
+  const memberName = useMemo(() => {
+    const { personInfo } = selectedEventMember.userEventMember;
+    return personInfo
+      ? `${personInfo.first_name}  ${personInfo.last_name}`
+      : selectedEventMember.userEventMember.name;
+  }, [selectedEventMember]);
+
   return (
     <Container>
+      <MenuButton>
+        <MenuText>{memberName}</MenuText>
+      </MenuButton>
       <SectionBorder />
 
       <MenuButtonSection>

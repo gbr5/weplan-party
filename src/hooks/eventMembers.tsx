@@ -5,6 +5,7 @@ import IFriendDTO from '../dtos/IFriendDTO';
 import api from '../services/api';
 import { useCurrentEvent } from './currentEvent';
 import { useEventVariables } from './eventVariables';
+import { useFriends } from './friends';
 
 interface EventMembersContextType {
   addMemberWindow: boolean;
@@ -22,11 +23,13 @@ const EventMembersContext = createContext({} as EventMembersContextType);
 const EventMembersProvider: React.FC = ({ children }) => {
   const { selectedEvent } = useEventVariables();
   const { getEventMembers } = useCurrentEvent();
+  const { handleUnselectedFriends } = useFriends();
 
   const [addMemberWindow, setAddMemberWindow] = useState(false);
   const [deleteMemberWindow, setDeleteMemberWindow] = useState(false);
 
   function handleAddMemberWindow(): void {
+    addMemberWindow === true && handleUnselectedFriends([]);
     setAddMemberWindow(!addMemberWindow);
   }
 

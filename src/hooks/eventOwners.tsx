@@ -5,6 +5,7 @@ import IFriendDTO from '../dtos/IFriendDTO';
 import api from '../services/api';
 import { useCurrentEvent } from './currentEvent';
 import { useEventVariables } from './eventVariables';
+import { useFriends } from './friends';
 import { useToast } from './toast';
 
 interface EventOwnersContextType {
@@ -24,11 +25,13 @@ const EventOwnersProvider: React.FC = ({ children }) => {
   const { addToast } = useToast();
   const { selectedEvent } = useEventVariables();
   const { getEventOwners } = useCurrentEvent();
+  const { handleUnselectedFriends } = useFriends();
 
   const [addOwnerWindow, setAddOwnerWindow] = useState(false);
   const [deleteOwnerWindow, setDeleteOwnerWindow] = useState(false);
 
   function handleAddOwnerWindow(): void {
+    addOwnerWindow === true && handleUnselectedFriends([]);
     setAddOwnerWindow(!addOwnerWindow);
   }
 

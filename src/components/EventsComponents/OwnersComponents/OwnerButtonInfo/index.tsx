@@ -50,8 +50,18 @@ export function OwnerButtonInfo(): JSX.Element {
     selectedEventOwner,
   ]);
 
+  const ownerName = useMemo(() => {
+    const { personInfo } = selectedEventOwner.userEventOwner;
+    return personInfo
+      ? `${personInfo.first_name}  ${personInfo.last_name}`
+      : selectedEventOwner.userEventOwner.name;
+  }, [selectedEventOwner]);
+
   return (
     <Container>
+      <DescriptionContainer>
+        <MenuText>{ownerName}</MenuText>
+      </DescriptionContainer>
       {editDescription ? (
         <DescriptionContainer>
           <CloseButton closeFunction={handleEditDescription} />

@@ -22,14 +22,8 @@ import { AddEventGuestListWindow } from '../../../AddEventGuestListWindow';
 export function EventGuestSection(): JSX.Element {
   const { user } = useAuth();
   const { getEventGuests } = useCurrentEvent();
+  const { eventGuests, isOwner, selectedEventGuest } = useEventVariables();
   const {
-    eventGuests,
-    isOwner,
-    selectedEvent,
-    selectedEventGuest,
-  } = useEventVariables();
-  const {
-    handleAddGuestListWindow,
     handleNewGuestWindow,
     addGuestListWindow,
     selectWePlanGuestsWindow,
@@ -46,7 +40,7 @@ export function EventGuestSection(): JSX.Element {
   } = useEventGuests();
 
   const [wpGuestInvitationWindow, setWpGuestInvitationWindow] = useState(false);
-  const [guestWindow, setGuestWindow] = useState(true);
+  const [guestWindow, setGuestWindow] = useState(isOwner);
 
   const handleGuestWindow = useCallback(props => {
     setGuestWindow(props);
@@ -137,20 +131,24 @@ export function EventGuestSection(): JSX.Element {
           </span>
         )} */}
         <span>
-          <BooleanNavigationButton
-            booleanActiveButton={guestWindow}
-            type="button"
-            onClick={() => handleGuestWindow(true)}
-          >
-            Convidados da Festa
-          </BooleanNavigationButton>
-          <BooleanNavigationButton
-            type="button"
-            onClick={() => handleGuestWindow(false)}
-            booleanActiveButton={!guestWindow}
-          >
-            Meus Convidados
-          </BooleanNavigationButton>
+          {isOwner && (
+            <>
+              <BooleanNavigationButton
+                booleanActiveButton={guestWindow}
+                type="button"
+                onClick={() => handleGuestWindow(true)}
+              >
+                Convidados da Festa
+              </BooleanNavigationButton>
+              <BooleanNavigationButton
+                type="button"
+                onClick={() => handleGuestWindow(false)}
+                booleanActiveButton={!guestWindow}
+              >
+                Meus Convidados
+              </BooleanNavigationButton>
+            </>
+          )}
           <span>
             {/* <button type="button" onClick={sendMassEmailInvitations}>
               Convite Virtual
