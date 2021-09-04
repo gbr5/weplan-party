@@ -1,5 +1,5 @@
-import IEventFileDTO from './IEventFileDTO';
-import IEventInfoDTO from './IEventInfoDTO';
+// import IEventFileDTO from './IEventFileDTO';
+// import IEventInfoDTO from './IEventInfoDTO';
 
 interface IEventDateDTO {
   id: string;
@@ -19,8 +19,8 @@ export default interface IEventDTO {
   isOwner?: boolean;
   isPublished: boolean;
   isDateDefined: boolean;
-  eventInfo: IEventInfoDTO;
+  // eventInfo: IEventInfoDTO;
   avatar_url?: string;
-  eventDates: IEventDateDTO[];
-  eventFiles: IEventFileDTO[];
+  // eventDates: IEventDateDTO[];
+  // eventFiles: IEventFileDTO[];
 }

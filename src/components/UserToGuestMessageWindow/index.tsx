@@ -200,9 +200,9 @@ const UserToGuestMessageWindow: React.FC<IPropsDTO> = ({
           </h2>
           <h2>
             <strong>Traje:</strong>{' '}
-            {updatedEventGuest.weplanGuest.event.eventInfo &&
+            {/* {updatedEventGuest.weplanGuest.event.eventInfo &&
               updatedEventGuest.weplanGuest.event.eventInfo.dress_code &&
-              updatedEventGuest.weplanGuest.event.eventInfo.dress_code}
+              updatedEventGuest.weplanGuest.event.eventInfo.dress_code} */}
           </h2>
           <h2>
             <strong>RSVP:</strong>

@@ -1,52 +1,9 @@
 import styled, { css } from 'styled-components';
-import '../../styles/global';
 
+interface ButtonProps {
+  booleanActiveButton: boolean;
+}
 export const Container = styled.div`
-  position: relative;
-`;
-
-export const Content = styled.main`
-  position: relative;
-  max-width: 100%;
-  margin: 0 4vh;
-  display: flex;
-  flex-direction: column;
-
-  @media (max-width: 1000px) {
-    margin: 0 1vh;
-    /* padding-bottom: 8vh; */
-  }
-`;
-
-export const MiddlePage = styled.div`
-  margin-top: 10vh;
-  display: flex;
-  flex-direction: column;
-  /* @media (max-width: 1000px) {
-    margin-top: 2vh;
-  } */
-`;
-
-export const BottomPage = styled.div`
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4vh;
-  height: 100%;
-
-  @media (max-width: 1100px) {
-    display: block;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2vh;
-    height: 100%;
-
-    margin-bottom: 2vh;
-  }
-`;
-
-export const BottomSection = styled.div`
   background: var(--header-background-color);
   padding: 2vw 2vh;
   border-radius: 8px;
@@ -192,13 +149,13 @@ export const BottomSection = styled.div`
           border-radius: 1%;
           width: 100%;
           /*
-          &:hover {
-            padding: 0 4px;
-            width: 32px;
-            color: var(--title-color);
-            border-radius: 50%;
-            background: rgba(0, 0, 0, 0.5);
-          } */
+        &:hover {
+          padding: 0 4px;
+          width: 32px;
+          color: var(--title-color);
+          border-radius: 50%;
+          background: rgba(0, 0, 0, 0.5);
+        } */
         }
 
         span {
@@ -224,4 +181,31 @@ export const BottomSection = styled.div`
       }
     }
   }
+`;
+
+export const BooleanNavigationButton = styled.button<ButtonProps>`
+  font-size: 18px;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-color);
+  opacity: 0.65;
+  transition: 0.25s;
+
+  &:hover {
+    opacity: 1;
+  }
+  > svg {
+    color: var(--primary-color);
+  }
+
+  ${props =>
+    props.booleanActiveButton &&
+    css`
+      color: var(--letter-color-4);
+      opacity: 1;
+      transition: 0.25s;
+    `}
 `;

@@ -10,7 +10,7 @@ import api from '../services/api';
 interface IEventContextData {
   eventBudgetWindow: boolean;
   createEventWindow: boolean;
-  nextEvent: IShowEventDTO;
+  nextEvent: IEventDTO;
   eventsAsOwner: IEventOwnerDTO[];
   eventsAsMember: IEventMemberDTO[];
   eventsAsGuest: IEventGuestDTO[];
@@ -26,7 +26,7 @@ interface IEventContextData {
 const EventContext = createContext({} as IEventContextData);
 
 const EventProvider: React.FC = ({ children }) => {
-  const [nextEvent, setNextEvent] = useState({} as IShowEventDTO);
+  const [nextEvent, setNextEvent] = useState({} as IEventDTO);
   const [eventsAsOwner, setEventsAsOwner] = useState<IEventOwnerDTO[]>([]);
   const [eventsAsMember, setEventsAsMember] = useState<IEventMemberDTO[]>([]);
   const [eventsAsGuest, setEventsAsGuest] = useState<IEventGuestDTO[]>([]);
@@ -74,7 +74,8 @@ const EventProvider: React.FC = ({ children }) => {
   }, []);
   const getNextEvent = useCallback(async () => {
     try {
-      const response = await api.get<IShowEventDTO>('/my-next-event/');
+      const response = await api.get<IEventDTO>('/my-next-event/');
+      console.log(response.data);
       setNextEvent(response.data);
     } catch (err) {
       throw new Error(err);

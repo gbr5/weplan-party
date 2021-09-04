@@ -31,10 +31,7 @@ export function SecondSection(): ReactElement {
 
   return (
     <Container>
-      <EventFileSection
-        updateEvent={updateEvent}
-        files={updatedEvent.eventFiles}
-      />
+      <EventFileSection updateEvent={updateEvent} files={[]} />
       {/* <EventImageSection
         images={updatedEvent.eventImages}
         updateEvent={updateEvent}

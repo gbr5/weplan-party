@@ -15,6 +15,7 @@ import IEventSupplierTransactionAgreementDTO from '../dtos/IEventSupplierTransac
 import IEventNoteDTO from '../dtos/IEventNoteDTO';
 import IEventTransactionDTO from '../dtos/IEventTransactionDTO';
 import { useEventVariables } from './eventVariables';
+import { useToast } from './toast';
 
 interface CurrentEventContextType {
   eventFinancialSubSection: string;
@@ -28,10 +29,12 @@ interface CurrentEventContextType {
   availableNumberOfGuests: number;
   totalEventCost: number;
   isOwner: boolean;
+  deleteEventConfirmationWindow: boolean;
   currentSection: string;
   sectionDescriptionWindow: boolean;
   handleEventFinancialSubSection: (data: string) => void;
   handleBudgetWindow: () => void;
+  handleDeleteEventConfirmationWindow: () => void;
   handleSectionDescriptionWindow: () => void;
   handleBackdropSearch: () => void;
   getEventGuests: (eventId: string) => Promise<void>;
@@ -48,12 +51,14 @@ interface CurrentEventContextType {
   createEventBudget: (budget: number) => Promise<void>;
   updateEventBudget: (data: IEventBudgetDTO) => Promise<void>;
   handleSelectedEvent: (data: IEventDTO) => void;
+  handleDeleteEvent: () => Promise<void>;
 }
 
 const CurrentEventContext = createContext({} as CurrentEventContextType);
 
 const CurrentEventProvider: React.FC = ({ children }) => {
   const { user } = useAuth();
+  const { addToast } = useToast();
   const {
     handleEventBudget,
     handleEventTransactions,
@@ -73,6 +78,9 @@ const CurrentEventProvider: React.FC = ({ children }) => {
     selectEventTask,
     selectedEvent,
     selectEvent,
+    eventOwners,
+    eventMembers,
+    eventGuests,
   } = useEventVariables();
   const [eventFinancialSubSection, setEventFinancialSubSection] = useState(
     'Main',
@@ -90,6 +98,10 @@ const CurrentEventProvider: React.FC = ({ children }) => {
   const [availableNumberOfGuests, setAvailableNumberOfGuests] = useState(0);
   const [totalEventCost, setTotalEventCost] = useState(0);
   const [isOwner, setIsOwner] = useState(false);
+  const [
+    deleteEventConfirmationWindow,
+    setDeleteEventConfirmationWindow,
+  ] = useState(false);
   const [currentSection, setCurrentSection] = useState('Notes');
 
   const calculateTotalEventCost = useCallback(() => {
@@ -125,6 +137,10 @@ const CurrentEventProvider: React.FC = ({ children }) => {
 
   function handleBudgetWindow(): void {
     setBudgetWindow(!budgetWindow);
+  }
+
+  function handleDeleteEventConfirmationWindow(): void {
+    setDeleteEventConfirmationWindow(!deleteEventConfirmationWindow);
   }
 
   function handleSectionDescriptionWindow(): void {
@@ -343,6 +359,54 @@ const CurrentEventProvider: React.FC = ({ children }) => {
     }
   }
 
+  async function handleDeleteEvent(): Promise<void> {
+    try {
+      if (selectedEvent.user_id === user.id) {
+        await api.delete(`/events/${selectedEvent.id}`);
+        // await getEventsAsOwner();
+        return;
+      }
+      const findOwner = eventOwners.find(
+        owner => owner.userEventOwner.id === user.id,
+      );
+      if (findOwner) {
+        await api.delete(`/event-owners/${findOwner.id}`);
+        // getEventsAsGuest();
+        return;
+      }
+      const findMember = eventMembers.find(
+        member => member.userEventMember.id === user.id,
+      );
+      if (findMember) {
+        await api.delete(`/event-members/${findMember.id}`);
+        // getEventsAsGuest();
+        return;
+      }
+      const findGuest = eventGuests.find(
+        guest => guest.weplanGuest.weplanUserGuest.id === user.id,
+      );
+      if (findGuest) {
+        await api.delete(`/event-guests/${findGuest.id}`);
+        // getEventsAsGuest();
+        return;
+      }
+
+      setDeleteEventConfirmationWindow(false);
+      addToast({
+        type: 'success',
+        title: 'Evento Deletado com sucesso',
+        description: 'Você já pode visualizar as alterações no seu dashboard.',
+      });
+    } catch (err) {
+      addToast({
+        type: 'error',
+        title: 'Não foi possível deletar seu evento',
+        description: 'Tente novamente.',
+      });
+      throw new Error(err);
+    }
+  }
+
   return (
     <CurrentEventContext.Provider
       value={{
@@ -377,6 +441,9 @@ const CurrentEventProvider: React.FC = ({ children }) => {
         getEventBudget,
         getEventTransactions,
         handleSelectedEvent,
+        deleteEventConfirmationWindow,
+        handleDeleteEvent,
+        handleDeleteEventConfirmationWindow,
       }}
     >
       {children}
