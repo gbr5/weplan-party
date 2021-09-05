@@ -13,7 +13,6 @@ import { useToast } from './toast';
 import { useEventVariables } from './eventVariables';
 import { useFriends } from './friends';
 import { useAuth } from './auth';
-import IUserDTO from '../dtos/IUserDTO';
 
 interface EventGuestsContextType {
   allGuestsFilter: boolean;
@@ -25,6 +24,8 @@ interface EventGuestsContextType {
   newGuestForm: boolean;
   newGuestWindow: boolean;
   selectWePlanGuestsWindow: boolean;
+  createGuestContactWindow: boolean;
+  guestContactWindow: boolean;
   selectWePlanGuestWindow: boolean;
   notConfirmedGuestsFilter: boolean;
   onlyMyGuestsFilter: boolean;
@@ -33,6 +34,8 @@ interface EventGuestsContextType {
   associateUserToEventGuest: (data: IFriendDTO) => Promise<void>;
   createMultipleWePlanGuests: (data: IFriendDTO[]) => Promise<void>;
   createGuestContact: (data: ICreateGuestContactDTO) => Promise<void>;
+  handleCreateGuestContactWindow: () => void;
+  handleGuestContactWindow: () => void;
   deleteGuestContact: (data: IGuestContactDTO) => Promise<void>;
   deleteGuest: (data: IEventGuestDTO) => Promise<void>;
   deleteWePlanGuest: () => Promise<void>;
@@ -92,9 +95,20 @@ const EventGuestsProvider: React.FC = ({ children }) => {
     false,
   );
   const [selectWePlanGuestWindow, setSelectWePlanGuestWindow] = useState(false);
+  const [createGuestContactWindow, setCreateGuestContactWindow] = useState(
+    false,
+  );
+  const [guestContactWindow, setGuestContactWindow] = useState(false);
 
   function handleAddGuestListWindow(): void {
     setAddGuestListWindow(!addGuestListWindow);
+  }
+
+  function handleCreateGuestContactWindow(): void {
+    setCreateGuestContactWindow(!createGuestContactWindow);
+  }
+  function handleGuestContactWindow(): void {
+    setGuestContactWindow(!guestContactWindow);
   }
 
   function handleDissociateUserFromGuestConfirmation(): void {
@@ -446,6 +460,10 @@ const EventGuestsProvider: React.FC = ({ children }) => {
         handleAddGuestListWindow,
         handleDissociateUserFromGuestConfirmation,
         sendMassEmailInvitations,
+        handleCreateGuestContactWindow,
+        handleGuestContactWindow,
+        createGuestContactWindow,
+        guestContactWindow,
       }}
     >
       {children}

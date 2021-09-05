@@ -1,11 +1,3 @@
-// import IEventFileDTO from './IEventFileDTO';
-// import IEventInfoDTO from './IEventInfoDTO';
-
-interface IEventDateDTO {
-  id: string;
-  date: Date;
-}
-
 export default interface IEventDTO {
   id: string;
   name: string;
@@ -19,8 +11,7 @@ export default interface IEventDTO {
   isOwner?: boolean;
   isPublished: boolean;
   isDateDefined: boolean;
-  // eventInfo: IEventInfoDTO;
   avatar_url?: string;
-  // eventDates: IEventDateDTO[];
-  // eventFiles: IEventFileDTO[];
+  created_at: Date;
+  updated_at: Date;
 }

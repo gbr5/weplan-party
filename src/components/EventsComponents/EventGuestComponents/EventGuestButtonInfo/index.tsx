@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { useState } from 'react';
 import { FiCheckSquare, FiPlus, FiSquare } from 'react-icons/fi';
 import { useTheme } from 'styled-components';
+import IGuestContactDTO from '../../../../dtos/IGuestContactDTO';
 import { useAuth } from '../../../../hooks/auth';
 import { useEventGuests } from '../../../../hooks/eventGuests';
 
@@ -25,6 +26,7 @@ import {
   FieldContainer,
   FieldLabel,
   ConfirmGuestButton,
+  Contact,
 } from './styles';
 
 export function EventGuestButtonInfo(): JSX.Element {
@@ -40,6 +42,9 @@ export function EventGuestButtonInfo(): JSX.Element {
   const theme = useTheme();
   const {
     editGuest,
+    handleCreateGuestContactWindow,
+    handleGuestContactWindow,
+    selectGuestContact,
     handleSelectWePlanGuestWindow,
     handleDissociateUserFromGuestConfirmation,
   } = useEventGuests();
@@ -136,6 +141,11 @@ export function EventGuestButtonInfo(): JSX.Element {
     }
   }
 
+  function handleEditGuestContactWindow(data: IGuestContactDTO): void {
+    selectGuestContact(data);
+    handleGuestContactWindow();
+  }
+
   return (
     <Container>
       <SectionBorder />
@@ -181,7 +191,7 @@ export function EventGuestButtonInfo(): JSX.Element {
         ))}
       {editGuestDescriptionComponent ? (
         <FieldContainer>
-          <FieldLabel>Nome: </FieldLabel>
+          <FieldLabel>Descrição: </FieldLabel>
           <InlineFormField
             defaultValue={selectedEventGuest.description}
             handleOnSubmit={handleEditGuestDescription}
@@ -199,7 +209,7 @@ export function EventGuestButtonInfo(): JSX.Element {
       {isOwner && (
         <MenuButtonSection>
           {isMine && (
-            <MenuButton>
+            <MenuButton onClick={handleCreateGuestContactWindow}>
               <MenuText>Adicionar Contato</MenuText>
               <IconContainer color={theme.colors.primary}>
                 <FiPlus size={24} />
@@ -213,45 +223,54 @@ export function EventGuestButtonInfo(): JSX.Element {
               contactType = 'Telefone';
 
               return (
-                <MenuButton key={contact.id}>
+                <MenuButton
+                  key={contact.id}
+                  onClick={() => handleEditGuestContactWindow(contact)}
+                >
                   <MenuText>{contactType}</MenuText>
                   <IconContainer color={theme.colors.primary}>
-                    <MenuText>
+                    <Contact>
                       <a target="blank" href={`tel:${contact.contact_info}`}>
                         {contact.contact_info}
                       </a>
-                    </MenuText>
+                    </Contact>
                   </IconContainer>
                 </MenuButton>
               );
             }
             if (contact.contact_type === 'Whatsapp') {
               return (
-                <MenuButton key={contact.id}>
+                <MenuButton
+                  key={contact.id}
+                  onClick={() => handleEditGuestContactWindow(contact)}
+                >
                   <MenuText>{contactType}</MenuText>
                   <IconContainer color={theme.colors.primary}>
-                    <MenuText>
+                    <Contact>
                       <a
                         target="blank"
                         href={`https://wa.me/${contact.contact_info}`}
                       >
                         {contact.contact_info}
                       </a>
-                    </MenuText>
+                    </Contact>
                   </IconContainer>
                 </MenuButton>
               );
             }
             if (contact.contact_type === 'Email') {
               return (
-                <MenuButton key={contact.id}>
+                <MenuButton
+                  key={contact.id}
+                  onClick={() => handleEditGuestContactWindow(contact)}
+                >
                   <MenuText>{contactType}</MenuText>
                   <IconContainer color={theme.colors.primary}>
-                    <MenuText>
+                    <Contact>
                       <a target="blank" href={`mailto:${contact.contact_info}`}>
                         {contact.contact_info}
                       </a>
-                    </MenuText>
+                    </Contact>
                   </IconContainer>
                 </MenuButton>
               );
@@ -263,23 +282,29 @@ export function EventGuestButtonInfo(): JSX.Element {
               contact.contact_type === 'WebSite'
             ) {
               return (
-                <MenuButton key={contact.id}>
+                <MenuButton
+                  key={contact.id}
+                  onClick={() => handleEditGuestContactWindow(contact)}
+                >
                   <MenuText>{contactType}</MenuText>
                   <IconContainer color={theme.colors.primary}>
-                    <MenuText>
+                    <Contact>
                       <a target="blank" href={contact.contact_info}>
                         {contact.contact_info}
                       </a>
-                    </MenuText>
+                    </Contact>
                   </IconContainer>
                 </MenuButton>
               );
             }
             return (
-              <MenuButton key={contact.id}>
+              <MenuButton
+                onClick={() => handleEditGuestContactWindow(contact)}
+                key={contact.id}
+              >
                 <MenuText>{contactType}</MenuText>
                 <IconContainer color={theme.colors.primary}>
-                  <MenuText>{contact.contact_info}</MenuText>
+                  <Contact>{contact.contact_info}</Contact>
                 </IconContainer>
               </MenuButton>
             );

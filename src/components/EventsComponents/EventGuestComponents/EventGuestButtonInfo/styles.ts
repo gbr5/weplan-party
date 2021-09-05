@@ -30,6 +30,10 @@ export const IconContainer = styled.div<IBackgroundColor>`
   border: none;
   box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
   position: relative;
+  display: flex;
+  min-height: 56px;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const FooterContainer = styled.div`
@@ -65,6 +69,17 @@ export const MenuText = styled.p`
   font-size: 16px;
   font-weight: bold;
   color: var(--letter-color-6);
+`;
+
+export const Contact = styled.p`
+  font-size: 16px;
+  letter-spacing: 1px;
+  color: var(--letter-color-6);
+
+  a {
+    text-decoration: none;
+    color: var(--letter-color-6);
+  }
 `;
 
 export const SectionBorder = styled.div`

@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
+  position: relative;
   list-style: none;
   padding: 14px 8px 12px;
   display: flex;

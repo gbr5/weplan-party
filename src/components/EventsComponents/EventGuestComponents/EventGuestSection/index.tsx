@@ -18,6 +18,8 @@ import { NewGuestWindow } from '../NewGuestWindow';
 
 import { Container, BooleanNavigationButton } from './styles';
 import { AddEventGuestListWindow } from '../../../AddEventGuestListWindow';
+import { CreateGuestContactWindow } from '../CreateGuestContactWindow';
+import { EditGuestContact } from '../EditGuestContact';
 
 export function EventGuestSection(): JSX.Element {
   const { user } = useAuth();
@@ -36,6 +38,8 @@ export function EventGuestSection(): JSX.Element {
     dissociateUserFromGuestConfirmation,
     deleteWePlanGuest,
     newGuestForm,
+    guestContactWindow,
+    createGuestContactWindow,
     newGuestWindow,
   } = useEventGuests();
 
@@ -87,6 +91,8 @@ export function EventGuestSection(): JSX.Element {
   );
   return (
     <>
+      {createGuestContactWindow && <CreateGuestContactWindow />}
+      {guestContactWindow && <EditGuestContact />}
       {newGuestForm && <NewGuestForm />}
       {newGuestWindow && <NewGuestWindow />}
       {wpGuestInvitationWindow && (
