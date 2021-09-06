@@ -72,7 +72,7 @@ const Dashboard: React.FC = () => {
         )}
         {!!deleteEventConfirmationWindow && (
           <DeleteConfirmationWindow
-            title="Tem certeza de que deseja deletar o evento?"
+            title="Deseja deletar o evento?"
             handleDelete={handleDeleteEvent}
             onHandleCloseWindow={handleDeleteEventConfirmationWindow}
           />

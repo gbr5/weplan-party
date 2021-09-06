@@ -12,6 +12,7 @@ import { useFriends } from '../../../../hooks/friends';
 
 import formatOnlyDateShort from '../../../../utils/formatOnlyDateShort';
 import InlineFormField from '../../../InlineFormField';
+import { GuestContact } from '../GuestContact';
 
 import {
   Container, // 1
@@ -217,97 +218,7 @@ export function EventGuestButtonInfo(): JSX.Element {
             </MenuButton>
           )}
           {selectedEventGuest.contacts.map(contact => {
-            let contactType = contact.contact_type;
-            if (contact.contact_type === 'Address') contactType = 'Endereço';
-            if (contact.contact_type === 'Phone') {
-              contactType = 'Telefone';
-
-              return (
-                <MenuButton
-                  key={contact.id}
-                  onClick={() => handleEditGuestContactWindow(contact)}
-                >
-                  <MenuText>{contactType}</MenuText>
-                  <IconContainer color={theme.colors.primary}>
-                    <Contact>
-                      <a target="blank" href={`tel:${contact.contact_info}`}>
-                        {contact.contact_info}
-                      </a>
-                    </Contact>
-                  </IconContainer>
-                </MenuButton>
-              );
-            }
-            if (contact.contact_type === 'Whatsapp') {
-              return (
-                <MenuButton
-                  key={contact.id}
-                  onClick={() => handleEditGuestContactWindow(contact)}
-                >
-                  <MenuText>{contactType}</MenuText>
-                  <IconContainer color={theme.colors.primary}>
-                    <Contact>
-                      <a
-                        target="blank"
-                        href={`https://wa.me/${contact.contact_info}`}
-                      >
-                        {contact.contact_info}
-                      </a>
-                    </Contact>
-                  </IconContainer>
-                </MenuButton>
-              );
-            }
-            if (contact.contact_type === 'Email') {
-              return (
-                <MenuButton
-                  key={contact.id}
-                  onClick={() => handleEditGuestContactWindow(contact)}
-                >
-                  <MenuText>{contactType}</MenuText>
-                  <IconContainer color={theme.colors.primary}>
-                    <Contact>
-                      <a target="blank" href={`mailto:${contact.contact_info}`}>
-                        {contact.contact_info}
-                      </a>
-                    </Contact>
-                  </IconContainer>
-                </MenuButton>
-              );
-            }
-            if (
-              contact.contact_type === 'Instagram' ||
-              contact.contact_type === 'Facebook' ||
-              contact.contact_type === 'Linkedin' ||
-              contact.contact_type === 'WebSite'
-            ) {
-              return (
-                <MenuButton
-                  key={contact.id}
-                  onClick={() => handleEditGuestContactWindow(contact)}
-                >
-                  <MenuText>{contactType}</MenuText>
-                  <IconContainer color={theme.colors.primary}>
-                    <Contact>
-                      <a target="blank" href={contact.contact_info}>
-                        {contact.contact_info}
-                      </a>
-                    </Contact>
-                  </IconContainer>
-                </MenuButton>
-              );
-            }
-            return (
-              <MenuButton
-                onClick={() => handleEditGuestContactWindow(contact)}
-                key={contact.id}
-              >
-                <MenuText>{contactType}</MenuText>
-                <IconContainer color={theme.colors.primary}>
-                  <Contact>{contact.contact_info}</Contact>
-                </IconContainer>
-              </MenuButton>
-            );
+            return <GuestContact guestContact={contact} key={contact.id} />;
           })}
         </MenuButtonSection>
       )}

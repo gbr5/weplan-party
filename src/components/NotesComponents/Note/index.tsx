@@ -25,12 +25,11 @@ interface IProps {
 }
 
 export function Note({ note }: IProps): ReactElement {
-  const { getUser, user } = useAuth();
+  const { user } = useAuth();
   const { getEventNotes } = useCurrentEvent();
-  const { selectedEvent } = useEventVariables();
+  const { selectedEvent, eventMembers, eventOwners } = useEventVariables();
   const { editNote, selectNote } = useNote();
 
-  const [author, setAuthor] = useState('');
   const [editNoteComponent, setEditNoteComponent] = useState(false);
 
   async function handleEditNote(data: string): Promise<void> {
@@ -56,24 +55,6 @@ export function Note({ note }: IProps): ReactElement {
     selectNote({} as INoteDTO);
   }
 
-  const getAuthor = useCallback(async () => {
-    const findAuthor = await getUser(note.author_id);
-    findAuthor && setAuthor(findAuthor.name);
-    return undefined;
-  }, [getUser, note]);
-
-  useEffect(() => {
-    if (selectedEvent.id !== note.author_id && user.id !== note.author_id) {
-      getAuthor();
-    }
-    if (selectedEvent.id === note.author_id) {
-      setAuthor('WePlan');
-    }
-    if (user.id === note.author_id) {
-      setAuthor(user.name);
-    }
-  }, [getAuthor, selectedEvent, note, user]);
-
   const cols = useMemo(() => {
     const screenWidth = window.screen.width;
     return screenWidth * 0.08;
@@ -82,6 +63,35 @@ export function Note({ note }: IProps): ReactElement {
   const rows = useMemo(() => {
     return note.note.length / cols + 5;
   }, [note, cols]);
+
+  const author = useMemo(() => {
+    if (selectedEvent.id === note.author_id) return 'WePlan';
+    if (user.id === note.author_id) {
+      const { personInfo } = user;
+      return personInfo
+        ? `${personInfo.first_name}  ${personInfo.last_name}`
+        : user.name;
+    }
+    const findOwner = eventOwners.find(
+      owner => owner.userEventOwner.id === note.author_id,
+    );
+    if (findOwner) {
+      const owner = findOwner.userEventOwner.personInfo;
+      return owner
+        ? `${owner.first_name}  ${owner.last_name}`
+        : findOwner.userEventOwner.name;
+    }
+    const findMember = eventMembers.find(
+      owner => owner.userEventMember.id === note.author_id,
+    );
+    if (findMember) {
+      const member = findMember.userEventMember.personInfo;
+      return member
+        ? `${member.first_name}  ${member.last_name}`
+        : findMember.userEventMember.name;
+    }
+    return '';
+  }, [eventOwners, eventMembers, user, selectedEvent, note]);
 
   return (
     <Container>

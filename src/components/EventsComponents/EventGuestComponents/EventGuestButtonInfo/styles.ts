@@ -46,6 +46,7 @@ export const FooterContainer = styled.div`
 
 export const MenuButtonSection = styled.div`
   display: flex;
+  position: relative;
   flex-direction: row;
   overflow-x: scroll;
   margin: 7px 4px 0;
