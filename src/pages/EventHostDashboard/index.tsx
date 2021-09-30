@@ -81,7 +81,7 @@ const EventHostDashboard: React.FC = () => {
     eventTaskNotesWindow,
     deleteTaskConfirmationWindow,
     handleDeleteTaskConfirmationWindow,
-    deleteTask,
+    deleteEventTask,
   } = useEventTasks();
 
   return (
@@ -128,7 +128,7 @@ const EventHostDashboard: React.FC = () => {
           <DeleteConfirmationWindow
             title="Deseja deletar esta tarefa?"
             onHandleCloseWindow={handleDeleteTaskConfirmationWindow}
-            handleDelete={() => deleteTask(selectedEventTask)}
+            handleDelete={() => deleteEventTask(selectedEventTask)}
           />
         )}
 

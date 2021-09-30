@@ -14,6 +14,11 @@ export function NotesSection(): JSX.Element {
   const { handleCreateEventNoteWindow, createEventNoteWindow } = useNote();
 
   const [filteredNotes, setFilteredNotes] = useState<INoteDTO[]>([]);
+  const [search, setSearch] = useState(false);
+
+  function handleSearch(): void {
+    setSearch(!search);
+  }
 
   function handleFilteredNotes(data: INoteDTO[]): void {
     setFilteredNotes(data);

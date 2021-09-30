@@ -13,14 +13,7 @@ import WindowUnFormattedContainer from '../../../WindowUnFormattedContainer';
 import { SelectTaskPriorityComponent } from '../SelectTaskPriorityComponent';
 import { WindowHeader } from '../../../WindowHeader';
 
-import {
-  Container,
-  FormQuestion,
-  DateContainer,
-  DateText,
-  DateButton,
-  TimeText,
-} from './styles';
+import { Container, FormQuestion, DateContainer } from './styles';
 import Button from '../../../Button';
 import Input from '../../../Input';
 import { useToast } from '../../../../hooks/toast';
@@ -35,7 +28,7 @@ interface IFormData {
 export function NewTaskForm(): ReactElement {
   const { addToast } = useToast();
   const { selectedEvent, selectedEventTask } = useEventVariables();
-  const { createTask, loading, handleCreateTaskWindow } = useEventTasks();
+  const { createEventTask, loading, handleCreateTaskWindow } = useEventTasks();
   const formRef = useRef<FormHandles>(null);
 
   const [selectedPriority, setPriority] = useState<'low' | 'neutral' | 'high'>(
@@ -51,7 +44,7 @@ export function NewTaskForm(): ReactElement {
           title: 'Dê um nome à tarefa!',
           type: 'error',
         });
-      await createTask({
+      await createEventTask({
         event_id: selectedEvent.id,
         title,
         due_date: selectedDate,
@@ -88,7 +81,7 @@ export function NewTaskForm(): ReactElement {
   async function handleUpdateTaskDueTime(date: Date): Promise<void> {
     if (
       formatOnlyTime(String(date)) ===
-      formatOnlyTime(String(selectedEventTask.due_date))
+      formatOnlyTime(String(selectedEventTask.task.due_date))
     )
       return;
     setSelectedDate(date);

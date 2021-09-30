@@ -1,13 +1,19 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { FiSettings, FiStar } from 'react-icons/fi';
+import { FiSettings } from 'react-icons/fi';
 import IEventDTO from '../../../dtos/IEventDTO';
-import { useAuth } from '../../../hooks/auth';
 import { useCurrentEvent } from '../../../hooks/currentEvent';
 import { useEventVariables } from '../../../hooks/eventVariables';
-import formatStringToDate from '../../../utils/formatStringToDate';
 
-import { Container, DateSection } from './styles';
+import {
+  Container,
+  IconButton,
+  Name,
+  DateSection,
+  Body,
+  CreatedAt,
+} from './styles';
+import formatOnlyTime from '../../../utils/formatOnlyTime';
 import formatOnlyDateShort from '../../../utils/formatOnlyDateShort';
 
 interface IProps {
@@ -16,7 +22,6 @@ interface IProps {
 
 export function EventButton({ event }: IProps): JSX.Element {
   const history = useHistory();
-  const { user } = useAuth();
   const {
     handleSelectedEvent,
     handleDeleteEventConfirmationWindow,
@@ -38,21 +43,20 @@ export function EventButton({ event }: IProps): JSX.Element {
 
   return (
     <Container>
-      <button type="button" onClick={() => handleMyEventDashboard()}>
-        <h3>{event.name}</h3>
-      </button>
-      {event.user_id === user.id && <FiStar size={16} />}
-
-      <div>
+      <Body type="button" onClick={() => handleMyEventDashboard()}>
         <DateSection>
-          {event.date && formatOnlyDateShort(String(event.date))}
+          {formatOnlyTime(String(event.date))} -{' '}
+          {formatOnlyDateShort(String(event.date))}
         </DateSection>
-        <span>
-          <button type="button" onClick={handleDeleteEventWindow}>
-            <FiSettings size={20} />
-          </button>
-        </span>
-      </div>
+        <Name>{event.name}</Name>
+        <CreatedAt>
+          Criado em: {formatOnlyTime(String(event.created_at))} -{' '}
+          {formatOnlyDateShort(String(event.created_at))}
+        </CreatedAt>
+      </Body>
+      <IconButton type="button" onClick={handleDeleteEventWindow}>
+        <FiSettings size={20} />
+      </IconButton>
     </Container>
   );
 }

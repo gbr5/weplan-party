@@ -26,14 +26,14 @@ export function EventTaskNotesWindow(): JSX.Element {
     if (note !== '' && note) {
       await createTaskNote({
         note,
-        task_id: selectedEventTask.id,
+        task_id: selectedEventTask.task.id,
       });
       await updateNotes();
     }
   }
 
   const notes = useMemo(() => {
-    return selectedEventTask.notes
+    return selectedEventTask.task.notes
       .map(note => note.note)
       .sort((a, b) => {
         if (
@@ -69,7 +69,7 @@ export function EventTaskNotesWindow(): JSX.Element {
       <Container>
         <Title>Notas</Title>
         <Underline />
-        <TaskTitle>Tarefa: {selectedEventTask.title}</TaskTitle>
+        <TaskTitle>Tarefa: {selectedEventTask.task.title}</TaskTitle>
 
         <NoteForm
           handleNote={(data: string) => handleCreateTaskNote(data)}

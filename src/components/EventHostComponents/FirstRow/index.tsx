@@ -23,7 +23,9 @@ export function FirstRow(): JSX.Element {
   }, [eventGuests]);
 
   const eventTaskInfo = useMemo(() => {
-    const resolved = eventTasks.filter(task => task.status === 'finnished');
+    const resolved = eventTasks.filter(
+      ({ task }) => task.status === 'finnished',
+    );
     return `${resolved.length} / ${eventTasks.length}`;
   }, [eventTasks]);
 

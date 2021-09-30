@@ -15,9 +15,9 @@ export function SelectTaskPriority(): JSX.Element {
   async function updateTaskPriority(
     priority: 'low' | 'neutral' | 'high',
   ): Promise<void> {
-    if (priority !== selectedEventTask.priority) {
+    if (priority !== selectedEventTask.task.priority) {
       await updateTask({
-        ...selectedEventTask,
+        ...selectedEventTask.task,
         priority,
       });
     }
@@ -31,21 +31,21 @@ export function SelectTaskPriority(): JSX.Element {
         <CloseButton closeFunction={handleEditTaskPriorityWindow} />
         <PriorityButton
           onClick={() => updateTaskPriority('low')}
-          isActive={selectedEventTask.priority === 'low'}
+          isActive={selectedEventTask.task.priority === 'low'}
         >
           <FiFlag color={theme.colors.green} />
           <Title>Baixa</Title>
         </PriorityButton>
         <PriorityButton
           onClick={() => updateTaskPriority('neutral')}
-          isActive={selectedEventTask.priority === 'neutral'}
+          isActive={selectedEventTask.task.priority === 'neutral'}
         >
           <FiFlag color={theme.colors.toastInfoColor} />
           <Title>Neutra</Title>
         </PriorityButton>
         <PriorityButton
           onClick={() => updateTaskPriority('high')}
-          isActive={selectedEventTask.priority === 'high'}
+          isActive={selectedEventTask.task.priority === 'high'}
         >
           <FiFlag color={theme.colors.red} />
           <Title>Alta</Title>

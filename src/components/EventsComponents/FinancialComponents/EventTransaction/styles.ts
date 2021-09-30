@@ -146,7 +146,7 @@ export const MonthContainer = styled.div`
   top: 0;
   left: 0px;
   border-radius: 8px;
-  opacity: 0.8;
+  opacity: 0.95;
   width: 120px;
 `;
 
@@ -155,6 +155,8 @@ export const Month = styled.p`
   font-size: 16px;
   z-index: 2;
   opacity: 1;
+  letter-spacing: 1px;
+  font-weight: 500;
 `;
 
 export const Day = styled.p`
@@ -165,4 +167,6 @@ export const Day = styled.p`
 export const Year = styled.p`
   color: var(--primary-color);
   font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 1px;
 `;

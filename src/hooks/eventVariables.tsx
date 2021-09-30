@@ -20,9 +20,6 @@ interface EventVariablesContextType {
   eventBudget: IEventBudgetDTO; // 1
   eventGuests: IEventGuestDTO[]; // 2
   eventSuppliers: IEventSupplierDTO[]; // 3
-  hiredSuppliers: IEventSupplierDTO[]; // 4
-  dischargedSuppliers: IEventSupplierDTO[]; // 5
-  notHiredSuppliers: IEventSupplierDTO[]; // 6
   eventOwners: IEventOwnerDTO[]; // 7
   eventMembers: IEventMemberDTO[]; // 8
   eventTasks: IEventTaskDTO[]; // 9
@@ -85,35 +82,166 @@ const EventVariablesContext = createContext({} as EventVariablesContextType);
 const EventVariablesProvider: React.FC = ({ children }) => {
   const { user } = useAuth();
 
-  const [eventBudget, setEventBudget] = useState({} as IEventBudgetDTO);
-  const [eventGuests, setEventGuests] = useState<IEventGuestDTO[]>([]);
-  const [notHiredSuppliers, setNotHiredSuppliers] = useState<
-    IEventSupplierDTO[]
-  >([]);
-  const [dischargedSuppliers, setDischargedSuppliers] = useState<
-    IEventSupplierDTO[]
-  >([]);
-  const [hiredSuppliers, setHiredSuppliers] = useState<IEventSupplierDTO[]>([]);
-  const [eventSuppliers, setEventSuppliers] = useState<IEventSupplierDTO[]>([]);
-  const [eventOwners, setEventOwners] = useState<IEventOwnerDTO[]>([]);
-  const [eventMembers, setEventMembers] = useState<IEventMemberDTO[]>([]);
-  const [eventTasks, setEventTasks] = useState<IEventTaskDTO[]>([]);
-  const [eventNotes, setEventNotes] = useState<IEventNoteDTO[]>([]);
+  const [isOwner, setIsOwner] = useState(false);
+  const [isMember, setIsMember] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<IEventDTO>(() => {
+    const data = localStorage.getItem(`@WePlan-Party:selected-event`);
+
+    if (data) return JSON.parse(data);
+    return {} as IEventDTO;
+  });
+
+  const [eventOwners, setEventOwners] = useState<IEventOwnerDTO[]>(() => {
+    const event = localStorage.getItem(`@WePlan-Party:selected-event`);
+
+    if (event) {
+      const data = localStorage.getItem(
+        `@WePlan-Party:event-${JSON.parse(event).id}-owners`,
+      );
+      if (data) {
+        const owners: IEventOwnerDTO[] = JSON.parse(data);
+        const findOwner = owners.find(
+          owner => owner.userEventOwner.id === user.id,
+        );
+        findOwner && setIsOwner(true);
+        return JSON.parse(data);
+      }
+    }
+    return [];
+  });
+
+  const [eventMembers, setEventMembers] = useState<IEventMemberDTO[]>(() => {
+    const event = localStorage.getItem(`@WePlan-Party:selected-event`);
+
+    if (isOwner && event) {
+      const data = localStorage.getItem(
+        `@WePlan-Party:event-${JSON.parse(event).id}-members`,
+      );
+
+      if (data) {
+        const members: IEventMemberDTO[] = JSON.parse(data);
+        const findMember = members.find(
+          member => member.userEventMember.id === user.id,
+        );
+        findMember && setIsMember(true);
+        return JSON.parse(data);
+      }
+    }
+    return [];
+  });
+
+  const [eventBudget, setEventBudget] = useState<IEventBudgetDTO>(() => {
+    const event = localStorage.getItem(`@WePlan-Party:selected-event`);
+    if ((isMember || isOwner) && event) {
+      const data = localStorage.getItem(
+        `@WePlan-Party:event-${JSON.parse(event).id}-budget`,
+      );
+
+      if (data) {
+        return JSON.parse(data);
+      }
+    }
+    return {} as IEventBudgetDTO;
+  });
+  const [eventGuests, setEventGuests] = useState<IEventGuestDTO[]>(() => {
+    const event = localStorage.getItem(`@WePlan-Party:selected-event`);
+    if ((isMember || isOwner) && event) {
+      const data = localStorage.getItem(
+        `@WePlan-Party:event-${JSON.parse(event).id}-guests`,
+      );
+
+      if (data) {
+        return JSON.parse(data);
+      }
+    }
+    return [];
+  });
+  const [eventSuppliers, setEventSuppliers] = useState<IEventSupplierDTO[]>(
+    () => {
+      const event = localStorage.getItem(`@WePlan-Party:selected-event`);
+
+      if ((isMember || isOwner) && event) {
+        const data = localStorage.getItem(
+          `@WePlan-Party:event-${JSON.parse(event).id}-suppliers`,
+        );
+
+        if (data) {
+          return JSON.parse(data);
+        }
+      }
+      return [];
+    },
+  );
+  const [eventTasks, setEventTasks] = useState<IEventTaskDTO[]>(() => {
+    const event = localStorage.getItem(`@WePlan-Party:selected-event`);
+
+    if ((isMember || isOwner) && event) {
+      const data = localStorage.getItem(
+        `@WePlan-Party:event-${JSON.parse(event).id}-tasks`,
+      );
+
+      if (data) {
+        return JSON.parse(data);
+      }
+    }
+    return [];
+  });
+  const [eventNotes, setEventNotes] = useState<IEventNoteDTO[]>(() => {
+    const event = localStorage.getItem(`@WePlan-Party:selected-event`);
+
+    if ((isMember || isOwner) && event) {
+      const data = localStorage.getItem(
+        `@WePlan-Party:event-${JSON.parse(event).id}-notes`,
+      );
+
+      if (data) {
+        return JSON.parse(data);
+      }
+    }
+    return [];
+  });
   const [
     eventSupplierTransactionAgreements,
     setEventSupplierTransactionAgreements,
-  ] = useState<IEventSupplierTransactionAgreementDTO[]>([]);
+  ] = useState<IEventSupplierTransactionAgreementDTO[]>(() => {
+    const event = localStorage.getItem(`@WePlan-Party:selected-event`);
+
+    if ((isMember || isOwner) && event) {
+      const data = localStorage.getItem(
+        `@WePlan-Party:event-${
+          JSON.parse(event).id
+        }-supplier-transaction-agreements`,
+      );
+
+      if (data) {
+        return JSON.parse(data);
+      }
+    }
+    return [];
+  });
   const [
     selectedEventSupplierTransactionAgreement,
     setSelectedEventSupplierTransactionAgreement,
   ] = useState({} as IEventSupplierTransactionAgreementDTO);
   const [eventTransactions, setEventTransactions] = useState<
     IEventTransactionDTO[]
-  >([]);
+  >(() => {
+    const event = localStorage.getItem(`@WePlan-Party:selected-event`);
+
+    if ((isMember || isOwner) && event) {
+      const data = localStorage.getItem(
+        `@WePlan-Party:event-${JSON.parse(event).id}-transactions`,
+      );
+
+      if (data) {
+        return JSON.parse(data);
+      }
+    }
+    return [];
+  });
   const [filteredEventTransactions, setFilteredEventTransactions] = useState<
     IEventTransactionDTO[]
   >([]);
-  const [selectedEvent, setSelectedEvent] = useState({} as IEventDTO);
   const [selectedEventGuest, setSelectedEventGuest] = useState(
     {} as IEventGuestDTO,
   );
@@ -146,35 +274,35 @@ const EventVariablesProvider: React.FC = ({ children }) => {
   const [currentSection, setCurrentSection] = useState('notes');
 
   function unsetVariables(): void {
+    localStorage.removeItem('@WePlan-Party:selected-event');
     setEventBudget({} as IEventBudgetDTO); // 1
     setEventGuests([]); // 2
     setEventSuppliers([]); // 3
-    setHiredSuppliers([]); // 4
-    setNotHiredSuppliers([]); // 5
-    setDischargedSuppliers([]); // 6
-    setNewTransactions([]); // 7
-    setEventOwners([]); // 8
-    setEventMembers([]); // 9
-    setEventTasks([]); // 10
-    setEventNotes([]); // 11
-    setEventSupplierTransactionAgreements([]); // 12
-    setEventTransactions([]); // 13
-    setFilteredEventTransactions([]); // 14
-    setSelectedDate(addDays(new Date(), 3)); // 15
-    setSelectedDateWindow(false); // 16
-    setSelectedEvent({} as IEventDTO); // 17
-    setSelectedEventGuest({} as IEventGuestDTO); // 18
-    setSelectedEventSupplier({} as IEventSupplierDTO); // 19
-    setSelectedEventOwner({} as IEventOwnerDTO); // 20
-    setSelectedEventMember({} as IEventMemberDTO); // 21
-    setSelectedEventTask({} as IEventTaskDTO); // 22
-    setSelectedEventNote({} as IEventNoteDTO); // 23
-    setSelectedEventTransaction({} as IEventTransactionDTO); // 24
+    setNewTransactions([]); // 4
+    setEventOwners([]); // 5
+    setEventMembers([]); // 6
+    setEventTasks([]); // 7
+    setEventNotes([]); // 8
+    setEventSupplierTransactionAgreements([]); // 9
+    setEventTransactions([]); // 10
+    setFilteredEventTransactions([]); // 11
+    setSelectedDate(addDays(new Date(), 3)); // 12
+    setSelectedDateWindow(false); // 13
+    setSelectedEvent({} as IEventDTO); // 14
+    setSelectedEventGuest({} as IEventGuestDTO); // 15
+    setSelectedEventSupplier({} as IEventSupplierDTO); // 16
+    setSelectedEventOwner({} as IEventOwnerDTO); // 17
+    setSelectedEventMember({} as IEventMemberDTO); // 18
+    setSelectedEventTask({} as IEventTaskDTO); // 19
+    setSelectedEventNote({} as IEventNoteDTO); // 20
+    setSelectedEventTransaction({} as IEventTransactionDTO); // 21
     setSelectedEventSupplierTransactionAgreement(
       {} as IEventSupplierTransactionAgreementDTO,
-    ); // 25
-    setSelectedNewTransaction({} as ICreateTransactionDTO); // 26
+    ); // 22
+    setSelectedNewTransaction({} as ICreateTransactionDTO); // 23
     setCurrentSection('notes');
+    setIsOwner(false);
+    setIsMember(false);
   }
 
   function handleSelectedDate(data: Date): void {
@@ -194,6 +322,7 @@ const EventVariablesProvider: React.FC = ({ children }) => {
     setSelectedDateWindow(!selectedDateWindow);
   }
   function selectEvent(data: IEventDTO): void {
+    localStorage.setItem('@WePlan-Party:selected-event', JSON.stringify(data));
     setSelectedEvent(data);
   }
 
@@ -228,26 +357,83 @@ const EventVariablesProvider: React.FC = ({ children }) => {
     setSelectedEventSupplierTransactionAgreement(data);
   }
   function handleEventGuests(data: IEventGuestDTO[]): void {
+    const event = localStorage.getItem(`@WePlan-Party:selected-event`);
+
+    event &&
+      localStorage.setItem(
+        `@WePlan-Party:event-${JSON.parse(event).id}-guests`,
+        JSON.stringify(data),
+      );
     setEventGuests(data);
   }
   function handleEventSuppliers(data: IEventSupplierDTO[]): void {
+    const event = localStorage.getItem(`@WePlan-Party:selected-event`);
+    event &&
+      localStorage.setItem(
+        `@WePlan-Party:event-${JSON.parse(event).id}-suppliers`,
+        JSON.stringify(data),
+      );
     setEventSuppliers(data);
-    const hired = data.filter(supplier => supplier.isHired);
-    setHiredSuppliers(hired);
   }
   function handleEventOwners(data: IEventOwnerDTO[]): void {
+    const event = localStorage.getItem('@WePlan-Party:selected-event');
+    if (event) {
+      const findOwner = data.find(owner => owner.userEventOwner.id === user.id);
+      if (findOwner) {
+        setIsOwner(true);
+        localStorage.setItem(
+          `@WePlan-Party:event-${JSON.parse(event).id}-owners`,
+          JSON.stringify(data),
+        );
+      }
+    }
     setEventOwners(data);
   }
   function handleEventMembers(data: IEventMemberDTO[]): void {
+    const event = localStorage.getItem('@WePlan-Party:selected-event');
+    if (event) {
+      const findMember = data.find(
+        member => member.userEventMember.id === user.id,
+      );
+      if (findMember || isOwner) {
+        !isOwner && setIsMember(true);
+        localStorage.setItem(
+          `@WePlan-Party:event-${JSON.parse(event).id}-owners`,
+          JSON.stringify(data),
+        );
+      }
+    }
     setEventMembers(data);
   }
   function handleEventTasks(data: IEventTaskDTO[]): void {
+    const event = localStorage.getItem('@WePlan-Party:selected-event');
+
+    (isMember || isOwner) &&
+      event &&
+      localStorage.setItem(
+        `@WePlan-Party:event-${JSON.parse(event).id}-tasks`,
+        JSON.stringify(data),
+      );
     setEventTasks(data);
   }
   function handleEventNotes(data: IEventNoteDTO[]): void {
+    const event = localStorage.getItem('@WePlan-Party:selected-event');
+    (isMember || isOwner) &&
+      event &&
+      localStorage.setItem(
+        `@WePlan-Party:event-${JSON.parse(event).id}-notes`,
+        JSON.stringify(data),
+      );
     setEventNotes(data);
   }
   function handleEventTransactions(data: IEventTransactionDTO[]): void {
+    const event = localStorage.getItem('@WePlan-Party:selected-event');
+    (isMember || isOwner) &&
+      event &&
+      localStorage.setItem(
+        `@WePlan-Party:event-${JSON.parse(event).id}-transactions`,
+        JSON.stringify(data),
+      );
     setEventTransactions(data);
   }
   function transformEventTransactions(
@@ -286,6 +472,13 @@ const EventVariablesProvider: React.FC = ({ children }) => {
           return -1;
         return 0;
       });
+    (isMember || isOwner) &&
+      selectedEvent &&
+      selectedEvent.id &&
+      localStorage.setItem(
+        `@WePlan-Party:event-${selectedEvent.id}-transactions`,
+        JSON.stringify(updatedTransactions),
+      );
     return updatedTransactions;
   }
   function handleFilteredEventTransactions(data: IEventTransactionDTO[]): void {
@@ -294,15 +487,26 @@ const EventVariablesProvider: React.FC = ({ children }) => {
   function handleEventSupplierTransactionAgreements(
     data: IEventSupplierTransactionAgreementDTO[],
   ): void {
+    const event = localStorage.getItem(`@WePlan-Party:selected-event`);
+
+    (isMember || isOwner) &&
+      event &&
+      localStorage.setItem(
+        `@WePlan-Party:event-${
+          JSON.parse(event).id
+        }-supplier-transaction-agreements`,
+        JSON.stringify(data),
+      );
     setEventSupplierTransactionAgreements(data);
   }
   function handleEventBudget(data: IEventBudgetDTO): void {
+    (isMember || isOwner) &&
+      localStorage.setItem(
+        `@WePlan-Party:event-${data.event_id}-budget`,
+        JSON.stringify(data),
+      );
     setEventBudget(data);
   }
-  const isOwner = useMemo(() => {
-    if (eventOwners.length <= 0) return false;
-    return !!eventOwners.find(owner => owner.userEventOwner.id === user.id);
-  }, [eventOwners, user]);
 
   const master = useMemo(() => {
     const thisowner = eventOwners.filter(
@@ -316,7 +520,6 @@ const EventVariablesProvider: React.FC = ({ children }) => {
       value={{
         isOwner,
         master,
-        dischargedSuppliers,
         eventBudget,
         eventGuests,
         eventMembers,
@@ -337,8 +540,6 @@ const EventVariablesProvider: React.FC = ({ children }) => {
         handleEventTransactions,
         handleEventSupplierTransactionAgreements,
         handleFilteredEventTransactions,
-        hiredSuppliers,
-        notHiredSuppliers,
         selectedEvent,
         selectedEventGuest,
         selectedEventMember,

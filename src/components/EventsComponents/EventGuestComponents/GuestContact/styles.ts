@@ -21,7 +21,9 @@ export const ContainerButton = styled.button`
   background-color: var(--letter-color-1);
   border-radius: 8px;
   padding: 0 16px;
-  margin: auto 8px;
+  margin: 0 8px;
+  border: none;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.25);
 `;
 
 export const ContactType = styled.p`
@@ -38,4 +40,5 @@ export const ContactInfo = styled.p`
   color: var(--letter-color-6);
   letter-spacing: 1px;
   text-align: right;
+  line-height: 38px;
 `;

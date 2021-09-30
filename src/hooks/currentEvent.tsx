@@ -70,7 +70,7 @@ const CurrentEventProvider: React.FC = ({ children }) => {
     handleEventGuests,
     handleEventSupplierTransactionAgreements,
     selectEventSupplier,
-    hiredSuppliers,
+    eventSuppliers,
     selectedEventSupplier,
     selectedEventGuest,
     selectEventGuest,
@@ -105,6 +105,9 @@ const CurrentEventProvider: React.FC = ({ children }) => {
   const [currentSection, setCurrentSection] = useState('Notes');
 
   const calculateTotalEventCost = useCallback(() => {
+    const hiredSuppliers = eventSuppliers.filter(
+      supplier => !supplier.isDischarged && supplier.isHired,
+    );
     if (hiredSuppliers.length <= 0) return;
     const totalCost: number = hiredSuppliers
       .map(supplier => {
@@ -119,7 +122,7 @@ const CurrentEventProvider: React.FC = ({ children }) => {
       })
       .reduce((a, b) => a + b, 0);
     setTotalEventCost(totalCost);
-  }, [hiredSuppliers]);
+  }, [eventSuppliers]);
 
   function handleEventFinancialSubSection(data: string): void {
     setEventFinancialSubSection(data);
@@ -236,8 +239,8 @@ const CurrentEventProvider: React.FC = ({ children }) => {
       );
       handleEventTasks(
         response.data.sort((a, b) => {
-          if (new Date(a.updated_at) > new Date(b.updated_at)) return 1;
-          if (new Date(a.updated_at) < new Date(b.updated_at)) return -1;
+          if (new Date(a.task.due_date) > new Date(b.task.due_date)) return 1;
+          if (new Date(a.task.due_date) < new Date(b.task.due_date)) return -1;
           return 0;
         }),
       );

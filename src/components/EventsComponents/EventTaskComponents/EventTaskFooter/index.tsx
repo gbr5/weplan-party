@@ -34,16 +34,16 @@ export function EventTaskFooter({ eventTask }: IProps): ReactElement {
   }
 
   const priorityColor = useMemo(() => {
-    if (eventTask.priority === 'low') return '#007500';
-    if (eventTask.priority === 'neutral') return '#1f4fff';
+    if (eventTask.task.priority === 'low') return '#007500';
+    if (eventTask.task.priority === 'neutral') return '#1f4fff';
     return '#ff3030';
-  }, [eventTask.priority]);
+  }, [eventTask.task.priority]);
 
   const statusColor = useMemo(() => {
-    if (eventTask.status === 'not started') return '#1f4fff';
-    if (eventTask.status === 'running') return '#ff3030';
+    if (eventTask.task.status === 'not started') return '#1f4fff';
+    if (eventTask.task.status === 'running') return '#ff3030';
     return '#007500';
-  }, [eventTask.status]);
+  }, [eventTask.task.status]);
 
   return (
     <Container>
@@ -51,19 +51,21 @@ export function EventTaskFooter({ eventTask }: IProps): ReactElement {
         <FiFlag color={priorityColor} size={iconSize} />
       </PriorityButton>
       <PriorityButton onClick={handleTaskStatus}>
-        {eventTask.status === 'not started' && (
+        {eventTask.task.status === 'not started' && (
           <FiCloud size={iconSize} color={statusColor} />
         )}
-        {eventTask.status === 'running' && (
+        {eventTask.task.status === 'running' && (
           <FiZap size={iconSize} color={statusColor} />
         )}
-        {eventTask.status === 'finnished' && (
+        {eventTask.task.status === 'finnished' && (
           <FiAward size={iconSize} color={statusColor} />
         )}
       </PriorityButton>
-      <DateTime>{formatOnlyTime(String(eventTask.due_date))}</DateTime>
+      <DateTime>{formatOnlyTime(String(eventTask.task.due_date))}</DateTime>
       <DateTime>|</DateTime>
-      <DateTime>{formatOnlyDateShort(String(eventTask.due_date))}</DateTime>
+      <DateTime>
+        {formatOnlyDateShort(String(eventTask.task.due_date))}
+      </DateTime>
     </Container>
   );
 }

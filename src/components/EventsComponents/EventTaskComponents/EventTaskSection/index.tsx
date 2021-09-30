@@ -13,15 +13,15 @@ export function EventTaskSection(): ReactElement {
   const { createTaskWindow, handleCreateTaskWindow } = useEventTasks();
 
   const notStartedCheckListTasks = useMemo(() => {
-    return eventTasks.filter(task => task.status === 'not started');
+    return eventTasks.filter(({ task }) => task.status === 'not started');
   }, [eventTasks]);
 
   const inProgressCheckListTasks = useMemo(() => {
-    return eventTasks.filter(task => task.status === 'running');
+    return eventTasks.filter(({ task }) => task.status === 'running');
   }, [eventTasks]);
 
   const resolvedCheckListTasks = useMemo(() => {
-    return eventTasks.filter(task => task.status === 'finnished');
+    return eventTasks.filter(({ task }) => task.status === 'finnished');
   }, [eventTasks]);
 
   return (

@@ -63,6 +63,8 @@ const AuthProvider: React.FC = ({ children }) => {
     localStorage.removeItem('@WePlan-Party:user');
     localStorage.removeItem('@WePlan-Party:friends');
     localStorage.removeItem('@WePlan-Party:friend-requests');
+    localStorage.removeItem('@WePlan-Party:selected-event');
+    localStorage.clear();
 
     setData({} as IAuthState);
   }, []);

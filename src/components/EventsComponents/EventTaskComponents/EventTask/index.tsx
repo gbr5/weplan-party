@@ -33,7 +33,7 @@ export function EventTask({ eventTask }: IProps): ReactElement {
       <Container onClick={handleTaskBody}>
         {selectedEventTask.id !== eventTask.id ? (
           <>
-            <Title>{eventTask.title}</Title>
+            <Title>{eventTask.task.title}</Title>
             <Underline />
             <EventTaskFooter eventTask={eventTask} />
           </>
@@ -45,7 +45,7 @@ export function EventTask({ eventTask }: IProps): ReactElement {
                 marginRight: '34px',
               }}
             >
-              {eventTask.title}
+              {eventTask.task.title}
             </Title>
             <Underline />
           </>

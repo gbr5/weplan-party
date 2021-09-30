@@ -251,12 +251,12 @@ const NoteProvider: React.FC = ({ children }) => {
 
   async function updateNotes(): Promise<void> {
     Promise.all([
-      selectedEventTask.notes
-        .filter(taskNote => taskNote.note.isNew)
-        .map(taskNote => {
+      selectedEventTask.task.notes
+        .filter(({ note }) => note.isNew)
+        .map(({ note }) => {
           return api.put('/notes', {
-            id: taskNote.note.id,
-            note: taskNote.note.note,
+            id: note.id,
+            note: note.note,
           });
         }),
     ]);

@@ -1,6 +1,6 @@
 import INoteDTO from './INoteDTO';
 
-export default interface IEventTaskNoteDTO {
+export default interface ITaskNoteDTO {
   id: string;
   note_id: string;
   task_id: string;

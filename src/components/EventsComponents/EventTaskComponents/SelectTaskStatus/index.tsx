@@ -15,9 +15,9 @@ export function SelectTaskStatus(): JSX.Element {
   async function updateTaskStatus(
     status: 'not started' | 'running' | 'finnished',
   ): Promise<void> {
-    if (status !== selectedEventTask.status) {
+    if (status !== selectedEventTask.task.status) {
       await updateTask({
-        ...selectedEventTask,
+        ...selectedEventTask.task,
         status,
       });
     }
@@ -31,21 +31,21 @@ export function SelectTaskStatus(): JSX.Element {
         <CloseButton closeFunction={handleEditTaskStatusWindow} />
         <StatusButton
           onClick={() => updateTaskStatus('not started')}
-          isActive={selectedEventTask.status === 'not started'}
+          isActive={selectedEventTask.task.status === 'not started'}
         >
           <FiCloud color={theme.colors.toastInfoColor} />
           <Title>Início</Title>
         </StatusButton>
         <StatusButton
           onClick={() => updateTaskStatus('running')}
-          isActive={selectedEventTask.status === 'running'}
+          isActive={selectedEventTask.task.status === 'running'}
         >
           <FiZap color={theme.colors.toastErrorColor} />
           <Title>Execução</Title>
         </StatusButton>
         <StatusButton
           onClick={() => updateTaskStatus('finnished')}
-          isActive={selectedEventTask.status === 'finnished'}
+          isActive={selectedEventTask.task.status === 'finnished'}
         >
           <FiAward color={theme.colors.green} />
           <Title>Fim</Title>

@@ -50,12 +50,12 @@ export function EventTaskBody(): ReactElement {
   async function handleUpdateTaskDueDate(date: Date): Promise<void> {
     if (
       formatOnlyDateShort(String(date)) ===
-      formatOnlyDateShort(String(selectedEventTask.due_date))
+      formatOnlyDateShort(String(selectedEventTask.task.due_date))
     )
       return;
     try {
       await updateTask({
-        ...selectedEventTask,
+        ...selectedEventTask.task,
         due_date: date,
       });
     } catch {
@@ -66,12 +66,12 @@ export function EventTaskBody(): ReactElement {
   async function handleUpdateTaskDueTime(date: Date): Promise<void> {
     if (
       formatOnlyTime(String(date)) ===
-      formatOnlyTime(String(selectedEventTask.due_date))
+      formatOnlyTime(String(selectedEventTask.task.due_date))
     )
       return;
     try {
       await updateTask({
-        ...selectedEventTask,
+        ...selectedEventTask.task,
         due_date: date,
       });
     } catch {
@@ -80,10 +80,10 @@ export function EventTaskBody(): ReactElement {
   }
 
   async function handleUpdateTaskTitle(title: string): Promise<void> {
-    if (title === selectedEventTask.title || title === '') return;
+    if (title === selectedEventTask.task.title || title === '') return;
     try {
       await updateTask({
-        ...selectedEventTask,
+        ...selectedEventTask.task,
         title,
       });
     } catch {
@@ -92,12 +92,12 @@ export function EventTaskBody(): ReactElement {
   }
 
   const status = useMemo(() => {
-    if (selectedEventTask.status === 'not started')
+    if (selectedEventTask.task.status === 'not started')
       return {
         title: 'Início',
         color: '#1f4fff',
       };
-    if (selectedEventTask.status === 'running')
+    if (selectedEventTask.task.status === 'running')
       return {
         title: 'Execução',
         color: '#ff3030',
@@ -109,12 +109,12 @@ export function EventTaskBody(): ReactElement {
   }, [selectedEventTask]);
 
   const priority = useMemo(() => {
-    if (selectedEventTask.priority === 'low')
+    if (selectedEventTask.task.priority === 'low')
       return {
         title: 'Baixa',
         color: '#007500',
       };
-    if (selectedEventTask.priority === 'neutral')
+    if (selectedEventTask.task.priority === 'neutral')
       return {
         title: 'Neutra',
         color: '#1f4fff',
@@ -128,9 +128,9 @@ export function EventTaskBody(): ReactElement {
   return (
     <Container>
       <InlineFormField
-        defaultValue={selectedEventTask.title}
+        defaultValue={selectedEventTask.task.title}
         handleOnSubmit={handleUpdateTaskTitle}
-        placeholder={selectedEventTask.title}
+        placeholder={selectedEventTask.task.title}
       />
       <Menu>
         <MenuButtonContainer>
@@ -138,13 +138,13 @@ export function EventTaskBody(): ReactElement {
           <MenuButton onClick={handleEditTaskStatusWindow}>
             <MenuTitle>Status</MenuTitle>
             <IconContainer color={status.color}>
-              {selectedEventTask.status === 'not started' && (
+              {selectedEventTask.task.status === 'not started' && (
                 <FiCloud size={functionIconSize} />
               )}
-              {selectedEventTask.status === 'running' && (
+              {selectedEventTask.task.status === 'running' && (
                 <FiZap size={functionIconSize} />
               )}
-              {selectedEventTask.status === 'finnished' && (
+              {selectedEventTask.task.status === 'finnished' && (
                 <FiAward size={functionIconSize} />
               )}
               <MenuText>{status.title}</MenuText>
@@ -165,8 +165,10 @@ export function EventTaskBody(): ReactElement {
           <MenuTitle>Notas</MenuTitle>
           <IconContainer color="#99afff">
             <FiFileText size={iconSize} />
-            {selectedEventTask.notes.length > 0 && (
-              <NotificationNumber number={selectedEventTask.notes.length} />
+            {selectedEventTask.task.notes.length > 0 && (
+              <NotificationNumber
+                number={selectedEventTask.task.notes.length}
+              />
             )}
           </IconContainer>
         </MenuButton>
@@ -181,11 +183,11 @@ export function EventTaskBody(): ReactElement {
         <DateHeader>Data Prevista</DateHeader>
         <TimePickerLine
           handleSelectedDate={handleUpdateTaskDueTime}
-          selectedDate={selectedEventTask.due_date}
+          selectedDate={selectedEventTask.task.due_date}
         />
         <DatePickerLine
           handleSelectedDate={handleUpdateTaskDueDate}
-          selectedDate={selectedEventTask.due_date}
+          selectedDate={selectedEventTask.task.due_date}
         />
       </DateContainer>
     </Container>
