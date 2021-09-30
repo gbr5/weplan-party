@@ -7,6 +7,7 @@ import {
   FiAward,
   FiFlag,
   FiTrash2,
+  FiUsers,
 } from 'react-icons/fi';
 
 import { useEventTasks } from '../../../../hooks/eventTasks';
@@ -41,6 +42,7 @@ export function EventTaskBody(): ReactElement {
     handleEditTaskPriorityWindow,
     handleEditTaskStatusWindow,
     handleEventTaskNotesWindow,
+    handleEventTaskFollowersWindow,
     handleDeleteTaskConfirmationWindow,
     updateTask,
     editTaskStatusWindow,
@@ -168,6 +170,17 @@ export function EventTaskBody(): ReactElement {
             {selectedEventTask.task.notes.length > 0 && (
               <NotificationNumber
                 number={selectedEventTask.task.notes.length}
+              />
+            )}
+          </IconContainer>
+        </MenuButton>
+        <MenuButton onClick={handleEventTaskFollowersWindow}>
+          <MenuTitle>Seguidores</MenuTitle>
+          <IconContainer color="#fee258">
+            <FiUsers size={iconSize} />
+            {selectedEventTask.task.followers.length > 0 && (
+              <NotificationNumber
+                number={selectedEventTask.task.followers.length}
               />
             )}
           </IconContainer>

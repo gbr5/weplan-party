@@ -7,10 +7,27 @@ import { Container, CheckListFunnel } from './styles';
 import { EventTask } from '../EventTask';
 import { useEventTasks } from '../../../../hooks/eventTasks';
 import { NewTaskForm } from '../NewTaskForm';
+import { EventTaskFollowersWindow } from '../EventTaskFollowersWindow';
+import { AddEventTaskFollowersWindow } from '../AddEventTaskFollowersWindow';
+import { EventTaskFollowersDescriptionWindow } from '../EventTaskFollowersDescriptionWindow';
+import DeleteConfirmationWindow from '../../../DeleteConfirmationWindow';
 
 export function EventTaskSection(): ReactElement {
-  const { eventTasks, isOwner } = useEventVariables();
-  const { createTaskWindow, handleCreateTaskWindow } = useEventTasks();
+  const {
+    eventTasks,
+    isOwner,
+    selectedEventTaskFollower,
+  } = useEventVariables();
+  const {
+    createTaskWindow,
+    handleCreateTaskWindow,
+    eventTaskFollowersWindow,
+    createEventTaskFollowersWindow,
+    eventTaskFollowersDescriptionWindow,
+    deleteTaskFollowerConfirmation,
+    handleDeleteTaskFollowerConfirmation,
+    deleteTaskFollower,
+  } = useEventTasks();
 
   const notStartedCheckListTasks = useMemo(() => {
     return eventTasks.filter(({ task }) => task.status === 'not started');
@@ -26,6 +43,18 @@ export function EventTaskSection(): ReactElement {
 
   return (
     <>
+      {eventTaskFollowersWindow && <EventTaskFollowersWindow />}
+      {createEventTaskFollowersWindow && <AddEventTaskFollowersWindow />}
+      {eventTaskFollowersDescriptionWindow && (
+        <EventTaskFollowersDescriptionWindow />
+      )}
+      {selectedEventTaskFollower && deleteTaskFollowerConfirmation && (
+        <DeleteConfirmationWindow
+          handleDelete={deleteTaskFollower}
+          onHandleCloseWindow={handleDeleteTaskFollowerConfirmation}
+          title="Deseja mesmo deletar o seguidor?"
+        />
+      )}
       {!!createTaskWindow && <NewTaskForm />}
       <Container>
         <strong>Tarefas</strong>

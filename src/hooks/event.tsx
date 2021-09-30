@@ -46,7 +46,7 @@ const EventProvider: React.FC = ({ children }) => {
       const response = await api.get<IEventOwnerDTO[]>(
         '/list/events/user-as-owner/',
       );
-      setEventsAsOwner(response.data);
+      response && response.data && setEventsAsOwner(response.data);
     } catch (err) {
       throw new Error(err);
     }
@@ -56,7 +56,7 @@ const EventProvider: React.FC = ({ children }) => {
       const response = await api.get<IEventMemberDTO[]>(
         '/list/events/user-as-member/',
       );
-      setEventsAsMember(response.data);
+      response && response.data && setEventsAsMember(response.data);
     } catch (err) {
       throw new Error(err);
     }
@@ -67,7 +67,7 @@ const EventProvider: React.FC = ({ children }) => {
       const response = await api.get<IEventGuestDTO[]>(
         `/event/weplan-guests/list/user`,
       );
-      setEventsAsGuest(response.data);
+      response && response.data && setEventsAsGuest(response.data);
     } catch (err) {
       throw new Error(err);
     }
@@ -75,8 +75,7 @@ const EventProvider: React.FC = ({ children }) => {
   const getNextEvent = useCallback(async () => {
     try {
       const response = await api.get<IEventDTO>('/my-next-event/');
-      console.log(response.data);
-      setNextEvent(response.data);
+      response && response.data && setNextEvent(response.data);
     } catch (err) {
       throw new Error(err);
     }
