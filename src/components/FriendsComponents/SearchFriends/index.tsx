@@ -20,6 +20,7 @@ import {
   InputContainer,
   SearchButton,
 } from './styles';
+import { useCurrentEvent } from '../../../hooks/currentEvent';
 
 interface IProps {
   handleFriends: (data: IFriendDTO[]) => void;
@@ -28,7 +29,7 @@ interface IProps {
 export function SearchFriends({ handleFriends }: IProps): ReactElement {
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const { friends } = useFriends();
+  const { filterEventFriends } = useCurrentEvent();
 
   const [backdrop, setBackdrop] = useState(false);
   const [filterString, setFilterString] = useState<string | undefined>(
@@ -41,7 +42,8 @@ export function SearchFriends({ handleFriends }: IProps): ReactElement {
     if (inputRef.current) inputRef.current.value = '';
     // Keyboard.dismiss();
     setBackdrop(false);
-    handleFriends(friends);
+    const sortedFriends = filterEventFriends();
+    handleFriends(sortedFriends);
   }
 
   function handleOffSearch(): void {
@@ -51,6 +53,7 @@ export function SearchFriends({ handleFriends }: IProps): ReactElement {
 
   const handleLookForTransaction = useCallback(
     (data: string) => {
+      const friends = filterEventFriends();
       setFilterString(data);
       if (data === '') return handleFriends(friends);
       setBackdrop(true);
@@ -59,7 +62,7 @@ export function SearchFriends({ handleFriends }: IProps): ReactElement {
       });
       return handleFriends(finrFriends);
     },
-    [friends, handleFriends],
+    [handleFriends, filterEventFriends],
   );
 
   const isActive = useMemo(() => {

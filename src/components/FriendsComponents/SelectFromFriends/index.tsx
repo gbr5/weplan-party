@@ -11,6 +11,8 @@ import IFriendDTO from '../../../dtos/IFriendDTO';
 import Button from '../../Button';
 
 import { Container, FriendsContainer } from './styles';
+import { useEventVariables } from '../../../hooks/eventVariables';
+import { useCurrentEvent } from '../../../hooks/currentEvent';
 
 interface IProps {
   handleAddFriends: (data: IFriendDTO[]) => Promise<void>;
@@ -21,23 +23,12 @@ export function SelectFromFriends({
   handleAddFriends,
   closeWindow,
 }: IProps): ReactElement {
-  const { friends, selectedFriends, unselectedFriends } = useFriends();
+  const { selectedFriends } = useFriends();
+  const { filterEventFriends } = useCurrentEvent();
 
-  const sortedFriends = useMemo(() => {
-    const response: IFriendDTO[] = [];
-    friends.map(friend => {
-      const findUnselected = unselectedFriends.find(
-        item => item.id === friend.id,
-      );
-      !findUnselected && response.push(friend);
-      return friend;
-    });
-    return response;
-  }, [friends, unselectedFriends]);
-
-  const [filteredFriends, setFilteredFriends] = useState<IFriendDTO[]>(
-    sortedFriends,
-  );
+  const [filteredFriends, setFilteredFriends] = useState<IFriendDTO[]>(() => {
+    return filterEventFriends();
+  });
 
   function handleFilteredFriends(data: IFriendDTO[]): void {
     setFilteredFriends(data);

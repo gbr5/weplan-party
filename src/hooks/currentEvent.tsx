@@ -16,6 +16,8 @@ import IEventNoteDTO from '../dtos/IEventNoteDTO';
 import IEventTransactionDTO from '../dtos/IEventTransactionDTO';
 import { useEventVariables } from './eventVariables';
 import { useToast } from './toast';
+import IFriendDTO from '../dtos/IFriendDTO';
+import { useFriends } from './friends';
 
 interface CurrentEventContextType {
   eventFinancialSubSection: string;
@@ -51,6 +53,7 @@ interface CurrentEventContextType {
   createEventBudget: (budget: number) => Promise<void>;
   updateEventBudget: (data: IEventBudgetDTO) => Promise<void>;
   handleSelectedEvent: (data: IEventDTO) => void;
+  filterEventFriends: () => IFriendDTO[];
   handleDeleteEvent: () => Promise<void>;
 }
 
@@ -58,6 +61,7 @@ const CurrentEventContext = createContext({} as CurrentEventContextType);
 
 const CurrentEventProvider: React.FC = ({ children }) => {
   const { user } = useAuth();
+  const { friends } = useFriends();
   const { addToast } = useToast();
   const {
     handleEventBudget,
@@ -410,6 +414,32 @@ const CurrentEventProvider: React.FC = ({ children }) => {
     }
   }
 
+  function filterEventFriends(): IFriendDTO[] {
+    const sortedFriends: IFriendDTO[] = [];
+    friends.map(friend => {
+      if (!friend.isConfirmed) return [];
+      const findFriendOwner = eventOwners.find(
+        owner => owner.userEventOwner.id === friend.friend.id,
+      );
+      const findFriendMember = eventMembers.find(
+        owner => owner.userEventMember.id === friend.friend.id,
+      );
+      const findFriendGuest = eventGuests
+        .filter(
+          guest =>
+            guest.weplanUser && guest.weplanGuest && guest.weplanGuest.id,
+        )
+        .find(
+          owner => owner.weplanGuest.weplanUserGuest.id === friend.friend.id,
+        );
+      if (!findFriendMember && !findFriendOwner && !findFriendGuest)
+        sortedFriends.push(friend);
+
+      return [];
+    });
+    return sortedFriends;
+  }
+
   return (
     <CurrentEventContext.Provider
       value={{
@@ -447,6 +477,7 @@ const CurrentEventProvider: React.FC = ({ children }) => {
         deleteEventConfirmationWindow,
         handleDeleteEvent,
         handleDeleteEventConfirmationWindow,
+        filterEventFriends,
       }}
     >
       {children}
