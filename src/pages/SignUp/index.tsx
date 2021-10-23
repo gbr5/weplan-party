@@ -107,12 +107,18 @@ const SignUp: React.FC = () => {
         formRef.current?.setErrors({});
         setLoading(true);
 
+        if (data.password.length < 8) {
+          return addToast({
+            title: 'A senha deve ter pelo menos 8 caractéres',
+          });
+        }
+
         const schema = Yup.object().shape({
           name: Yup.string().required('Nome é obrigatório'),
           email: Yup.string()
             .required('E-mail é obrigatório')
             .email('Digite um e-mail válido'),
-          password: Yup.string().min(6, 'Mínimo de 6 dígitos'),
+          password: Yup.string().min(8, 'Mínimo de 6 dígitos'),
           password_confirmation: Yup.string().oneOf(
             [Yup.ref('password'), undefined],
             'As senhas devem ser iguais.',

@@ -89,7 +89,7 @@ export const MenuItemContainer = styled.div`
 
     h3 {
       text-align: left;
-      font-size: 20px;
+      font-size: 18px;
     }
   }
 `;
@@ -106,7 +106,7 @@ export const ToggleButton = styled.div`
   }
 
   strong {
-    font-size: 20px;
+    font-size: 18px;
     color: black;
   }
 `;

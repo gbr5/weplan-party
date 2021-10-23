@@ -41,7 +41,7 @@ const WelcomePage: React.FC = () => {
       history.push('/signin', {
         params: email,
       });
-    } catch (err) {
+    } catch {
       addToast({
         type: 'error',
         title: 'Erro na validação da conta.',
@@ -49,7 +49,7 @@ const WelcomePage: React.FC = () => {
           'Ocorreu um erro ao tentar realizar da sua conta, tente novamente.',
       });
       setUpdateTokenButton(true);
-      throw new Error(err);
+      throw new Error();
     }
   }, [addToast, location, history]);
 
@@ -69,14 +69,14 @@ const WelcomePage: React.FC = () => {
         description:
           'O token para validação do seu perfil tem validade de 2 horas.',
       });
-    } catch (err) {
+    } catch {
       addToast({
         type: 'error',
         title: 'Erro ao enviar e-mail.',
         description:
           'Ocorreu um erro ao enviar e-mail de verificação, tente novamente.',
       });
-      throw new Error(err);
+      throw new Error();
     }
   }, [addToast, userEmail]);
 
